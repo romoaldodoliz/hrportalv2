@@ -1,0 +1,1361 @@
+<template>
+<div>
+    <loader v-if="loading"></loader>
+    <div class="header bg-gradient-success pb-8 pt-5 pt-md-8 container-list"></div>
+        <div class="container-fluid mt--9">
+            <div class="header-body">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-6">
+                         <div class="card shadow">
+                                <div class="card-header border-0">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h3 class="mb-0">ALL EMPLOYEES</h3>
+                                            <small class="text-muted">List of all employees</small>
+                                        </div> 
+                                        <div class="col text-right">
+                                         <a href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="col-xl-12 mb-2 mt-3 float-right">
+                                            <div class="col-xl-6 mb-2 mt-3 float-left">
+                                                <input type="text" name="employee" class="form-control" placeholder="Search by Employee Number or Name" autocomplete="off" v-model="keywords" id="name">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-12 mb-2 mt-3 float-right">
+                                            <h4>Filter by: </h4>
+                                            <div class="col-xl-4 mb-2 float-left">
+                                                <select class="form-control" v-model="company" id="company">
+                                                    <option value="">Choose Company</option>
+                                                    <option v-for="(company,v) in companies" v-bind:key="v" :value="company.id"> {{ company.name }}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-3 mb-2 float-left">
+                                                <select class="form-control" v-model="department" id="department">
+                                                    <option value="">Choose Deparment</option>
+                                                    <option v-for="(department,v) in departments" v-bind:key="v" :value="department.id"> {{ department.name }}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-3 mb-2 float-left">
+                                                <select class="form-control" v-model="location" id="location">
+                                                    <option value="">Choose Location</option>
+                                                    <option v-for="(location,v) in locations" v-bind:key="v" :value="location.id"> {{ location.name }}</option>
+                                                </select>
+                                            </div> 
+                                            <div class="col-xl-1 mb-2 float-left">
+                                                <button class="btn btn-sm btn-primary" @click="fetchFilterEmployee"> Apply Filter</button>
+                                            </div> 
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <!-- employees table -->
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Position</th>
+                                                <th scope="col">Company</th>
+                                                <th scope="col">Department</th>
+                                                <th scope="col">Location</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-if="table_loading">
+                                                <td colspan="15">
+                                                    <content-placeholders>
+                                                        <content-placeholders-text :lines="3" />
+                                                    </content-placeholders>
+                                                </td>
+                                            </tr>
+                                             <tr v-for="(employee, u) in filteredQueues" v-bind:key="u">
+                                                <td class="text-center">
+                                                    <div class="dropdown">
+                                                        <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-pen"></i> Edit</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ employee.employee_number }}</td>
+                                                <td>{{ employee.first_name + " "+ employee.last_name }}</td>
+                                                <td>{{ employee.position }}</td>
+                                                <td>{{ employee.companies[0] ? employee.companies[0].name : "" }}</td>
+                                                <td>{{ employee.departments[0] ? employee.departments[0].name : ""  }}</td>
+                                                <td>{{ employee.locations[0] ? employee.locations[0].name : '' }}</td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row mb-3 mt-3 ml-1" v-if="filteredQueues.length ">
+                                    <div class="col-6">
+                                        <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                            <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                                        <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <span class="mr-2">Filtered employee(s) : {{ filteredQueues.length }} </span><br>
+                                        <span class="mr-2">Total employee(s) : {{ employees.length }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit employee Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center" id="addCompanyLabel">EMPLOYEE INFORMATION</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center mb-2">
+                            <img :src="profile_image" @error="profileImageLoadError()" class="rounded-circle" style="width:150px;height:150px;border:2px dotted ;">
+                        </div>
+                        
+                        <div class="nav-wrapper">
+                            <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i class="fas fa-user-tie mr-2"></i>PERSONAL</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i class="fas fa-briefcase mr-2"></i>WORK</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-address-book mr-2"></i>CONTACT</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <div class="tab-content" id="myTabContent">
+                                    <!-- Personal -->
+                                    <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
+                                        <div class="row">
+                                            
+
+                                            <div class="col-md-12 mb-5" style="border:1px solid;border-radius:6px;border-color:#cad1d7;">
+                                                <div class="col-md-12 mt-3 justify-content-center">
+                                                    <div class="form-group">
+                                                        <label for="role">Profile Image</label> 
+                                                        <input type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
+                                                        <span class="text-danger" v-if="errors.employee_image">{{ errors.employee_image[0] }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-center mb-2 mt-2">
+                                                    <img :src="signature_image" @error="signatureImageLoadError()" style="width:250px;height:auto;border-radius:6px;border:2px dotted;">
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="role">Signature</label> 
+                                                        <input type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
+                                                        <span class="text-danger" v-if="errors.employee_signature">{{ errors.employee_signature[0] }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">First Name*</label> 
+                                                    <input type="text"  class="form-control" v-model="employee_copied.first_name"   >
+                                                    <span class="text-danger" v-if="errors.first_name">{{ errors.first_name[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="role">Middle Name</label> 
+                                                    <input type="text"  class="form-control" v-model="employee_copied.middle_name"   >
+                                                    <span class="text-danger" v-if="errors.middle_name">{{ errors.middle_name[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="role">Middle Initial</label> 
+                                                    <input type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
+                                                    <span class="text-danger" v-if="errors.middle_initial">{{ errors.middle_initial[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Last Name*</label> 
+                                                    <input type="text"  class="form-control" v-model="employee_copied.last_name"   >
+                                                    <span class="text-danger" v-if="errors.last_name">{{ errors.last_name[0] }}</span>
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Suffix</label> 
+                                                    <input type="text" class="form-control" v-model="employee_copied.name_suffix">
+                                                    <span class="text-danger" v-if="errors.name_suffix">{{ errors.name_suffix[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Marital Status*</label> 
+                                                    <select class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMartialStatus()">
+                                                        <option value="">Choose Marital Status</option>
+                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.marital_status">{{ errors.marital_status[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
+                                                    <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
+                                                    <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Date of Birth*</label> 
+                                                    <input type="date" class="form-control" v-model="employee_copied.birthdate">
+                                                    <span class="text-danger" v-if="errors.birthdate">{{ errors.birthdate[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Age <span class="text-danger" v-if="employee_copied.age">{{ employee_copied.ageRange }}</span></label> 
+                                                    <input type="text" disabled class="form-control" v-model="employee_copied.age">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Gender*</label> 
+                                                    <select class="form-control" v-model="employee_copied.gender" id="marital_status">
+                                                        <option value="">Choose Gender</option>
+                                                        <option value="MALE"> MALE</option>
+                                                        <option value="FEMALE"> FEMALE</option>
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.gender">{{ errors.gender[0] }}</span>
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="role">Birthplace</label> 
+                                                    <textarea  class="form-control" v-model="employee_copied.birthplace"></textarea>
+                                                    <span class="text-danger" v-if="errors.birthplace">{{ errors.birthplace[0] }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <h2 class="col-12 modal-title text-center" id="addCompanyLabel">Educational Background</h2>
+                                            
+                                            <div class="col-md-12">
+                                                <h2 class="ml-0 pl-0">Tertiary</h2>
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Name of School</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.school_graduated">
+                                                    <span class="text-danger" v-if="errors.school_graduated">{{ errors.school_graduated[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Course</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.school_course">
+                                                    <span class="text-danger" v-if="errors.school_course">{{ errors.school_course[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Year Graduated</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.school_year">
+                                                    <span class="text-danger" v-if="errors.school_year">{{ errors.school_year[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <h2 class="ml-0 pl-0">Vocational Course</h2>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Name of School</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_graduated">
+                                                    <span class="text-danger" v-if="errors.vocational_graduated">{{ errors.vocational_graduated[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Course</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_course">
+                                                    <span class="text-danger" v-if="errors.vocational_course">{{ errors.vocational_course[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Year Graduated</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_year">
+                                                    <span class="text-danger" v-if="errors.vocational_year">{{ errors.vocational_year[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <!-- Work -->
+                                    <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Company*</label>
+                                                    <select class="form-control" v-model="employee_copied.company_list" id="company">
+                                                        <option value="">Choose Company</option>
+                                                        <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.company_list">{{ errors.company_list[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Division</label>  
+                                                    <select class="form-control" v-model="employee_copied.division" id="marital_status">
+                                                        <option value="">Choose Division</option>
+                                                        <option v-for="(division) in divisions" v-bind:key="division" :value="division"> {{ division }}</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Department*</label>
+                                                    <select class="form-control" v-model="employee_copied.department_list" id="department">
+                                                        <option value="">Choose Department</option>
+                                                        <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.department_list">{{ errors.department_list[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Employee Number</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.employee_number">
+                                                    <span class="text-danger" v-if="errors.employee_number">{{ errors.employee_number[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">ESS Employee No.</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.ess_ee_number">
+                                                    <span class="text-danger" v-if="errors.ess_ee_number">{{ errors.ess_ee_number[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Position</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.position">
+                                                    <span class="text-danger" v-if="errors.position">{{ errors.position[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Classification</label>
+                                                    <select class="form-control" v-model="employee_copied.classification" id="department">
+                                                        <option value="">Choose Classification</option>
+                                                        <option value="Probationary">Probationary</option>
+                                                        <option value="Regular">Regular</option>
+                                                        <option value="Consultant">Consultant</option>
+                                                        <option value="Project">Project Based</option>
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.classification">{{ errors.classification[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Date Hired</label>
+                                                    <input type="date" class="form-control" v-model="employee_copied.date_hired">
+                                                    <span class="text-danger" v-if="errors.date_hired">{{ errors.date_hired[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Tenure</label>
+                                                    <input type="text" disabled class="form-control" v-model="employee_copied.tenure">
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Level</label>
+                                                    <select class="form-control" v-model="employee_copied.level" id="level">
+                                                        <option value="">Choose Level</option>
+                                                        <option v-for="(level) in levels" v-bind:key="level" :value="level"> {{ level }}</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Location / Site*</label>
+                                                    <select class="form-control" v-model="employee_copied.location_list" id="location">
+                                                        <option value="">Choose Location</option>
+                                                        <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.location_list">{{ errors.location_list[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Area</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.area">
+                                                    <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Bank Account Number</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.bank_account_number">
+                                                    <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Bank Name</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.bank_name">
+                                                    <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Status</label>
+                                                    <select class="form-control" v-model="employee_copied.status" id="status">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="Active">Active</option> 
+                                                        <option value="Inactive">Inactive</option> 
+                                                        <option value="On-hold">On-hold</option> 
+                                                        <option value="Notification">Notification</option> 
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.status">{{ errors.status[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Date Regularized</label>
+                                                    <input type="date" class="form-control" v-model="employee_copied.date_regularized">
+                                                    <span class="text-danger" v-if="errors.date_regularized">{{ errors.date_regularized[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Date Resigned</label>
+                                                    <input type="date" class="form-control" v-model="employee_copied.date_resigned">
+                                                    <span class="text-danger" v-if="errors.date_resigned">{{ errors.date_resigned[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <h4>System Approvers</h4>
+                                                <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;" @click="fetchApprovers()"><i class="fas fa-redo" title="Refresh Approver"></i></button>
+                                                <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addApprover()">Add Row</button>
+                                                 <div class="table-responsive">
+                                                    <table class="table table-hover" id="tab_assign_head">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Name
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Position
+                                                                </th>
+                                                                <th class="text-center"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(row,index) in approvers" v-bind:key="index">
+                                                                <td>
+                                                                    <select class="form-control" v-model="row.employee_head_id" id="location">
+                                                                        <option value="">Choose Approver</option>
+                                                                        <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <select class="form-control" v-model="row.head_id" id="location">
+                                                                        <option value="">Choose Position</option>
+                                                                        <option v-for="(position,b) in employee_position_approvers" v-bind:key="b" :value="position.id"> {{ position.name }}</option>
+                                                                    </select> 
+                                                                </td>
+                                                                <td width="5%">
+                                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeApprover(index,row.id)">Remove</button>
+                                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeApprover(index)">Remove</button>  
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>    
+                                                </div>    
+                                            </div>                
+
+                                        </div>
+                                    </div>
+                                    <!-- Contact -->
+                                    <div class="tab-pane fade" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="role">Current Address</label>
+                                                    <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
+                                                    <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="role">Permanent Address</label>
+                                                    <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
+                                                    <span class="text-danger" v-if="errors.permanent_address">{{ errors.permanent_address[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="role">Landline</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.phone_number">
+                                                    <span class="text-danger" v-if="errors.phone_number">{{ errors.phone_number[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="role">Mobile Number</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                                    <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
+                                                </div>
+                                            </div>   
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Contact Person</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.contact_person">
+                                                    <span class="text-danger" v-if="errors.contact_person">{{ errors.contact_person[0] }}</span> 
+                                                </div>
+                                            </div>    
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Contact Relation</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.contact_relation">
+                                                    <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
+                                                </div>
+                                            </div>  
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Contact Number</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.contact_number">
+                                                    <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-12">
+                                                <h4>HMO Dependents (By hierarchy *For Single - Mother, Father, Child *For Married - Spouse, Child)</h4>
+                                                <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;" @click="fetchDependents()"><i class="fas fa-redo" title="Refresh HMO Dependents"></i></button>
+                                                <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addDependent()">Add Row</button>
+                                                 <div class="table-responsive">
+                                                    <table class="table table-hover" id="tab_hmo_dependent">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Name
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Gender
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Date of birth
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Relationship
+                                                                </th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(row,index) in dependents" v-bind:key="index">
+                                                                <td>
+                                                                   <input type="text" class="form-control" v-model="row.dependent_name">     
+                                                                </td>
+                                                                <td>
+                                                                    <select class="form-control" v-model="row.dependent_gender" id="dependent_gender">
+                                                                        <option value="">Choose Gender</option>
+                                                                        <option value="MALE">MALE</option>
+                                                                        <option value="FEMALE">FEMALE</option>
+                                                                    </select> 
+                                                                </td>
+                                                                <td>
+                                                                    <input type="date" class="form-control" v-model="row.bdate">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" v-model="row.relation">
+                                                                </td>
+                                                                <td with="5%">
+                                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">Remove</button>
+                                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">Remove</button>  
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Identification -->
+                                    <div class="tab-pane fade" id="tabs-icons-text-4" role="tabpanel" aria-labelledby="tabs-icons-text-4-tab">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">SSS</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.sss_number">
+                                                    <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">HDMF</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.hdmf">
+                                                    <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Philhealth</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.phil_number">
+                                                    <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">TIN</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.tax_number">
+                                                    <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Tax Status*</label>
+                                                    <select class="form-control" v-model="employee_copied.tax_status" id="tax_status">
+                                                        <option value="">Choose Tax Status</option>
+                                                        <option value="S">S</option> 
+                                                        <option value="S1">S1</option> 
+                                                        <option value="S2">S2</option> 
+                                                        <option value="S3">S3</option> 
+                                                        <option value="S4">S4</option> 
+                                                        <option value="M">M4</option> 
+                                                        <option value="M1">M1</option> 
+                                                        <option value="M2">M3</option> 
+                                                        <option value="M3">M4</option> 
+                                                        <option value="M4">M4</option> 
+                                                        
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
+                                                </div>
+                                            </div>    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 text-center mt-3 pt-3 pb-3" style="background-color:#f4f5f7;border-radius:5px;">
+                            <h4>Terms and Conditions</h4>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input class="custom-control-input" id="terms_conditions" v-model="termsConditions" @change="termsConditionsValidate" type="checkbox">
+                                <label class="custom-control-label" for="terms_conditions">I certify that the information provided is true and correct to the best of my knowledge.</label>
+                            </div>     
+                        </div>
+                    </div>
+                  
+                    <div class="modal-footer">
+                        <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</template>
+
+
+<script>
+    import loader from './Loader'
+    import Swal from 'sweetalert2'
+
+    export default {
+         components: {
+            loader
+        },
+        data(){
+            return {
+                employees: [],
+                employee: [],
+                employee_copied: [],
+                copied_role: [],
+                roles: [],
+                errors: [],
+                currentPage: 0,
+                itemsPerPage: 50,
+                keywords: "",
+                loading: false,
+                employee_id: '',
+                marital_statuses : [],
+                marital_file : '',
+                profile_image_file : '',
+                signature_image_file : '',
+                profile_image: '',
+                signature_image: '',
+                marital_attachment_validate : true,
+                marital_attachment_view : false,
+                companies : [],
+                divisions : [],
+                departments : [],
+                locations : [],
+                levels : [],
+                saveEmployee: true,
+                termsConditions: false,
+                employee_head_approvers: [],
+                employee_position_approvers: [],
+                approvers : [],
+                deletedApprover : [],
+                dependents : [],
+                deletedDependent : [],
+                table_loading : true,
+                company : '',
+                location : '',
+                department : '',
+            }
+        },
+        created(){
+            this.fetchEmployees();
+            this.fetchMaritalStatuses();
+            this.fetchCompanies();
+            this.fetchDepartments();
+            this.fetchLocations();
+            this.fetchLevels();
+            this.fetchHeadApprovers();
+            this.fetchPositionApprovers();
+        },
+        methods:{
+            profileImageLoadError(){
+                this.profile_image = 'storage/default.png';
+            },
+            signatureImageLoadError(){
+                this.signature_image = 'storage/image_not_available.png';
+            },
+            resetForm(){
+                this.errors = [];
+                this.employee = [];
+            },
+            customLabelHeadApprover (head_approver) {
+                return `${head_approver.first_name + " " +  head_approver.last_name}`
+            },
+            updateEmployee(employee_copied){
+                this.errors = [];
+               
+                this.edit_updated = false;
+                this.employee_error = false;
+                this.loading = true;
+                document.getElementById('edit_btn').disabled = true;
+                var index = this.employees.findIndex(item => item.id == employee_copied.id);
+
+                let formData = new FormData();
+
+                //Personal
+                if(this.profile_image_file){
+                    formData.append('employee_image', this.profile_image_file);
+                }
+                if(this.signature_image_file){
+                    formData.append('employee_signature', this.signature_image_file);
+                }
+                
+                formData.append('first_name', employee_copied.first_name);
+                if(employee_copied.middle_name){
+                    formData.append('middle_name', employee_copied.middle_name);     
+                }
+                if(employee_copied.middle_name){
+                    formData.append('middle_initial', employee_copied.middle_initial);
+                }
+                
+                formData.append('last_name', employee_copied.last_name);
+                formData.append('name_suffix', employee_copied.name_suffix ? employee_copied.name_suffix : "-");
+                formData.append('marital_status', employee_copied.marital_status);
+
+                if(this.marital_file){
+                    formData.append('marital_status_attachment', this.marital_file);
+                }
+                formData.append('birthdate', employee_copied.birthdate);
+                formData.append('gender', employee_copied.gender);
+                formData.append('birthplace', employee_copied.birthplace ? employee_copied.birthplace : "-");
+                formData.append('school_graduated', employee_copied.school_graduated ? employee_copied.school_graduated : "-");
+                formData.append('school_course', employee_copied.school_course ? employee_copied.school_course : "-");
+                formData.append('school_year', employee_copied.school_year ? employee_copied.school_year : "-");
+                formData.append('vocational_graduated', employee_copied.vocational_graduated ? employee_copied.vocational_graduated : "-");
+                formData.append('vocational_course', employee_copied.vocational_course ? employee_copied.vocational_course : "-");
+                formData.append('school_year', employee_copied.school_year ? employee_copied.school_year : "-");
+                formData.append('vocational_graduated', employee_copied.vocational_graduated ? employee_copied.vocational_graduated : "-");
+                formData.append('vocational_course', employee_copied.vocational_course ? employee_copied.vocational_course : "-");
+                formData.append('vocational_year', employee_copied.vocational_year ? employee_copied.vocational_year : "-");
+                //Work
+                formData.append('company_list', employee_copied.company_list);
+                formData.append('division', employee_copied.division);
+                formData.append('department_list', employee_copied.department_list);
+                formData.append('employee_number', employee_copied.employee_number ? employee_copied.employee_number : "-");
+                formData.append('ess_ee_number', employee_copied.ess_ee_number ? employee_copied.ess_ee_number : "-");
+                formData.append('position', employee_copied.position ? employee_copied.position : "-");
+                formData.append('classification', employee_copied.classification ? employee_copied.classification : "-");
+                formData.append('date_hired', employee_copied.date_hired ? employee_copied.date_hired : "");
+                formData.append('level', employee_copied.level ? employee_copied.level : "-");
+                formData.append('location_list', employee_copied.location_list);
+                formData.append('area', employee_copied.area ? employee_copied.area : "-");
+                formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
+                formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
+                formData.append('status', employee_copied.status ? employee_copied.status : "-");
+
+               
+                formData.append('date_regularized', employee_copied.date_regularized ? employee_copied.date_regularized : "");      
+                
+               
+                formData.append('date_resigned', employee_copied.date_resigned ? employee_copied.date_resigned : "");
+
+                //Contact
+                formData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
+                formData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
+                formData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
+                formData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
+                formData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
+                formData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
+                formData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
+                //Identification
+                formData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
+                formData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
+                formData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
+                formData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
+                formData.append('tax_status', employee_copied.tax_status);
+
+                //Approvers
+                formData.append('head_approvers', this.approvers ? JSON.stringify(this.approvers) : "");
+                formData.append('deleted_approvers', this.deletedApprover ? JSON.stringify(this.deletedApprover) : "");
+
+                //Dependents
+                formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
+                formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+
+                formData.append('_method', 'PATCH');
+
+                axios.post(`/employee/${employee_copied.id}`, 
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }  
+                )
+                .then(response => {
+                    this.employees.splice(index,1,response.data);
+                    document.getElementById('edit_btn').disabled = false;
+                    this.loading = false;
+                    this.copyObject(response.data);
+
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Employee Updated Successfully',
+                        icon: 'success',
+                        confirmButtonText: 'Okay'
+                    })
+                })
+                .catch(error => {
+                    this.loading = false;
+                    this.errors = error.response.data.errors;
+                    document.getElementById('edit_btn').disabled = false;
+                    
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'Unable to Update Employee. Check Entries and then try again.',
+                        icon: 'error',
+                        confirmButtonText: 'Okay'
+                    })
+                })
+            },
+            copyObject(employee){
+                this.errors = [];
+                this.termsConditions = false;
+                this.saveEmployee = true;
+
+                //Config Employee Fields
+                this.employee_copied = Object.assign({}, employee);
+                this.employee_copied.age = this.getAge(this.employee_copied.birthdate); 
+                this.employee_copied.birthdate = this.getDateFormat(this.employee_copied.birthdate); 
+                this.employee_copied.date_hired = this.getDateFormat(this.employee_copied.date_hired); 
+                this.employee_copied.tenure = this.getTenure(this.employee_copied.date_hired);
+                this.employee_copied.date_regularized = this.getDateFormat(this.employee_copied.date_regularized);
+                this.employee_copied.date_resigned = this.getDateFormat(this.employee_copied.date_resigned);
+                this.employee_copied.company_list = this.employee_copied.companies[0].id; 
+                this.employee_copied.department_list = this.employee_copied.departments[0].id; 
+                this.employee_copied.location_list = this.employee_copied.locations[0].id; 
+                this.employee_id = employee.id;
+
+                //Get Approvers
+                this.fetchApprovers();
+
+                //Get Dependents
+                this.fetchDependents();
+
+                //Get Divisions
+                this.fetchDivisions();
+
+                //Validate Marital Status
+                this.validateMartialStatus();
+
+                //Attachment
+                var num = Math.random();
+                this.profile_image = 'storage/id_image/employee_image/' + employee.id + '.png?v='+num;
+                this.signature_image = 'storage/id_image/employee_signature/' + employee.id + '.png?v='+num;
+                var profile =  document.getElementById("profile_image_file");
+                var signature =  document.getElementById("signature_image_file");
+                var marital_status =  document.getElementById("marital_file");
+                profile.value = '';
+                signature.value = '';
+                marital_status.value = '';
+                
+            },
+            validateMartialStatus(){
+                if(this.employee_copied.marital_status){
+                    if(this.employee_copied.marital_status == "Married" || this.employee_copied.marital_status == "Divorced"){
+                        this.marital_attachment_validate = false;
+                        this.marital_attachment_view = true;
+                        
+                    }else{
+                        this.marital_attachment_validate = true;
+                        this.marital_attachment_view = false;
+                    }
+                }else{
+                    this.marital_attachment_validate = true;
+                    this.marital_attachment_view = false;
+                }     
+            },
+            fetchEmployees(){
+                this.table_loading = true;
+                axios.get('/employees-all')
+                .then(response => { 
+                    this.employees = response.data;
+                    this.table_loading = false;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchHeadApprovers(){
+                 axios.get('/employee-head-approvers')
+                .then(response => { 
+                    this.employee_head_approvers = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchPositionApprovers(){
+                 axios.get('/heads-all')
+                .then(response => { 
+                    this.employee_position_approvers = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchApprovers(){
+                this.approvers = [];
+                this.deletedApprover = [];
+                axios.get('/employee-approvers/'+this.employee_copied.id)
+                .then(response => { 
+                    this.approvers = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchDependents(){
+                let v = this;
+                this.dependents = [];
+                this.deletedDependent = [];
+                axios.get('/employee-dependents/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        var dependents_arr = [];
+                        response.data.forEach(element => {
+                            v.dependents.push({
+                                id: element.id,
+                                dependent_name: element.dependent_name,
+                                dependent_gender: element.dependent_gender,
+                                bdate: v.getDateFormat(element.bdate),
+                                relation: element.relation
+                            });
+                        });
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            addApprover(){
+                this.approvers.push({
+                    id: "",
+                    employee_head_id: "",
+                    head_id: "",
+                });
+            },
+            removeApprover: function(index,id) {
+                let head_id = id;
+                if(head_id){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this approver?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+
+                            this.deletedApprover.push({
+                                id: head_id
+                            });
+                            this.approvers.splice(index, 1);    
+                        }
+                    })
+                }else{
+                    this.approvers.splice(index, 1);
+                } 
+            },
+            addDependent(){
+                this.dependents.push({
+                    id: "",
+                    dependent_name: "",
+                    dependent_gender: "",
+                    bdate: "",
+                    relation: "",
+                });
+            },
+            removeDependent: function(index,id) {
+                let dependent_id = id;
+                if(dependent_id){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this dependent?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+
+                            this.deletedDependent.push({
+                                id: dependent_id
+                            });
+                            this.dependents.splice(index, 1);    
+                        }
+                    })
+                }else{
+                    this.dependents.splice(index, 1);
+                } 
+            },
+            profileHandleFileUpload(){
+                var profile = document.getElementById("profile_image_file");
+                this.profile_image = window.URL.createObjectURL(profile.files[0]);
+                this.profile_image_file = profile.files[0];
+            },
+            signatureHandleFileUpload(){
+                var signature = document.getElementById("signature_image_file");
+                this.signature_image = window.URL.createObjectURL(signature.files[0]);
+                this.signature_image_file = signature.files[0];
+            },
+            maritalHandleFileUpload(){
+                var marital = document.getElementById("marital_file");
+                this.marital_file = marital.files[0];
+            },
+            fetchMaritalStatuses(){
+                axios.get('/maritals-options')
+                .then(response => { 
+                    this.marital_statuses = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchCompanies(){
+                axios.get('/companies-all')
+                .then(response => { 
+                    this.companies = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchDepartments(){
+                axios.get('/departments-all')
+                .then(response => { 
+                    this.departments = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchLocations(){
+                axios.get('/locations-all')
+                .then(response => { 
+                    this.locations = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchDivisions(){
+                axios.get('/division-options/'+this.employee_copied.company_list)
+                .then(response => { 
+                    this.divisions = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchLevels(){
+                axios.get('/levels-options')
+                .then(response => { 
+                    this.levels = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchFilterEmployee(){
+                this.table_loading = true;
+                this.employees = [];
+                this.formFilterData = new FormData();
+                if(this.company){
+                    this.formFilterData.append('company',this.company);
+                }
+                if(this.department){
+                    this.formFilterData.append('department',this.department);
+                }
+                if(this.location){
+                    this.formFilterData.append('location',this.location);
+                }
+                this.formFilterData.append('_method', 'POST');
+
+                axios.post('/filter-employee', this.formFilterData)
+                .then(response => {
+                    this.employees =  response.data;
+                    this.table_loading = false;
+                    this.errors = [];
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.table_loading = false;
+                })
+            },
+            termsConditionsValidate(){
+                var termsCondition = document.getElementById("terms_conditions");
+                if(termsCondition.checked){
+                    this.saveEmployee = false;
+                }else{
+                    this.saveEmployee = true;
+                }
+            },
+            getDateFormat(dateString){
+
+                if(dateString != null && dateString != "0000-00-00 00:00:00")
+                {
+                    var d = new Date(dateString),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                    if (month.length < 2) 
+                        month = '0' + month;
+                    if (day.length < 2) 
+                        day = '0' + day;
+
+                    var date_created = [year, month, day].join('-');
+
+                    return date_created;
+                }
+                else{
+                    return "";
+                }
+                
+            },
+            getAge(dateString) 
+            {
+                let v = this;
+                var today = new Date();
+                var birthDate = new Date(dateString);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
+                {
+                    age--;
+                }
+                v.employee_copied.ageRange = v.getAgeRange(age);
+                return age;
+            },
+            getAgeRange(get_age){
+                var age = parseInt(get_age,10);
+                let check = "";
+                if(age >= 1 && age <= 10){
+                   check = "(1-10 YEARS OLD)";
+                }
+                else if(age >= 11 && age <= 20){
+                    check = "(11-20 YEARS OLD)";
+                }
+                else if(age >= 21 && age <= 30){
+                    check = "(21-30 YEARS OLD)";
+                }
+                else if(age >= 31 && age <= 40){
+                    check = "(31-40 YEARS OLD)";
+                }
+                else if(age >= 41 && age <= 50){
+                    check = "(41-50 YEARS OLD)";
+                }
+                else if(age >= 51 && age <= 60){
+                    check = "(51-60 YEARS OLD)";
+                }
+                else if(age >= 61 && age <= 70){
+                    check = "(61-70 YEARS OLD)";
+                }
+                else if(age >= 71 && age <= 80){
+                    check = "(71-80 YEARS OLD)";
+                }
+                else if(age >= 81 && age <= 90){
+                    check = "(81-90 YEARS OLD)";
+                }
+                else if(age >= 91 && age <= 100){
+                    check = "(91-100 YEARS OLD)";
+                }
+                else if(age >= 101 && age <= 110){
+                    check = "(101-110 YEARS OLD)";
+                }
+                else if(age >= 121 && age <= 130){
+                    check = "(121-130 YEARS OLD)";
+                }
+                return check;
+            },
+            getTenure(dateString) 
+            {
+                if(dateString){
+                    var to = new Date();
+                    var from = new Date(dateString);
+
+                    let
+                        endYear = to.getFullYear(),
+                        endMonth = to.getMonth(),
+                        years = endYear - from.getFullYear(),
+                        months = endMonth - from.getMonth(),
+                        days = to.getDate() - from.getDate();
+
+                    if (months < 0)
+                    {
+                        years--;
+                        months += 12;
+                    }
+                    if (days < 0)
+                    {
+                        months--;
+                        days += new Date(endYear, endMonth, 0).getDate();
+                    }
+                    return years + ' year(s) ' + months + ' month(s)';
+                }else{
+                    return "";
+                }
+            },
+            setPage(pageNumber) {
+                this.currentPage = pageNumber;
+            },
+
+            resetStartRow() {
+                this.currentPage = 0;
+            },
+
+            showPreviousLink() {
+                return this.currentPage == 0 ? false : true;
+            },
+
+            showNextLink() {
+                return this.currentPage == (this.totalPages - 1) ? false : true;
+            }  
+        },
+        computed:{
+            filteredemployees(){
+                let self = this;
+                return Object.values(self.employees).filter(employee => {
+                    let full_name = employee.first_name + " " + employee.last_name;
+                    return employee.employee_number.toLowerCase().includes(this.keywords.toLowerCase()) || employee.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
+                });
+            },
+            totalPages() {
+                return Math.ceil(Object.values(this.employees).length / this.itemsPerPage)
+            },
+            filteredQueues() {
+                var index = this.currentPage * this.itemsPerPage;
+                var queues_array = this.filteredemployees.slice(index, index + this.itemsPerPage);
+
+                if(this.currentPage >= this.totalPages) {
+                    this.currentPage = this.totalPages - 1
+                }
+
+                if(this.currentPage == -1) {
+                    this.currentPage = 0;
+                }
+
+                return queues_array;
+            },
+        }
+    }
+</script>
+
+<style>
+    @media (min-width: 992px){
+        .modal-lg {
+            max-width: 700px!important;
+        }
+        .modal-employee {
+            max-width: 1200px!important;
+        }
+    }
+</style>
