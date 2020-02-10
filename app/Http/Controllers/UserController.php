@@ -101,13 +101,15 @@ class UserController extends Controller
 
     public function changePassword(Request $request){
 
+        return  $request->all();
         $validator = $request->validate([
-            'user_id' => 'required',
             'new_password' => 'required|confirmed',
             'new_password_confirmation' => 'required'
         ]);
     
         $user = User::findOrFail($request->user_id);
+
+       
         $user->password = bcrypt($request->input('new_password'));
         $user->save();
 

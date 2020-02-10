@@ -29,15 +29,16 @@ Route::get('logout', function(){
         Route::get('/home', 'HomeController@index')->name('home');
 
         // Users
-        Route::get('/users',['as'=>'users.index','uses'=>'UserController@index','middleware' => ['role:Administrator|HR Staff']]);
-        Route::get('/users-all',['as'=>'users.indexData','uses'=>'UserController@indexData','middleware' => ['role:Administrator|HR Staff']]);
-        Route::post('/user',['as'=>'users.STORE','uses'=>'UserController@store','middleware' => ['role:Administrator|HR Staff']]);
-        Route::patch('/user/{user}',['as'=>'users.store','uses'=>'UserController@update','middleware' => ['role:Administrator|HR Staff']]);
-        Route::delete('/user/{user}',['as'=>'users.destroy','uses'=>'UserController@destroy','middleware' => ['role:Administrator|HR Staff']]);
-        Route::delete('/change-password',['as'=>'users.changePassword','uses'=>'UserController@changePassword','middleware' => ['role:Administrator|HR Staff']]);
+        Route::get('/users',['as'=>'users.index','uses'=>'UserController@index','middleware' => ['role:Administrator']]);
+        Route::get('/users-all',['as'=>'users.indexData','uses'=>'UserController@indexData','middleware' => ['role:Administrator']]);
+        Route::post('/user',['as'=>'users.store','uses'=>'UserController@store','middleware' => ['role:Administrator']]);
+        Route::patch('/user/{user}',['as'=>'users.update','uses'=>'UserController@update','middleware' => ['role:Administrator']]);
+        Route::delete('/user/{user}',['as'=>'users.destroy','uses'=>'UserController@destroy','middleware' => ['role:Administrator']]);
+        
+        Route::post('/change-password',['as'=>'users.changePassword','uses'=>'UserController@changePassword','middleware' => ['role:Administrator']]);
 
         // Roles
-        Route::get('/roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['role:Administrator|HR Staff']]);
+        Route::get('/roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['role:Administrator']]);
 
         // Employees
             Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff']]);
@@ -160,7 +161,10 @@ Route::get('logout', function(){
         //Dashboard
         Route::get('employee-approval-requests-pending-all', 'HomeController@userProfileRequestPendingData');
         Route::get('employee-approval-requests-all', 'HomeController@employeeApprovalRequestData');
+        
         Route::get('employee_approval_requests', 'HomeController@employeeApprovalRequests');
+
+        Route::get('employee_approval_requests',['as'=>'home.employeeApprovalRequests','uses'=>'HomeController@employeeApprovalRequests','middleware' => ['role:Administrator|HR Staff']]);
 
         //Employee Approval Request
         Route::patch('employee_approval/{employee_request}', 'HomeController@employeeApproval');

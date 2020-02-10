@@ -257,6 +257,7 @@
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    console.log(this.errors);
                     Swal.fire({
                         title: 'Warning!',
                         text: 'Unable to save user. Please try again.',

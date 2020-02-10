@@ -16207,6 +16207,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
+        console.log(_this.errors);
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
           text: 'Unable to save user. Please try again.',

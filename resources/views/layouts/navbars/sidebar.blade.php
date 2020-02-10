@@ -28,7 +28,7 @@
                 
             <!-- Navigation -->
             <ul class="navbar-nav mt--4">
-                @if(auth()->user()->roles[0]->name == "Administrator")
+                @if(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "HR Staff")
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/home') }}">
                             <i class="fas fa-desktop text-primary" style="font-size: 15px;"></i> Dashboard
@@ -36,7 +36,7 @@
                     </li>
                 @endif
 
-                @if(auth()->user()->roles[0]->name == "Administrator")
+                @if(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "HR Staff")
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employees') }}">
                             <i class="fas fa-users text-success" style="font-size: 15px;"></i> Employees
