@@ -10755,9 +10755,23 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     previewPrintId: function previewPrintId(employee_id) {
       this.employee_id_src = "";
-      this.employee_id_src = 'employee_print_id/' + employee_id + '#toolbar=0&navpanes=0&scrollbar=0';
+      this.employee_id_src = 'employee_print_id/' + employee_id.id + '#toolbar=0&navpanes=0&scrollbar=0';
+      this.employee_id = employee_id;
     },
     printEmployeeId: function printEmployeeId() {
+      alert(this.employee_id.id); // this.formFilterData = new FormData();
+      // this.formFilterData.append('employee_id',this.employee_id.id);
+      // axios.post('/filter-employee', this.formFilterData)
+      // .then(response => {
+      //     this.employee_ids =  response.data;
+      //     this.errors = [];
+      //     this.table_loading = false;
+      // })
+      // .catch(error => {
+      //     this.errors = error.response.data.errors;
+      //     this.table_loading = false;
+      // })
+
       printJS({
         printable: this.employee_id_src,
         type: 'pdf',
@@ -11727,7 +11741,7 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('vocational_year', employee_copied.vocational_year ? employee_copied.vocational_year : "-"); //Work
 
       formData.append('company_list', employee_copied.company_list);
-      formData.append('division', employee_copied.division);
+      formData.append('division', employee_copied.division ? employee_copied.division : "");
       formData.append('department_list', employee_copied.department_list);
       formData.append('employee_number', employee_copied.employee_number ? employee_copied.employee_number : "-");
       formData.append('ess_ee_number', employee_copied.ess_ee_number ? employee_copied.ess_ee_number : "-");
@@ -15571,7 +15585,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     validateMartialStatus: function validateMartialStatus() {
       if (this.employee_copied.marital_status) {
-        if (this.employee_copied.marital_status == "Married" || this.employee_copied.marital_status == "Divorced") {
+        if (this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED") {
           this.marital_attachment_validate = false;
           this.marital_attachment_view = true;
         } else {
@@ -61489,7 +61503,7 @@ var render = function() {
                                         on: {
                                           click: function($event) {
                                             return _vm.previewPrintId(
-                                              employee_id.id
+                                              employee_id
                                             )
                                           }
                                         }

@@ -834,7 +834,7 @@
                 formData.append('vocational_year', employee_copied.vocational_year ? employee_copied.vocational_year : "-");
                 //Work
                 formData.append('company_list', employee_copied.company_list);
-                formData.append('division', employee_copied.division);
+                formData.append('division', employee_copied.division ? employee_copied.division : "");
                 formData.append('department_list', employee_copied.department_list);
                 formData.append('employee_number', employee_copied.employee_number ? employee_copied.employee_number : "-");
                 formData.append('ess_ee_number', employee_copied.ess_ee_number ? employee_copied.ess_ee_number : "-");

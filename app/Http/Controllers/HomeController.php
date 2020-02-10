@@ -47,10 +47,10 @@ class HomeController extends Controller
                 return view('home');
             }
             else{
-                return redirect('/login');
+                return redirect('/user_profile');
             }
         }else{
-            return redirect('/login');
+            return redirect('/user_profile');
         }
     }
 

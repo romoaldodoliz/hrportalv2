@@ -80,7 +80,7 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                        <a class="dropdown-item" data-toggle="modal" data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id.id)"><i class="fas fa-print"></i>Print Preview</a>
+                                                        <a class="dropdown-item" data-toggle="modal" data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id)"><i class="fas fa-print"></i>Print Preview</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -170,9 +170,24 @@ export default {
     methods:{
         previewPrintId(employee_id){
             this.employee_id_src = "";
-            this.employee_id_src = 'employee_print_id/'+ employee_id +'#toolbar=0&navpanes=0&scrollbar=0';
+            this.employee_id_src = 'employee_print_id/'+ employee_id.id +'#toolbar=0&navpanes=0&scrollbar=0';
+            this.employee_id = employee_id;
         },
         printEmployeeId(){
+            alert(this.employee_id.id);
+            // this.formFilterData = new FormData();
+            // this.formFilterData.append('employee_id',this.employee_id.id);
+            // axios.post('/filter-employee', this.formFilterData)
+            // .then(response => {
+            //     this.employee_ids =  response.data;
+            //     this.errors = [];
+            //     this.table_loading = false;
+            // })
+            // .catch(error => {
+            //     this.errors = error.response.data.errors;
+            //     this.table_loading = false;
+            // })
+
             printJS({printable: this.employee_id_src , type:'pdf', showModal:true});
         },
         fetchFilterEmployee(){

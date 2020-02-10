@@ -966,7 +966,8 @@
                         text: 'Unable to Update Employee. Check Entries and then try again.',
                         icon: 'error',
                         confirmButtonText: 'Okay'
-                    })
+                    });
+
                 })
 
             },
@@ -1037,7 +1038,7 @@
             },
             validateMartialStatus(){
                 if(this.employee_copied.marital_status){
-                    if(this.employee_copied.marital_status == "Married" || this.employee_copied.marital_status == "Divorced"){
+                    if(this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED"){
                         this.marital_attachment_validate = false;
                         this.marital_attachment_view = true;
                         

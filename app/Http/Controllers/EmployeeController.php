@@ -97,6 +97,10 @@ class EmployeeController extends Controller
 
         $data = $request->all();
 
+        if(empty($request->division) && $request->division == 'null'){
+            $data['division'] = null;
+        }
+
         if(empty($request->date_hired)){
             $data['date_hired'] = null;
         }
@@ -289,13 +293,20 @@ class EmployeeController extends Controller
                 if($data['dependents']){
                     $dependents = json_decode($data['dependents']);
                    foreach($dependents as $dependent){
+
+                        $dependent_name = $dependent->dependent_name ? $dependent->dependent_name : null;
+                        $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
+                        $bdate = $dependent->bdate ? $dependent->bdate : null;
+                        $relation = $dependent->relation ? $dependent->relation : null;
+
                         $data_dependent = [
                             'employee_id'=>$employee->id,
-                            'dependent_name'=>$dependent->dependent_name,
-                            'dependent_gender'=>$dependent->dependent_gender,
-                            'bdate'=>$dependent->bdate,
-                            'relation'=>$dependent->relation,
+                            'dependent_name'=>$dependent_name,
+                            'dependent_gender'=>$dependent_gender,
+                            'bdate'=>$bdate,
+                            'relation'=>$relation,
                         ];
+
                         if(!empty($dependent->id)){
                             $employee->dependents()->where('id',$dependent->id)->update($data_dependent);
                         }else{
@@ -574,7 +585,7 @@ class EmployeeController extends Controller
 
         Fpdf::SetXY(0,76.5);
         Fpdf::SetFont('Avenir-Bold', '', 6);
-        if(!empty($employee->division) || $employee->division != 'null'){
+        if(!empty($employee->division) && $employee->division != "null"){
             Fpdf::MultiCell(35,2.5, $employee->division ? $employee->division : " " ,0,'L');
         }
        
