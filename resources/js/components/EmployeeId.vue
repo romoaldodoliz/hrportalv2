@@ -174,19 +174,19 @@ export default {
             this.employee_id = employee_id;
         },
         printEmployeeId(){
-            alert(this.employee_id.id);
-            // this.formFilterData = new FormData();
-            // this.formFilterData.append('employee_id',this.employee_id.id);
-            // axios.post('/filter-employee', this.formFilterData)
-            // .then(response => {
-            //     this.employee_ids =  response.data;
-            //     this.errors = [];
-            //     this.table_loading = false;
-            // })
-            // .catch(error => {
-            //     this.errors = error.response.data.errors;
-            //     this.table_loading = false;
-            // })
+            // alert(this.employee_id.id);
+            this.formFilterData = new FormData();
+            this.formFilterData.append('employee_id',this.employee_id.id);
+            axios.post('/filter-employee', this.formFilterData)
+            .then(response => {
+                this.employee_ids =  response.data;
+                this.errors = [];
+                this.table_loading = false;
+            })
+            .catch(error => {
+                this.errors = error.response.data.errors;
+                this.table_loading = false;
+            })
 
             printJS({printable: this.employee_id_src , type:'pdf', showModal:true});
         },
