@@ -669,14 +669,14 @@
                 this.employee.tax_status = "";
                 this.approvers = [];
                 this.dependents = [];
+                this.profile_image = 'storage/default.png';
+                this.signature_image = 'storage/image_not_available.png';
+
             },
             storeEmployee(employee){
-             
                 this.errors = [];
                 this.employee_error = false;
-                this.loading = true;
                 let formData = new FormData();
-
                 //Personal
                 if(this.profile_image_file){
                     formData.append('employee_image', this.profile_image_file);
@@ -685,18 +685,18 @@
                     formData.append('employee_signature', this.signature_image_file);
                 }
                 
-                formData.append('first_name', employee.first_name ? employee.first_name : "");
+                formData.append('first_name', employee.first_name ? employee.first_name : "-");
                 formData.append('middle_name', employee.middle_name ? employee.middle_name : "-");
-                formData.append('middle_initial', employee.middle_initial ? employee.middle_initial : "");
+                formData.append('middle_initial', employee.middle_initial ? employee.middle_initial : "-");
                 formData.append('last_name', employee.last_name ? employee.last_name : "");
                 formData.append('name_suffix', employee.name_suffix ? employee.name_suffix : "-");
-                formData.append('marital_status', employee.marital_status ? employee.marital_status : "");
+                formData.append('marital_status', employee.marital_status ? employee.marital_status : "-");
 
                 if(this.marital_file){
                     formData.append('marital_status_attachment', this.marital_file);
                 }
                 formData.append('birthdate', employee.birthdate ? employee.birthdate : "");
-                formData.append('gender', employee.gender ? employee.gender : "");
+                formData.append('gender', employee.gender ? employee.gender : "-");
                 formData.append('birthplace', employee.birthplace ? employee.birthplace : "-");
                 formData.append('school_graduated', employee.school_graduated ? employee.school_graduated : "-");
                 formData.append('school_course', employee.school_course ? employee.school_course : "-");
@@ -715,9 +715,9 @@
                 formData.append('id_remarks', "-");
                 formData.append('bank_name', "-");
 
-                formData.append('company_list', employee.company_list ? employee.company_list : "");
-                formData.append('division', employee.division ? employee.division : "");
-                formData.append('department_list', employee.department_list ? employee.department_list : "");
+                formData.append('company_list', employee.company_list ? employee.company_list : "-");
+                formData.append('division', employee.division ? employee.division : "-");
+                formData.append('department_list', employee.department_list ? employee.department_list : "-");
                 formData.append('employee_number', employee.employee_number ? employee.employee_number : "-");
                 formData.append('ess_ee_number', employee.ess_ee_number ? employee.ess_ee_number : "-");
                 formData.append('position', employee.position ? employee.position : "-");
@@ -761,7 +761,7 @@
                     }  
                 )
                 .then(response => {
-                    this.loading = false;
+                   
                     this.resetForm();
                     Swal.fire({
                         title: 'Success!',
@@ -771,7 +771,7 @@
                     })
                 })
                 .catch(error => {
-                    this.loading = false;
+                   
                     this.errors = error.response.data.errors;
                     Swal.fire({
                         title: 'Warning!',
@@ -779,12 +779,12 @@
                         icon: 'error',
                         confirmButtonText: 'Okay'
                     })
+                    
                 })
             },
-            
             validateMartialStatus(){
                 if(this.employee.marital_status){
-                    if(this.employee.marital_status == "Married" || this.employee.marital_status == "Divorced"){
+                    if(this.employee.marital_status == "MARRIED" || this.employee.marital_status == "DIVORCED"){
                         this.marital_attachment_validate = false;
                         this.marital_attachment_view = true;
                         
@@ -797,6 +797,7 @@
                     this.marital_attachment_view = false;
                 }     
             },
+
             fetchApprovers(){
                 this.approvers = [];
             },

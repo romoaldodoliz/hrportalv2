@@ -174,15 +174,24 @@ class EmployeeController extends Controller
                 if($data['dependents']){
                     $dependents = json_decode($data['dependents']);
                     foreach($dependents as $dependent){
+
+                        $dependent_name = $dependent->dependent_name ? $dependent->dependent_name : null;
+                        $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
+                        $bdate = $dependent->bdate ? $dependent->bdate : null;
+                        $relation = $dependent->relation ? $dependent->relation : null;
+
                         $data_dependent = [
                             'employee_id'=>$employee->id,
-                            'dependent_name'=>$dependent->dependent_name,
-                            'dependent_gender'=>$dependent->dependent_gender,
-                            'bdate'=>$dependent->bdate,
-                            'relation'=>$dependent->relation,
+                            'dependent_name'=>$dependent_name,
+                            'dependent_gender'=>$dependent_gender,
+                            'bdate'=>$bdate,
+                            'relation'=>$relation,
                         ];
-                        
-                        $employee->dependents()->create($data_dependent);  
+                        if($employee->id){
+                            $employee->dependents()->create($data_dependent);       
+                        }
+
+                       
                    }
                 }
 

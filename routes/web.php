@@ -162,8 +162,6 @@ Route::get('logout', function(){
         Route::get('employee-approval-requests-pending-all', 'HomeController@userProfileRequestPendingData');
         Route::get('employee-approval-requests-all', 'HomeController@employeeApprovalRequestData');
         
-        Route::get('employee_approval_requests', 'HomeController@employeeApprovalRequests');
-
         Route::get('employee_approval_requests',['as'=>'home.employeeApprovalRequests','uses'=>'HomeController@employeeApprovalRequests','middleware' => ['role:Administrator|HR Staff']]);
 
         //Employee Approval Request

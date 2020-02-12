@@ -9489,13 +9489,14 @@ __webpack_require__.r(__webpack_exports__);
       this.employee.tax_status = "";
       this.approvers = [];
       this.dependents = [];
+      this.profile_image = 'storage/default.png';
+      this.signature_image = 'storage/image_not_available.png';
     },
     storeEmployee: function storeEmployee(employee) {
       var _this = this;
 
       this.errors = [];
       this.employee_error = false;
-      this.loading = true;
       var formData = new FormData(); //Personal
 
       if (this.profile_image_file) {
@@ -9506,19 +9507,19 @@ __webpack_require__.r(__webpack_exports__);
         formData.append('employee_signature', this.signature_image_file);
       }
 
-      formData.append('first_name', employee.first_name ? employee.first_name : "");
+      formData.append('first_name', employee.first_name ? employee.first_name : "-");
       formData.append('middle_name', employee.middle_name ? employee.middle_name : "-");
-      formData.append('middle_initial', employee.middle_initial ? employee.middle_initial : "");
+      formData.append('middle_initial', employee.middle_initial ? employee.middle_initial : "-");
       formData.append('last_name', employee.last_name ? employee.last_name : "");
       formData.append('name_suffix', employee.name_suffix ? employee.name_suffix : "-");
-      formData.append('marital_status', employee.marital_status ? employee.marital_status : "");
+      formData.append('marital_status', employee.marital_status ? employee.marital_status : "-");
 
       if (this.marital_file) {
         formData.append('marital_status_attachment', this.marital_file);
       }
 
       formData.append('birthdate', employee.birthdate ? employee.birthdate : "");
-      formData.append('gender', employee.gender ? employee.gender : "");
+      formData.append('gender', employee.gender ? employee.gender : "-");
       formData.append('birthplace', employee.birthplace ? employee.birthplace : "-");
       formData.append('school_graduated', employee.school_graduated ? employee.school_graduated : "-");
       formData.append('school_course', employee.school_course ? employee.school_course : "-");
@@ -9536,9 +9537,9 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('job_remarks', "-");
       formData.append('id_remarks', "-");
       formData.append('bank_name', "-");
-      formData.append('company_list', employee.company_list ? employee.company_list : "");
-      formData.append('division', employee.division ? employee.division : "");
-      formData.append('department_list', employee.department_list ? employee.department_list : "");
+      formData.append('company_list', employee.company_list ? employee.company_list : "-");
+      formData.append('division', employee.division ? employee.division : "-");
+      formData.append('department_list', employee.department_list ? employee.department_list : "-");
       formData.append('employee_number', employee.employee_number ? employee.employee_number : "-");
       formData.append('ess_ee_number', employee.ess_ee_number ? employee.ess_ee_number : "-");
       formData.append('position', employee.position ? employee.position : "-");
@@ -9573,8 +9574,6 @@ __webpack_require__.r(__webpack_exports__);
           'Content-Type': 'multipart/form-data'
         }
       }).then(function (response) {
-        _this.loading = false;
-
         _this.resetForm();
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
@@ -9584,7 +9583,6 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Okay'
         });
       })["catch"](function (error) {
-        _this.loading = false;
         _this.errors = error.response.data.errors;
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
@@ -9596,7 +9594,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     validateMartialStatus: function validateMartialStatus() {
       if (this.employee.marital_status) {
-        if (this.employee.marital_status == "Married" || this.employee.marital_status == "Divorced") {
+        if (this.employee.marital_status == "MARRIED" || this.employee.marital_status == "DIVORCED") {
           this.marital_attachment_validate = false;
           this.marital_attachment_view = true;
         } else {
