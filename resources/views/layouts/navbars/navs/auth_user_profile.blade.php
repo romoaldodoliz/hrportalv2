@@ -13,9 +13,9 @@
             <div class="media align-items-center">
                 <span class="avatar avatar-sm rounded-circle">
                     @if(file_exists('storage/id_image/employee_image/' . session("employee_id") . '.png'))
-                        <img id= "image_profile" alt="Image placeholder" src="/storage/id_image/employee_image/{{session("employee_id")}}.png?v={{ mt_rand() }}">
+                        <img id= "image_profile" alt="Image placeholder" src="{{ url('/storage/id_image/employee_image/') . '/' . session("employee_id"). '.png?v=' . mt_rand() }}">
                     @else 
-                        <img id= "image_profile" alt="Image placeholder" src="/storage/default.png">
+                        <img id= "image_profile" alt="Image placeholder" src="{{ url('/storage/default.png') }} ">
                     @endif
                 </span>
                 <div class="media-body ml-2 d-none d-lg-block">
@@ -27,12 +27,12 @@
             <div class=" dropdown-header noti-title">
                 <h6 class="text-overflow m-0">Welcome!</h6>
             </div>
-            <a href="/user_profile" class="dropdown-item">
+            <a href="{{ url('/user_profile') }}" class="dropdown-item">
                 <i class="fas fa-user"></i>
                 <span>My profile</span>
             </a>
             @if(auth()->user()->roles[0]->name != "User")
-                <a href="/home" class="dropdown-item">
+                <a href="{{ url('/home') }}" class="dropdown-item">
                     <i class="fas fa-desktop"></i>
                     <span>Dashboard</span>
                 </a>

@@ -11,9 +11,9 @@
                     <div class="media align-items-center">
                       <span class="avatar avatar-sm rounded-circle">
                         @if(file_exists('storage/id_image/employee_image/' . session("employee_id") . '.png'))
-                            <img id= "image_profile" alt="Image placeholder" src="/storage/id_image/employee_image/{{session("employee_id")}}.png?v={{ mt_rand() }}">
+                            <img id= "image_profile" alt="Image placeholder" src="{{ url('/storage/id_image/employee_image/') . '/' . session("employee_id"). '.png?v=' . mt_rand() }}">
                         @else 
-                            <img id= "image_profile" alt="Image placeholder" src="/storage/default.png">
+                            <img id= "image_profile" alt="Image placeholder" src="{{ url('/storage/default.png') }} ">
                         @endif
                     </span>
                       <div class="media-body ml-2 d-none d-lg-block">
@@ -28,7 +28,7 @@
                     </div>
                     <div class="dropdown-divider"></div>
                     @if(session("employee_id"))
-                        <a href="/user_profile" class="dropdown-item">
+                        <a href="{{ url('/user_profile') }}" class="dropdown-item">
                             <i class="fas fa-user"></i>
                             <span>{{ __('My Profile') }}</span>
                         </a>
