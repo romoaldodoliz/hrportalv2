@@ -76,12 +76,17 @@
                 <div class="card bg-secondary shadow  mb-5">
                     <div class="card-header bg-white border-0">
                         <div class="row align-items-center">
-                            <div class="col-8">
-                                <h3 class="mb-0 text-uppercase">My account</h3>
+                            <div class="col-6">
+                                <h3 class="mb-0 text-uppercase">Employee Information</h3>
                             </div>
-                            <div class="col-4 text-right">
-                                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#employeeRequestsModal"><span class="badge badge-pill badge-warning" v-if="employee_requests_pending > 0"><i class="fas fa-exclamation"></i></span> Employee Update Request(s)</button>
+                            <div class="col-6 text-right" v-if="employee_copied.verification">
+                                <!-- <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#employeeRequestsModal"><span class="badge badge-pill badge-warning" v-if="employee_requests_pending > 0"><i class="fas fa-exclamation"></i></span> Employee Update Request(s)</button> -->
+                                <span v-if="employee_copied.verification.verification == '1'" class="badge badge-success">Your employee information has been verified.</span>
                             </div>
+                            <div class="col-6 text-right" v-else>
+                                <span class="badge badge-danger">Please verify your information. Then Click Update.</span>
+                            </div>
+
                         </div>
                     </div>
                     <div class="card-body">
@@ -92,19 +97,19 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Profile Image</label> 
-                                        <input type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()" :disabled="user_disabled"/>
+                                        <input type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()" disabled="disabled"/>
                                         <span class="text-danger" v-if="errors.employee_image">{{ errors.employee_image[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Signature</label> 
-                                        <input type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()" :disabled="user_disabled"/>
+                                        <input type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()" disabled="disabled"/>
                                         <span class="text-danger" v-if="errors.employee_signature">{{ errors.employee_signature[0] }}</span>
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4">
+                                <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="role">First Name*</label> 
                                         <input type="text"  class="form-control" v-model="employee_copied.first_name"  :disabled="user_disabled">
@@ -120,7 +125,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-2">
+                                <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="role">Middle Name</label> 
                                         <input type="text"  class="form-control" v-model="employee_copied.middle_name"   >
@@ -129,9 +134,16 @@
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="form-group">
-                                        <label for="role">Middle Initial</label> 
+                                        <label for="role">M.I.</label> 
                                         <input type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
                                         <span class="text-danger" v-if="errors.middle_initial">{{ errors.middle_initial[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="role">Nick Name*</label> 
+                                        <input type="text"  class="form-control" v-model="employee_copied.nick_name"   >
+                                        <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -165,12 +177,12 @@
                                         <span class="text-danger" v-if="errors.birthdate">{{ errors.birthdate[0] }}</span>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <!-- <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">Age <span class="text-danger" v-if="employee_copied.age">{{ employee_copied.ageRange }}</span></label> 
                                         <input type="text" disabled class="form-control" v-model="employee_copied.age" >
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">Gender*</label> 
@@ -258,7 +270,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Company*</label>
-                                        <select class="form-control" v-model="employee_copied.company_list" id="company" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.company_list" id="company" disabled="disabled">
                                             <option value="">Choose Company</option>
                                             <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                         </select>
@@ -270,7 +282,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Division</label>  
-                                        <select class="form-control" v-model="employee_copied.division" id="marital_status" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.division" id="marital_status" disabled="disabled">
                                             <option value="">Choose Division</option>
                                             <option v-for="(division) in divisions" v-bind:key="division" :value="division"> {{ division }}</option>
                                         </select>
@@ -281,7 +293,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Department*</label>
-                                        <select class="form-control" v-model="employee_copied.department_list" id="department" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.department_list" id="department" disabled="disabled">
                                             <option value="">Choose Department</option>
                                             <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
                                         </select>
@@ -292,7 +304,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Employee Number</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.employee_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.employee_number" disabled="disabled">
                                         <span class="text-danger" v-if="errors.employee_number">{{ errors.employee_number[0] }}</span> 
                                     </div>
                                 </div>
@@ -300,7 +312,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">ESS Employee No.</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.ess_ee_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.ess_ee_number" disabled="disabled">
                                         <span class="text-danger" v-if="errors.ess_ee_number">{{ errors.ess_ee_number[0] }}</span> 
                                     </div>
                                 </div>
@@ -308,7 +320,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Position</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.position" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.position" disabled="disabled">
                                         <span class="text-danger" v-if="errors.position">{{ errors.position[0] }}</span> 
                                     </div>
                                 </div>
@@ -316,7 +328,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Classification</label>
-                                        <select class="form-control" v-model="employee_copied.classification" id="department" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.classification" id="department" disabled="disabled">
                                             <option value="">Choose Classification</option>
                                             <option value="Probationary">Probationary</option>
                                             <option value="Regular">Regular</option>
@@ -330,7 +342,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Date Hired</label>
-                                        <input type="date" class="form-control" v-model="employee_copied.date_hired" :disabled="user_disabled">
+                                        <input type="date" class="form-control" v-model="employee_copied.date_hired" disabled="disabled">
                                         <span class="text-danger" v-if="errors.date_hired">{{ errors.date_hired[0] }}</span> 
                                     </div>
                                 </div>
@@ -346,7 +358,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Level</label>
-                                        <select class="form-control" v-model="employee_copied.level" id="level" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.level" id="level" disabled="disabled">
                                             <option value="">Choose Level</option>
                                             <option v-for="(level) in levels" v-bind:key="level" :value="level"> {{ level }}</option>
                                         </select>
@@ -358,7 +370,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Location / Site*</label>
-                                        <select class="form-control" v-model="employee_copied.location_list" id="location" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.location_list" id="location" disabled="disabled">
                                             <option value="">Choose Location</option>
                                             <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
                                         </select>
@@ -370,7 +382,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Area</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.area" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.area" disabled="disabled">
                                         <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
                                     </div>
                                 </div>
@@ -378,7 +390,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Bank Account Number</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.bank_account_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.bank_account_number" disabled="disabled">
                                         <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
                                     </div>
                                 </div>
@@ -386,7 +398,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Bank Name</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.bank_name" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.bank_name" disabled="disabled">
                                         <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
                                     </div>
                                 </div>
@@ -511,35 +523,35 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">SSS</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.sss_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.sss_number" disabled="disabled">
                                         <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">HDMF</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.hdmf" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.hdmf" disabled="disabled">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Philhealth</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.phil_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.phil_number" disabled="disabled">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">TIN</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.tax_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.tax_number" disabled="disabled">
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Tax Status*</label>
-                                        <select class="form-control" v-model="employee_copied.tax_status" id="tax_status" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.tax_status" id="tax_status" disabled="disabled">
                                             <option value="">Choose Tax Status</option>
                                             <option value="S">S</option> 
                                             <option value="S1">S1</option> 
@@ -873,7 +885,7 @@
                 dependents : [],
                 deletedDependent : [],
                 table_loading : true,
-                user_disabled : true,
+                user_disabled : false,
                 employee_requests : [],
                 employee_request: [],
                 employee_request_original: [],
@@ -908,19 +920,30 @@
                     formData.append('employee_signature', this.signature_image_file);
                 }
                 
-                if(employee_copied.middle_name){
-                    formData.append('middle_name', employee_copied.middle_name);
-                }
-                if(employee_copied.middle_initial){
-                    formData.append('middle_initial', employee_copied.middle_initial);
-                }
-                
+                formData.append('first_name', employee_copied.first_name);
+                formData.append('middle_name', employee_copied.middle_name);     
+                formData.append('middle_initial', employee_copied.middle_initial);
                 formData.append('last_name', employee_copied.last_name);
+                formData.append('nick_name', employee_copied.nick_name);
+
+                formData.append('name_suffix', employee_copied.name_suffix ? employee_copied.name_suffix : "-");
                 formData.append('marital_status', employee_copied.marital_status);
 
                 if(this.marital_file){
                     formData.append('marital_status_attachment', this.marital_file);
                 }
+                formData.append('birthdate', employee_copied.birthdate);
+                formData.append('gender', employee_copied.gender);
+                formData.append('birthplace', employee_copied.birthplace ? employee_copied.birthplace : "-");
+                formData.append('school_graduated', employee_copied.school_graduated ? employee_copied.school_graduated : "-");
+                formData.append('school_course', employee_copied.school_course ? employee_copied.school_course : "-");
+                formData.append('school_year', employee_copied.school_year ? employee_copied.school_year : "-");
+                formData.append('vocational_graduated', employee_copied.vocational_graduated ? employee_copied.vocational_graduated : "-");
+                formData.append('vocational_course', employee_copied.vocational_course ? employee_copied.vocational_course : "-");
+                formData.append('school_year', employee_copied.school_year ? employee_copied.school_year : "-");
+                formData.append('vocational_graduated', employee_copied.vocational_graduated ? employee_copied.vocational_graduated : "-");
+                formData.append('vocational_course', employee_copied.vocational_course ? employee_copied.vocational_course : "-");
+                formData.append('vocational_year', employee_copied.vocational_year ? employee_copied.vocational_year : "-");
             
                 //Contact
                 formData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
@@ -930,13 +953,14 @@
                 formData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
                 formData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
                 formData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
+                
                 //Dependents
                 formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
                 formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
 
                 formData.append('_method', 'PATCH');
 
-                axios.post(`/employee-user-profile/${employee_copied.id}`, 
+                axios.post(`/employee-user-profile-verification/${employee_copied.id}`, 
                     formData,
                     {
                         headers: {
@@ -951,7 +975,7 @@
 
                     Swal.fire({
                         title: 'Success!',
-                        text: 'Employee update has been sent to HR for Approval. Thank you.',
+                        text: 'Employee Details has been verified. Thank you.',
                         icon: 'success',
                         confirmButtonText: 'Okay'
                     })

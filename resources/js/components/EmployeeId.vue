@@ -70,6 +70,7 @@
                                                 <content-placeholders>
                                                     <content-placeholders-text :lines="3" />
                                                 </content-placeholders>
+                                                <h4>Loading Employee Records.. Please wait a moment... </h4>
                                             </td>
                                         </tr>
                                         <tr v-for="(employee_id,index) in filteredQueues" v-bind:key="index">
@@ -177,9 +178,9 @@ export default {
             // alert(this.employee_id.id);
             this.formFilterData = new FormData();
             this.formFilterData.append('employee_id',this.employee_id.id);
-            axios.post('/filter-employee', this.formFilterData)
+            axios.post('/print-id-logs', this.formFilterData)
             .then(response => {
-                this.employee_ids =  response.data;
+                this.employee_ids = response.data;
                 this.errors = [];
                 this.table_loading = false;
             })
@@ -194,15 +195,11 @@ export default {
             this.table_loading = true;
             this.employee_ids = [];
             this.formFilterData = new FormData();
-            if(this.company){
-                this.formFilterData.append('company',this.company);
-            }
-            if(this.department){
-                this.formFilterData.append('department',this.department);
-            }
-            if(this.location){
-                this.formFilterData.append('location',this.location);
-            }
+        
+            this.formFilterData.append('company',this.company);
+            this.formFilterData.append('department',this.department);
+            this.formFilterData.append('location',this.location);
+           
             this.formFilterData.append('_method', 'POST');
 
             axios.post('/filter-employee', this.formFilterData)

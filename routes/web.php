@@ -64,8 +64,12 @@ Route::get('logout', function(){
             Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents');  
 
             //Employee Filter
-            Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff']]);
-    
+            Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
+            
+
+            Route::post('/print-id-logs',['as'=>'employees.print_id_logs','uses'=>'EmployeeController@print_id_logs','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
+
+
             //Employee Print ID
             Route::get('employee_print_id/{employee}',['as'=>'employees.print','uses'=>'EmployeeController@print_id','middleware' => ['role:Administrator|Administrator Printer']]);
             Route::get('/employee_ids',['as'=>'employees.employee_id_index','uses'=>'EmployeeController@employee_id_index','middleware' => ['role:Administrator|Administrator Printer']]);
@@ -156,6 +160,10 @@ Route::get('logout', function(){
         Route::get('employee-approval-request/{employee}', 'EmployeeController@employeeApprovalRequest');
         Route::patch('employee-user-profile/{employee}', 'EmployeeController@storeEmployeeUserProfile');
         Route::delete('employee-user-profile/{employee}', 'EmployeeController@destroyEmployeeUserProfile');
+
+
+        Route::patch('employee-user-profile-verification/{employee}', 'EmployeeController@updateEmployeeUserProfileVerification');
+
         Route::get('user-pendings/{employee}', 'EmployeeController@userProfileRequestPending');
 
         //Dashboard

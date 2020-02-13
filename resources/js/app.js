@@ -28,6 +28,7 @@ Vue.component('addemployee', require('./components/AddEmployee.vue').default);
 Vue.component('settings', require('./components/Settings.vue').default);
 Vue.component('activities', require('./components/Activities.vue').default);
 Vue.component('userprofile', require('./components/UserProfile.vue').default);
+Vue.component('userprofileverification', require('./components/UserProfileVerification.vue').default);
 Vue.component('employeeapprovalrequest', require('./components/EmployeeApprovalRequest.vue').default);
 Vue.component('employeeid', require('./components/EmployeeId.vue').default);
 

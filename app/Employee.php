@@ -26,6 +26,7 @@ class Employee extends Model implements AuditableContract
     	'first_name',
     	'middle_name',
     	'middle_initial',
+    	'nick_name',
         'job_remarks', // job information remarks
         'id_remarks', // identification information remarks
         'gender',
@@ -104,6 +105,11 @@ class Employee extends Model implements AuditableContract
     public function print_id_logs()
     {
         return $this->hasMany('App\PrintIdLog');
+    }
+
+    public function verification()
+    {
+        return $this->hasOne('App\EmployeeDetailVerification');
     }
 
 }

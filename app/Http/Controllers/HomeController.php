@@ -59,7 +59,7 @@ class HomeController extends Controller
     }
 
     public function userProfile(){
-        return Employee::with('companies','departments','locations')->where('user_id', auth()->user()->id)->first();
+        return Employee::with('companies','departments','locations','verification')->where('user_id', auth()->user()->id)->first();
     }
 
     

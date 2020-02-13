@@ -1,6 +1,5 @@
 <template>
 <div>
-    <loader v-if="loading"></loader>
     <div class="header bg-gradient-success pb-8 pt-5 pt-md-8 container-list"></div>
         <div class="container-fluid mt--9">
             <div class="header-body">
@@ -70,6 +69,7 @@
                                                     <content-placeholders>
                                                         <content-placeholders-text :lines="3" />
                                                     </content-placeholders>
+                                                    <h4>Loading Employee Records.. Please wait a moment... </h4>
                                                 </td>
                                             </tr>
                                              <tr v-for="(employee, u) in filteredQueues" v-bind:key="u">
@@ -212,7 +212,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Status*</label> 
-                                                    <select class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMartialStatus()">
+                                                    <select class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
                                                         <option value="">Choose Marital Status</option>
                                                         <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
                                                     </select>
@@ -733,7 +733,6 @@
                 currentPage: 0,
                 itemsPerPage: 50,
                 keywords: "",
-                loading: false,
                 employee_id: '',
                 marital_statuses : [],
                 marital_file : '',
@@ -791,7 +790,6 @@
                
                 this.edit_updated = false;
                 this.employee_error = false;
-                this.loading = true;
                 document.getElementById('edit_btn').disabled = true;
                 var index = this.employees.findIndex(item => item.id == employee_copied.id);
 
@@ -890,7 +888,6 @@
                 .then(response => {
                     this.employees.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    this.loading = false;
                     this.copyObject(response.data);
 
                     Swal.fire({
@@ -901,7 +898,6 @@
                     })
                 })
                 .catch(error => {
-                    this.loading = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     
@@ -941,7 +937,7 @@
                 this.fetchDivisions();
 
                 //Validate Marital Status
-                this.validateMartialStatus();
+                this.validateMaritalStatus();
 
                 //Attachment
                 var num = Math.random();
@@ -955,9 +951,10 @@
                 marital_status.value = '';
                 
             },
-            validateMartialStatus(){
+            validateMaritalStatus(){
+
                 if(this.employee_copied.marital_status){
-                    if(this.employee_copied.marital_status == "Married" || this.employee_copied.marital_status == "Divorced"){
+                    if(this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED"){
                         this.marital_attachment_validate = false;
                         this.marital_attachment_view = true;
                         
@@ -968,7 +965,7 @@
                 }else{
                     this.marital_attachment_validate = true;
                     this.marital_attachment_view = false;
-                }     
+                }
             },
             fetchEmployees(){
                 this.table_loading = true;

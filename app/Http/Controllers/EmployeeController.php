@@ -12,7 +12,9 @@ use App\Department;
 use App\Company;
 use App\Location;
 use App\User;
+use App\PrintIdLog;
 use App\EmployeeApprovalRequest;
+use App\EmployeeDetailVerification;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -25,29 +27,29 @@ use DB;
 
 class EmployeeController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         session(['header_text' => 'Employees']);
         return view('employees.index');
     }
 
-    public function indexData(Request $request)
+    public function indexData()
     {
         return Employee::with('companies','departments','locations')->orderBy('employee_number', 'ASC')->get();
     }
-    public function employeeindexCount(Request $request)
+    public function employeeindexCount()
     {
-        return Employee::with('companies','departments','locations')->count();
+        return Employee::where('status','Active')->count();
     }
-    public function employeeInactiveCount(Request $request)
+    public function employeeInactiveCount()
     {
         return Employee::where('status','Inactive')->count();
     }
-    public function employeeNewCount(Request $request)
+    public function employeeNewCount()
     {
         return Employee::with('companies','departments')->whereMonth('created_at', Carbon::now()->month)->get();
     }
-    public function employeeUpdateCount(Request $request)
+    public function employeeUpdateCount()
     {
         return Employee::whereMonth('updated_at', Carbon::now()->month)->count();
     }
@@ -343,6 +345,94 @@ class EmployeeController extends Controller
         }
     }
 
+
+    public function updateEmployeeUserProfileVerification(Request $request, Employee $employee){
+       
+        $this->validate($request, [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'nick_name' => 'required',
+            'marital_status' => 'required',
+            'gender' => 'required',
+            'birthdate' => 'required',
+        ]);
+
+        $data = $request->all();
+
+        if(isset($request->marital_status_attachment)){
+            if($request->file('marital_status_attachment')){
+                $attachment = $request->file('marital_status_attachment');   
+                $filename = $employee->id . '_' . $attachment->getClientOriginalName();
+                $path = Storage::disk('public')->putFileAs('marital_attachments', $attachment , $filename);
+                $data['marital_status_attachment'] =  $filename;
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+
+            if($employee->update($data)){
+
+                //Add Dependents
+                if($data['dependents']){
+                    $dependents = json_decode($data['dependents']);
+                   foreach($dependents as $dependent){
+
+                        $dependent_name = $dependent->dependent_name ? $dependent->dependent_name : null;
+                        $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
+                        $bdate = $dependent->bdate ? $dependent->bdate : null;
+                        $relation = $dependent->relation ? $dependent->relation : null;
+
+                        $data_dependent = [
+                            'employee_id'=>$employee->id,
+                            'dependent_name'=>$dependent_name,
+                            'dependent_gender'=>$dependent_gender,
+                            'bdate'=>$bdate,
+                            'relation'=>$relation,
+                        ];
+
+                        if(!empty($dependent->id)){
+                            $employee->dependents()->where('id',$dependent->id)->update($data_dependent);
+                        }else{
+                            $employee->dependents()->create($data_dependent);
+                        }
+                   }
+                }
+                
+                //Delete Dependents
+                if(!empty($data['deleted_dependents'])){
+                   $deleted_dependents = json_decode($data['deleted_dependents']);
+                   foreach($deleted_dependents as $deleted_dependent){
+                        if(isset($deleted_dependent->id)){
+                            $employee->dependents()->where('id',$deleted_dependent->id)->delete();
+                        }
+                   }
+                }
+
+                //Verification
+                
+                $verification  = EmployeeDetailVerification::where('employee_id',$employee->id)->first();
+                $data = [];
+                $data['employee_id'] = $employee->id;
+                $data['verification'] = '1';
+                if(!empty($verification)){
+                    EmployeeDetailVerification::where('id', $verification->id)->update($data);
+                }else{
+                    EmployeeDetailVerification::create($data);
+                }
+
+                DB::commit();
+                return Employee::with('companies','departments','locations','verification')->where('id',$employee->id)->first();
+            }else{
+                return Employee::with('companies','departments','locations','verification')->where('id',$employee->id)->first(); 
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return $employee;
+        }
+
+    }
+
     public function storeEmployeeUserProfile(Request $request, Employee $employee){
         
         $data = $request->all();
@@ -443,6 +533,7 @@ class EmployeeController extends Controller
         $company = $request->company;
         $department = $request->department;
         $location = $request->location;
+        
         $employee = Employee::with('companies','departments','locations','print_id_logs')
                     ->when(!empty($request->company), function($q) use($company) {
                         $q->whereHas('companies', function ($w) use($company)  {
@@ -776,10 +867,11 @@ class EmployeeController extends Controller
 
     }
 
-    public function print_id_logs(Employee $employee){
+    public function print_id_logs(Request $request){
+        
+        $employee = Employee::where('id',$request->employee_id)->first();
 
         if($employee){
-
             $print_id_logs_data = [];
             $print_id_logs_data['employee_id'] = $employee->id;
             $print_id_logs_data['user_id'] = Auth::user()->id;
