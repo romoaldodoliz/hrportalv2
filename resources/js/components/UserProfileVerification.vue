@@ -1,6 +1,5 @@
 <template>
 <div>
-    <loader v-if="loading"></loader>
     <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 300px; background-image: url(/img/bg.jpg); background-size: cover; background-position: center bottom;">
         <!-- Mask -->
         <span class="mask bg-gradient-success opacity-7"></span>
@@ -865,7 +864,6 @@
                 employee: [],
                 employee_copied: [],
                 errors: [],
-                loading: false,
                 employee_id: '',
                 marital_statuses : [],
                 marital_file : '',
@@ -907,7 +905,6 @@
         methods:{
             updateEmployee(employee_copied){
                 this.errors = [];
-                this.loading = true;
                 document.getElementById('edit_btn').disabled = true;
 
                 let formData = new FormData();
@@ -970,7 +967,6 @@
                 )
                 .then(response => {
                     document.getElementById('edit_btn').disabled = false;
-                    this.loading = false;
                     this.copyObject(response.data);
 
                     Swal.fire({
@@ -981,7 +977,6 @@
                     })
                 })
                 .catch(error => {
-                    this.loading = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     
