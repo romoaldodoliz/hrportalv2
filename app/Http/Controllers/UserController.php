@@ -99,6 +99,10 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function change_password(){
+        return view('change_password')->with('employee');
+    }
+
     public function changePassword(Request $request){
 
       

@@ -32,6 +32,8 @@ Vue.component('userprofileverification', require('./components/UserProfileVerifi
 Vue.component('employeeapprovalrequest', require('./components/EmployeeApprovalRequest.vue').default);
 Vue.component('employeeid', require('./components/EmployeeId.vue').default);
 
+Vue.component('changepassword', require('./components/ChangePassword.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

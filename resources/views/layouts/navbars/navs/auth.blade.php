@@ -33,6 +33,10 @@
                             <span>{{ __('My Profile') }}</span>
                         </a>
                     @endif
+                    <a href="{{ url('/change_password') }}" class="dropdown-item">
+                        <i class="fas fa-lock"></i>
+                        <span>Change Password</span>
+                    </a>
                     <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt"></i>

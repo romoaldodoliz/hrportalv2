@@ -37,6 +37,10 @@
                     <span>Dashboard</span>
                 </a>
             @endif
+            <a href="{{ url('/change_password') }}" class="dropdown-item">
+                <i class="fas fa-lock"></i>
+                <span>Change Password</span>
+            </a>
             <div class="dropdown-divider"></div>
             <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">

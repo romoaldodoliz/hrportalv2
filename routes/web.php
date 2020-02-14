@@ -36,6 +36,8 @@ Route::get('logout', function(){
         Route::delete('/user/{user}',['as'=>'users.destroy','uses'=>'UserController@destroy','middleware' => ['role:Administrator']]);
         
         Route::post('/change-password',['as'=>'users.changePassword','uses'=>'UserController@changePassword','middleware' => ['role:Administrator']]);
+        
+        Route::get('/change_password',['as'=>'users.change_password','uses'=>'UserController@change_password','middleware' => ['role:Administrator|HR Staff|User']]);
 
         // Roles
         Route::get('/roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['role:Administrator']]);
