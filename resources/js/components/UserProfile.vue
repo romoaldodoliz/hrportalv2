@@ -81,7 +81,7 @@
                                     <span v-if="employee_copied.verification.verification == '1'" class="badge badge-success">Your employee information has been verified.</span>
                                 </div>
                                 <div class="col text-right" v-else>
-                                    <span class="badge badge-danger">Please verify your information. Then Click Update.</span>
+                                    <span class="badge badge-danger">Please verify your information.</span>
                                 </div>
                             </div>
                             <div class="col-4 text-right">
@@ -605,6 +605,8 @@
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                                
+                                <button id="verify_btn" :disabled="saveEmployee" v-if="!employee_copied.verification" type="button" class="btn btn-info btn-round btn-fill btn-lg" @click="verifyEmployee(employee_copied)" style="width:150px;">Verify</button>
                             </div>
                         </div>
                     </div>
@@ -975,6 +977,46 @@
                 }else{
                     this.gender_disabled = true;
                 }
+            },
+            verifyEmployee(employee_copied){
+                Swal.fire({
+                        title: 'Are you sure you want to verify this information?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#2dce89',
+                        cancelButtonColor: '#f5365c',
+                        confirmButtonText: 'Yes, Verify'
+                        }).then((result) => {
+                        if (result.value) {
+                            let formData = new FormData();
+                            formData.append('employee_id', employee_copied.id);
+                            formData.append('verification', '1');
+
+                            axios.post(`/verify_employee`,formData)
+                            .then(response => {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Your Information has been Verified. Thank you.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Okay'
+                                });
+                                this.employee_copied = response.data; 
+                            })
+                            .catch(error => {
+                            
+                                this.errors = error.response.data.errors;
+                                Swal.fire({
+                                    title: 'Warning!',
+                                    text: 'Unable to verify Employee.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Okay'
+                                })
+                                
+                            })
+
+                            
+                        }
+                    })
             },
             updateEmployee(employee_copied){
                 this.errors = [];

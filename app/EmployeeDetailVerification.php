@@ -12,5 +12,10 @@ class EmployeeDetailVerification extends Model
         'employee_id',
         'verification'
     ];
+
+    public function employee()
+    {
+    	return $this->belongsTo('App\Employee')->select('id','user_id','first_name','middle_name','last_name');
+    }
     
 }

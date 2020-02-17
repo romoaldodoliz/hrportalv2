@@ -51,7 +51,8 @@ class EmployeeController extends Controller
     }
     public function employeeUpdateCount()
     {
-        return Employee::whereMonth('updated_at', Carbon::now()->month)->count();
+        //return Employee::whereMonth('updated_at', Carbon::now()->month)->count();
+        return EmployeeDetailVerification::count();
     }
 
     public function employeeApprovers(Employee $employee){

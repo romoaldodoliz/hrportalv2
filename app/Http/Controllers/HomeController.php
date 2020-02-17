@@ -76,6 +76,18 @@ class HomeController extends Controller
         return view('employee_approval_requests.index');
     }
 
+    public function verifiedEmployees(){
+        return EmployeeDetailVerification::with('employee')->orderBy('created_at','DESC')->get();
+    }
+
+    public function verifyEmployee(Request $request){
+        $data = $request->all();
+
+        EmployeeDetailVerification::create($data);
+
+        return Employee::with('companies','departments','locations','verification')->where('id',$data['employee_id'])->first();
+    }
+
     public function employeeApproval(Request $request,EmployeeApprovalRequest $employee_request){
         
         DB::beginTransaction();

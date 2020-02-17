@@ -174,6 +174,12 @@ Route::get('logout', function(){
         
         Route::get('employee_approval_requests',['as'=>'home.employeeApprovalRequests','uses'=>'HomeController@employeeApprovalRequests','middleware' => ['role:Administrator|HR Staff']]);
 
+
         //Employee Approval Request
         Route::patch('employee_approval/{employee_request}', 'HomeController@employeeApproval');
+
+        //Verify Employee
+        Route::post('verify_employee', 'HomeController@verifyEmployee');
+
+        Route::get('verified_employees', 'HomeController@verifiedEmployees');
     });

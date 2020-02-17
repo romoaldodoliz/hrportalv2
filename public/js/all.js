@@ -15697,6 +15697,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -15757,8 +15759,43 @@ __webpack_require__.r(__webpack_exports__);
         this.gender_disabled = true;
       }
     },
-    updateEmployee: function updateEmployee(employee_copied) {
+    verifyEmployee: function verifyEmployee(employee_copied) {
       var _this = this;
+
+      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+        title: 'Are you sure you want to verify this information?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2dce89',
+        cancelButtonColor: '#f5365c',
+        confirmButtonText: 'Yes, Verify'
+      }).then(function (result) {
+        if (result.value) {
+          var formData = new FormData();
+          formData.append('employee_id', employee_copied.id);
+          formData.append('verification', '1');
+          axios.post("/verify_employee", formData).then(function (response) {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+              title: 'Success!',
+              text: 'Your Information has been Verified. Thank you.',
+              icon: 'success',
+              confirmButtonText: 'Okay'
+            });
+            _this.employee_copied = response.data;
+          })["catch"](function (error) {
+            _this.errors = error.response.data.errors;
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+              title: 'Warning!',
+              text: 'Unable to verify Employee.',
+              icon: 'error',
+              confirmButtonText: 'Okay'
+            });
+          });
+        }
+      });
+    },
+    updateEmployee: function updateEmployee(employee_copied) {
+      var _this2 = this;
 
       this.errors = [];
       document.getElementById('edit_btn').disabled = true;
@@ -15808,7 +15845,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         document.getElementById('edit_btn').disabled = false;
 
-        _this.copyObject(response.data);
+        _this2.copyObject(response.data);
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Success!',
@@ -15817,7 +15854,7 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Okay'
         });
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this2.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
@@ -15834,14 +15871,14 @@ __webpack_require__.r(__webpack_exports__);
       this.signature_image = 'storage/image_not_available.png';
     },
     fetchEmployee: function fetchEmployee() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.get('/user-profile').then(function (response) {
-        _this2.employee = response.data;
+        _this3.employee = response.data;
 
-        _this2.copyObject(response.data);
+        _this3.copyObject(response.data);
       })["catch"](function (error) {
-        _this2.errors = error;
+        _this3.errors = error;
       });
     },
     copyObject: function copyObject(employee) {
@@ -15906,18 +15943,18 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     fetchEmployees: function fetchEmployees() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.table_loading = true;
       axios.get('/employees-all').then(function (response) {
-        _this3.employees = response.data;
-        _this3.table_loading = false;
+        _this4.employees = response.data;
+        _this4.table_loading = false;
       })["catch"](function (error) {
-        _this3.errors = error.response.data.error;
+        _this4.errors = error.response.data.error;
       });
     },
     fetchDependents: function fetchDependents() {
-      var _this4 = this;
+      var _this5 = this;
 
       var v = this;
       this.dependents = [];
@@ -15936,7 +15973,7 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (error) {
-        _this4.errors = error.response.data.error;
+        _this5.errors = error.response.data.error;
       });
     },
     addDependent: function addDependent() {
@@ -15949,7 +15986,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     removeDependent: function removeDependent(index, dependent) {
-      var _this5 = this;
+      var _this6 = this;
 
       if (dependent) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
@@ -15961,7 +15998,7 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this5.deletedDependent.push({
+            _this6.deletedDependent.push({
               id: dependent.id,
               dependent_name: dependent.dependent_name,
               dependent_gender: dependent.dependent_gender,
@@ -15969,7 +16006,7 @@ __webpack_require__.r(__webpack_exports__);
               relation: dependent.relation
             });
 
-            _this5.dependents.splice(index, 1);
+            _this6.dependents.splice(index, 1);
           }
         });
       } else {
@@ -15991,57 +16028,57 @@ __webpack_require__.r(__webpack_exports__);
       this.marital_file = marital.files[0];
     },
     fetchMaritalStatuses: function fetchMaritalStatuses() {
-      var _this6 = this;
-
-      axios.get('/maritals-options').then(function (response) {
-        _this6.marital_statuses = response.data;
-      })["catch"](function (error) {
-        _this6.errors = error.response.data.error;
-      });
-    },
-    fetchCompanies: function fetchCompanies() {
       var _this7 = this;
 
-      axios.get('/companies-all').then(function (response) {
-        _this7.companies = response.data;
+      axios.get('/maritals-options').then(function (response) {
+        _this7.marital_statuses = response.data;
       })["catch"](function (error) {
         _this7.errors = error.response.data.error;
       });
     },
-    fetchDepartments: function fetchDepartments() {
+    fetchCompanies: function fetchCompanies() {
       var _this8 = this;
 
-      axios.get('/departments-all').then(function (response) {
-        _this8.departments = response.data;
+      axios.get('/companies-all').then(function (response) {
+        _this8.companies = response.data;
       })["catch"](function (error) {
         _this8.errors = error.response.data.error;
       });
     },
-    fetchLocations: function fetchLocations() {
+    fetchDepartments: function fetchDepartments() {
       var _this9 = this;
 
-      axios.get('/locations-all').then(function (response) {
-        _this9.locations = response.data;
+      axios.get('/departments-all').then(function (response) {
+        _this9.departments = response.data;
       })["catch"](function (error) {
         _this9.errors = error.response.data.error;
       });
     },
-    fetchDivisions: function fetchDivisions() {
+    fetchLocations: function fetchLocations() {
       var _this10 = this;
 
-      axios.get('/division-options/' + this.employee_copied.company_list).then(function (response) {
-        _this10.divisions = response.data;
+      axios.get('/locations-all').then(function (response) {
+        _this10.locations = response.data;
       })["catch"](function (error) {
         _this10.errors = error.response.data.error;
       });
     },
-    fetchLevels: function fetchLevels() {
+    fetchDivisions: function fetchDivisions() {
       var _this11 = this;
 
-      axios.get('/levels-options').then(function (response) {
-        _this11.levels = response.data;
+      axios.get('/division-options/' + this.employee_copied.company_list).then(function (response) {
+        _this11.divisions = response.data;
       })["catch"](function (error) {
         _this11.errors = error.response.data.error;
+      });
+    },
+    fetchLevels: function fetchLevels() {
+      var _this12 = this;
+
+      axios.get('/levels-options').then(function (response) {
+        _this12.levels = response.data;
+      })["catch"](function (error) {
+        _this12.errors = error.response.data.error;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -16151,27 +16188,27 @@ __webpack_require__.r(__webpack_exports__);
       this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
     },
     fetchEmployeeRequestPending: function fetchEmployeeRequestPending(employee_id) {
-      var _this12 = this;
+      var _this13 = this;
 
       this.employee_requests_pending = '';
       axios.get('/user-pendings/' + employee_id).then(function (response) {
-        _this12.employee_requests_pending = response.data;
-      })["catch"](function (error) {
-        _this12.errors = error.response.data.error;
-      });
-    },
-    fetchEmployeeRequest: function fetchEmployeeRequest(employee_id) {
-      var _this13 = this;
-
-      this.employee_requests = [];
-      axios.get('/employee-approval-request/' + employee_id).then(function (response) {
-        _this13.employee_requests = response.data;
+        _this13.employee_requests_pending = response.data;
       })["catch"](function (error) {
         _this13.errors = error.response.data.error;
       });
     },
-    removeEmployeeRequest: function removeEmployeeRequest(index, employee_request_id) {
+    fetchEmployeeRequest: function fetchEmployeeRequest(employee_id) {
       var _this14 = this;
+
+      this.employee_requests = [];
+      axios.get('/employee-approval-request/' + employee_id).then(function (response) {
+        _this14.employee_requests = response.data;
+      })["catch"](function (error) {
+        _this14.errors = error.response.data.error;
+      });
+    },
+    removeEmployeeRequest: function removeEmployeeRequest(index, employee_request_id) {
+      var _this15 = this;
 
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure you want to delete this request?',
@@ -16184,11 +16221,11 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           axios["delete"]("/employee-user-profile/".concat(employee_request_id)).then(function (response) {
-            _this14.employee_requests.splice(index, 1);
+            _this15.employee_requests.splice(index, 1);
 
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Your request has been deleted.', 'success');
           })["catch"](function (error) {
-            _this14.errors = error.response.data.errors;
+            _this15.errors = error.response.data.errors;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Warning!',
               text: 'Unable to delete request. Please try again.',
@@ -16214,11 +16251,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployeerequests: function filteredemployeerequests() {
-      var _this15 = this;
+      var _this16 = this;
 
       var self = this;
       return Object.values(self.employee_requests).filter(function (employee_request) {
-        return employee_request.status.toLowerCase().includes(_this15.keywords.toLowerCase());
+        return employee_request.status.toLowerCase().includes(_this16.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -61866,7 +61903,7 @@ var render = function() {
                             staticClass:
                               "card-title text-uppercase text-muted mb-0"
                           },
-                          [_vm._v("Total Update")]
+                          [_vm._v("Total Verified Employee")]
                         ),
                         _vm._v(" "),
                         _c(
@@ -73032,9 +73069,7 @@ var render = function() {
                       ])
                     : _c("div", { staticClass: "col text-right" }, [
                         _c("span", { staticClass: "badge badge-danger" }, [
-                          _vm._v(
-                            "Please verify your information. Then Click Update."
-                          )
+                          _vm._v("Please verify your information.")
                         ])
                       ])
                 ]),
@@ -75632,7 +75667,28 @@ var render = function() {
                       }
                     },
                     [_vm._v("Update")]
-                  )
+                  ),
+                  _vm._v(" "),
+                  !_vm.employee_copied.verification
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-info btn-round btn-fill btn-lg",
+                          staticStyle: { width: "150px" },
+                          attrs: {
+                            id: "verify_btn",
+                            disabled: _vm.saveEmployee,
+                            type: "button"
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.verifyEmployee(_vm.employee_copied)
+                            }
+                          }
+                        },
+                        [_vm._v("Verify")]
+                      )
+                    : _vm._e()
                 ])
               ])
             ])
