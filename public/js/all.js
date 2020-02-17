@@ -10584,6 +10584,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -11081,6 +11123,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
 //
 //
 //
@@ -15581,6 +15625,78 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -15609,6 +15725,7 @@ __webpack_require__.r(__webpack_exports__);
       deletedDependent: [],
       table_loading: true,
       user_disabled: true,
+      gender_disabled: true,
       employee_requests: [],
       employee_request: [],
       employee_request_original: [],
@@ -15626,8 +15743,20 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchDepartments();
     this.fetchLocations();
     this.fetchLevels();
+    this.disabledByGender();
   },
   methods: {
+    disabledByGender: function disabledByGender() {
+      if (this.employee_copied.gender == 'FEMALE') {
+        if (this.employee_copied.marital_status == 'MARRIED' || this.employee_copied.marital_status == 'DIVORCED' || this.employee_copied.marital_status == 'WIDOW') {
+          this.gender_disabled = false;
+        } else {
+          this.gender_disabled = true;
+        }
+      } else {
+        this.gender_disabled = true;
+      }
+    },
     updateEmployee: function updateEmployee(employee_copied) {
       var _this = this;
 
@@ -15643,16 +15772,12 @@ __webpack_require__.r(__webpack_exports__);
         formData.append('employee_signature', this.signature_image_file);
       }
 
-      if (employee_copied.middle_name) {
-        formData.append('middle_name', employee_copied.middle_name);
-      }
-
-      if (employee_copied.middle_initial) {
-        formData.append('middle_initial', employee_copied.middle_initial);
-      }
-
+      formData.append('middle_name', employee_copied.middle_name);
+      formData.append('middle_initial', employee_copied.middle_initial);
       formData.append('last_name', employee_copied.last_name);
       formData.append('marital_status', employee_copied.marital_status);
+      formData.append('gender', employee_copied.gender);
+      formData.append('nick_name', employee_copied.nick_name);
 
       if (this.marital_file) {
         formData.append('marital_status_attachment', this.marital_file);
@@ -15668,7 +15793,13 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-"); //Dependents
 
       formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
-      formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+      formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : ""); //IDENTIFICATION
+
+      formData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
+      formData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
+      formData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
+      formData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
+      formData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
       formData.append('_method', 'PATCH');
       axios.post("/employee-user-profile/".concat(employee_copied.id), formData, {
         headers: {
@@ -15681,7 +15812,7 @@ __webpack_require__.r(__webpack_exports__);
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Success!',
-          text: 'Employee update has been sent to HR for Approval. Thank you.',
+          text: 'Your employee update has been sent to HR for Verification. See Employee Requests for your updates. Thank you.',
           icon: 'success',
           confirmButtonText: 'Okay'
         });
@@ -15755,12 +15886,19 @@ __webpack_require__.r(__webpack_exports__);
     },
     validateMartialStatus: function validateMartialStatus() {
       if (this.employee_copied.marital_status) {
-        if (this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED") {
+        if (this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED" || this.employee_copied.marital_status == "WIDOW") {
           this.marital_attachment_validate = false;
           this.marital_attachment_view = true;
+
+          if (this.employee_copied.gender == "FEMALE") {
+            this.gender_disabled = false;
+          } else {
+            this.gender_disabled = true;
+          }
         } else {
           this.marital_attachment_validate = true;
           this.marital_attachment_view = false;
+          this.gender_disabled = true;
         }
       } else {
         this.marital_attachment_validate = true;
@@ -62396,6 +62534,34 @@ var render = function() {
                     _c("tbody", [
                       _c("tr", [
                         _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" NICK NAME")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.nick_name)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.nick_name !=
+                          _vm.employee_request_approval.nick_name
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.nick_name)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
                           _vm._v(" LAST NAME")
                         ]),
                         _vm._v(" "),
@@ -62580,6 +62746,32 @@ var render = function() {
                                 ]
                               )
                             : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" GENDER")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_original.gender)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.gender !=
+                          _vm.employee_request_approval.gender
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_approval.gender)
+                          )
                         ])
                       ]),
                       _vm._v(" "),
@@ -62805,6 +62997,116 @@ var render = function() {
                               )
                           )
                         ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" SSS")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.sss_number)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.sss_number !=
+                          _vm.employee_request_approval.sss_number
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.sss_number)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" HDMF")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_original.hdmf)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.hdmf !=
+                          _vm.employee_request_approval.hdmf
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_approval.hdmf)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" Philhealth")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.phil_number)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.phil_number !=
+                          _vm.employee_request_approval.phil_number
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.phil_number)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" TIN")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.tax_number)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.tax_number !=
+                          _vm.employee_request_approval.tax_number
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.tax_number)
+                          )
+                        ])
                       ])
                     ])
                   ])
@@ -62939,7 +63241,42 @@ var render = function() {
                       0
                     )
                   ])
-                ])
+                ]),
+                _vm._v(" "),
+                _vm.employee_request_approval.remarks
+                  ? _c("div", { staticClass: "row mt-5" }, [
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "alert alert-primary alert-with-icon",
+                            attrs: { "data-notify": "container" }
+                          },
+                          [
+                            _c("i", { staticClass: "fas fa-sticky-note" }),
+                            _vm._v(" "),
+                            _c("strong", [_vm._v("Notes/Remarks:")]),
+                            _vm._v(" "),
+                            _c("br"),
+                            _vm._v(" "),
+                            _c(
+                              "span",
+                              { attrs: { "data-notify": "message" } },
+                              [
+                                _vm._v(
+                                  "\n                                        " +
+                                    _vm._s(
+                                      _vm.employee_request_approval.remarks
+                                    ) +
+                                    "\n                                "
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ])
+                    ])
+                  : _vm._e()
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [
@@ -64057,10 +64394,7 @@ var render = function() {
                                           }
                                         }
                                       },
-                                      [
-                                        _c("i", { staticClass: "fas fa-pen" }),
-                                        _vm._v(" Edit")
-                                      ]
+                                      [_vm._v(" Edit")]
                                     )
                                   ]
                                 )
@@ -64927,6 +65261,12 @@ var render = function() {
                                         "option",
                                         { attrs: { value: "FEMALE" } },
                                         [_vm._v(" FEMALE")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "UNKNOWN" } },
+                                        [_vm._v(" UNKNOWN")]
                                       )
                                     ]
                                   ),
@@ -67186,6 +67526,16 @@ var render = function() {
                                                       attrs: { value: "FEMALE" }
                                                     },
                                                     [_vm._v("FEMALE")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: {
+                                                        value: "UNKNOWN"
+                                                      }
+                                                    },
+                                                    [_vm._v(" UNKNOWN")]
                                                   )
                                                 ]
                                               )
@@ -67802,7 +68152,12 @@ var staticRenderFns = [
           "aria-expanded": "false"
         }
       },
-      [_c("i", { staticClass: "fas fa-ellipsis-v" })]
+      [
+        _c("i", {
+          staticClass: "fas fa-pen",
+          staticStyle: { color: "#5e72e4" }
+        })
+      ]
     )
   },
   function() {
@@ -72660,7 +73015,29 @@ var render = function() {
           _c("div", { staticClass: "card bg-secondary shadow  mb-5" }, [
             _c("div", { staticClass: "card-header bg-white border-0" }, [
               _c("div", { staticClass: "row align-items-center" }, [
-                _vm._m(0),
+                _c("div", { staticClass: "col-8" }, [
+                  _c("h3", { staticClass: "mb-0 text-uppercase" }, [
+                    _vm._v("My account")
+                  ]),
+                  _vm._v(" "),
+                  _vm.employee_copied.verification
+                    ? _c("div", { staticClass: "col text-right" }, [
+                        _vm.employee_copied.verification.verification == "1"
+                          ? _c("span", { staticClass: "badge badge-success" }, [
+                              _vm._v(
+                                "Your employee information has been verified."
+                              )
+                            ])
+                          : _vm._e()
+                      ])
+                    : _c("div", { staticClass: "col text-right" }, [
+                        _c("span", { staticClass: "badge badge-danger" }, [
+                          _vm._v(
+                            "Please verify your information. Then Click Update."
+                          )
+                        ])
+                      ])
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-4 text-right" }, [
                   _c(
@@ -72757,6 +73134,46 @@ var render = function() {
                   _c("div", { staticClass: "col-lg-4" }, [
                     _c("div", { staticClass: "form-group" }, [
                       _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("Nick Name*")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.employee_copied.nick_name,
+                            expression: "employee_copied.nick_name"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.employee_copied.nick_name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.employee_copied,
+                              "nick_name",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.nick_name
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.nick_name[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-lg-4" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
                         _vm._v("First Name*")
                       ]),
                       _vm._v(" "),
@@ -72810,7 +73227,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text" },
+                        attrs: { type: "text", disabled: _vm.gender_disabled },
                         domProps: { value: _vm.employee_copied.last_name },
                         on: {
                           input: function($event) {
@@ -72850,7 +73267,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text" },
+                        attrs: { type: "text", disabled: _vm.gender_disabled },
                         domProps: { value: _vm.employee_copied.middle_name },
                         on: {
                           input: function($event) {
@@ -72890,7 +73307,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text" },
+                        attrs: { type: "text", disabled: _vm.gender_disabled },
                         domProps: { value: _vm.employee_copied.middle_initial },
                         on: {
                           input: function($event) {
@@ -73066,6 +73483,14 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
+                      _vm.employee_copied.marital_status == "MARRIED" ||
+                      _vm.employee_copied.marital_status == "DIVORCED" ||
+                      _vm.employee_copied.marital_status == "WIDOW"
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v("*Attach original copy")
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
                       _vm.errors.marital_status_attachment
                         ? _c("span", { staticClass: "text-danger" }, [
                             _vm._v(
@@ -73173,28 +73598,30 @@ var render = function() {
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: {
-                            id: "marital_status",
-                            disabled: _vm.user_disabled
-                          },
+                          attrs: { id: "gender" },
                           on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.$set(
-                                _vm.employee_copied,
-                                "gender",
-                                $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              )
-                            }
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.employee_copied,
+                                  "gender",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              function($event) {
+                                return _vm.disabledByGender()
+                              }
+                            ]
                           }
                         },
                         [
@@ -73208,6 +73635,10 @@ var render = function() {
                           _vm._v(" "),
                           _c("option", { attrs: { value: "FEMALE" } }, [
                             _vm._v(" FEMALE")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "UNKNOWN" } }, [
+                            _vm._v(" UNKNOWN")
                           ])
                         ]
                       ),
@@ -73270,7 +73701,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "pl-lg-4" }, [
                 _c("div", { staticClass: "row" }, [
-                  _vm._m(1),
+                  _vm._m(0),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-3" }, [
                     _c("div", { staticClass: "form-group" }, [
@@ -73394,7 +73825,7 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm._m(2),
+                  _vm._m(1),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-3" }, [
                     _c("div", { staticClass: "form-group" }, [
@@ -74591,7 +75022,7 @@ var render = function() {
                           attrs: { id: "tab_hmo_dependent" }
                         },
                         [
-                          _vm._m(3),
+                          _vm._m(2),
                           _vm._v(" "),
                           _c(
                             "tbody",
@@ -74680,6 +75111,12 @@ var render = function() {
                                         "option",
                                         { attrs: { value: "FEMALE" } },
                                         [_vm._v("FEMALE")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "UNKNOWN" } },
+                                        [_vm._v("UNKNOWN")]
                                       )
                                     ]
                                   )
@@ -74810,7 +75247,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", disabled: _vm.user_disabled },
+                        attrs: { type: "text" },
                         domProps: { value: _vm.employee_copied.sss_number },
                         on: {
                           input: function($event) {
@@ -74848,7 +75285,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", disabled: _vm.user_disabled },
+                        attrs: { type: "text" },
                         domProps: { value: _vm.employee_copied.hdmf },
                         on: {
                           input: function($event) {
@@ -74888,7 +75325,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", disabled: _vm.user_disabled },
+                        attrs: { type: "text" },
                         domProps: { value: _vm.employee_copied.phil_number },
                         on: {
                           input: function($event) {
@@ -74926,7 +75363,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", disabled: _vm.user_disabled },
+                        attrs: { type: "text" },
                         domProps: { value: _vm.employee_copied.tax_number },
                         on: {
                           input: function($event) {
@@ -75042,6 +75479,55 @@ var render = function() {
                       _vm.errors.tax_status
                         ? _c("span", { staticClass: "text-danger" }, [
                             _vm._v(_vm._s(_vm.errors.tax_status[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("hr", { staticClass: "my-4" }),
+              _vm._v(" "),
+              _c("div", { staticClass: "pl-lg-4" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("NOTES/REMARKS")
+                      ]),
+                      _vm._v(" "),
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.employee_copied.remarks,
+                            expression: "employee_copied.remarks"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          placeholder: "Add Notes/Remarks to HR",
+                          rows: "4"
+                        },
+                        domProps: { value: _vm.employee_copied.remarks },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.employee_copied,
+                              "remarks",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.remarks
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.remarks[0]))
                           ])
                         : _vm._e()
                     ])
@@ -75178,11 +75664,11 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(4),
+              _vm._m(3),
               _vm._v(" "),
               _c("div", { staticClass: "modal-header" }, [
                 _c("div", { staticClass: "row align-items-center" }, [
-                  _vm._m(5),
+                  _vm._m(4),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-xl-12 mb-2 mt-3" }, [
                     _c("input", {
@@ -75218,7 +75704,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("table", { staticClass: "table table-hover" }, [
-                  _vm._m(6),
+                  _vm._m(5),
                   _vm._v(" "),
                   _c(
                     "tbody",
@@ -75229,7 +75715,7 @@ var render = function() {
                       return _c("tr", { key: index }, [
                         _c("td", { staticClass: "text-center" }, [
                           _c("div", { staticClass: "dropdown" }, [
-                            _vm._m(7, true),
+                            _vm._m(6, true),
                             _vm._v(" "),
                             _c(
                               "div",
@@ -75377,7 +75863,7 @@ var render = function() {
                   : _vm._e()
               ]),
               _vm._v(" "),
-              _vm._m(8)
+              _vm._m(7)
             ])
           ]
         )
@@ -75407,7 +75893,7 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(9),
+              _vm._m(8),
               _vm._v(" "),
               _c("div", { staticClass: "modal-header" }, [
                 _c("div", { staticClass: "row align-items-center" }, [
@@ -75429,9 +75915,37 @@ var render = function() {
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "table-responsive" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(10),
+                    _vm._m(9),
                     _vm._v(" "),
                     _c("tbody", [
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" NICK NAME")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.nick_name)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.nick_name !=
+                          _vm.employee_request_approval.nick_name
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.nick_name)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
                       _c("tr", [
                         _c("td", { attrs: { align: "left" } }, [
                           _vm._v(" LAST NAME")
@@ -75561,7 +76075,9 @@ var render = function() {
                           _vm.employee_request_original.marital_status ==
                             "MARRIED" ||
                           _vm.employee_request_original.marital_status ==
-                            "DIVORCED"
+                            "DIVORCED" ||
+                          _vm.employee_request_original.marital_status ==
+                            "WIDOW"
                             ? _c(
                                 "a",
                                 {
@@ -75586,7 +76102,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("td", { attrs: { align: "left" } }, [
-                          _vm.employee_request_approval
+                          _vm.employee_request_original
                             .marital_status_attachment !=
                           _vm.employee_request_approval
                             .marital_status_attachment
@@ -75600,7 +76116,9 @@ var render = function() {
                           _vm.employee_request_approval.marital_status ==
                             "MARRIED" ||
                           _vm.employee_request_approval.marital_status ==
-                            "DIVORCED"
+                            "DIVORCED" ||
+                          _vm.employee_request_original.marital_status ==
+                            "WIDOW"
                             ? _c(
                                 "a",
                                 {
@@ -75622,6 +76140,32 @@ var render = function() {
                                 ]
                               )
                             : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" GENDER")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_original.gender)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.gender !=
+                          _vm.employee_request_approval.gender
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_approval.gender)
+                          )
                         ])
                       ]),
                       _vm._v(" "),
@@ -75847,6 +76391,116 @@ var render = function() {
                               )
                           )
                         ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" SSS")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.sss_number)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.sss_number !=
+                          _vm.employee_request_approval.sss_number
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.sss_number)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" HDMF")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_original.hdmf)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.hdmf !=
+                          _vm.employee_request_approval.hdmf
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " + _vm._s(_vm.employee_request_approval.hdmf)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" Philhealth")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.phil_number)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.phil_number !=
+                          _vm.employee_request_approval.phil_number
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.phil_number)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("tr", [
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(" TIN")
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_original.tax_number)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { attrs: { align: "left" } }, [
+                          _vm.employee_request_original.tax_number !=
+                          _vm.employee_request_approval.tax_number
+                            ? _c("i", {
+                                staticClass: "fa fa-exclamation-circle",
+                                staticStyle: { color: "#F3BB45" },
+                                attrs: { title: "Changed" }
+                              })
+                            : _vm._e(),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.employee_request_approval.tax_number)
+                          )
+                        ])
                       ])
                     ])
                   ])
@@ -75854,7 +76508,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(11),
+                    _vm._m(10),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -75895,7 +76549,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(12),
+                    _vm._m(11),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -75936,7 +76590,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(13),
+                    _vm._m(12),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -75981,7 +76635,42 @@ var render = function() {
                       0
                     )
                   ])
-                ])
+                ]),
+                _vm._v(" "),
+                _vm.employee_request_approval.remarks
+                  ? _c("div", { staticClass: "row mt-5" }, [
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "alert alert-primary alert-with-icon",
+                            attrs: { "data-notify": "container" }
+                          },
+                          [
+                            _c("i", { staticClass: "fas fa-sticky-note" }),
+                            _vm._v(" "),
+                            _c("strong", [_vm._v("Notes/Remarks:")]),
+                            _vm._v(" "),
+                            _c("br"),
+                            _vm._v(" "),
+                            _c(
+                              "span",
+                              { attrs: { "data-notify": "message" } },
+                              [
+                                _vm._v(
+                                  "\r\n                                    " +
+                                    _vm._s(
+                                      _vm.employee_request_approval.remarks
+                                    ) +
+                                    "\r\n                            "
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ])
+                    ])
+                  : _vm._e()
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" })
@@ -75993,14 +76682,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-8" }, [
-      _c("h3", { staticClass: "mb-0 text-uppercase" }, [_vm._v("My account")])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

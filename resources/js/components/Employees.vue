@@ -77,10 +77,10 @@
                                                     <div class="dropdown">
                                                         <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
                                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="fas fa-ellipsis-v"></i>
+                                                            <i class="fas fa-pen" style="color:#5e72e4"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-pen"></i> Edit</a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"> Edit</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -247,6 +247,7 @@
                                                         <option value="">Choose Gender</option>
                                                         <option value="MALE"> MALE</option>
                                                         <option value="FEMALE"> FEMALE</option>
+                                                        <option value="UNKNOWN"> UNKNOWN</option>
                                                     </select>
                                                     <span class="text-danger" v-if="errors.gender">{{ errors.gender[0] }}</span>
                                                 </div>
@@ -617,6 +618,7 @@
                                                                         <option value="">Choose Gender</option>
                                                                         <option value="MALE">MALE</option>
                                                                         <option value="FEMALE">FEMALE</option>
+                                                                         <option value="UNKNOWN"> UNKNOWN</option>
                                                                     </select> 
                                                                 </td>
                                                                 <td>

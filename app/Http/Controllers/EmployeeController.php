@@ -437,6 +437,13 @@ class EmployeeController extends Controller
         
         $data = $request->all();
 
+        $this->validate($request, [
+            'last_name' => 'required',
+            'nick_name' => 'required',
+            'marital_status' => 'required',
+            'gender' => 'required',
+        ]);
+
         $original_employee_dependents = Dependent::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
 
         if(empty($request->date_hired)){
@@ -464,6 +471,7 @@ class EmployeeController extends Controller
         }
 
         //For approval data 
+        $employee_data['nick_name'] = $request->nick_name ? $request->nick_name : $employee->nick_name;
         $employee_data['middle_name'] = $request->middle_name ? $request->middle_name : $employee->middle_name;
         $employee_data['middle_initial'] = $request->middle_initial ? $request->middle_initial : $employee->middle_initial;
         $employee_data['last_name'] = $request->last_name ? $request->last_name : $employee->last_name;
@@ -478,7 +486,16 @@ class EmployeeController extends Controller
         $employee_data['dependents'] = $request->dependents;
         $employee_data['deleted_dependents'] = $request->deleted_dependents;
 
+        $employee_data['gender'] = $request->gender;
+        $employee_data['sss_number'] = $request->sss_number;
+        $employee_data['phil_number'] = $request->phil_number;
+        $employee_data['tax_number'] = $request->tax_number;
+        $employee_data['hdmf'] = $request->hdmf;
+
+        $employee_data['remarks'] = $request->remarks;
+
         //Original Employee
+        $original_employee_data['nick_name'] = $employee->nick_name ? $employee->nick_name : $employee->nick_name;
         $original_employee_data['middle_name'] = $employee->middle_name ? $employee->middle_name : $employee->middle_name;
         $original_employee_data['middle_initial'] = $employee->middle_initial ? $employee->middle_initial : $employee->middle_initial;
         $original_employee_data['last_name'] = $employee->last_name ? $employee->last_name : $employee->last_name;
@@ -492,23 +509,27 @@ class EmployeeController extends Controller
         $original_employee_data['contact_relation'] = $employee->contact_relation;
         $original_employee_data['contact_number'] = $employee->contact_number;
         $original_employee_data['dependents'] = $original_employee_dependents;
+
+        $original_employee_data['gender'] = $employee->gender;
+        $original_employee_data['sss_number'] = $employee->sss_number;
+        $original_employee_data['phil_number'] = $employee->phil_number;
+        $original_employee_data['tax_number'] = $employee->tax_number;
+        $original_employee_data['hdmf'] = $employee->hdmf;
         
         // Employee Approval Data
         $employee_approval_data['employee_id'] = $employee->id;
         $employee_approval_data['employee_data'] = json_encode($employee_data);
         $employee_approval_data['original_employee_data'] = json_encode($original_employee_data);
 
-      
-
         $check_request = EmployeeApprovalRequest::where('employee_id', '=', $employee->id)->where('status' , '=', 'Pending')->first();
  
-        // if($check_request){
-        //     $check_request->update($employee_approval_data);
-        // }else{
+        if($check_request){
+            $check_request->update($employee_approval_data);
+        }else{
             EmployeeApprovalRequest::create($employee_approval_data);
-        // }
+        }
 
-        return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
+        return Employee::with('companies','departments','locations','verification')->where('id',$employee->id)->first();
 
     }
 

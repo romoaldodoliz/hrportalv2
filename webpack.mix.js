@@ -20,4 +20,4 @@ mix.styles([
     'public/js/script.js',
     'resources/js/app.js',],
     'public/js/all.js')
-.browserSync('http://hrportalv2.local');
+.browserSync('http://hrportalv2.local/');

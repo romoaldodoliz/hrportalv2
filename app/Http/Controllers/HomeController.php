@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use App\Employee;
 use App\EmployeeApprovalRequest;
+use App\EmployeeDetailVerification;
 
 use DB;
 use Illuminate\Http\File;
@@ -89,6 +90,9 @@ class HomeController extends Controller
             
             if($request->status == "Approved"){
                 //Update Approved Employee Request
+                if($employee_request_original_data['nick_name'] != $employee_request_approval_data['nick_name']){
+                    $approved_data['nick_name'] = $employee_request_approval_data['nick_name'];
+                }
                 if($employee_request_original_data['last_name'] != $employee_request_approval_data['last_name']){
                     $approved_data['last_name'] = $employee_request_approval_data['last_name'];
                 }
@@ -100,6 +104,10 @@ class HomeController extends Controller
                 }
                 if($employee_request_original_data['marital_status'] != $employee_request_approval_data['marital_status']){
                     $approved_data['marital_status'] = $employee_request_approval_data['marital_status'];
+                }
+
+                if($employee_request_original_data['gender'] != $employee_request_approval_data['gender']){
+                    $approved_data['gender'] = $employee_request_approval_data['gender'];
                 }
                 if(isset($employee_request_approval_data['marital_status_attachment'])){
                 
@@ -131,6 +139,18 @@ class HomeController extends Controller
                 if($employee_request_original_data['contact_relation'] != $employee_request_approval_data['contact_relation']){
                     $approved_data['contact_relation'] = $employee_request_approval_data['contact_relation'];
                 }
+                if($employee_request_original_data['sss_number'] != $employee_request_approval_data['sss_number']){
+                    $approved_data['sss_number'] = $employee_request_approval_data['sss_number'];
+                }
+                if($employee_request_original_data['phil_number'] != $employee_request_approval_data['phil_number']){
+                    $approved_data['phil_number'] = $employee_request_approval_data['phil_number'];
+                }
+                if($employee_request_original_data['hdmf'] != $employee_request_approval_data['hdmf']){
+                    $approved_data['hdmf'] = $employee_request_approval_data['hdmf'];
+                }
+                if($employee_request_original_data['tax_number'] != $employee_request_approval_data['tax_number']){
+                    $approved_data['tax_number'] = $employee_request_approval_data['tax_number'];
+                }
 
                 if($employee_request_approval_dependents_data){
                     foreach($employee_request_approval_dependents_data as $dependent){
@@ -159,6 +179,19 @@ class HomeController extends Controller
                 
                 if($employee->update($approved_data)){
                     if($employee_request->update(['status'=>$request->get('status')])){
+
+                        //Verification
+                
+                        $verification  = EmployeeDetailVerification::where('employee_id',$employee->id)->first();
+                        $data = [];
+                        $data['employee_id'] = $employee->id;
+                        $data['verification'] = '1';
+                        if(!empty($verification)){
+                            EmployeeDetailVerification::where('id', $verification->id)->update($data);
+                        }else{
+                            EmployeeDetailVerification::create($data);
+                        }
+                        
                         DB::commit();
                         return EmployeeApprovalRequest::with('employee')->where('id',$employee_request->id)->first();
                     }

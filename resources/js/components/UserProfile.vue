@@ -77,10 +77,18 @@
                         <div class="row align-items-center">
                             <div class="col-8">
                                 <h3 class="mb-0 text-uppercase">My account</h3>
+                                <div class="col text-right" v-if="employee_copied.verification">
+                                    <span v-if="employee_copied.verification.verification == '1'" class="badge badge-success">Your employee information has been verified.</span>
+                                </div>
+                                <div class="col text-right" v-else>
+                                    <span class="badge badge-danger">Please verify your information. Then Click Update.</span>
+                                </div>
                             </div>
                             <div class="col-4 text-right">
                                 <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#employeeRequestsModal"><span class="badge badge-pill badge-warning" v-if="employee_requests_pending > 0"><i class="fas fa-exclamation"></i></span> Employee Update Request(s)</button>
                             </div>
+
+                            
                         </div>
                     </div>
                     <div class="card-body">
@@ -103,6 +111,14 @@
                                     </div>
                                 </div>
 
+                                 <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="role">Nick Name*</label> 
+                                        <input type="text"  class="form-control" v-model="employee_copied.nick_name" >
+                                        <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
+                                    </div>
+                                </div>
+
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">First Name*</label> 
@@ -114,7 +130,7 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">Last Name*</label> 
-                                        <input type="text"  class="form-control" v-model="employee_copied.last_name"   >
+                                        <input type="text"  class="form-control" v-model="employee_copied.last_name" :disabled="gender_disabled">
                                         <span class="text-danger" v-if="errors.last_name">{{ errors.last_name[0] }}</span>
                                     </div>
                                 </div>
@@ -122,14 +138,14 @@
                                 <div class="col-lg-2">
                                     <div class="form-group">
                                         <label for="role">Middle Name</label> 
-                                        <input type="text"  class="form-control" v-model="employee_copied.middle_name"   >
+                                        <input type="text"  class="form-control" v-model="employee_copied.middle_name" :disabled="gender_disabled">
                                         <span class="text-danger" v-if="errors.middle_name">{{ errors.middle_name[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="form-group">
                                         <label for="role">Middle Initial</label> 
-                                        <input type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
+                                        <input type="text"  class="form-control" v-model="employee_copied.middle_initial" :disabled="gender_disabled" >
                                         <span class="text-danger" v-if="errors.middle_initial">{{ errors.middle_initial[0] }}</span>
                                     </div>
                                 </div>
@@ -154,6 +170,7 @@
                                     <div class="form-group">
                                         <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
                                         <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
+                                        <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
                                         <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
                                     </div>
                                 </div>
@@ -173,10 +190,11 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">Gender*</label> 
-                                        <select class="form-control" v-model="employee_copied.gender" id="marital_status" :disabled="user_disabled">
+                                        <select class="form-control" v-model="employee_copied.gender" id="gender" @change="disabledByGender()">
                                             <option value="">Choose Gender</option>
                                             <option value="MALE"> MALE</option>
                                             <option value="FEMALE"> FEMALE</option>
+                                            <option value="UNKNOWN"> UNKNOWN</option>
                                         </select>
                                         <span class="text-danger" v-if="errors.gender">{{ errors.gender[0] }}</span>
                                     </div>
@@ -483,6 +501,7 @@
                                                             <option value="">Choose Gender</option>
                                                             <option value="MALE">MALE</option>
                                                             <option value="FEMALE">FEMALE</option>
+                                                            <option value="UNKNOWN">UNKNOWN</option>
                                                         </select> 
                                                     </td>
                                                     <td>
@@ -510,28 +529,28 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">SSS</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.sss_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.sss_number">
                                         <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">HDMF</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.hdmf" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.hdmf">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Philhealth</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.phil_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.phil_number">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">TIN</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.tax_number" :disabled="user_disabled">
+                                        <input type="text" class="form-control" v-model="employee_copied.tax_number">
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
@@ -555,9 +574,21 @@
 
                                         <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                     </div>
-                                </div>    
+                                </div>
                             </div>         
-                        </div>         
+                        </div> 
+                         <hr class="my-4">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="role">NOTES/REMARKS</label>
+                                        <textarea class="form-control" v-model="employee_copied.remarks" placeholder="Add Notes/Remarks to HR" rows="4"></textarea>
+                                        <span class="text-danger" v-if="errors.remarks">{{ errors.remarks[0] }}</span> 
+                                    </div>
+                                </div> 
+                            </div>        
+                        </div>        
 
                         <div class="col-md-12 text-center mt-3 pt-3 pb-3" style="background-color:#f4f5f7;border-radius:5px;">
                             <h4>Terms and Conditions</h4>
@@ -687,6 +718,11 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td align="left"> NICK NAME</td>
+                                <td align="left"> {{ employee_request_original.nick_name }}</td>
+                                <td align="left"> <i v-if="employee_request_original.nick_name != employee_request_approval.nick_name" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.nick_name }}</td>
+                            </tr>
+                            <tr>
                                 <td align="left"> LAST NAME</td>
                                 <td align="left"> {{ employee_request_original.last_name }}</td>
                                 <td align="left"> <i v-if="employee_request_original.last_name != employee_request_approval.last_name" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.last_name }}</td>
@@ -709,13 +745,18 @@
                             <tr>
                                 <td align="left"> MARITAL STATUS ATTACHMENT</td>
                                 <td align="left"> 
-                                    <a  v-if="employee_request_original.marital_status == 'MARRIED' || employee_request_original.marital_status == 'DIVORCED'" :href="'storage/marital_attachments/temps/'+employee_request_original.marital_status_attachment" target="_blank">{{ employee_request_original.marital_status_attachment }}</a>
+                                    <a  v-if="employee_request_original.marital_status == 'MARRIED' || employee_request_original.marital_status == 'DIVORCED' || employee_request_original.marital_status == 'WIDOW'" :href="'storage/marital_attachments/temps/'+employee_request_original.marital_status_attachment" target="_blank">{{ employee_request_original.marital_status_attachment }}</a>
                                 </td>
                                 <td align="left"> 
-                                    <i v-if="employee_request_approval.marital_status_attachment != employee_request_approval.marital_status_attachment" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i>
+                                    <i v-if="employee_request_original.marital_status_attachment != employee_request_approval.marital_status_attachment" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i>
 
-                                    <a  v-if="employee_request_approval.marital_status == 'MARRIED' || employee_request_approval.marital_status == 'DIVORCED'" :href="'storage/marital_attachments/temps/'+employee_request_approval.marital_status_attachment" target="_blank">{{ employee_request_approval.marital_status_attachment }}</a>
+                                    <a  v-if="employee_request_approval.marital_status == 'MARRIED' || employee_request_approval.marital_status == 'DIVORCED' || employee_request_original.marital_status == 'WIDOW'" :href="'storage/marital_attachments/temps/'+employee_request_approval.marital_status_attachment" target="_blank">{{ employee_request_approval.marital_status_attachment }}</a>
                                     </td>
+                            </tr>
+                            <tr>
+                                <td align="left"> GENDER</td>
+                                <td align="left"> {{ employee_request_original.gender }}</td>
+                                <td align="left"> <i v-if="employee_request_original.gender != employee_request_approval.gender" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.gender }}</td>
                             </tr>
                             <tr>
                                 <td align="left"> CURRENT ADDRESS</td>
@@ -751,6 +792,26 @@
                                 <td align="left"> CONTACT NUMBER</td>
                                 <td align="left"> {{ employee_request_original.contact_number }}</td>
                                 <td align="left"> <i v-if="employee_request_original.contact_number != employee_request_approval.contact_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_number }}</td>
+                            </tr>
+                            <tr>
+                                <td align="left"> SSS</td>
+                                <td align="left"> {{ employee_request_original.sss_number }}</td>
+                                <td align="left"> <i v-if="employee_request_original.sss_number != employee_request_approval.sss_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.sss_number }}</td>
+                            </tr>
+                            <tr>
+                                <td align="left"> HDMF</td>
+                                <td align="left"> {{ employee_request_original.hdmf }}</td>
+                                <td align="left"> <i v-if="employee_request_original.hdmf != employee_request_approval.hdmf" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.hdmf }}</td>
+                            </tr>
+                            <tr>
+                                <td align="left"> Philhealth</td>
+                                <td align="left"> {{ employee_request_original.phil_number }}</td>
+                                <td align="left"> <i v-if="employee_request_original.phil_number != employee_request_approval.phil_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.phil_number }}</td>
+                            </tr>
+                            <tr>
+                                <td align="left"> TIN</td>
+                                <td align="left"> {{ employee_request_original.tax_number }}</td>
+                                <td align="left"> <i v-if="employee_request_original.tax_number != employee_request_approval.tax_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.tax_number }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -809,29 +870,40 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="text-center" width="20%;" colspan="5">DELETED - HMO DEPENDENTS</th>
-                            </tr>
-                            <tr>
-                                <th width="20%;">#</th>
-                                <th width="20%;">Name</th>
-                                <th width="20%;">Gender</th>
-                                <th width="20%;">Date of Birth</th>
-                                <th width="20%;">Relationship</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(request_approval_deleted_dependent, index) in employee_request_approval.deleted_dependents" v-bind:key="index">
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ request_approval_deleted_dependent.dependent_name }}</td>
-                                <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
-                                <td>{{ request_approval_deleted_dependent.bdate }}</td>
-                                <td>{{ request_approval_deleted_dependent.relation }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="20%;" colspan="5">DELETED - HMO DEPENDENTS</th>
+                                </tr>
+                                <tr>
+                                    <th width="20%;">#</th>
+                                    <th width="20%;">Name</th>
+                                    <th width="20%;">Gender</th>
+                                    <th width="20%;">Date of Birth</th>
+                                    <th width="20%;">Relationship</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(request_approval_deleted_dependent, index) in employee_request_approval.deleted_dependents" v-bind:key="index">
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ request_approval_deleted_dependent.dependent_name }}</td>
+                                    <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
+                                    <td>{{ request_approval_deleted_dependent.bdate }}</td>
+                                    <td>{{ request_approval_deleted_dependent.relation }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-5" v-if="employee_request_approval.remarks">
+                        <div class="col-md-12">
+                         
+                            <div data-notify="container" class="alert alert-primary alert-with-icon"><i class="fas fa-sticky-note"></i> <strong>Notes/Remarks:</strong>
+                            <br>
+                            <span data-notify="message">
+                                &nbsp;&nbsp;&nbsp;&nbsp;{{employee_request_approval.remarks}}
+                            </span>
+                            </div>
+                        </div>
                     </div>
                 
                 </div>    
@@ -872,6 +944,7 @@
                 deletedDependent : [],
                 table_loading : true,
                 user_disabled : true,
+                gender_disabled : true,
                 employee_requests : [],
                 employee_request: [],
                 employee_request_original: [],
@@ -889,8 +962,20 @@
             this.fetchDepartments();
             this.fetchLocations();
             this.fetchLevels();
+            this.disabledByGender();
         },
         methods:{
+            disabledByGender(){
+                if(this.employee_copied.gender == 'FEMALE'){
+                    if(this.employee_copied.marital_status == 'MARRIED' || this.employee_copied.marital_status == 'DIVORCED' || this.employee_copied.marital_status == 'WIDOW'){
+                         this.gender_disabled = false;
+                    }else{
+                         this.gender_disabled = true;
+                    }
+                }else{
+                    this.gender_disabled = true;
+                }
+            },
             updateEmployee(employee_copied){
                 this.errors = [];
                 document.getElementById('edit_btn').disabled = true;
@@ -905,15 +990,17 @@
                     formData.append('employee_signature', this.signature_image_file);
                 }
                 
-                if(employee_copied.middle_name){
-                    formData.append('middle_name', employee_copied.middle_name);
-                }
-                if(employee_copied.middle_initial){
-                    formData.append('middle_initial', employee_copied.middle_initial);
-                }
+                formData.append('middle_name', employee_copied.middle_name);
+                
+                formData.append('middle_initial', employee_copied.middle_initial);
                 
                 formData.append('last_name', employee_copied.last_name);
                 formData.append('marital_status', employee_copied.marital_status);
+                formData.append('gender', employee_copied.gender);
+
+                formData.append('nick_name', employee_copied.nick_name);
+
+
 
                 if(this.marital_file){
                     formData.append('marital_status_attachment', this.marital_file);
@@ -927,9 +1014,18 @@
                 formData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
                 formData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
                 formData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
+
                 //Dependents
                 formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
                 formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+
+                //IDENTIFICATION
+                formData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
+                formData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
+                formData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
+                formData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
+
+                formData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
 
                 formData.append('_method', 'PATCH');
 
@@ -947,7 +1043,7 @@
 
                     Swal.fire({
                         title: 'Success!',
-                        text: 'Employee update has been sent to HR for Approval. Thank you.',
+                        text: 'Your employee update has been sent to HR for Verification. See Employee Requests for your updates. Thank you.',
                         icon: 'success',
                         confirmButtonText: 'Okay'
                     })
@@ -1033,13 +1129,20 @@
             },
             validateMartialStatus(){
                 if(this.employee_copied.marital_status){
-                    if(this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED"){
+                    if(this.employee_copied.marital_status == "MARRIED" || this.employee_copied.marital_status == "DIVORCED" || this.employee_copied.marital_status == "WIDOW"){
                         this.marital_attachment_validate = false;
                         this.marital_attachment_view = true;
+
+                        if(this.employee_copied.gender == "FEMALE"){
+                            this.gender_disabled = false;
+                        }else{
+                            this.gender_disabled = true;
+                        }
                         
                     }else{
                         this.marital_attachment_validate = true;
                         this.marital_attachment_view = false;
+                        this.gender_disabled = true;
                     }
                 }else{
                     this.marital_attachment_validate = true;

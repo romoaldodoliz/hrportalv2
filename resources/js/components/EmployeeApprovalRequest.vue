@@ -95,6 +95,11 @@
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td align="left"> NICK NAME</td>
+                                        <td align="left"> {{ employee_request_original.nick_name }}</td>
+                                        <td align="left"> <i v-if="employee_request_original.nick_name != employee_request_approval.nick_name" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.nick_name }}</td>
+                                    </tr>
+                                    <tr>
                                         <td align="left"> LAST NAME</td>
                                         <td align="left"> {{ employee_request_original.last_name }}</td>
                                         <td align="left"> <i v-if="employee_request_original.last_name != employee_request_approval.last_name" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.last_name }}</td>
@@ -124,6 +129,11 @@
 
                                             <a v-if="employee_request_approval.marital_status_attachment" :href="'storage/marital_attachments/temps/'+employee_request_approval.marital_status_attachment" target="_blank">{{ employee_request_approval.marital_status_attachment }}</a>
                                             </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"> GENDER</td>
+                                        <td align="left"> {{ employee_request_original.gender }}</td>
+                                        <td align="left"> <i v-if="employee_request_original.gender != employee_request_approval.gender" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.gender }}</td>
                                     </tr>
                                     <tr>
                                         <td align="left"> CURRENT ADDRESS</td>
@@ -159,6 +169,26 @@
                                         <td align="left"> CONTACT NUMBER</td>
                                         <td align="left"> {{ employee_request_original.contact_number }}</td>
                                         <td align="left"> <i v-if="employee_request_original.contact_number != employee_request_approval.contact_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"> SSS</td>
+                                        <td align="left"> {{ employee_request_original.sss_number }}</td>
+                                        <td align="left"> <i v-if="employee_request_original.sss_number != employee_request_approval.sss_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.sss_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"> HDMF</td>
+                                        <td align="left"> {{ employee_request_original.hdmf }}</td>
+                                        <td align="left"> <i v-if="employee_request_original.hdmf != employee_request_approval.hdmf" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.hdmf }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"> Philhealth</td>
+                                        <td align="left"> {{ employee_request_original.phil_number }}</td>
+                                        <td align="left"> <i v-if="employee_request_original.phil_number != employee_request_approval.phil_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.phil_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"> TIN</td>
+                                        <td align="left"> {{ employee_request_original.tax_number }}</td>
+                                        <td align="left"> <i v-if="employee_request_original.tax_number != employee_request_approval.tax_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.tax_number }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -240,6 +270,18 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
+
+                            <div class="row mt-5" v-if="employee_request_approval.remarks">
+                                <div class="col-md-12">
+                                
+                                    <div data-notify="container" class="alert alert-primary alert-with-icon"><i class="fas fa-sticky-note"></i> <strong>Notes/Remarks:</strong>
+                                    <br>
+                                    <span data-notify="message">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;{{employee_request_approval.remarks}}
+                                    </span>
+                                    </div>
+                                </div>
                             </div>
                         
                         </div>    
