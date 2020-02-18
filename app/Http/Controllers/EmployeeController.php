@@ -572,7 +572,7 @@ class EmployeeController extends Controller
                             $w->where('id', '=', $location);
                         });
                     })
-                    ->orderBy('employee_number','ASC')->get();
+                    ->orderBy('employee_number','DESC')->get();
         return $employee;
     }
 

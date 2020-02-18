@@ -81,7 +81,8 @@
                                     <span v-if="employee_copied.verification.verification == '1'" class="badge badge-success">Your employee information has been verified.</span>
                                 </div>
                                 <div class="col text-right" v-else>
-                                    <span class="badge badge-danger">Please verify your information.</span>
+                                    <span class="badge badge-danger" v-if="employee_requests_pending > 0">Your employee information has been sent to HR for verification.</span>
+                                    <span class="badge badge-danger" v-else>Please verify your information.</span>
                                 </div>
                             </div>
                             <div class="col-4 text-right">
@@ -1040,11 +1041,11 @@
                 
                 formData.append('middle_initial', employee_copied.middle_initial);
                 
-                formData.append('last_name', employee_copied.last_name);
-                formData.append('marital_status', employee_copied.marital_status);
-                formData.append('gender', employee_copied.gender);
+                formData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
+                formData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
+                formData.append('gender', employee_copied.gender ? employee_copied.gender : "");
 
-                formData.append('nick_name', employee_copied.nick_name);
+                formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
 
 
 

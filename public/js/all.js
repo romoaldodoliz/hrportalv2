@@ -15727,6 +15727,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -15842,10 +15843,10 @@ __webpack_require__.r(__webpack_exports__);
 
       formData.append('middle_name', employee_copied.middle_name);
       formData.append('middle_initial', employee_copied.middle_initial);
-      formData.append('last_name', employee_copied.last_name);
-      formData.append('marital_status', employee_copied.marital_status);
-      formData.append('gender', employee_copied.gender);
-      formData.append('nick_name', employee_copied.nick_name);
+      formData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
+      formData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
+      formData.append('gender', employee_copied.gender ? employee_copied.gender : "");
+      formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
 
       if (this.marital_file) {
         formData.append('marital_status_attachment', this.marital_file);
@@ -73273,9 +73274,15 @@ var render = function() {
                           : _vm._e()
                       ])
                     : _c("div", { staticClass: "col text-right" }, [
-                        _c("span", { staticClass: "badge badge-danger" }, [
-                          _vm._v("Please verify your information.")
-                        ])
+                        _vm.employee_requests_pending > 0
+                          ? _c("span", { staticClass: "badge badge-danger" }, [
+                              _vm._v(
+                                "Your employee information has been sent to HR for verification."
+                              )
+                            ])
+                          : _c("span", { staticClass: "badge badge-danger" }, [
+                              _vm._v("Please verify your information.")
+                            ])
                       ])
                 ]),
                 _vm._v(" "),
