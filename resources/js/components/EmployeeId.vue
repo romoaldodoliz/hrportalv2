@@ -129,11 +129,18 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-md-12 text-center">
-                            <iframe :src="employee_id_src" frameborder="0" height="700px" width="100%"></iframe>
+                            <iframe id="id-frame" :src="employee_id_src" frameborder="0" height="700px" width="100%"></iframe>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary btn-md" @click="printEmployeeId"> Print </button>
+                        <div v-if="employee_id.verification">
+                           <button v-if="employee_id.verification.verification == '1'" class="btn btn-primary btn-md" @click="printEmployeeId"> Print </button>
+                        </div>
+                        <div v-else class="text-center">
+                            <span class="badge badge-danger"><strong>Warning!</strong> This employee is not yet verified.</span>
+                        </div>
+                        
+
                     </div>
                 </div>
             </div>
@@ -170,8 +177,26 @@ export default {
     },
     methods:{
         previewPrintId(employee_id){
-            this.employee_id_src = "";
-            this.employee_id_src = 'employee_print_id/'+ employee_id.id +'#toolbar=0&navpanes=0&scrollbar=0';
+
+            var doc = document.getElementById("id-frame");
+            
+            if( doc.document ) {
+                document.test.document.body.innerHTML = '<h4 style="margin-left:2px;">Getting Ready.. Loading Image.. Extracting...</h4>'; //Chrome, IE
+            }else {
+                doc.contentDocument.body.innerHTML = '<h4 style="margin-left:2px;">Getting Ready.. Loading Image.. Extracting...</h4>'; //FireFox
+            }
+            
+            setTimeout(function() { 
+                if( doc.document ) {
+                    document.test.document.body.innerHTML = ""; //Chrome, IE
+                }else {
+                    doc.contentDocument.body.innerHTML = ""; //FireFox
+                }
+
+            }, 1000);
+
+            var num = Math.random();
+            this.employee_id_src = 'employee_print_id/'+ employee_id.id +'#toolbar=0&navpanes=0&scrollbar=0' + '?var=' + num;
             this.employee_id = employee_id;
         },
         printEmployeeId(){

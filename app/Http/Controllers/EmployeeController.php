@@ -545,7 +545,7 @@ class EmployeeController extends Controller
 
     public function employeeIdIndex(){
         session(['header_text' => 'Employees']);
-        $employee = Employee::select('id','employee_number','employee_number', 'first_name', 'last_name')->with('companies','departments','locations','print_id_logs')->orderBy('employee_number','ASC')->get();
+        $employee = Employee::select('id','employee_number','employee_number', 'first_name', 'last_name')->with('companies','departments','locations','print_id_logs','verification')->orderBy('employee_number','ASC')->get();
         return $employee;
     }
 
@@ -556,7 +556,7 @@ class EmployeeController extends Controller
         $department = $request->department;
         $location = $request->location;
         
-        $employee = Employee::with('companies','departments','locations','print_id_logs')
+        $employee = Employee::with('companies','departments','locations','print_id_logs','verification')
                     ->when(!empty($request->company), function($q) use($company) {
                         $q->whereHas('companies', function ($w) use($company)  {
                             $w->where('id', '=', $company);

@@ -32,6 +32,8 @@ Vue.component('userprofileverification', require('./components/UserProfileVerifi
 Vue.component('employeeapprovalrequest', require('./components/EmployeeApprovalRequest.vue').default);
 Vue.component('employeeid', require('./components/EmployeeId.vue').default);
 
+Vue.component('verifiedemployees', require('./components/VerifiedEmployees.vue').default);
+
 Vue.component('changepassword', require('./components/ChangePassword.vue').default);
 
 /**

@@ -80,6 +80,10 @@ class HomeController extends Controller
         return EmployeeDetailVerification::with('employee')->orderBy('created_at','DESC')->get();
     }
 
+    public function verifiedEmployeeList(){
+        return view('verified_employees');
+    }
+
     public function verifyEmployee(Request $request){
         $data = $request->all();
 

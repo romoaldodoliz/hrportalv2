@@ -182,4 +182,6 @@ Route::get('logout', function(){
         Route::post('verify_employee', 'HomeController@verifyEmployee');
 
         Route::get('verified_employees', 'HomeController@verifiedEmployees');
+
+        Route::get('verified-employees', 'HomeController@verifiedEmployeeList');
     });

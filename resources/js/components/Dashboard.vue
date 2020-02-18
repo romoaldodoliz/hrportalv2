@@ -88,7 +88,12 @@
                     <p class="mt-3 mb-0 text-muted text-sm">
                         <span class="text-success mr-2"></span>
                         <span class="text-nowrap">Last updated: Today</span>
+                        <span class="ml-4">
+                            <a href="/verified-employees" class="btn btn-sm btn-primary">See all</a>
+                        </span>
+                        
                     </p>
+                     
                     </div>
                 </div>
                 </div>

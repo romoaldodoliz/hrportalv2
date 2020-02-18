@@ -1,0 +1,135 @@
+<template>
+    <div>
+        <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 300px; background-image: url(/img/bg.jpg); background-size: cover; background-position: center bottom;">
+          <!-- Mask -->
+            <span class="mask bg-gradient-success opacity-7"></span>
+        </div>
+
+
+        <div class="container-fluid mt--9">
+            <div class="header-body">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-6">
+                         <div class="card shadow">
+                                <div class="card-header border-0">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h3 class="mb-0">ALL VERIFIED EMPLOYEES</h3>
+                                            <small class="text-muted">List of verified employees</small>
+                                        </div> 
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="col-xl-4 mb-2 mt-3 float-right">
+                                            <input type="text" name="employee_approval_requests" class="form-control" placeholder="Search" autocomplete="off" v-model="keywords" id="employee_approval_requests">
+                                        </div> 
+                                    </div>
+
+
+                                    <div class="table-responsive">
+                                        <!-- employees table -->
+                                        <table class="table align-items-center table-flush">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Date</th>
+                                                    <th scope="col">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(verified_employee,index) in filteredQueues" v-bind:key="index">
+                                                    <td>{{ verified_employee.employee.first_name }} {{ verified_employee.employee.last_name }}</td>
+                                                    <td>{{ verified_employee.created_at }}</td>
+                                                    <td>Ready for ID Printing</td>
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="row mb-3 mt-3 ml-1" v-if="filteredQueues.length ">
+                                        <div class="col-6">
+                                            <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                                <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                                            <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="mr-2">Filtered employee(s) : {{ filteredQueues.length }} </span><br>
+                                            <span class="mr-2">Total employee(s) : {{ verified_employees.length }}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</template>
+
+<script>
+    export default {
+       data() {
+           return {
+               errors: [],
+                currentPage: 0,
+                itemsPerPage: 25,
+                keywords: "",
+                verified_employees: [],
+           }
+       }, 
+       created () {
+           this.fetchVerifiedEmpoyees();
+       },
+       methods: {
+           fetchVerifiedEmpoyees() {
+                axios.get('/verified_employees')
+                .then(response => { 
+                    this.verified_employees = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+           },
+           setPage(pageNumber) {
+                this.currentPage = pageNumber;
+            },
+
+            resetStartRow() {
+                this.currentPage = 0;
+            },
+            showPreviousLink() {
+                return this.currentPage == 0 ? false : true;
+            },
+
+            showNextLink() {
+                return this.currentPage == (this.totalPages - 1) ? false : true;
+            }  
+       },
+       computed: {
+           filteredverifiedemployees(){
+                let self = this;
+                return Object.values(self.verified_employees).filter(verified_employee => {
+                    let full_name = verified_employee.employee.first_name + " " + verified_employee.employee.last_name;
+                    return verified_employee.employee.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || verified_employee.employee.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
+                });
+            },
+            totalPages() {
+                return Math.ceil(Object.values(this.verified_employees).length / this.itemsPerPage)
+            },
+            filteredQueues() {
+                var index = this.currentPage * this.itemsPerPage;
+                var queues_array = this.filteredverifiedemployees.slice(index, index + this.itemsPerPage);
+
+                if(this.currentPage >= this.totalPages) {
+                    this.currentPage = this.totalPages - 1
+                }
+
+                if(this.currentPage == -1) {
+                    this.currentPage = 0;
+                }
+
+                return queues_array;
+            },
+       },
+    }
+</script>

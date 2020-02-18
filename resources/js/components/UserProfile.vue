@@ -605,8 +605,9 @@
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
-                                
-                                <button id="verify_btn" :disabled="saveEmployee" v-if="!employee_copied.verification" type="button" class="btn btn-info btn-round btn-fill btn-lg" @click="verifyEmployee(employee_copied)" style="width:150px;">Verify</button>
+                               
+                                <button id="verify_btn" :disabled="saveEmployee" v-if="!employee_copied.verification && employee_requests_pending == 0" type="button" class="btn btn-info btn-round btn-fill btn-lg" @click="verifyEmployee(employee_copied)" style="width:150px;">Verify</button>
+                              
                             </div>
                         </div>
                     </div>
@@ -954,7 +955,7 @@
                 keywords : '',
                 currentPage: 0,
                 itemsPerPage: 5,
-                employee_requests_pending : ''
+                employee_requests_pending : 0
             }
         },
         created(){
@@ -1001,6 +1002,9 @@
                                     confirmButtonText: 'Okay'
                                 });
                                 this.employee_copied = response.data; 
+                                document.getElementById("terms_conditions").checked = false;
+
+                                this.termsConditionsValidate();
                             })
                             .catch(error => {
                             
@@ -1457,7 +1461,7 @@
                 this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
             },
             fetchEmployeeRequestPending(employee_id){
-                this.employee_requests_pending = '';
+                this.employee_requests_pending = 0;
                 axios.get('/user-pendings/' + employee_id)
                 .then(response => { 
                     this.employee_requests_pending = response.data;
@@ -1491,6 +1495,8 @@
                             axios.delete(`/employee-user-profile/${employee_request_id}`)
                             .then(response => {
                                 this.employee_requests.splice(index, 1);
+
+                                this.fetchEmployeeRequestPending(this.employee_copied.id);
                                 Swal.fire(
                                 'Deleted!',
                                 'Your request has been deleted.',
