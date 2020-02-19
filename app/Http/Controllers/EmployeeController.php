@@ -649,7 +649,7 @@ class EmployeeController extends Controller
         
             $image ='storage/id_image/employee_image/' . $employee->id . '.png';
            
-            $destinationPath = storage_path('app/public/id_image/temp_employee_image/');
+            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
 
             if(!File::isDirectory($destinationPath)){
                 File::makeDirectory($destinationPath, 0777, true, true);
