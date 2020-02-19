@@ -10,7 +10,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h3 class="mb-0">Activities</h3>
+                                            <h3 class="mb-0">ACTIVITY LOGS</h3>
                                             <small class="text-muted">List of all user logs</small>
                                         </div> 
                                     </div>

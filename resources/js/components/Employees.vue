@@ -9,7 +9,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h3 class="mb-0">ALL EMPLOYEES</h3>
+                                            <h3 class="mb-0">EMPLOYEES</h3>
                                             <small class="text-muted">List of all employees</small>
                                         </div> 
                                         <div class="col text-right">
@@ -625,7 +625,14 @@
                                                                     <input type="date" class="form-control" v-model="row.bdate">
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" class="form-control" v-model="row.relation">
+                                                                    <select class="form-control" v-model="row.relation" id="relation">
+                                                                        <option value="">Choose Relation</option>
+                                                                        <option value="MOTHER">MOTHER</option>
+                                                                        <option value="FATHER">FATHER</option>
+                                                                        <option value="BROTHER">BROTHER</option>
+                                                                        <option value="SISTER">SISTER</option>
+                                                                        <option value="CHILD">CHILD</option>
+                                                                    </select>
                                                                 </td>
                                                                 <td with="5%">
                                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">Remove</button>

@@ -27,7 +27,7 @@
                                 <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-6-tab" data-toggle="tab" href="#tabs-icons-text-6" role="tab" aria-controls="tabs-icons-text-6" aria-selected="false"><i class="fas fa-layer-group mr-2"></i>LEVELS</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-7-tab" data-toggle="tab" href="#tabs-icons-text-7" role="tab" aria-controls="tabs-icons-text-7" aria-selected="false"><i class="fas fa-id-card-alt mr-2"></i>MARITALS</a>
+                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-7-tab" data-toggle="tab" href="#tabs-icons-text-7" role="tab" aria-controls="tabs-icons-text-7" aria-selected="false"><i class="fas fa-id-card-alt mr-2"></i> <span style="font-size:12px;">MARITALS STATUS</span> </a>
                             </li>
                         </ul>
                     </div>

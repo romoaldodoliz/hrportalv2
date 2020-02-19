@@ -9415,6 +9415,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -11135,6 +11142,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -14792,6 +14806,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -57852,7 +57874,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row align-items-center" }, [
       _c("div", { staticClass: "col" }, [
-        _c("h3", { staticClass: "mb-0" }, [_vm._v("Activities")]),
+        _c("h3", { staticClass: "mb-0" }, [_vm._v("ACTIVITY LOGS")]),
         _vm._v(" "),
         _c("small", { staticClass: "text-muted" }, [
           _vm._v("List of all user logs")
@@ -60884,37 +60906,115 @@ var render = function() {
                                                 ]),
                                                 _vm._v(" "),
                                                 _c("td", [
-                                                  _c("input", {
-                                                    directives: [
-                                                      {
-                                                        name: "model",
-                                                        rawName: "v-model",
-                                                        value: row.relation,
-                                                        expression:
-                                                          "row.relation"
-                                                      }
-                                                    ],
-                                                    staticClass: "form-control",
-                                                    attrs: { type: "text" },
-                                                    domProps: {
-                                                      value: row.relation
-                                                    },
-                                                    on: {
-                                                      input: function($event) {
-                                                        if (
-                                                          $event.target
-                                                            .composing
-                                                        ) {
-                                                          return
+                                                  _c(
+                                                    "select",
+                                                    {
+                                                      directives: [
+                                                        {
+                                                          name: "model",
+                                                          rawName: "v-model",
+                                                          value: row.relation,
+                                                          expression:
+                                                            "row.relation"
                                                         }
-                                                        _vm.$set(
-                                                          row,
-                                                          "relation",
-                                                          $event.target.value
-                                                        )
+                                                      ],
+                                                      staticClass:
+                                                        "form-control",
+                                                      attrs: { id: "relation" },
+                                                      on: {
+                                                        change: function(
+                                                          $event
+                                                        ) {
+                                                          var $$selectedVal = Array.prototype.filter
+                                                            .call(
+                                                              $event.target
+                                                                .options,
+                                                              function(o) {
+                                                                return o.selected
+                                                              }
+                                                            )
+                                                            .map(function(o) {
+                                                              var val =
+                                                                "_value" in o
+                                                                  ? o._value
+                                                                  : o.value
+                                                              return val
+                                                            })
+                                                          _vm.$set(
+                                                            row,
+                                                            "relation",
+                                                            $event.target
+                                                              .multiple
+                                                              ? $$selectedVal
+                                                              : $$selectedVal[0]
+                                                          )
+                                                        }
                                                       }
-                                                    }
-                                                  })
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "option",
+                                                        {
+                                                          attrs: { value: "" }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "Choose Relation"
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value: "MOTHER"
+                                                          }
+                                                        },
+                                                        [_vm._v("MOTHER")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value: "FATHER"
+                                                          }
+                                                        },
+                                                        [_vm._v("FATHER")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value: "BROTHER"
+                                                          }
+                                                        },
+                                                        [_vm._v("BROTHER")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value: "SISTER"
+                                                          }
+                                                        },
+                                                        [_vm._v("SISTER")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value: "CHILD"
+                                                          }
+                                                        },
+                                                        [_vm._v("CHILD")]
+                                                      )
+                                                    ]
+                                                  )
                                                 ]),
                                                 _vm._v(" "),
                                                 _c(
@@ -64232,7 +64332,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row align-items-center" }, [
       _c("div", { staticClass: "col" }, [
-        _c("h3", { staticClass: "mb-0" }, [_vm._v("Employee IDs")]),
+        _c("h3", { staticClass: "mb-0" }, [_vm._v("EMPLOYEE ID's")]),
         _vm._v(" "),
         _c("small", { staticClass: "text-muted" }, [
           _vm._v("List of all employees")
@@ -67800,35 +67900,95 @@ var render = function() {
                                             ]),
                                             _vm._v(" "),
                                             _c("td", [
-                                              _c("input", {
-                                                directives: [
-                                                  {
-                                                    name: "model",
-                                                    rawName: "v-model",
-                                                    value: row.relation,
-                                                    expression: "row.relation"
-                                                  }
-                                                ],
-                                                staticClass: "form-control",
-                                                attrs: { type: "text" },
-                                                domProps: {
-                                                  value: row.relation
-                                                },
-                                                on: {
-                                                  input: function($event) {
-                                                    if (
-                                                      $event.target.composing
-                                                    ) {
-                                                      return
+                                              _c(
+                                                "select",
+                                                {
+                                                  directives: [
+                                                    {
+                                                      name: "model",
+                                                      rawName: "v-model",
+                                                      value: row.relation,
+                                                      expression: "row.relation"
                                                     }
-                                                    _vm.$set(
-                                                      row,
-                                                      "relation",
-                                                      $event.target.value
-                                                    )
+                                                  ],
+                                                  staticClass: "form-control",
+                                                  attrs: { id: "relation" },
+                                                  on: {
+                                                    change: function($event) {
+                                                      var $$selectedVal = Array.prototype.filter
+                                                        .call(
+                                                          $event.target.options,
+                                                          function(o) {
+                                                            return o.selected
+                                                          }
+                                                        )
+                                                        .map(function(o) {
+                                                          var val =
+                                                            "_value" in o
+                                                              ? o._value
+                                                              : o.value
+                                                          return val
+                                                        })
+                                                      _vm.$set(
+                                                        row,
+                                                        "relation",
+                                                        $event.target.multiple
+                                                          ? $$selectedVal
+                                                          : $$selectedVal[0]
+                                                      )
+                                                    }
                                                   }
-                                                }
-                                              })
+                                                },
+                                                [
+                                                  _c(
+                                                    "option",
+                                                    { attrs: { value: "" } },
+                                                    [_vm._v("Choose Relation")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: { value: "MOTHER" }
+                                                    },
+                                                    [_vm._v("MOTHER")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: { value: "FATHER" }
+                                                    },
+                                                    [_vm._v("FATHER")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: {
+                                                        value: "BROTHER"
+                                                      }
+                                                    },
+                                                    [_vm._v("BROTHER")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: { value: "SISTER" }
+                                                    },
+                                                    [_vm._v("SISTER")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: { value: "CHILD" }
+                                                    },
+                                                    [_vm._v("CHILD")]
+                                                  )
+                                                ]
+                                              )
                                             ]),
                                             _vm._v(" "),
                                             _c(
@@ -68323,7 +68483,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row align-items-center" }, [
       _c("div", { staticClass: "col" }, [
-        _c("h3", { staticClass: "mb-0" }, [_vm._v("ALL EMPLOYEES")]),
+        _c("h3", { staticClass: "mb-0" }, [_vm._v("EMPLOYEES")]),
         _vm._v(" "),
         _c("small", { staticClass: "text-muted" }, [
           _vm._v("List of all employees")
@@ -72326,7 +72486,10 @@ var staticRenderFns = [
               },
               [
                 _c("i", { staticClass: "fas fa-id-card-alt mr-2" }),
-                _vm._v("MARITALS")
+                _vm._v(" "),
+                _c("span", { staticStyle: { "font-size": "12px" } }, [
+                  _vm._v("MARITALS STATUS")
+                ])
               ]
             )
           ])
@@ -75383,31 +75546,81 @@ var render = function() {
                                 ]),
                                 _vm._v(" "),
                                 _c("td", [
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: row.relation,
-                                        expression: "row.relation"
-                                      }
-                                    ],
-                                    staticClass: "form-control",
-                                    attrs: { type: "text" },
-                                    domProps: { value: row.relation },
-                                    on: {
-                                      input: function($event) {
-                                        if ($event.target.composing) {
-                                          return
+                                  _c(
+                                    "select",
+                                    {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: row.relation,
+                                          expression: "row.relation"
                                         }
-                                        _vm.$set(
-                                          row,
-                                          "relation",
-                                          $event.target.value
-                                        )
+                                      ],
+                                      staticClass: "form-control",
+                                      attrs: { id: "relation" },
+                                      on: {
+                                        change: function($event) {
+                                          var $$selectedVal = Array.prototype.filter
+                                            .call(
+                                              $event.target.options,
+                                              function(o) {
+                                                return o.selected
+                                              }
+                                            )
+                                            .map(function(o) {
+                                              var val =
+                                                "_value" in o
+                                                  ? o._value
+                                                  : o.value
+                                              return val
+                                            })
+                                          _vm.$set(
+                                            row,
+                                            "relation",
+                                            $event.target.multiple
+                                              ? $$selectedVal
+                                              : $$selectedVal[0]
+                                          )
+                                        }
                                       }
-                                    }
-                                  })
+                                    },
+                                    [
+                                      _c("option", { attrs: { value: "" } }, [
+                                        _vm._v("Choose Relation")
+                                      ]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "MOTHER" } },
+                                        [_vm._v("MOTHER")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "FATHER" } },
+                                        [_vm._v("FATHER")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "BROTHER" } },
+                                        [_vm._v("BROTHER")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "SISTER" } },
+                                        [_vm._v("SISTER")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "CHILD" } },
+                                        [_vm._v("CHILD")]
+                                      )
+                                    ]
+                                  )
                                 ]),
                                 _vm._v(" "),
                                 _c("td", [
@@ -81634,7 +81847,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row align-items-center" }, [
       _c("div", { staticClass: "col" }, [
-        _c("h3", { staticClass: "mb-0" }, [_vm._v("ALL USERS")]),
+        _c("h3", { staticClass: "mb-0" }, [_vm._v("USERS")]),
         _vm._v(" "),
         _c("small", { staticClass: "text-muted" }, [
           _vm._v("List of all users")

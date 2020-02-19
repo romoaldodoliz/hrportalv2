@@ -65,7 +65,7 @@
                 @if(auth()->user()->roles[0]->name == "Administrator")
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/activities') }}">
-                            <i class="fas fa-clipboard-list text-default" style="font-size: 15px;"></i> Activity Log
+                            <i class="fas fa-clipboard-list text-default" style="font-size: 15px;"></i> Activity Logs
                         </a>
                     </li>
                 @endif

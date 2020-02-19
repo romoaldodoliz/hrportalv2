@@ -13,7 +13,7 @@
                             <div class="card-header border-0">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h3 class="mb-0">Employee IDs</h3>
+                                        <h3 class="mb-0">EMPLOYEE ID's</h3>
                                         <small class="text-muted">List of all employees</small>
                                     </div> 
                                 </div>

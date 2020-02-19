@@ -509,7 +509,15 @@
                                                         <input type="date" class="form-control" v-model="row.bdate">
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" v-model="row.relation">
+                                                        <select class="form-control" v-model="row.relation" id="relation">
+                                                            <option value="">Choose Relation</option>
+                                                            <option value="MOTHER">MOTHER</option>
+                                                            <option value="FATHER">FATHER</option>
+                                                            <option value="BROTHER">BROTHER</option>
+                                                            <option value="SISTER">SISTER</option>
+                                                            <option value="CHILD">CHILD</option>
+                                                        </select> 
+
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">Remove</button>
