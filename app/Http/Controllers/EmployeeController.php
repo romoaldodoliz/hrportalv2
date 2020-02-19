@@ -586,13 +586,13 @@ class EmployeeController extends Controller
             $address = isset($location->addresses->first()->name) ? $location->addresses->first()->name : '';
         }
 
-        function RotatedImage($file,$x,$y,$w,$h,$angle)
-        {
-            //Image rotated around its upper-left corner
-            Fpdf::Rotate($angle,$x,$y);
-            Fpdf::Image($file,$x,$y,$w,$h);
-            Fpdf::Rotate(0);
-        }
+        // function RotatedImage($file,$x,$y,$w,$h,$angle)
+        // {
+        //     //Image rotated around its upper-left corner
+        //     Fpdf::Rotate($angle,$x,$y);
+        //     Fpdf::Image($file,$x,$y,$w,$h);
+        //     Fpdf::Rotate(0);
+        // }
 
         function departmentColor($color){
             
@@ -740,9 +740,9 @@ class EmployeeController extends Controller
                 $constraint->aspectRatio();
             })->save($destinationPath.'/'. $employee->id . '.png');
     
-            if (file_exists('storage/id_image/temp_employee_signature/' . $employee->id.'.png')){
-                RotatedImage(url("storage/id_image/temp_employee_signature/") . '/' . $employee->id.'.png',30, 67, 22, 8,15);
-            }
+            // if (file_exists('storage/id_image/temp_employee_signature/' . $employee->id.'.png')){
+            //     RotatedImage(url("storage/id_image/temp_employee_signature/") . '/' . $employee->id.'.png',30, 67, 22, 8,15);
+            // }
         }
 
         //Back
