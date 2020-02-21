@@ -124,6 +124,20 @@
                                     <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
                                 </div>
                             </div>
+
+
+                            <div class="col-md-12">
+                                <div class="form-group " style="border:1px solid;border-radius:5px;">
+                                
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="view_confidential" class="custom-control-input" v-model="user_copied.view_confidential" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="view_confidential">View Confidential Employee</label>
+                                    </div>
+
+                                    <span class="text-danger" v-if="errors.view_confidential">{{ errors.view_confidential[0] }}</span> 
+                                </div>
+                            </div>
+                            
                         </div>
                         
                     </div>
@@ -301,6 +315,7 @@
                     name: user_copied.name,
                     email: user_copied.email,
                     role: user_copied.role,
+                    view_confidential: user_copied.view_confidential,
                     _method: 'PATCH'
                 })
                 .then(response => {

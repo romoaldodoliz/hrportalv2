@@ -85,7 +85,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>{{ employee_id.employee_number }}</td>
+                                            <td>{{ employee_id.id_number }}</td>
                                             <td>{{ employee_id.first_name }} {{ employee_id.last_name }}</td>
                                             <td>{{ employee_id.companies[0] ? employee_id.companies[0].name : '' }}</td>
                                             <td>{{ employee_id.departments[0] ? employee_id.departments[0].name : '' }}</td>

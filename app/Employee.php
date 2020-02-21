@@ -15,6 +15,8 @@ class Employee extends Model implements AuditableContract
     protected $auditTimestamps = true;
     
     protected $fillable = [
+    	'series_number',
+    	'id_number',
     	'employee_number',
     	'company', 
         'department',
@@ -64,6 +66,7 @@ class Employee extends Model implements AuditableContract
         'vocational_graduated',
         'vocational_course',
         'vocational_year',
+        'confidential',
     ];
     
 

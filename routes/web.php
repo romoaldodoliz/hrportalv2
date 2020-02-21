@@ -76,7 +76,12 @@ Route::get('logout', function(){
             Route::get('employee_print_id/{employee}',['as'=>'employees.print','uses'=>'EmployeeController@print_id','middleware' => ['role:Administrator|Administrator Printer']]);
             Route::get('/employee_ids',['as'=>'employees.employee_id_index','uses'=>'EmployeeController@employee_id_index','middleware' => ['role:Administrator|Administrator Printer']]);
             Route::get('/employee-ids',['as'=>'employees.employeeIdIndex','uses'=>'EmployeeController@employeeIdIndex','middleware' => ['role:Administrator|Administrator Printer']]);
-    
+        
+            //Transfer Employee 
+            Route::patch('/transfer-employee/{employee}', ['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployee','middleware'=>['role:Administrator|HR Staff']]);
+
+            //Transfer Employee Logs
+            Route::get('/transfer-employee-logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
         // Settings
         Route::get('settings',['as'=>'settings.index','uses'=>'SettingsController@index','middleware' => ['role:Administrator']]);
 

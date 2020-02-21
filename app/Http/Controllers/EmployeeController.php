@@ -15,6 +15,7 @@ use App\User;
 use App\PrintIdLog;
 use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
+use App\EmployeeTransfer;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -35,7 +36,15 @@ class EmployeeController extends Controller
 
     public function indexData()
     {
-        return Employee::with('companies','departments','locations')->orderBy('employee_number', 'ASC')->get();
+        $check_user = User::where('id',Auth::user()->id)->first();
+
+        return Employee::with('companies','departments','locations')
+                            ->when($check_user['view_confidential'] != "YES" , function($q) {
+                                $q->where('confidential','NO');
+                            })
+                            ->orderBy('series_number', 'ASC')
+                            ->get();
+        
     }
     public function employeeindexCount()
     {
@@ -545,7 +554,16 @@ class EmployeeController extends Controller
 
     public function employeeIdIndex(){
         session(['header_text' => 'Employees']);
-        $employee = Employee::select('id','employee_number','employee_number', 'first_name', 'last_name')->with('companies','departments','locations','print_id_logs','verification')->orderBy('employee_number','ASC')->get();
+
+        $check_user = User::where('id',Auth::user()->id)->first();
+
+        $employee = Employee::select('id','employee_number','id_number', 'first_name', 'last_name')
+                            ->with('companies','departments','locations','print_id_logs','verification')
+                            ->when($check_user['view_confidential'] != "YES" , function($q) {
+                                $q->where('confidential','NO');
+                            })
+                            ->orderBy('employee_number','ASC')
+                            ->get();
         return $employee;
     }
 
@@ -556,6 +574,8 @@ class EmployeeController extends Controller
         $department = $request->department;
         $location = $request->location;
         
+        $check_user = User::where('id',Auth::user()->id)->first();
+
         $employee = Employee::with('companies','departments','locations','print_id_logs','verification')
                     ->when(!empty($request->company), function($q) use($company) {
                         $q->whereHas('companies', function ($w) use($company)  {
@@ -571,6 +591,9 @@ class EmployeeController extends Controller
                         $q->whereHas('locations', function ($w) use($location)  {
                             $w->where('id', '=', $location);
                         });
+                    })
+                    ->when($check_user['view_confidential'] != "YES" , function($q) {
+                        $q->where('confidential','NO');
                     })
                     ->orderBy('employee_number','DESC')->get();
         return $employee;
@@ -904,4 +927,140 @@ class EmployeeController extends Controller
 
         return $employee;
     }
+
+    public function transferEmployee(Request $request, Employee $employee){
+
+        $employee_data = Employee::with('companies','departments','locations','assign_heads')->where('id',$employee->id)->first();
+
+        $data = $request->all();
+  
+        $this->validate($request, [
+            'position' => 'required',
+            'date_hired' => 'required',
+            'company_list' => 'required',
+            'department_list' => 'required',
+            'location_list' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            //Generate New Employee Number
+            $new_id_number = '';
+            $new_series_number = '';
+            $find_last = Employee::select('series_number','date_hired')
+                                    ->whereNotNull('id_number')
+                                    ->orderBy('series_number','DESC')
+                                    ->where('status','Active')
+                                    ->first();             
+            if($find_last){
+                $series_number = $find_last['series_number'];
+
+                $new_company = Company::where('id',$data['company_list'])->first();
+
+                $check_transfer_employee = EmployeeTransfer::where('employee_id',$employee_data['id'])->get();
+
+                if(count($check_transfer_employee) > 0){
+                    $first_year = $check_transfer_employee[0]['previous_date_hired'] ? date('y',strtotime($check_transfer_employee[0]['previous_date_hired'])) : 'XX';
+                    $second_year = $data['date_hired'] ? date('y',strtotime($data['date_hired'])) : 'XX';
+                    $year_number = str_pad($first_year,2,'0',STR_PAD_LEFT) . str_pad($second_year,2,'0',STR_PAD_LEFT);
+                }else{
+                    $first_year = $employee_data['date_hired'] ? date('y',strtotime($employee_data['date_hired'])) : 'XX';
+                    $second_year = $data['date_hired'] ? date('y',strtotime($data['date_hired'])) : 'XX';
+                    $year_number = str_pad($first_year,2,'0',STR_PAD_LEFT) . str_pad($second_year,2,'0',STR_PAD_LEFT);
+                }
+                $new_series_number = $series_number + 1;
+                $new_id_number = $new_company['company_code'] . '-' . str_pad($new_series_number, 5, '0', STR_PAD_LEFT)  . '-' . $year_number;
+                
+            }
+            
+            $data['id_number'] = $new_id_number;
+            $data['series_number'] = str_pad($new_series_number, 5, '0', STR_PAD_LEFT);
+
+
+            if($employee->update($data)){
+                $employee->companies()->sync( (array) $data['company_list']);
+                $employee->departments()->sync( (array) $data['department_list']);
+                $employee->locations()->sync( (array) $data['location_list']);
+
+                //Delete Approvers
+                if($employee_data['assign_heads']){
+                    foreach($employee_data['assign_heads'] as $assign_head){
+                        $employee->assign_heads()->where('id',$assign_head->id)->delete();
+                    }
+                }
+
+                //Add Approvers
+                if($data['head_approvers']){
+                    $approvers = json_decode($data['head_approvers']);
+                   foreach($approvers as $head_approver){
+                        $data_head_approver = [
+                            'employee_id'=>$employee_data['id'],
+                            'employee_head_id'=>$head_approver->employee_head_id,
+                            'head_id'=>$head_approver->head_id
+                        ];
+                        if(!empty($head_approver->id)){
+                            $employee->assign_heads()->where('id',$head_approver->id)->update($data_head_approver);
+                        }else{
+                            $employee->assign_heads()->create($data_head_approver);
+                        }
+                   }
+                }
+
+                //Save Transfer Logs
+                $transfer_logs_data = [];
+                $transfer_logs_data['employee_id'] = $employee_data['id'];
+
+                $assign_heads = AssignHead::where('employee_id',$employee->id)->get();
+                //OLD
+                $transfer_logs_data['previous_id_number'] = $employee_data['id_number'];
+                $transfer_logs_data['previous_position'] = $employee_data['position'];
+                $transfer_logs_data['previous_date_hired'] = $employee_data['date_hired'];
+                $transfer_logs_data['previous_division'] = $employee_data['division'];
+                $transfer_logs_data['previous_department'] = $employee_data['departments'] ? $employee_data['departments'][0]['id'] : "";
+                $transfer_logs_data['previous_company'] = $employee_data['companies'] ? $employee_data['companies'][0]['id'] : "";
+                $transfer_logs_data['previous_location'] = $employee_data['locations'] ? $employee_data['locations'][0]['id'] : "";
+                $transfer_logs_data['previous_system_approvers'] = $employee_data['assign_heads'] ? json_encode($assign_heads) : "";
+
+                //New
+                $transfer_logs_data['new_id_number'] = $new_id_number;
+                $transfer_logs_data['new_position'] = $data['position'];
+                $transfer_logs_data['new_date_hired'] = $data['date_hired'];
+                $transfer_logs_data['new_division'] = $data['division'];
+                $transfer_logs_data['new_department'] =  $data['department_list'] ? $data['department_list'] : "";
+                $transfer_logs_data['new_company'] = $data['company_list'] ? $data['company_list'] : "";
+                $transfer_logs_data['new_location'] = $data['location_list'] ? $data['location_list'] : "";
+                $transfer_logs_data['new_system_approvers'] = $data['head_approvers'] ? json_encode($data['head_approvers']) : "";
+
+                $transfer_logs_data['transferred_by'] =  Auth::user()->id;
+
+                EmployeeTransfer::create($transfer_logs_data);
+
+                DB::commit();
+                
+                return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return $employee;
+        }
+
+        return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
+
+    }
+
+    public function transferEmployeeLogs(Employee $employee){
+
+        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
+        
+        if($transfer_employee_logs){
+            foreach($transfer_employee_logs as $key => $transfer_employee_log){
+                $transfer_employee_logs[$key] = $transfer_employee_log;
+                $transfer_employee_logs[$key]['previous_system_approvers'] = json_decode($transfer_employee_log['previous_system_approvers']);
+                $transfer_employee_logs[$key]['new_system_approvers'] = json_decode($transfer_employee_log['new_system_approvers']);
+            }
+        }
+        return $transfer_employee_logs;
+
+    }
+
 }

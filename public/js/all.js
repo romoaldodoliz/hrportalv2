@@ -11867,6 +11867,209 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -11878,8 +12081,14 @@ __webpack_require__.r(__webpack_exports__);
       employees: [],
       employee: [],
       employee_copied: [],
+      transfer_employee: [],
+      transferEmployeeDetails: [],
+      transfer_approvers: [],
+      viewTransferLogsList: false,
+      transferLogsList: [],
       copied_role: [],
       roles: [],
+      transfer_errors: [],
       errors: [],
       currentPage: 0,
       itemsPerPage: 50,
@@ -11923,6 +12132,82 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchPositionApprovers();
   },
   methods: {
+    clearTransferForm: function clearTransferForm() {
+      this.transfer_employee.company_list = "";
+      this.transfer_employee.department_list = "";
+      this.transfer_employee.location_list = "";
+      this.transfer_employee.division = "";
+      this.transfer_employee.position = "";
+      this.transfer_employee.date_hired = "";
+      this.transfer_approvers = [];
+    },
+    transferEmployee: function transferEmployee(employee) {
+      this.transferEmployeeDetails = employee;
+    },
+    saveTransferEmployee: function saveTransferEmployee(transfer_employee) {
+      var _this = this;
+
+      var v = this;
+      var index = this.employees.findIndex(function (item) {
+        return item.id == v.transferEmployeeDetails.id;
+      });
+      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+        title: 'Are you sure you want to transfer this employee?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Transfer'
+      }).then(function (result) {
+        if (result.value) {
+          var formData = new FormData();
+          formData.append('employee_id', v.transferEmployeeDetails.id);
+          formData.append('company_list', transfer_employee.company_list ? transfer_employee.company_list : "");
+          formData.append('department_list', transfer_employee.department_list ? transfer_employee.department_list : "");
+          formData.append('location_list', transfer_employee.location_list ? transfer_employee.location_list : "");
+          formData.append('division', transfer_employee.division ? transfer_employee.division : "");
+          formData.append('position', transfer_employee.position ? transfer_employee.position : "");
+          formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
+          formData.append('head_approvers', _this.transfer_approvers ? JSON.stringify(_this.transfer_approvers) : "");
+          formData.append('_method', 'PATCH');
+          axios.post("/transfer-employee/".concat(v.transferEmployeeDetails.id), formData).then(function (response) {
+            _this.fetchEmployees();
+
+            _this.clearTransferForm();
+
+            _this.transferEmployeeDetails = response.data;
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+              title: 'Success!',
+              text: 'Employee has been successfully transferred.',
+              icon: 'success',
+              confirmButtonText: 'Okay'
+            });
+          })["catch"](function (error) {
+            _this.transfer_errors = error.response.data.errors;
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+              title: 'Warning!',
+              text: 'Unable to Update Employee. Check Entries and then try again.',
+              icon: 'error',
+              confirmButtonText: 'Okay'
+            });
+          });
+        }
+      });
+    },
+    viewTransferEmployeeLogs: function viewTransferEmployeeLogs() {
+      var _this2 = this;
+
+      this.viewTransferLogsList = true;
+      this.transferLogsList = [];
+      axios.get('/transfer-employee-logs/' + this.transferEmployeeDetails.id).then(function (response) {
+        _this2.transferLogsList = response.data;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.error;
+      });
+    },
+    closeTransferEmployeeLogs: function closeTransferEmployeeLogs() {
+      this.viewTransferLogsList = false;
+    },
     profileImageLoadError: function profileImageLoadError() {
       this.profile_image = 'storage/default.png';
     },
@@ -11937,7 +12222,7 @@ __webpack_require__.r(__webpack_exports__);
       return "".concat(head_approver.first_name + " " + head_approver.last_name);
     },
     updateEmployee: function updateEmployee(employee_copied) {
-      var _this = this;
+      var _this3 = this;
 
       this.errors = [];
       this.edit_updated = false;
@@ -12001,6 +12286,7 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
       formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
       formData.append('status', employee_copied.status ? employee_copied.status : "-");
+      formData.append('confidential', employee_copied.confidential ? employee_copied.confidential : "NO");
       formData.append('date_regularized', employee_copied.date_regularized ? employee_copied.date_regularized : "");
       formData.append('date_resigned', employee_copied.date_resigned ? employee_copied.date_resigned : ""); //Contact
 
@@ -12029,11 +12315,11 @@ __webpack_require__.r(__webpack_exports__);
           'Content-Type': 'multipart/form-data'
         }
       }).then(function (response) {
-        _this.employees.splice(index, 1, response.data);
+        _this3.employees.splice(index, 1, response.data);
 
         document.getElementById('edit_btn').disabled = false;
 
-        _this.copyObject(response.data);
+        _this3.copyObject(response.data);
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Success!',
@@ -12042,7 +12328,7 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Okay'
         });
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this3.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
@@ -12102,47 +12388,47 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     fetchEmployees: function fetchEmployees() {
-      var _this2 = this;
+      var _this4 = this;
 
       this.table_loading = true;
       axios.get('/employees-all').then(function (response) {
-        _this2.employees = response.data;
-        _this2.table_loading = false;
-      })["catch"](function (error) {
-        _this2.errors = error.response.data.error;
-      });
-    },
-    fetchHeadApprovers: function fetchHeadApprovers() {
-      var _this3 = this;
-
-      axios.get('/employee-head-approvers').then(function (response) {
-        _this3.employee_head_approvers = response.data;
-      })["catch"](function (error) {
-        _this3.errors = error.response.data.error;
-      });
-    },
-    fetchPositionApprovers: function fetchPositionApprovers() {
-      var _this4 = this;
-
-      axios.get('/heads-all').then(function (response) {
-        _this4.employee_position_approvers = response.data;
+        _this4.employees = response.data;
+        _this4.table_loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.error;
       });
     },
-    fetchApprovers: function fetchApprovers() {
+    fetchHeadApprovers: function fetchHeadApprovers() {
       var _this5 = this;
 
-      this.approvers = [];
-      this.deletedApprover = [];
-      axios.get('/employee-approvers/' + this.employee_copied.id).then(function (response) {
-        _this5.approvers = response.data;
+      axios.get('/employee-head-approvers').then(function (response) {
+        _this5.employee_head_approvers = response.data;
       })["catch"](function (error) {
         _this5.errors = error.response.data.error;
       });
     },
-    fetchDependents: function fetchDependents() {
+    fetchPositionApprovers: function fetchPositionApprovers() {
       var _this6 = this;
+
+      axios.get('/heads-all').then(function (response) {
+        _this6.employee_position_approvers = response.data;
+      })["catch"](function (error) {
+        _this6.errors = error.response.data.error;
+      });
+    },
+    fetchApprovers: function fetchApprovers() {
+      var _this7 = this;
+
+      this.approvers = [];
+      this.deletedApprover = [];
+      axios.get('/employee-approvers/' + this.employee_copied.id).then(function (response) {
+        _this7.approvers = response.data;
+      })["catch"](function (error) {
+        _this7.errors = error.response.data.error;
+      });
+    },
+    fetchDependents: function fetchDependents() {
+      var _this8 = this;
 
       var v = this;
       this.dependents = [];
@@ -12161,7 +12447,7 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (error) {
-        _this6.errors = error.response.data.error;
+        _this8.errors = error.response.data.error;
       });
     },
     addApprover: function addApprover() {
@@ -12172,7 +12458,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     removeApprover: function removeApprover(index, id) {
-      var _this7 = this;
+      var _this9 = this;
 
       var head_id = id;
 
@@ -12186,16 +12472,26 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this7.deletedApprover.push({
+            _this9.deletedApprover.push({
               id: head_id
             });
 
-            _this7.approvers.splice(index, 1);
+            _this9.approvers.splice(index, 1);
           }
         });
       } else {
         this.approvers.splice(index, 1);
       }
+    },
+    addTransferApprover: function addTransferApprover() {
+      this.transfer_approvers.push({
+        id: "",
+        employee_head_id: "",
+        head_id: ""
+      });
+    },
+    removeTransferApprover: function removeTransferApprover(index, id) {
+      this.transfer_approvers.splice(index, 1);
     },
     addDependent: function addDependent() {
       this.dependents.push({
@@ -12207,7 +12503,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     removeDependent: function removeDependent(index, id) {
-      var _this8 = this;
+      var _this10 = this;
 
       var dependent_id = id;
 
@@ -12221,11 +12517,11 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this8.deletedDependent.push({
+            _this10.deletedDependent.push({
               id: dependent_id
             });
 
-            _this8.dependents.splice(index, 1);
+            _this10.dependents.splice(index, 1);
           }
         });
       } else {
@@ -12247,61 +12543,61 @@ __webpack_require__.r(__webpack_exports__);
       this.marital_file = marital.files[0];
     },
     fetchMaritalStatuses: function fetchMaritalStatuses() {
-      var _this9 = this;
-
-      axios.get('/maritals-options').then(function (response) {
-        _this9.marital_statuses = response.data;
-      })["catch"](function (error) {
-        _this9.errors = error.response.data.error;
-      });
-    },
-    fetchCompanies: function fetchCompanies() {
-      var _this10 = this;
-
-      axios.get('/companies-all').then(function (response) {
-        _this10.companies = response.data;
-      })["catch"](function (error) {
-        _this10.errors = error.response.data.error;
-      });
-    },
-    fetchDepartments: function fetchDepartments() {
       var _this11 = this;
 
-      axios.get('/departments-all').then(function (response) {
-        _this11.departments = response.data;
+      axios.get('/maritals-options').then(function (response) {
+        _this11.marital_statuses = response.data;
       })["catch"](function (error) {
         _this11.errors = error.response.data.error;
       });
     },
-    fetchLocations: function fetchLocations() {
+    fetchCompanies: function fetchCompanies() {
       var _this12 = this;
 
-      axios.get('/locations-all').then(function (response) {
-        _this12.locations = response.data;
+      axios.get('/companies-all').then(function (response) {
+        _this12.companies = response.data;
       })["catch"](function (error) {
         _this12.errors = error.response.data.error;
       });
     },
-    fetchDivisions: function fetchDivisions() {
+    fetchDepartments: function fetchDepartments() {
       var _this13 = this;
 
-      axios.get('/division-options/' + this.employee_copied.company_list).then(function (response) {
-        _this13.divisions = response.data;
+      axios.get('/departments-all').then(function (response) {
+        _this13.departments = response.data;
       })["catch"](function (error) {
         _this13.errors = error.response.data.error;
       });
     },
-    fetchLevels: function fetchLevels() {
+    fetchLocations: function fetchLocations() {
       var _this14 = this;
 
-      axios.get('/levels-options').then(function (response) {
-        _this14.levels = response.data;
+      axios.get('/locations-all').then(function (response) {
+        _this14.locations = response.data;
       })["catch"](function (error) {
         _this14.errors = error.response.data.error;
       });
     },
-    fetchFilterEmployee: function fetchFilterEmployee() {
+    fetchDivisions: function fetchDivisions() {
       var _this15 = this;
+
+      axios.get('/division-options/' + this.employee_copied.company_list).then(function (response) {
+        _this15.divisions = response.data;
+      })["catch"](function (error) {
+        _this15.errors = error.response.data.error;
+      });
+    },
+    fetchLevels: function fetchLevels() {
+      var _this16 = this;
+
+      axios.get('/levels-options').then(function (response) {
+        _this16.levels = response.data;
+      })["catch"](function (error) {
+        _this16.errors = error.response.data.error;
+      });
+    },
+    fetchFilterEmployee: function fetchFilterEmployee() {
+      var _this17 = this;
 
       this.table_loading = true;
       this.employees = [];
@@ -12321,12 +12617,12 @@ __webpack_require__.r(__webpack_exports__);
 
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee', this.formFilterData).then(function (response) {
-        _this15.employees = response.data;
-        _this15.table_loading = false;
-        _this15.errors = [];
+        _this17.employees = response.data;
+        _this17.table_loading = false;
+        _this17.errors = [];
       })["catch"](function (error) {
-        _this15.errors = error.response.data.errors;
-        _this15.table_loading = false;
+        _this17.errors = error.response.data.errors;
+        _this17.table_loading = false;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -12438,12 +12734,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployees: function filteredemployees() {
-      var _this16 = this;
+      var _this18 = this;
 
       var self = this;
       return Object.values(self.employees).filter(function (employee) {
         var full_name = employee.first_name + " " + employee.last_name;
-        return employee.employee_number.toLowerCase().includes(_this16.keywords.toLowerCase()) || employee.first_name.toLowerCase().includes(_this16.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this16.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this16.keywords.toLowerCase());
+        return employee.employee_number.toLowerCase().includes(_this18.keywords.toLowerCase()) || employee.first_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this18.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -17944,6 +18240,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -18044,6 +18354,7 @@ __webpack_require__.r(__webpack_exports__);
         name: user_copied.name,
         email: user_copied.email,
         role: user_copied.role,
+        view_confidential: user_copied.view_confidential,
         _method: 'PATCH'
       }).then(function (response) {
         _this3.users.splice(index, 1, response.data);
@@ -64117,9 +64428,7 @@ var render = function() {
                               ])
                             ]),
                             _vm._v(" "),
-                            _c("td", [
-                              _vm._v(_vm._s(employee_id.employee_number))
-                            ]),
+                            _c("td", [_vm._v(_vm._s(employee_id.id_number))]),
                             _vm._v(" "),
                             _c("td", [
                               _vm._v(
@@ -64723,15 +65032,33 @@ var render = function() {
                                         }
                                       },
                                       [_vm._v(" Edit")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "dropdown-item",
+                                        staticStyle: { cursor: "pointer" },
+                                        attrs: {
+                                          "data-toggle": "modal",
+                                          "data-target": "#transferModal"
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.transferEmployee(
+                                              employee
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_vm._v(" Transfer")]
                                     )
                                   ]
                                 )
                               ])
                             ]),
                             _vm._v(" "),
-                            _c("td", [
-                              _vm._v(_vm._s(employee.employee_number))
-                            ]),
+                            _c("td", [_vm._v(_vm._s(employee.id_number))]),
                             _vm._v(" "),
                             _c("td", [
                               _vm._v(
@@ -67057,6 +67384,143 @@ var render = function() {
                                 ])
                               ]),
                               _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "col-md-4",
+                                  staticStyle: {
+                                    border: "1px solid",
+                                    "border-radius": "5px"
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    { staticClass: "form-group mt-2" },
+                                    [
+                                      _c(
+                                        "label",
+                                        { attrs: { for: "confidential" } },
+                                        [_vm._v("Set as Confidential Employee")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "custom-control custom-checkbox mb-3"
+                                        },
+                                        [
+                                          _c("input", {
+                                            directives: [
+                                              {
+                                                name: "model",
+                                                rawName: "v-model",
+                                                value:
+                                                  _vm.employee_copied
+                                                    .confidential,
+                                                expression:
+                                                  "employee_copied.confidential"
+                                              }
+                                            ],
+                                            staticClass: "custom-control-input",
+                                            attrs: {
+                                              id: "confidential",
+                                              "true-value": "YES",
+                                              "false-value": "NO",
+                                              type: "checkbox"
+                                            },
+                                            domProps: {
+                                              checked: Array.isArray(
+                                                _vm.employee_copied.confidential
+                                              )
+                                                ? _vm._i(
+                                                    _vm.employee_copied
+                                                      .confidential,
+                                                    null
+                                                  ) > -1
+                                                : _vm._q(
+                                                    _vm.employee_copied
+                                                      .confidential,
+                                                    "YES"
+                                                  )
+                                            },
+                                            on: {
+                                              change: function($event) {
+                                                var $$a =
+                                                    _vm.employee_copied
+                                                      .confidential,
+                                                  $$el = $event.target,
+                                                  $$c = $$el.checked
+                                                    ? "YES"
+                                                    : "NO"
+                                                if (Array.isArray($$a)) {
+                                                  var $$v = null,
+                                                    $$i = _vm._i($$a, $$v)
+                                                  if ($$el.checked) {
+                                                    $$i < 0 &&
+                                                      _vm.$set(
+                                                        _vm.employee_copied,
+                                                        "confidential",
+                                                        $$a.concat([$$v])
+                                                      )
+                                                  } else {
+                                                    $$i > -1 &&
+                                                      _vm.$set(
+                                                        _vm.employee_copied,
+                                                        "confidential",
+                                                        $$a
+                                                          .slice(0, $$i)
+                                                          .concat(
+                                                            $$a.slice($$i + 1)
+                                                          )
+                                                      )
+                                                  }
+                                                } else {
+                                                  _vm.$set(
+                                                    _vm.employee_copied,
+                                                    "confidential",
+                                                    $$c
+                                                  )
+                                                }
+                                              }
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "label",
+                                            {
+                                              staticClass:
+                                                "custom-control-label",
+                                              attrs: { for: "confidential" }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "Confidential Employee (Ex. President CEO, Executives, etc.)"
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _vm.errors.confidential
+                                        ? _c(
+                                            "span",
+                                            { staticClass: "text-danger" },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.errors.confidential[0]
+                                                )
+                                              )
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
                               _c("div", { staticClass: "col-md-12" }, [
                                 _c("h4", [_vm._v("System Approvers")]),
                                 _vm._v(" "),
@@ -68473,6 +68937,877 @@ var render = function() {
           ]
         )
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "transferModal",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true",
+          "data-backdrop": "static"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass:
+              "modal-dialog modal-dialog-centered modal-lg modal-employee",
+            staticStyle: { width: "80%!important" },
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(10),
+              _vm._v(" "),
+              _vm._m(11),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "card shadow" }, [
+                  _c("div", { staticClass: "card-body" }, [
+                    _c("h1", { staticClass: "col-12 text-left" }, [
+                      _vm._v(
+                        _vm._s(
+                          _vm.transferEmployeeDetails.first_name +
+                            " " +
+                            _vm.transferEmployeeDetails.last_name
+                        )
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "h4",
+                      { staticClass: "col-6 text-left mt--2 text-default" },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            _vm.transferEmployeeDetails.id_number
+                              ? _vm.transferEmployeeDetails.id_number
+                              : ""
+                          )
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "h4",
+                      { staticClass: "col-6 text-left mt--2 text-info" },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            _vm.transferEmployeeDetails.position
+                              ? _vm.transferEmployeeDetails.position
+                              : ""
+                          )
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "h4",
+                      { staticClass: "col-6 text-left mt--2 text-danger" },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            _vm.transferEmployeeDetails.departments
+                              ? _vm.transferEmployeeDetails.departments[0].name
+                              : ""
+                          )
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "h4",
+                      { staticClass: "col-6 text-left mt--2 text-success" },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            _vm.transferEmployeeDetails.companies
+                              ? _vm.transferEmployeeDetails.companies[0].name
+                              : ""
+                          )
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "h4",
+                      { staticClass: "col-6 text-left mt--2 text-warning" },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            _vm.transferEmployeeDetails.locations
+                              ? _vm.transferEmployeeDetails.locations[0].name
+                              : ""
+                          )
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "row mt--10 mb-3" }, [
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _vm.viewTransferLogsList
+                          ? _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "btn btn-danger btn-sm mb-2 ml-2 mt--10",
+                                staticStyle: { float: "right" },
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.closeTransferEmployeeLogs()
+                                  }
+                                }
+                              },
+                              [_vm._v("Close")]
+                            )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "btn btn-primary btn-sm mb-2 ml-2 mt--10 ",
+                            staticStyle: { float: "right" },
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.viewTransferEmployeeLogs()
+                              }
+                            }
+                          },
+                          [_vm._v("View Transfer History/Logs")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _vm.viewTransferLogsList
+                          ? _c("div", { staticClass: "table-responsive" }, [
+                              _c(
+                                "table",
+                                {
+                                  staticClass: "table table-hover",
+                                  attrs: { id: "tab_transfer_logs" }
+                                },
+                                [
+                                  _vm._m(12),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tbody",
+                                    _vm._l(_vm.transferLogsList, function(
+                                      log,
+                                      index
+                                    ) {
+                                      return _c("tr", { key: index }, [
+                                        _c("td", [_vm._v(_vm._s(index + 1))]),
+                                        _vm._v(" "),
+                                        _c("td", [
+                                          _c("span", [
+                                            _vm._v("Company: "),
+                                            _c("strong", [
+                                              _vm._v(
+                                                _vm._s(
+                                                  log.previous_company.name
+                                                )
+                                              )
+                                            ])
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "ID Number: " +
+                                                _vm._s(log.previous_id_number)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Date Hired: " +
+                                                _vm._s(log.previous_date_hired)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Position: " +
+                                                _vm._s(log.previous_position)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Department: " +
+                                                _vm._s(
+                                                  log.previous_department.name
+                                                )
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Location: " +
+                                                _vm._s(
+                                                  log.previous_location.name
+                                                )
+                                            )
+                                          ]),
+                                          _c("br")
+                                        ]),
+                                        _vm._v(" "),
+                                        _c("td", [
+                                          _c("span", [
+                                            _vm._v("Company: "),
+                                            _c("strong", [
+                                              _vm._v(
+                                                _vm._s(log.new_company.name)
+                                              )
+                                            ])
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "ID Number: " +
+                                                _vm._s(log.new_id_number)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Date Hired: " +
+                                                _vm._s(log.new_date_hired)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Position: " +
+                                                _vm._s(log.new_position)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Department: " +
+                                                _vm._s(log.new_department.name)
+                                            )
+                                          ]),
+                                          _c("br"),
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(
+                                              "Location: " +
+                                                _vm._s(log.new_location.name)
+                                            )
+                                          ]),
+                                          _c("br")
+                                        ])
+                                      ])
+                                    }),
+                                    0
+                                  )
+                                ]
+                              )
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("hr"),
+                    _vm._v(" "),
+                    _c("h4", [_vm._v("Fill up fields to transfer employee.")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "row" }, [
+                      _c("div", { staticClass: "col-md-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "role" } }, [
+                            _vm._v("Company*")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.transfer_employee.company_list,
+                                  expression: "transfer_employee.company_list"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { id: "company" },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.transfer_employee,
+                                    "company_list",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c("option", { attrs: { value: "" } }, [
+                                _vm._v("Choose Company")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.companies, function(company, b) {
+                                return _c(
+                                  "option",
+                                  { key: b, domProps: { value: company.id } },
+                                  [_vm._v(" " + _vm._s(company.name))]
+                                )
+                              })
+                            ],
+                            2
+                          ),
+                          _vm._v(" "),
+                          _vm.transfer_errors.company_list
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(
+                                  _vm._s(_vm.transfer_errors.company_list[0])
+                                )
+                              ])
+                            : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "role" } }, [
+                            _vm._v("Department*")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.transfer_employee.department_list,
+                                  expression:
+                                    "transfer_employee.department_list"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { id: "department" },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.transfer_employee,
+                                    "department_list",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c("option", { attrs: { value: "" } }, [
+                                _vm._v("Choose Department")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.departments, function(department, b) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: b,
+                                    domProps: { value: department.id }
+                                  },
+                                  [_vm._v(" " + _vm._s(department.name))]
+                                )
+                              })
+                            ],
+                            2
+                          ),
+                          _vm._v(" "),
+                          _vm.transfer_errors.department_list
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(
+                                  _vm._s(_vm.transfer_errors.department_list[0])
+                                )
+                              ])
+                            : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "role" } }, [
+                            _vm._v("Location*")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.transfer_employee.location_list,
+                                  expression: "transfer_employee.location_list"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { id: "location" },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.transfer_employee,
+                                    "location_list",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c("option", { attrs: { value: "" } }, [
+                                _vm._v("Choose Location")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.locations, function(location, b) {
+                                return _c(
+                                  "option",
+                                  { key: b, domProps: { value: location.id } },
+                                  [_vm._v(" " + _vm._s(location.name))]
+                                )
+                              })
+                            ],
+                            2
+                          ),
+                          _vm._v(" "),
+                          _vm.transfer_errors.location_list
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(
+                                  _vm._s(_vm.transfer_errors.location_list[0])
+                                )
+                              ])
+                            : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "role" } }, [
+                            _vm._v("Division")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.transfer_employee.division,
+                                expression: "transfer_employee.division"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.transfer_employee.division },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.transfer_employee,
+                                  "division",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _vm.transfer_errors.division
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.transfer_errors.division[0]))
+                            ])
+                          : _vm._e()
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "role" } }, [
+                            _vm._v("Position*")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.transfer_employee.position,
+                                expression: "transfer_employee.position"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.transfer_employee.position },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.transfer_employee,
+                                  "position",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.transfer_errors.position
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(_vm._s(_vm.transfer_errors.position[0]))
+                              ])
+                            : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "role" } }, [
+                            _vm._v("Date Hired*")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.transfer_employee.date_hired,
+                                expression: "transfer_employee.date_hired"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "date" },
+                            domProps: {
+                              value: _vm.transfer_employee.date_hired
+                            },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.transfer_employee,
+                                  "date_hired",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.transfer_errors.date_hired
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(
+                                  _vm._s(_vm.transfer_errors.date_hired[0])
+                                )
+                              ])
+                            : _vm._e()
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _c("h4", [_vm._v("New System Approvers")]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary btn-sm mb-2",
+                            staticStyle: { float: "right" },
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.addTransferApprover()
+                              }
+                            }
+                          },
+                          [_vm._v("Add Row")]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "table-responsive" }, [
+                          _c(
+                            "table",
+                            {
+                              staticClass: "table table-hover",
+                              attrs: { id: "tab_assign_head" }
+                            },
+                            [
+                              _vm._m(13),
+                              _vm._v(" "),
+                              _c(
+                                "tbody",
+                                _vm._l(_vm.transfer_approvers, function(
+                                  row,
+                                  index
+                                ) {
+                                  return _c("tr", { key: index }, [
+                                    _c("td", [
+                                      _c(
+                                        "select",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: row.employee_head_id,
+                                              expression: "row.employee_head_id"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { id: "location" },
+                                          on: {
+                                            change: function($event) {
+                                              var $$selectedVal = Array.prototype.filter
+                                                .call(
+                                                  $event.target.options,
+                                                  function(o) {
+                                                    return o.selected
+                                                  }
+                                                )
+                                                .map(function(o) {
+                                                  var val =
+                                                    "_value" in o
+                                                      ? o._value
+                                                      : o.value
+                                                  return val
+                                                })
+                                              _vm.$set(
+                                                row,
+                                                "employee_head_id",
+                                                $event.target.multiple
+                                                  ? $$selectedVal
+                                                  : $$selectedVal[0]
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "option",
+                                            { attrs: { value: "" } },
+                                            [_vm._v("Choose Approver")]
+                                          ),
+                                          _vm._v(" "),
+                                          _vm._l(
+                                            _vm.employee_head_approvers,
+                                            function(approver, b) {
+                                              return _c(
+                                                "option",
+                                                {
+                                                  key: b,
+                                                  domProps: {
+                                                    value: approver.id
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    " " +
+                                                      _vm._s(
+                                                        approver.last_name +
+                                                          " " +
+                                                          approver.first_name
+                                                      )
+                                                  )
+                                                ]
+                                              )
+                                            }
+                                          )
+                                        ],
+                                        2
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _c(
+                                        "select",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: row.head_id,
+                                              expression: "row.head_id"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { id: "location" },
+                                          on: {
+                                            change: function($event) {
+                                              var $$selectedVal = Array.prototype.filter
+                                                .call(
+                                                  $event.target.options,
+                                                  function(o) {
+                                                    return o.selected
+                                                  }
+                                                )
+                                                .map(function(o) {
+                                                  var val =
+                                                    "_value" in o
+                                                      ? o._value
+                                                      : o.value
+                                                  return val
+                                                })
+                                              _vm.$set(
+                                                row,
+                                                "head_id",
+                                                $event.target.multiple
+                                                  ? $$selectedVal
+                                                  : $$selectedVal[0]
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "option",
+                                            { attrs: { value: "" } },
+                                            [_vm._v("Choose Position")]
+                                          ),
+                                          _vm._v(" "),
+                                          _vm._l(
+                                            _vm.employee_position_approvers,
+                                            function(position, b) {
+                                              return _c(
+                                                "option",
+                                                {
+                                                  key: b,
+                                                  domProps: {
+                                                    value: position.id
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    " " + _vm._s(position.name)
+                                                  )
+                                                ]
+                                              )
+                                            }
+                                          )
+                                        ],
+                                        2
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", { attrs: { width: "5%" } }, [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass:
+                                            "btn btn-success btn-sm mt-2",
+                                          staticStyle: { float: "right" },
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.removeTransferApprover(
+                                                index
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Remove")]
+                                      )
+                                    ])
+                                  ])
+                                }),
+                                0
+                              )
+                            ]
+                          )
+                        ])
+                      ])
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success btn-round btn-fill btn-lg",
+                    staticStyle: { width: "150px" },
+                    attrs: { id: "save_trasnfer_btn", type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.saveTransferEmployee(_vm.transfer_employee)
+                      }
+                    }
+                  },
+                  [_vm._v("Save")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger btn-round btn-fill btn-lg",
+                    staticStyle: { width: "150px" },
+                    attrs: {
+                      id: "close_transfer_btn",
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-label": "Close"
+                    }
+                  },
+                  [_vm._v("Close")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
     )
   ])
 }
@@ -68750,6 +70085,83 @@ var staticRenderFns = [
         ]),
         _vm._v(" "),
         _c("th")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h2", { staticClass: "col-12 modal-title text-left" }, [
+        _vm._v("Transfer Employee")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { staticClass: "text-center" }, [
+          _vm._v(
+            "\r\n                                                            #\r\n                                                        "
+          )
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [
+          _vm._v(
+            "\r\n                                                            FROM\r\n                                                        "
+          )
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [
+          _vm._v(
+            "\r\n                                                            TO\r\n                                                        "
+          )
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { staticClass: "text-center" }, [
+          _vm._v(
+            "\r\n                                                            Name\r\n                                                        "
+          )
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [
+          _vm._v(
+            "\r\n                                                            Position\r\n                                                        "
+          )
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" })
       ])
     ])
   }
@@ -81612,6 +83024,109 @@ var render = function() {
                             ])
                           : _vm._e()
                       ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12" }, [
+                      _c(
+                        "div",
+                        {
+                          staticClass: "form-group ",
+                          staticStyle: {
+                            border: "1px solid",
+                            "border-radius": "5px"
+                          }
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "custom-control custom-checkbox mt-2 ml-2 mb-3"
+                            },
+                            [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.user_copied.view_confidential,
+                                    expression: "user_copied.view_confidential"
+                                  }
+                                ],
+                                staticClass: "custom-control-input",
+                                attrs: {
+                                  id: "view_confidential",
+                                  "true-value": "YES",
+                                  "false-value": "NO",
+                                  type: "checkbox"
+                                },
+                                domProps: {
+                                  checked: Array.isArray(
+                                    _vm.user_copied.view_confidential
+                                  )
+                                    ? _vm._i(
+                                        _vm.user_copied.view_confidential,
+                                        null
+                                      ) > -1
+                                    : _vm._q(
+                                        _vm.user_copied.view_confidential,
+                                        "YES"
+                                      )
+                                },
+                                on: {
+                                  change: function($event) {
+                                    var $$a = _vm.user_copied.view_confidential,
+                                      $$el = $event.target,
+                                      $$c = $$el.checked ? "YES" : "NO"
+                                    if (Array.isArray($$a)) {
+                                      var $$v = null,
+                                        $$i = _vm._i($$a, $$v)
+                                      if ($$el.checked) {
+                                        $$i < 0 &&
+                                          _vm.$set(
+                                            _vm.user_copied,
+                                            "view_confidential",
+                                            $$a.concat([$$v])
+                                          )
+                                      } else {
+                                        $$i > -1 &&
+                                          _vm.$set(
+                                            _vm.user_copied,
+                                            "view_confidential",
+                                            $$a
+                                              .slice(0, $$i)
+                                              .concat($$a.slice($$i + 1))
+                                          )
+                                      }
+                                    } else {
+                                      _vm.$set(
+                                        _vm.user_copied,
+                                        "view_confidential",
+                                        $$c
+                                      )
+                                    }
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass: "custom-control-label",
+                                  attrs: { for: "view_confidential" }
+                                },
+                                [_vm._v("View Confidential Employee")]
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm.errors.view_confidential
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(_vm._s(_vm.errors.view_confidential[0]))
+                              ])
+                            : _vm._e()
+                        ]
+                      )
                     ])
                   ])
                 ]),

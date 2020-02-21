@@ -31,7 +31,7 @@ class User extends Model implements Auditable, Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'view_confidential'
     ];
 
     /**

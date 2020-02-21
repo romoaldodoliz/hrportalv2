@@ -81,10 +81,11 @@
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"> Edit</a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"> Transfer</a>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{{ employee.employee_number }}</td>
+                                                <td>{{ employee.id_number }}</td>
                                                 <td>{{ employee.first_name + " "+ employee.last_name }}</td>
                                                 <td>{{ employee.position }}</td>
                                                 <td>{{ employee.companies[0] ? employee.companies[0].name : "" }}</td>
@@ -487,6 +488,19 @@
                                                 </div>
                                             </div>
 
+
+                                            <div class="col-md-4" style="border:1px solid;border-radius:5px;">
+                                                <div class="form-group mt-2">
+                                                    <label for="confidential">Set as Confidential Employee</label>
+                                                    <div class="custom-control custom-checkbox mb-3">
+                                                        <input id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
+                                                        <label class="custom-control-label" for="confidential">Confidential Employee (Ex. President CEO, Executives, etc.)</label>
+                                                    </div>
+
+                                                    <span class="text-danger" v-if="errors.confidential">{{ errors.confidential[0] }}</span> 
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-12">
                                                 <h4>System Approvers</h4>
                                                 <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;" @click="fetchApprovers()"><i class="fas fa-redo" title="Refresh Approver"></i></button>
@@ -718,7 +732,196 @@
                 </div>
             </div>
         </div>
-    </div>
+
+
+
+        <!-- Transfer employee Modal -->
+        <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-left">Transfer Employee</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <h1 class="col-12 text-left">{{ transferEmployeeDetails.first_name + ' ' + transferEmployeeDetails.last_name }}</h1>
+                                <h4 class="col-6 text-left mt--2 text-default">{{ transferEmployeeDetails.id_number ? transferEmployeeDetails.id_number : "" }}</h4>
+                                <h4 class="col-6 text-left mt--2 text-info">{{ transferEmployeeDetails.position ? transferEmployeeDetails.position : "" }}</h4>
+                                <h4 class="col-6 text-left mt--2 text-danger">{{ transferEmployeeDetails.departments ? transferEmployeeDetails.departments[0].name : "" }}</h4>
+                                <h4 class="col-6 text-left mt--2 text-success">{{ transferEmployeeDetails.companies ? transferEmployeeDetails.companies[0].name : "" }}</h4>
+                                <h4 class="col-6 text-left mt--2 text-warning">{{ transferEmployeeDetails.locations ? transferEmployeeDetails.locations[0].name : "" }}</h4>
+                               
+                               <div class="row mt--10 mb-3">
+                                    <div class="col-md-12">
+                                        <button v-if="viewTransferLogsList" type="button" class="btn btn-danger btn-sm mb-2 ml-2 mt--10" style="float: right;" @click="closeTransferEmployeeLogs()">Close</button>
+                                        <button type="button" class="btn btn-primary btn-sm mb-2 ml-2 mt--10 " style="float: right;" @click="viewTransferEmployeeLogs()">View Transfer History/Logs</button>
+                                        
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="table-responsive" v-if="viewTransferLogsList">
+                                            <table class="table table-hover" id="tab_transfer_logs">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">
+                                                            #
+                                                        </th>
+                                                        <th class="text-center">
+                                                            FROM
+                                                        </th>
+                                                        <th class="text-center">
+                                                            TO
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(log,index) in transferLogsList" v-bind:key="index">
+                                                        <td>{{index+1}}</td>
+                                                        <td>
+                                                            <span>Company: <strong>{{log.previous_company.name}}</strong></span><br>
+                                                            <span>ID Number: {{log.previous_id_number}}</span><br>
+                                                            <span>Date Hired: {{log.previous_date_hired}}</span><br>
+                                                            <span>Position: {{log.previous_position}}</span><br>
+                                                            <span>Department: {{log.previous_department.name}}</span><br>
+                                                            <span>Location: {{log.previous_location.name}}</span><br>
+                                                            
+                                                        </td>
+                                                        <td>
+                                                            <span>Company: <strong>{{log.new_company.name}}</strong></span><br>
+                                                            <span>ID Number: {{log.new_id_number}}</span><br>
+                                                            <span>Date Hired: {{log.new_date_hired}}</span><br>
+                                                            <span>Position: {{log.new_position}}</span><br>
+                                                            <span>Department: {{log.new_department.name}}</span><br>
+                                                            <span>Location: {{log.new_location.name}}</span><br>
+                                                            
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h4>Fill up fields to transfer employee.</h4>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Company*</label>
+                                            <select class="form-control" v-model="transfer_employee.company_list" id="company">
+                                                <option value="">Choose Company</option>
+                                                <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="transfer_errors.company_list">{{ transfer_errors.company_list[0] }}</span> 
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Department*</label>
+                                            <select class="form-control" v-model="transfer_employee.department_list" id="department">
+                                                <option value="">Choose Department</option>
+                                                <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
+                                            </select>
+
+                                            <span class="text-danger" v-if="transfer_errors.department_list">{{ transfer_errors.department_list[0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Location*</label>
+                                            <select class="form-control" v-model="transfer_employee.location_list" id="location">
+                                                <option value="">Choose Location</option>
+                                                <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
+                                            </select>
+
+                                            <span class="text-danger" v-if="transfer_errors.location_list">{{ transfer_errors.location_list[0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Division</label>
+                                            <input type="text" class="form-control" v-model="transfer_employee.division">
+                                        </div>
+
+                                        <span class="text-danger" v-if="transfer_errors.division">{{ transfer_errors.division[0] }}</span>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Position*</label>
+                                            <input type="text" class="form-control" v-model="transfer_employee.position">
+
+                                            <span class="text-danger" v-if="transfer_errors.position">{{ transfer_errors.position[0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Date Hired*</label>
+                                            <input type="date" class="form-control" v-model="transfer_employee.date_hired">
+                                            <span class="text-danger" v-if="transfer_errors.date_hired">{{ transfer_errors.date_hired[0] }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <h4>New System Approvers</h4>
+                        
+                                        <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addTransferApprover()">Add Row</button>
+                                            <div class="table-responsive">
+                                            <table class="table table-hover" id="tab_assign_head">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">
+                                                            Name
+                                                        </th>
+                                                        <th class="text-center">
+                                                            Position
+                                                        </th>
+                                                        <th class="text-center"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(row,index) in transfer_approvers" v-bind:key="index">
+                                                        <td>
+                                                            <select class="form-control" v-model="row.employee_head_id" id="location">
+                                                                <option value="">Choose Approver</option>
+                                                                <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control" v-model="row.head_id" id="location">
+                                                                <option value="">Choose Position</option>
+                                                                <option v-for="(position,b) in employee_position_approvers" v-bind:key="b" :value="position.id"> {{ position.name }}</option>
+                                                            </select> 
+                                                        </td>
+                                                        <td width="5%">
+                                                            <button type="button" class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeTransferApprover(index)">Remove</button>  
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        </div>    
+                                    </div>
+
+                                   
+                                </div>
+
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Save</button>
+                        <button id="close_transfer_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </div>
 </template>
 
@@ -736,8 +939,14 @@
                 employees: [],
                 employee: [],
                 employee_copied: [],
+                transfer_employee: [],
+                transferEmployeeDetails: [],
+                transfer_approvers : [],
+                viewTransferLogsList : false,
+                transferLogsList : [],
                 copied_role: [],
                 roles: [],
+                transfer_errors: [],
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -781,6 +990,84 @@
             this.fetchPositionApprovers();
         },
         methods:{
+            clearTransferForm(){
+                this.transfer_employee.company_list = "";
+                this.transfer_employee.department_list = "";
+                this.transfer_employee.location_list = "";
+                this.transfer_employee.division = "";
+                this.transfer_employee.position = "";
+                this.transfer_employee.date_hired = "";
+                this.transfer_approvers = [];
+            },
+            transferEmployee(employee){
+                this.transferEmployeeDetails = employee;
+            },
+            saveTransferEmployee(transfer_employee){
+                let v = this;
+                var index = this.employees.findIndex(item => item.id == v.transferEmployeeDetails.id);
+                Swal.fire({
+                        title: 'Are you sure you want to transfer this employee?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Transfer'
+                        }).then((result) => {
+                        if (result.value) {
+                            let formData = new FormData();
+                            formData.append('employee_id', v.transferEmployeeDetails.id);
+                            formData.append('company_list', transfer_employee.company_list ? transfer_employee.company_list : "");
+                            formData.append('department_list', transfer_employee.department_list ? transfer_employee.department_list : "");
+                            formData.append('location_list', transfer_employee.location_list ? transfer_employee.location_list : "");
+                            formData.append('division', transfer_employee.division ? transfer_employee.division : "");
+                            formData.append('position', transfer_employee.position ? transfer_employee.position : "");
+                            formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
+                            formData.append('head_approvers', this.transfer_approvers ? JSON.stringify(this.transfer_approvers) : "");
+
+                            formData.append('_method', 'PATCH');
+
+                            axios.post(`/transfer-employee/${v.transferEmployeeDetails.id}`, 
+                                formData
+                            )
+                            .then(response => {
+                                this.fetchEmployees();
+                                this.clearTransferForm();
+                                this.transferEmployeeDetails = response.data;
+                               
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Employee has been successfully transferred.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Okay'
+                                })
+                            })
+                            .catch(error => {
+                                this.transfer_errors = error.response.data.errors;
+                                Swal.fire({
+                                    title: 'Warning!',
+                                    text: 'Unable to Update Employee. Check Entries and then try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Okay'
+                                })
+                            })
+
+                        }
+                })
+            },
+            viewTransferEmployeeLogs(){
+                this.viewTransferLogsList = true;
+                this.transferLogsList = [];
+                axios.get('/transfer-employee-logs/' + this.transferEmployeeDetails.id)
+                .then(response => { 
+                    this.transferLogsList = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            closeTransferEmployeeLogs(){
+                this.viewTransferLogsList = false;
+            },
             profileImageLoadError(){
                 this.profile_image = 'storage/default.png';
             },
@@ -854,6 +1141,7 @@
                 formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
                 formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
                 formData.append('status', employee_copied.status ? employee_copied.status : "-");
+                formData.append('confidential', employee_copied.confidential ? employee_copied.confidential : "NO");
 
                
                 formData.append('date_regularized', employee_copied.date_regularized ? employee_copied.date_regularized : "");      
@@ -1069,6 +1357,16 @@
                 }else{
                     this.approvers.splice(index, 1);
                 } 
+            },
+            addTransferApprover(){
+                this.transfer_approvers.push({
+                    id: "",
+                    employee_head_id: "",
+                    head_id: "",
+                });
+            },
+            removeTransferApprover: function(index,id) {
+                this.transfer_approvers.splice(index, 1);
             },
             addDependent(){
                 this.dependents.push({
