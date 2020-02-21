@@ -12070,6 +12070,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -15102,6 +15103,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+//
 //
 //
 //
@@ -68447,6 +68449,14 @@ var render = function() {
                                                   _c(
                                                     "option",
                                                     {
+                                                      attrs: { value: "SPOUSE" }
+                                                    },
+                                                    [_vm._v("SPOUSE")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    {
                                                       attrs: { value: "CHILD" }
                                                     },
                                                     [_vm._v("CHILD")]
@@ -77024,6 +77034,12 @@ var render = function() {
                                         "option",
                                         { attrs: { value: "SISTER" } },
                                         [_vm._v("SISTER")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "SPOUSE" } },
+                                        [_vm._v("SPOUSE")]
                                       ),
                                       _vm._v(" "),
                                       _c(

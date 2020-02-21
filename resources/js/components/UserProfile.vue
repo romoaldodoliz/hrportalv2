@@ -515,6 +515,7 @@
                                                             <option value="FATHER">FATHER</option>
                                                             <option value="BROTHER">BROTHER</option>
                                                             <option value="SISTER">SISTER</option>
+                                                            <option value="SPOUSE">SPOUSE</option>
                                                             <option value="CHILD">CHILD</option>
                                                         </select> 
 
