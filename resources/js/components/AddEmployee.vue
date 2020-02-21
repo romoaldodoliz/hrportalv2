@@ -205,7 +205,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="role">Company*</label>
-                                                            <select class="form-control" v-model="employee.company_list" id="company" @change="fetchDivisions()">
+                                                            <select class="form-control" v-model="employee.company_list" id="company">
                                                                 <option value="">Choose Company</option>
                                                                 <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                                             </select>
@@ -216,11 +216,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="role">Division</label>  
-                                                            <select class="form-control" v-model="employee.division" id="marital_status">
-                                                                <option value="">Choose Division</option>
-                                                                <option v-for="(division) in divisions" v-bind:key="division" :value="division"> {{ division }}</option>
-                                                            </select>
-
+                                                            <input type="text" class="form-control" v-model="employee.division">
                                                             <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
                                                         </div>
                                                     </div>
@@ -893,15 +889,6 @@
                 axios.get('/locations-all')
                 .then(response => { 
                     this.locations = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.error;
-                })
-            },
-            fetchDivisions(){
-                axios.get('/division-options/'+this.employee.company_list)
-                .then(response => { 
-                    this.divisions = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;

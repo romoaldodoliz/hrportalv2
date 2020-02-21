@@ -25,7 +25,7 @@
 
                                         <div class="col-xl-12 mb-2 mt-3 float-right">
                                             <h4>Filter by: </h4>
-                                            <div class="col-xl-4 mb-2 float-left">
+                                            <div class="col-xl-3 mb-2 float-left">
                                                 <select class="form-control" v-model="company" id="company">
                                                     <option value="">Choose Company</option>
                                                     <option v-for="(company,v) in companies" v-bind:key="v" :value="company.id"> {{ company.name }}</option>
@@ -43,8 +43,15 @@
                                                     <option v-for="(location,v) in locations" v-bind:key="v" :value="location.id"> {{ location.name }}</option>
                                                 </select>
                                             </div> 
-                                            <div class="col-xl-1 mb-2 float-left">
-                                                <button class="btn btn-sm btn-primary" @click="fetchFilterEmployee"> Apply Filter</button>
+                                            <div class="col-xl-3 mb-2 float-left">
+                                                <select class="form-control" v-model="employee_status" id="employee_status">
+                                                    <option value="">Choose Status</option>
+                                                    <option value="ACTIVE">Active</option>
+                                                    <option value="INACTIVE">Inactive</option>
+                                                </select>
+                                            </div> 
+                                            <div class="col-xl-12">
+                                                <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
                                             </div> 
                                         </div>  
                                     </div>
@@ -337,11 +344,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Division</label>  
-                                                    <select class="form-control" v-model="employee_copied.division" id="marital_status">
-                                                        <option value="">Choose Division</option>
-                                                        <option v-for="(division) in divisions" v-bind:key="division" :value="division"> {{ division }}</option>
-                                                    </select>
-
+                                                    <input type="text" class="form-control" v-model="employee_copied.division">
                                                     <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
                                                 </div>
                                             </div>
@@ -916,7 +919,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Save</button>
+                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Tranfer</button>
                         <button id="close_transfer_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
                     </div>
                 </div>
@@ -978,6 +981,7 @@
                 company : '',
                 location : '',
                 department : '',
+                employee_status : '',
             }
         },
         created(){
@@ -1231,9 +1235,6 @@
                 //Get Dependents
                 this.fetchDependents();
 
-                //Get Divisions
-                this.fetchDivisions();
-
                 //Validate Marital Status
                 this.validateMaritalStatus();
 
@@ -1451,15 +1452,6 @@
                     this.errors = error.response.data.error;
                 })
             },
-            fetchDivisions(){
-                axios.get('/division-options/'+this.employee_copied.company_list)
-                .then(response => { 
-                    this.divisions = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.error;
-                })
-            },
             fetchLevels(){
                 axios.get('/levels-options')
                 .then(response => { 
@@ -1481,6 +1473,9 @@
                 }
                 if(this.location){
                     this.formFilterData.append('location',this.location);
+                }
+                if(this.employee_status){
+                    this.formFilterData.append('employee_status',this.employee_status);
                 }
                 this.formFilterData.append('_method', 'POST');
 

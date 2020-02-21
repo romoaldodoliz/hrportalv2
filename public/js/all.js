@@ -9418,10 +9418,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 
 
@@ -9706,22 +9702,13 @@ __webpack_require__.r(__webpack_exports__);
         _this7.errors = error.response.data.error;
       });
     },
-    fetchDivisions: function fetchDivisions() {
+    fetchLevels: function fetchLevels() {
       var _this8 = this;
 
-      axios.get('/division-options/' + this.employee.company_list).then(function (response) {
-        _this8.divisions = response.data;
+      axios.get('/levels-options').then(function (response) {
+        _this8.levels = response.data;
       })["catch"](function (error) {
         _this8.errors = error.response.data.error;
-      });
-    },
-    fetchLevels: function fetchLevels() {
-      var _this9 = this;
-
-      axios.get('/levels-options').then(function (response) {
-        _this9.levels = response.data;
-      })["catch"](function (error) {
-        _this9.errors = error.response.data.error;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -10976,6 +10963,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -10993,6 +10987,7 @@ __webpack_require__.r(__webpack_exports__);
       departments: [],
       department: '',
       employee_id_src: '',
+      employee_status: '',
       table_loading: true
     };
   },
@@ -11037,6 +11032,7 @@ __webpack_require__.r(__webpack_exports__);
       this.formFilterData.append('company', this.company);
       this.formFilterData.append('department', this.department);
       this.formFilterData.append('location', this.location);
+      this.formFilterData.append('employee_status', this.employee_status);
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee', this.formFilterData).then(function (response) {
         _this2.employee_ids = response.data;
@@ -12071,6 +12067,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12119,7 +12118,8 @@ __webpack_require__.r(__webpack_exports__);
       table_loading: true,
       company: '',
       location: '',
-      department: ''
+      department: '',
+      employee_status: ''
     };
   },
   created: function created() {
@@ -12358,9 +12358,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.fetchApprovers(); //Get Dependents
 
-      this.fetchDependents(); //Get Divisions
-
-      this.fetchDivisions(); //Validate Marital Status
+      this.fetchDependents(); //Validate Marital Status
 
       this.validateMaritalStatus(); //Attachment
 
@@ -12579,26 +12577,17 @@ __webpack_require__.r(__webpack_exports__);
         _this14.errors = error.response.data.error;
       });
     },
-    fetchDivisions: function fetchDivisions() {
+    fetchLevels: function fetchLevels() {
       var _this15 = this;
 
-      axios.get('/division-options/' + this.employee_copied.company_list).then(function (response) {
-        _this15.divisions = response.data;
+      axios.get('/levels-options').then(function (response) {
+        _this15.levels = response.data;
       })["catch"](function (error) {
         _this15.errors = error.response.data.error;
       });
     },
-    fetchLevels: function fetchLevels() {
-      var _this16 = this;
-
-      axios.get('/levels-options').then(function (response) {
-        _this16.levels = response.data;
-      })["catch"](function (error) {
-        _this16.errors = error.response.data.error;
-      });
-    },
     fetchFilterEmployee: function fetchFilterEmployee() {
-      var _this17 = this;
+      var _this16 = this;
 
       this.table_loading = true;
       this.employees = [];
@@ -12616,14 +12605,18 @@ __webpack_require__.r(__webpack_exports__);
         this.formFilterData.append('location', this.location);
       }
 
+      if (this.employee_status) {
+        this.formFilterData.append('employee_status', this.employee_status);
+      }
+
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee', this.formFilterData).then(function (response) {
-        _this17.employees = response.data;
-        _this17.table_loading = false;
-        _this17.errors = [];
+        _this16.employees = response.data;
+        _this16.table_loading = false;
+        _this16.errors = [];
       })["catch"](function (error) {
-        _this17.errors = error.response.data.errors;
-        _this17.table_loading = false;
+        _this16.errors = error.response.data.errors;
+        _this16.table_loading = false;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -12735,12 +12728,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployees: function filteredemployees() {
-      var _this18 = this;
+      var _this17 = this;
 
       var self = this;
       return Object.values(self.employees).filter(function (employee) {
         var full_name = employee.first_name + " " + employee.last_name;
-        return employee.first_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this18.keywords.toLowerCase());
+        return employee.first_name.toLowerCase().includes(_this17.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this17.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this17.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -16029,10 +16022,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -16239,9 +16228,7 @@ __webpack_require__.r(__webpack_exports__);
       this.profile_image = 'storage/id_image/employee_image/' + employee.id + '.png?v=' + num;
       this.signature_image = 'storage/id_image/employee_signature/' + employee.id + '.png?v=' + num; //Get Dependents
 
-      this.fetchDependents(); //Get Divisions
-
-      this.fetchDivisions(); //Validate Marital Status
+      this.fetchDependents(); //Validate Marital Status
 
       this.validateMartialStatus(); //Attachment
 
@@ -16400,22 +16387,13 @@ __webpack_require__.r(__webpack_exports__);
         _this10.errors = error.response.data.error;
       });
     },
-    fetchDivisions: function fetchDivisions() {
+    fetchLevels: function fetchLevels() {
       var _this11 = this;
 
-      axios.get('/division-options/' + this.employee_copied.company_list).then(function (response) {
-        _this11.divisions = response.data;
+      axios.get('/levels-options').then(function (response) {
+        _this11.levels = response.data;
       })["catch"](function (error) {
         _this11.errors = error.response.data.error;
-      });
-    },
-    fetchLevels: function fetchLevels() {
-      var _this12 = this;
-
-      axios.get('/levels-options').then(function (response) {
-        _this12.levels = response.data;
-      })["catch"](function (error) {
-        _this12.errors = error.response.data.error;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -16525,27 +16503,27 @@ __webpack_require__.r(__webpack_exports__);
       this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
     },
     fetchEmployeeRequestPending: function fetchEmployeeRequestPending(employee_id) {
-      var _this13 = this;
+      var _this12 = this;
 
       this.employee_requests_pending = 0;
       axios.get('/user-pendings/' + employee_id).then(function (response) {
-        _this13.employee_requests_pending = response.data;
+        _this12.employee_requests_pending = response.data;
+      })["catch"](function (error) {
+        _this12.errors = error.response.data.error;
+      });
+    },
+    fetchEmployeeRequest: function fetchEmployeeRequest(employee_id) {
+      var _this13 = this;
+
+      this.employee_requests = [];
+      axios.get('/employee-approval-request/' + employee_id).then(function (response) {
+        _this13.employee_requests = response.data;
       })["catch"](function (error) {
         _this13.errors = error.response.data.error;
       });
     },
-    fetchEmployeeRequest: function fetchEmployeeRequest(employee_id) {
-      var _this14 = this;
-
-      this.employee_requests = [];
-      axios.get('/employee-approval-request/' + employee_id).then(function (response) {
-        _this14.employee_requests = response.data;
-      })["catch"](function (error) {
-        _this14.errors = error.response.data.error;
-      });
-    },
     removeEmployeeRequest: function removeEmployeeRequest(index, employee_request_id) {
-      var _this15 = this;
+      var _this14 = this;
 
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure you want to delete this request?',
@@ -16558,13 +16536,13 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           axios["delete"]("/employee-user-profile/".concat(employee_request_id)).then(function (response) {
-            _this15.employee_requests.splice(index, 1);
+            _this14.employee_requests.splice(index, 1);
 
-            _this15.fetchEmployeeRequestPending(_this15.employee_copied.id);
+            _this14.fetchEmployeeRequestPending(_this14.employee_copied.id);
 
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Your request has been deleted.', 'success');
           })["catch"](function (error) {
-            _this15.errors = error.response.data.errors;
+            _this14.errors = error.response.data.errors;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Warning!',
               text: 'Unable to delete request. Please try again.',
@@ -16590,11 +16568,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployeerequests: function filteredemployeerequests() {
-      var _this16 = this;
+      var _this15 = this;
 
       var self = this;
       return Object.values(self.employee_requests).filter(function (employee_request) {
-        return employee_request.status.toLowerCase().includes(_this16.keywords.toLowerCase());
+        return employee_request.status.toLowerCase().includes(_this15.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -59321,34 +59299,29 @@ var render = function() {
                                         staticClass: "form-control",
                                         attrs: { id: "company" },
                                         on: {
-                                          change: [
-                                            function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
-                                                )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.employee,
-                                                "company_list",
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
                                               )
-                                            },
-                                            function($event) {
-                                              return _vm.fetchDivisions()
-                                            }
-                                          ]
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.employee,
+                                              "company_list",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
                                         }
                                       },
                                       [
@@ -59393,65 +59366,33 @@ var render = function() {
                                       _vm._v("Division")
                                     ]),
                                     _vm._v(" "),
-                                    _c(
-                                      "select",
-                                      {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.employee.division,
-                                            expression: "employee.division"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: { id: "marital_status" },
-                                        on: {
-                                          change: function($event) {
-                                            var $$selectedVal = Array.prototype.filter
-                                              .call(
-                                                $event.target.options,
-                                                function(o) {
-                                                  return o.selected
-                                                }
-                                              )
-                                              .map(function(o) {
-                                                var val =
-                                                  "_value" in o
-                                                    ? o._value
-                                                    : o.value
-                                                return val
-                                              })
-                                            _vm.$set(
-                                              _vm.employee,
-                                              "division",
-                                              $event.target.multiple
-                                                ? $$selectedVal
-                                                : $$selectedVal[0]
-                                            )
-                                          }
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.employee.division,
+                                          expression: "employee.division"
                                         }
-                                      },
-                                      [
-                                        _c("option", { attrs: { value: "" } }, [
-                                          _vm._v("Choose Division")
-                                        ]),
-                                        _vm._v(" "),
-                                        _vm._l(_vm.divisions, function(
-                                          division
-                                        ) {
-                                          return _c(
-                                            "option",
-                                            {
-                                              key: division,
-                                              domProps: { value: division }
-                                            },
-                                            [_vm._v(" " + _vm._s(division))]
-                                          )
-                                        })
                                       ],
-                                      2
-                                    ),
+                                      staticClass: "form-control",
+                                      attrs: { type: "text" },
+                                      domProps: {
+                                        value: _vm.employee.division
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.employee,
+                                            "division",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
                                     _vm._v(" "),
                                     _vm.errors.division
                                       ? _c(
@@ -64192,7 +64133,7 @@ var render = function() {
                     [
                       _c("h4", [_vm._v("Filter by: ")]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-xl-4 mb-2 float-left" }, [
+                      _c("div", { staticClass: "col-xl-3 mb-2 float-left" }, [
                         _c(
                           "select",
                           {
@@ -64333,11 +64274,58 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-xl-1 mb-2 float-left" }, [
+                      _c("div", { staticClass: "col-xl-3 mb-2 float-left" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.employee_status,
+                                expression: "employee_status"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { id: "employee_status" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.employee_status = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Choose Status")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "ACTIVE" } }, [
+                              _vm._v("Active")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "INACTIVE" } }, [
+                              _vm._v("Inactive")
+                            ])
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-xl-12" }, [
                         _c(
                           "button",
                           {
-                            staticClass: "btn btn-sm btn-primary",
+                            staticClass:
+                              "btn btn-sm btn-primary mt-3 float-right",
                             on: { click: _vm.fetchFilterEmployee }
                           },
                           [_vm._v(" Apply Filter")]
@@ -64812,7 +64800,7 @@ var render = function() {
                     [
                       _c("h4", [_vm._v("Filter by: ")]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-xl-4 mb-2 float-left" }, [
+                      _c("div", { staticClass: "col-xl-3 mb-2 float-left" }, [
                         _c(
                           "select",
                           {
@@ -64953,11 +64941,58 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-xl-1 mb-2 float-left" }, [
+                      _c("div", { staticClass: "col-xl-3 mb-2 float-left" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.employee_status,
+                                expression: "employee_status"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { id: "employee_status" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.employee_status = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Choose Status")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "ACTIVE" } }, [
+                              _vm._v("Active")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "INACTIVE" } }, [
+                              _vm._v("Inactive")
+                            ])
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-xl-12" }, [
                         _c(
                           "button",
                           {
-                            staticClass: "btn btn-sm btn-primary",
+                            staticClass:
+                              "btn btn-sm btn-primary mt-3 float-right",
                             on: { click: _vm.fetchFilterEmployee }
                           },
                           [_vm._v(" Apply Filter")]
@@ -66415,63 +66450,33 @@ var render = function() {
                                     _vm._v("Division")
                                   ]),
                                   _vm._v(" "),
-                                  _c(
-                                    "select",
-                                    {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: _vm.employee_copied.division,
-                                          expression: "employee_copied.division"
-                                        }
-                                      ],
-                                      staticClass: "form-control",
-                                      attrs: { id: "marital_status" },
-                                      on: {
-                                        change: function($event) {
-                                          var $$selectedVal = Array.prototype.filter
-                                            .call(
-                                              $event.target.options,
-                                              function(o) {
-                                                return o.selected
-                                              }
-                                            )
-                                            .map(function(o) {
-                                              var val =
-                                                "_value" in o
-                                                  ? o._value
-                                                  : o.value
-                                              return val
-                                            })
-                                          _vm.$set(
-                                            _vm.employee_copied,
-                                            "division",
-                                            $event.target.multiple
-                                              ? $$selectedVal
-                                              : $$selectedVal[0]
-                                          )
-                                        }
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.employee_copied.division,
+                                        expression: "employee_copied.division"
                                       }
-                                    },
-                                    [
-                                      _c("option", { attrs: { value: "" } }, [
-                                        _vm._v("Choose Division")
-                                      ]),
-                                      _vm._v(" "),
-                                      _vm._l(_vm.divisions, function(division) {
-                                        return _c(
-                                          "option",
-                                          {
-                                            key: division,
-                                            domProps: { value: division }
-                                          },
-                                          [_vm._v(" " + _vm._s(division))]
-                                        )
-                                      })
                                     ],
-                                    2
-                                  ),
+                                    staticClass: "form-control",
+                                    attrs: { type: "text" },
+                                    domProps: {
+                                      value: _vm.employee_copied.division
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.employee_copied,
+                                          "division",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
                                   _vm._v(" "),
                                   _vm.errors.division
                                     ? _c(
@@ -69796,7 +69801,7 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Save")]
+                  [_vm._v("Tranfer")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -75849,57 +75854,31 @@ var render = function() {
                         _vm._v("Division")
                       ]),
                       _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee_copied.division,
-                              expression: "employee_copied.division"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            id: "marital_status",
-                            disabled: _vm.user_disabled
-                          },
-                          on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.$set(
-                                _vm.employee_copied,
-                                "division",
-                                $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              )
-                            }
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.employee_copied.division,
+                            expression: "employee_copied.division"
                           }
-                        },
-                        [
-                          _c("option", { attrs: { value: "" } }, [
-                            _vm._v("Choose Division")
-                          ]),
-                          _vm._v(" "),
-                          _vm._l(_vm.divisions, function(division) {
-                            return _c(
-                              "option",
-                              { key: division, domProps: { value: division } },
-                              [_vm._v(" " + _vm._s(division))]
-                            )
-                          })
                         ],
-                        2
-                      ),
+                        staticClass: "form-control",
+                        attrs: { type: "text", disabled: _vm.user_disabled },
+                        domProps: { value: _vm.employee_copied.division },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.employee_copied,
+                              "division",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
                       _vm._v(" "),
                       _vm.errors.division
                         ? _c("span", { staticClass: "text-danger" }, [

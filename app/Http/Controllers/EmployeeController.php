@@ -573,6 +573,7 @@ class EmployeeController extends Controller
         $company = $request->company;
         $department = $request->department;
         $location = $request->location;
+        $employee_status = $request->employee_status;
         
         $check_user = User::where('id',Auth::user()->id)->first();
 
@@ -591,6 +592,9 @@ class EmployeeController extends Controller
                         $q->whereHas('locations', function ($w) use($location)  {
                             $w->where('id', '=', $location);
                         });
+                    })
+                    ->when(!empty($request->employee_status), function($q) use($employee_status) {
+                       $q->where('status', '=', $employee_status);
                     })
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');

@@ -288,11 +288,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Division</label>  
-                                        <select class="form-control" v-model="employee_copied.division" id="marital_status" :disabled="user_disabled">
-                                            <option value="">Choose Division</option>
-                                            <option v-for="(division) in divisions" v-bind:key="division" :value="division"> {{ division }}</option>
-                                        </select>
-
+                                        <input type="text" class="form-control" v-model="employee_copied.division" :disabled="user_disabled">
                                         <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
                                     </div>
                                 </div>
@@ -1161,9 +1157,6 @@
                 //Get Dependents
                 this.fetchDependents();
 
-                //Get Divisions
-                this.fetchDivisions();
-
                 //Validate Marital Status
                 this.validateMartialStatus();
 
@@ -1320,15 +1313,6 @@
                 axios.get('/locations-all')
                 .then(response => { 
                     this.locations = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.error;
-                })
-            },
-            fetchDivisions(){
-                axios.get('/division-options/'+this.employee_copied.company_list)
-                .then(response => { 
-                    this.divisions = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;

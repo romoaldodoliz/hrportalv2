@@ -25,7 +25,7 @@
                                     </div> 
                                     <div class="col-xl-12 mb-2 mt-3 float-right">
                                         <h4>Filter by: </h4>
-                                        <div class="col-xl-4 mb-2 float-left">
+                                        <div class="col-xl-3 mb-2 float-left">
                                             <select class="form-control" v-model="company" id="company">
                                                 <option value="">Choose Company</option>
                                                 <option v-for="(company,v) in companies" v-bind:key="v" :value="company.id"> {{ company.name }}</option>
@@ -43,8 +43,15 @@
                                                 <option v-for="(location,v) in locations" v-bind:key="v" :value="location.id"> {{ location.name }}</option>
                                             </select>
                                         </div> 
-                                        <div class="col-xl-1 mb-2 float-left">
-                                            <button class="btn btn-sm btn-primary" @click="fetchFilterEmployee"> Apply Filter</button>
+                                        <div class="col-xl-3 mb-2 float-left">
+                                                <select class="form-control" v-model="employee_status" id="employee_status">
+                                                    <option value="">Choose Status</option>
+                                                    <option value="ACTIVE">Active</option>
+                                                    <option value="INACTIVE">Inactive</option>
+                                                </select>
+                                            </div> 
+                                        <div class="col-xl-12">
+                                            <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
                                         </div> 
                                     </div> 
                                 </div>
@@ -166,6 +173,7 @@ export default {
             departments : [],
             department : '',
             employee_id_src : '',
+            employee_status : '',
             table_loading : true,
          }
     },
@@ -206,6 +214,7 @@ export default {
             this.formFilterData.append('company',this.company);
             this.formFilterData.append('department',this.department);
             this.formFilterData.append('location',this.location);
+            this.formFilterData.append('employee_status',this.employee_status);
            
             this.formFilterData.append('_method', 'POST');
 
