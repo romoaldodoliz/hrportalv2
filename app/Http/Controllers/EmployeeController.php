@@ -42,7 +42,7 @@ class EmployeeController extends Controller
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
-                            ->orderBy('series_number', 'ASC')
+                            ->orderBy('series_number','DESC')
                             ->get();
         
     }
@@ -562,7 +562,7 @@ class EmployeeController extends Controller
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
-                            ->orderBy('employee_number','ASC')
+                            ->orderBy('series_number','DESC')
                             ->get();
         return $employee;
     }
@@ -599,7 +599,8 @@ class EmployeeController extends Controller
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');
                     })
-                    ->orderBy('employee_number','DESC')->get();
+                    ->orderBy('series_number','DESC')
+                    ->get();
         return $employee;
     }
 
