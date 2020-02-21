@@ -87,8 +87,8 @@
                                                             <i class="fas fa-pen" style="color:#5e72e4"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"> Edit</a>
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"> Transfer</a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -755,11 +755,13 @@
                         <div class="card shadow">
                             <div class="card-body">
                                 <h1 class="col-12 text-left">{{ transferEmployeeDetails.first_name + ' ' + transferEmployeeDetails.last_name }}</h1>
+
                                 <h4 class="col-6 text-left mt--2 text-default">{{ transferEmployeeDetails.id_number ? transferEmployeeDetails.id_number : "" }}</h4>
                                 <h4 class="col-6 text-left mt--2 text-info">{{ transferEmployeeDetails.position ? transferEmployeeDetails.position : "" }}</h4>
-                                <h4 class="col-6 text-left mt--2 text-danger">{{ transferEmployeeDetails.departments ? transferEmployeeDetails.departments[0].name : "" }}</h4>
-                                <h4 class="col-6 text-left mt--2 text-success">{{ transferEmployeeDetails.companies ? transferEmployeeDetails.companies[0].name : "" }}</h4>
-                                <h4 class="col-6 text-left mt--2 text-warning">{{ transferEmployeeDetails.locations ? transferEmployeeDetails.locations[0].name : "" }}</h4>
+
+                                <h4 class="col-6 text-left mt--2 text-danger" v-if="transferEmployeeDetails.departments">{{ transferEmployeeDetails.departments[0] ? transferEmployeeDetails.departments[0].name : "" }}</h4>
+                                <h4 class="col-6 text-left mt--2 text-success" v-if="transferEmployeeDetails.companies">{{ transferEmployeeDetails.companies[0] ? transferEmployeeDetails.companies[0].name : "" }}</h4>
+                                <h4 class="col-6 text-left mt--2 text-warning" v-if="transferEmployeeDetails.locations">{{ transferEmployeeDetails.locations[0] ? transferEmployeeDetails.locations[0].name : "" }}</h4>
                                
                                <div class="row mt--10 mb-3">
                                     <div class="col-md-12">
@@ -787,21 +789,21 @@
                                                     <tr v-for="(log,index) in transferLogsList" v-bind:key="index">
                                                         <td>{{index+1}}</td>
                                                         <td>
-                                                            <span>Company: <strong>{{log.previous_company.name}}</strong></span><br>
+                                                            <span>Company: <strong>{{ log.previous_company ? log.previous_company.name : ""}}</strong></span><br>
                                                             <span>ID Number: {{log.previous_id_number}}</span><br>
                                                             <span>Date Hired: {{log.previous_date_hired}}</span><br>
                                                             <span>Position: {{log.previous_position}}</span><br>
-                                                            <span>Department: {{log.previous_department.name}}</span><br>
-                                                            <span>Location: {{log.previous_location.name}}</span><br>
+                                                            <span>Department: {{ log.previous_department ? log.previous_department.name : ""}}</span><br>
+                                                            <span>Location: {{log.previous_location ? log.previous_location.name : ""}}</span><br>
                                                             
                                                         </td>
                                                         <td>
-                                                            <span>Company: <strong>{{log.new_company.name}}</strong></span><br>
+                                                            <span>Company: <strong>{{log.new_company ? log.new_company.name : ""}}</strong></span><br>
                                                             <span>ID Number: {{log.new_id_number}}</span><br>
                                                             <span>Date Hired: {{log.new_date_hired}}</span><br>
                                                             <span>Position: {{log.new_position}}</span><br>
-                                                            <span>Department: {{log.new_department.name}}</span><br>
-                                                            <span>Location: {{log.new_location.name}}</span><br>
+                                                            <span>Department: {{log.new_department ? log.new_department.name : ""}}</span><br>
+                                                            <span>Location: {{log.new_location ? log.new_location.name : ""}}</span><br>
                                                             
                                                         </td>
                                                     </tr>
@@ -1005,7 +1007,9 @@
                 this.transfer_approvers = [];
             },
             transferEmployee(employee){
-                this.transferEmployeeDetails = employee;
+                let v = this;
+                v.transferEmployeeDetails = [];
+                v.transferEmployeeDetails = employee;
             },
             saveTransferEmployee(transfer_employee){
                 let v = this;

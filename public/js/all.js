@@ -12070,6 +12070,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12143,7 +12145,9 @@ __webpack_require__.r(__webpack_exports__);
       this.transfer_approvers = [];
     },
     transferEmployee: function transferEmployee(employee) {
-      this.transferEmployeeDetails = employee;
+      var v = this;
+      v.transferEmployeeDetails = [];
+      v.transferEmployeeDetails = employee;
     },
     saveTransferEmployee: function saveTransferEmployee(transfer_employee) {
       var _this = this;
@@ -65068,7 +65072,12 @@ var render = function() {
                                           }
                                         }
                                       },
-                                      [_vm._v(" Edit")]
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-user-edit"
+                                        }),
+                                        _vm._v(" Edit")
+                                      ]
                                     ),
                                     _vm._v(" "),
                                     _c(
@@ -65088,7 +65097,12 @@ var render = function() {
                                           }
                                         }
                                       },
-                                      [_vm._v(" Transfer")]
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-user-cog"
+                                        }),
+                                        _vm._v(" Transfer")
+                                      ]
                                     )
                                   ]
                                 )
@@ -69023,47 +69037,56 @@ var render = function() {
                       ]
                     ),
                     _vm._v(" "),
-                    _c(
-                      "h4",
-                      { staticClass: "col-6 text-left mt--2 text-danger" },
-                      [
-                        _vm._v(
-                          _vm._s(
-                            _vm.transferEmployeeDetails.departments
-                              ? _vm.transferEmployeeDetails.departments[0].name
-                              : ""
-                          )
+                    _vm.transferEmployeeDetails.departments
+                      ? _c(
+                          "h4",
+                          { staticClass: "col-6 text-left mt--2 text-danger" },
+                          [
+                            _vm._v(
+                              _vm._s(
+                                _vm.transferEmployeeDetails.departments[0]
+                                  ? _vm.transferEmployeeDetails.departments[0]
+                                      .name
+                                  : ""
+                              )
+                            )
+                          ]
                         )
-                      ]
-                    ),
+                      : _vm._e(),
                     _vm._v(" "),
-                    _c(
-                      "h4",
-                      { staticClass: "col-6 text-left mt--2 text-success" },
-                      [
-                        _vm._v(
-                          _vm._s(
-                            _vm.transferEmployeeDetails.companies
-                              ? _vm.transferEmployeeDetails.companies[0].name
-                              : ""
-                          )
+                    _vm.transferEmployeeDetails.companies
+                      ? _c(
+                          "h4",
+                          { staticClass: "col-6 text-left mt--2 text-success" },
+                          [
+                            _vm._v(
+                              _vm._s(
+                                _vm.transferEmployeeDetails.companies[0]
+                                  ? _vm.transferEmployeeDetails.companies[0]
+                                      .name
+                                  : ""
+                              )
+                            )
+                          ]
                         )
-                      ]
-                    ),
+                      : _vm._e(),
                     _vm._v(" "),
-                    _c(
-                      "h4",
-                      { staticClass: "col-6 text-left mt--2 text-warning" },
-                      [
-                        _vm._v(
-                          _vm._s(
-                            _vm.transferEmployeeDetails.locations
-                              ? _vm.transferEmployeeDetails.locations[0].name
-                              : ""
-                          )
+                    _vm.transferEmployeeDetails.locations
+                      ? _c(
+                          "h4",
+                          { staticClass: "col-6 text-left mt--2 text-warning" },
+                          [
+                            _vm._v(
+                              _vm._s(
+                                _vm.transferEmployeeDetails.locations[0]
+                                  ? _vm.transferEmployeeDetails.locations[0]
+                                      .name
+                                  : ""
+                              )
+                            )
+                          ]
                         )
-                      ]
-                    ),
+                      : _vm._e(),
                     _vm._v(" "),
                     _c("div", { staticClass: "row mt--10 mb-3" }, [
                       _c("div", { staticClass: "col-md-12" }, [
@@ -69129,7 +69152,9 @@ var render = function() {
                                             _c("strong", [
                                               _vm._v(
                                                 _vm._s(
-                                                  log.previous_company.name
+                                                  log.previous_company
+                                                    ? log.previous_company.name
+                                                    : ""
                                                 )
                                               )
                                             ])
@@ -69164,7 +69189,10 @@ var render = function() {
                                             _vm._v(
                                               "Department: " +
                                                 _vm._s(
-                                                  log.previous_department.name
+                                                  log.previous_department
+                                                    ? log.previous_department
+                                                        .name
+                                                    : ""
                                                 )
                                             )
                                           ]),
@@ -69174,7 +69202,9 @@ var render = function() {
                                             _vm._v(
                                               "Location: " +
                                                 _vm._s(
-                                                  log.previous_location.name
+                                                  log.previous_location
+                                                    ? log.previous_location.name
+                                                    : ""
                                                 )
                                             )
                                           ]),
@@ -69186,7 +69216,11 @@ var render = function() {
                                             _vm._v("Company: "),
                                             _c("strong", [
                                               _vm._v(
-                                                _vm._s(log.new_company.name)
+                                                _vm._s(
+                                                  log.new_company
+                                                    ? log.new_company.name
+                                                    : ""
+                                                )
                                               )
                                             ])
                                           ]),
@@ -69219,7 +69253,11 @@ var render = function() {
                                           _c("span", [
                                             _vm._v(
                                               "Department: " +
-                                                _vm._s(log.new_department.name)
+                                                _vm._s(
+                                                  log.new_department
+                                                    ? log.new_department.name
+                                                    : ""
+                                                )
                                             )
                                           ]),
                                           _c("br"),
@@ -69227,7 +69265,11 @@ var render = function() {
                                           _c("span", [
                                             _vm._v(
                                               "Location: " +
-                                                _vm._s(log.new_location.name)
+                                                _vm._s(
+                                                  log.new_location
+                                                    ? log.new_location.name
+                                                    : ""
+                                                )
                                             )
                                           ]),
                                           _c("br")
