@@ -20,7 +20,7 @@
                                 <div class="row align-items-center">
                                     <div class="col-xl-12 mb-2 mt-3 float-right">
                                         <div class="col-xl-6 mb-2 mt-3 float-left">
-                                            <input type="text" name="employee_ids" class="form-control" placeholder="Search" autocomplete="off" v-model="keywords" id="employee_ids">
+                                            <input type="text" name="employee_ids" class="form-control" placeholder="Search by Name" autocomplete="off" v-model="keywords" id="employee_ids">
                                         </div> 
                                     </div> 
                                     <div class="col-xl-12 mb-2 mt-3 float-right">
@@ -278,7 +278,7 @@ export default {
             let self = this;
             return Object.values(self.employee_ids).filter(employee_id => {
                 let full_name = employee_id.first_name + " " + employee_id.last_name;
-                return employee_id.employee_number.toLowerCase().includes(this.keywords.toLowerCase()) || employee_id.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
+                return  employee_id.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
             });
         },
         totalPages() {

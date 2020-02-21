@@ -11105,7 +11105,7 @@ __webpack_require__.r(__webpack_exports__);
       var self = this;
       return Object.values(self.employee_ids).filter(function (employee_id) {
         var full_name = employee_id.first_name + " " + employee_id.last_name;
-        return employee_id.employee_number.toLowerCase().includes(_this7.keywords.toLowerCase()) || employee_id.first_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this7.keywords.toLowerCase());
+        return employee_id.first_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this7.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -12740,7 +12740,7 @@ __webpack_require__.r(__webpack_exports__);
       var self = this;
       return Object.values(self.employees).filter(function (employee) {
         var full_name = employee.first_name + " " + employee.last_name;
-        return employee.employee_number.toLowerCase().includes(_this18.keywords.toLowerCase()) || employee.first_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this18.keywords.toLowerCase());
+        return employee.first_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this18.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this18.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -64167,7 +64167,7 @@ var render = function() {
                             attrs: {
                               type: "text",
                               name: "employee_ids",
-                              placeholder: "Search",
+                              placeholder: "Search by Name",
                               autocomplete: "off",
                               id: "employee_ids"
                             },
@@ -64787,7 +64787,7 @@ var render = function() {
                             attrs: {
                               type: "text",
                               name: "employee",
-                              placeholder: "Search by Employee Number or Name",
+                              placeholder: "Search by Name",
                               autocomplete: "off",
                               id: "name"
                             },
