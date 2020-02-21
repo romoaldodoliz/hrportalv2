@@ -12072,6 +12072,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12121,7 +12144,8 @@ __webpack_require__.r(__webpack_exports__);
       company: '',
       location: '',
       department: '',
-      employee_status: ''
+      employee_status: '',
+      org_chart_src: ''
     };
   },
   created: function created() {
@@ -12135,6 +12159,9 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchPositionApprovers();
   },
   methods: {
+    orgChartEmployee: function orgChartEmployee(employee) {
+      this.org_chart_src = '/org-chart/' + employee.id;
+    },
     clearTransferForm: function clearTransferForm() {
       this.transfer_employee.company_list = "";
       this.transfer_employee.department_list = "";
@@ -23054,7 +23081,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n@media (min-width: 992px){\n.modal-lg {\n        max-width: 700px!important;\n}\n.modal-employee {\n        max-width: 1200px!important;\n}\n}\n", ""]);
+exports.push([module.i, "\n.modal-orgchart{\n    width: 1400px!important;\n}\n@media (min-width: 992px){\n.modal-lg {\n        max-width: 700px!important;\n}\n.modal-employee {\n        max-width: 1200px!important;\n}\n}\n", ""]);
 
 // exports
 
@@ -65010,7 +65037,7 @@ var render = function() {
               _c("div", { staticClass: "table-responsive" }, [
                 _c(
                   "table",
-                  { staticClass: "table align-items-center table-flush" },
+                  { staticClass: "table align-items-center table-flush mb-5" },
                   [
                     _vm._m(1),
                     _vm._v(" "),
@@ -65102,6 +65129,31 @@ var render = function() {
                                           staticClass: "fas fa-user-cog"
                                         }),
                                         _vm._v(" Transfer")
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "dropdown-item",
+                                        staticStyle: { cursor: "pointer" },
+                                        attrs: {
+                                          "data-toggle": "modal",
+                                          "data-target": "#orgChartModal"
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.orgChartEmployee(
+                                              employee
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-sitemap"
+                                        }),
+                                        _vm._v(" Organizational Chart")
                                       ]
                                     )
                                   ]
@@ -69865,6 +69917,55 @@ var render = function() {
           ]
         )
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "orgChartModal",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true",
+          "data-backdrop": "static"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass:
+              "modal-dialog modal-dialog-centered modal-lg modal-employee",
+            staticStyle: { width: "80%!important" },
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(14),
+              _vm._v(" "),
+              _vm._m(15),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "col-md-12 text-center" }, [
+                  _c("iframe", {
+                    attrs: {
+                      id: "id-frame",
+                      src: _vm.org_chart_src,
+                      frameborder: "0",
+                      height: "700px",
+                      width: "100%"
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" })
+            ])
+          ]
+        )
+      ]
     )
   ])
 }
@@ -70219,6 +70320,35 @@ var staticRenderFns = [
         ]),
         _vm._v(" "),
         _c("th", { staticClass: "text-center" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h2", { staticClass: "col-12 modal-title text-left" }, [
+        _vm._v("Organizational Chart")
       ])
     ])
   }

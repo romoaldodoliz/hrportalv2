@@ -16,6 +16,7 @@ use App\PrintIdLog;
 use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
 use App\EmployeeTransfer;
+use App\Api;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -1066,6 +1067,20 @@ class EmployeeController extends Controller
         }
         return $transfer_employee_logs;
 
+    }
+
+    public function orgChart(Employee $employee){
+
+        $api = Api::first();
+        $user = $employee;
+        $datas = '';
+        if($employee->id){
+            $rUrl =  $api->api_link.$employee->id;
+            $datas = file_get_contents($rUrl);
+        }
+
+        return view('org_chart',compact('datas','user'));
+        
     }
 
 }

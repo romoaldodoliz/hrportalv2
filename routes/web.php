@@ -82,7 +82,12 @@ Route::get('logout', function(){
 
             //Transfer Employee Logs
             Route::get('/transfer-employee-logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
-        // Settings
+            
+            //Organizational Chart
+            Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff']]);
+        
+        
+            // Settings
         Route::get('settings',['as'=>'settings.index','uses'=>'SettingsController@index','middleware' => ['role:Administrator']]);
 
         /**

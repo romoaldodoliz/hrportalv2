@@ -58,7 +58,7 @@
                                 </div>
                                 <div class="table-responsive">
                                     <!-- employees table -->
-                                    <table class="table align-items-center table-flush">
+                                    <table class="table align-items-center table-flush mb-5">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th scope="col"></th>
@@ -89,6 +89,7 @@
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -928,9 +929,31 @@
             </div>
         </div>
 
+        <!-- Org Chart employee Modal -->
+        <div class="modal fade" id="orgChartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-left">Organizational Chart</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12 text-center">
+                            <iframe id="id-frame" :src="org_chart_src" frameborder="0" height="700px" width="100%"></iframe>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </div>
 </template>
-
 
 <script>
     import loader from './Loader'
@@ -984,6 +1007,7 @@
                 location : '',
                 department : '',
                 employee_status : '',
+                org_chart_src : '',
             }
         },
         created(){
@@ -997,6 +1021,9 @@
             this.fetchPositionApprovers();
         },
         methods:{
+            orgChartEmployee(employee){
+                this.org_chart_src = '/org-chart/' + employee.id;
+            },
             clearTransferForm(){
                 this.transfer_employee.company_list = "";
                 this.transfer_employee.department_list = "";
@@ -1654,6 +1681,9 @@
 </script>
 
 <style>
+    .modal-orgchart{
+        width: 1400px!important;
+    }
     @media (min-width: 992px){
         .modal-lg {
             max-width: 700px!important;
