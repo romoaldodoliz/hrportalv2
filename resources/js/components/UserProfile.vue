@@ -112,14 +112,6 @@
                                     </div>
                                 </div>
 
-                                 <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label for="role">Nick Name*</label> 
-                                        <input type="text"  class="form-control" v-model="employee_copied.nick_name" >
-                                        <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
-                                    </div>
-                                </div>
-
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">First Name*</label> 
@@ -155,6 +147,13 @@
                                         <label for="role">Suffix</label> 
                                         <input type="text" class="form-control" v-model="employee_copied.name_suffix" :disabled="user_disabled">
                                         <span class="text-danger" v-if="errors.name_suffix">{{ errors.name_suffix[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="role">Nick Name</label> 
+                                        <input type="text"  class="form-control" v-model="employee_copied.nick_name" >
+                                        <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">

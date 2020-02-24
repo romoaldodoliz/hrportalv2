@@ -450,7 +450,6 @@ class EmployeeController extends Controller
 
         $this->validate($request, [
             'last_name' => 'required',
-            'nick_name' => 'required',
             'marital_status' => 'required',
             'gender' => 'required',
         ]);
