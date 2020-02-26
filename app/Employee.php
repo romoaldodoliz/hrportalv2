@@ -105,6 +105,11 @@ class Employee extends Model implements AuditableContract
         return $this->hasMany('App\Dependent');
     }
 
+    public function dependents_attachments()
+    {
+        return $this->hasMany('App\DependentAttachment');
+    }
+
     public function print_id_logs()
     {
         return $this->hasMany('App\PrintIdLog');

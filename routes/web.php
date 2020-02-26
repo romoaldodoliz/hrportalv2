@@ -35,7 +35,7 @@ Route::get('logout', function(){
         Route::patch('/user/{user}',['as'=>'users.update','uses'=>'UserController@update','middleware' => ['role:Administrator']]);
         Route::delete('/user/{user}',['as'=>'users.destroy','uses'=>'UserController@destroy','middleware' => ['role:Administrator']]);
         
-        Route::post('/change-password',['as'=>'users.changePassword','uses'=>'UserController@changePassword','middleware' => ['role:Administrator']]);
+        Route::post('/change-password','UserController@changePassword');
         
         Route::get('/change_password',['as'=>'users.change_password','uses'=>'UserController@change_password','middleware' => ['role:Administrator|HR Staff|User']]);
 
@@ -63,7 +63,9 @@ Route::get('logout', function(){
             Route::get('/employee-approvers/{employee}', 'EmployeeController@employeeApprovers');  
 
             //Employee Dependents
-            Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents');  
+            Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents'); 
+
+            Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');  
 
             //Employee Filter
             Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);

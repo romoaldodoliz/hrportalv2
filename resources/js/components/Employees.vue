@@ -662,6 +662,41 @@
                                                     </table>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-12 mt-5">
+                                                <h4>Attachment(s)  - Birth Certificates</h4>
+                                            </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <input type="file" multiple="multiple" id="dependents_attachments" class="form-control dependents-attachments-edit" @change="uploadDependentAttachments" placeholder="Attach file"><br>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                <div class="table-responsive mt-3">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>File</th>
+                                                                <th class="text-center"></th>
+                                                                <th class="text-center"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(attachment, index) in employee_dependent_attachments" v-bind:key="index">
+                                                                <td>{{ index + 1 }}</td>
+                                                                <td> {{ attachment.file }}</td>
+                                                                <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
+                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">Remove</button></td>
+                                                                
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    </div>
+                                                    
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                     <!-- Identification -->
@@ -1008,6 +1043,11 @@
                 department : '',
                 employee_status : '',
                 org_chart_src : '',
+                dependent_attachments : [],
+                employee_dependent_attachments: [],
+                deleted_dependent_attachments: [],
+                dependent_attachments: [],
+                fileSize: 0,
             }
         },
         created(){
@@ -1021,6 +1061,63 @@
             this.fetchPositionApprovers();
         },
         methods:{
+            removeDependentAttachment: function(index,attachment) {
+                if(attachment){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this attachment?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+
+                            this.deleted_dependent_attachments.push({
+                                id: attachment.id,
+                                file: attachment.file,
+                            });
+
+                            this.employee_dependent_attachments.splice(index, 1);    
+                        }
+                    })
+                }
+            },
+             uploadDependentAttachments(e){
+
+                var files = e.target.files || e.dataTransfer.files;
+
+                if(!files.length)
+                    return;
+                
+                for (var i = files.length - 1; i >= 0; i--){
+                    this.dependent_attachments.push(files[i]);
+                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                }
+                if(this.fileSize > 5){
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('dependents_attachments').value = "";
+                    this.dependent_attachments = [];
+                    this.fileSize = 0;
+                }
+                
+            },
+            fetchDependentAttachments(){
+                let v = this;
+                this.employee_dependent_attachments = [];
+                this.deleted_dependent_attachments = [];
+                axios.get('/employee-dependents-attachments/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.employee_dependent_attachments = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            
             orgChartEmployee(employee){
                 this.org_chart_src = '/org-chart/' + employee.id;
             },
@@ -1208,6 +1305,17 @@
                 formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
                 formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
 
+                
+
+                if(this.dependent_attachments.length > 0){
+                    for(var i = 0; i < this.dependent_attachments.length; i++){
+                        let dependent_attachments = this.dependent_attachments[i];
+                        formData.append('dependent_attachments[]', dependent_attachments);
+                    }
+                } 
+
+                formData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
+
                 formData.append('_method', 'PATCH');
 
                 axios.post(`/employee/${employee_copied.id}`, 
@@ -1221,6 +1329,8 @@
                 .then(response => {
                     this.employees.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
+                    this.dependent_attachments = [];
+                    document.getElementById('dependents_attachments').value = "";
                     this.copyObject(response.data);
 
                     Swal.fire({
@@ -1233,7 +1343,7 @@
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
-                    
+                    document.getElementById('dependents_attachments').value = "";
                     Swal.fire({
                         title: 'Warning!',
                         text: 'Unable to Update Employee. Check Entries and then try again.',
@@ -1265,6 +1375,7 @@
 
                 //Get Dependents
                 this.fetchDependents();
+                this.fetchDependentAttachments();
 
                 //Validate Marital Status
                 this.validateMaritalStatus();

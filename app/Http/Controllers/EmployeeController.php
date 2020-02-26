@@ -16,6 +16,7 @@ use App\PrintIdLog;
 use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
 use App\EmployeeTransfer;
+use App\DependentAttachment;
 use App\Api;
 
 use Carbon\Carbon;
@@ -71,6 +72,10 @@ class EmployeeController extends Controller
 
     public function employeeDependents(Employee $employee){
         return Dependent::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
+    }
+
+    public function employeeDependentsAttachments(Employee $employee){
+        return DependentAttachment::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
     }
 
     public function employeeHeadApprovers(){
@@ -239,6 +244,7 @@ class EmployeeController extends Controller
         ]);
 
         $data = $request->all();
+        $date_time = Carbon::now()->format('M_d_Y_h_m_s');
 
         if(empty($request->date_hired)){
             $data['date_hired'] = null;
@@ -347,6 +353,40 @@ class EmployeeController extends Controller
                    }
                 }
 
+                //dependent_attachments
+                $attachments = $request->file('dependent_attachments');   
+                $new_dependent_attachments = [];
+
+                if(!empty($attachments)){
+                    foreach($attachments as $attachment){
+                        $filename = $employee->id . '_' . $date_time . '_' . $attachment->getClientOriginalName();
+                        $path = Storage::disk('public')->putFileAs('dependents_attachments', $attachment,$filename);
+                        $new_dependent_attachments[] = $filename; 
+                    }    
+                }
+                
+                //Delete Dependents Attachment
+                if($data['deleted_dependent_attachments']){
+                    $deleted_dependent_attachments = json_decode($data['deleted_dependent_attachments']);
+                    foreach($deleted_dependent_attachments as $deleted_dependent_attachment){
+                        if(isset($deleted_dependent_attachment->id)){
+                            $employee->dependents_attachments()->where('id',$deleted_dependent_attachment->id)->delete();
+                        }
+                   }
+                }
+
+                 //Dependents Attachment
+                if($new_dependent_attachments){
+                    foreach($new_dependent_attachments as $attachment){
+                        $dependent_attachment_data =  [];
+                        $dependent_attachment_data['employee_id'] = $employee->id;
+                        $dependent_attachment_data['file'] = $attachment;
+                        $employee->dependents_attachments()->create($dependent_attachment_data);
+                    }
+                }
+
+                
+
                 DB::commit();
                 return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
             }
@@ -448,6 +488,8 @@ class EmployeeController extends Controller
         
         $data = $request->all();
 
+        $date_time = Carbon::now()->format('M_d_Y_h_m_s');
+
         $this->validate($request, [
             'last_name' => 'required',
             'marital_status' => 'required',
@@ -469,17 +511,26 @@ class EmployeeController extends Controller
 
         
         if(isset($request->marital_status_attachment)){
-            
-            $date_time = Carbon::now()->format('M_d_Y_h_m_s');
-
             if($request->file('marital_status_attachment')){
                 $attachment = $request->file('marital_status_attachment');   
                 $filename = $employee->id . '_' . $date_time . '_' . $attachment->getClientOriginalName();
-                $path = Storage::disk('public')->putFileAs('marital_attachments/temps', $attachment , $filename);
+                $path = Storage::disk('public')->putFileAs('marital_attachments/temps/', $attachment , $filename);
                 $employee_data['marital_status_attachment'] =  $filename;
             }
         }
 
+        //dependent_attachments
+        $attachments = $request->file('dependent_attachments');   
+        $new_dependent_attachments = [];
+
+        if(!empty($attachments)){
+            foreach($attachments as $attachment){
+                $filename = $employee->id . '_' . $date_time . '_' . $attachment->getClientOriginalName();
+                $path = Storage::disk('public')->putFileAs('dependents_attachments/temps', $attachment,$filename);
+                $new_dependent_attachments[] = $filename; 
+            }    
+        }
+    
         //For approval data 
         $employee_data['nick_name'] = $request->nick_name ? $request->nick_name : $employee->nick_name;
         $employee_data['middle_name'] = $request->middle_name ? $request->middle_name : $employee->middle_name;
@@ -495,6 +546,9 @@ class EmployeeController extends Controller
         $employee_data['contact_number'] = $request->contact_number;
         $employee_data['dependents'] = $request->dependents;
         $employee_data['deleted_dependents'] = $request->deleted_dependents;
+
+        $employee_data['dependent_attachments'] = $new_dependent_attachments;
+        $employee_data['deleted_dependent_attachments'] = $request->deleted_dependent_attachments;
 
         $employee_data['gender'] = $request->gender;
         $employee_data['sss_number'] = $request->sss_number;

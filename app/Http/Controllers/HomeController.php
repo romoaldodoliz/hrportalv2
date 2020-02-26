@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Employee;
 use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
+use App\DependentAttachment;
 
 use DB;
 use Illuminate\Http\File;
@@ -104,6 +105,10 @@ class HomeController extends Controller
             $employee_request_approval_dependents_data = $employee_request_approval_data['dependents'] ? json_decode($employee_request_approval_data['dependents'], true) : '';
             $employee_request_approval_deleted_dependents_data = $employee_request_approval_data['deleted_dependents'] ? json_decode($employee_request_approval_data['deleted_dependents'], true) : '';
             
+            $employee_request_approval_deleted_dependents_attachment = $employee_request_approval_data['deleted_dependent_attachments'] ? json_decode($employee_request_approval_data['deleted_dependent_attachments'], true) : '';
+
+            $employee_request_approval_dependents_attachment = $employee_request_approval_data['dependent_attachments'] ? $employee_request_approval_data['dependent_attachments'] : [];
+
             if($request->status == "Approved"){
                 //Update Approved Employee Request
                 if($employee_request_original_data['nick_name'] != $employee_request_approval_data['nick_name']){
@@ -189,6 +194,35 @@ class HomeController extends Controller
                     foreach($employee_request_approval_deleted_dependents_data as $deleted_dependent){
                         if(isset($deleted_dependent['id'])){
                             $employee->dependents()->where('id',$deleted_dependent['id'])->delete();
+                        }
+                   }
+                }
+
+
+                
+
+                //Dependents Attachment
+                if($employee_request_approval_dependents_attachment){
+                    foreach($employee_request_approval_dependents_attachment as $attachment){
+                        //Move file from temp to folder
+                        $file = Storage::disk('public')->get('dependents_attachments/temps/' . $attachment);
+                        if($file){
+                            Storage::disk('public')->put('dependents_attachments/' . $attachment , $file); 
+                        }
+
+                        $dependent_attachment_data =  [];
+                        $dependent_attachment_data['employee_id'] = $employee_request->employee_id;
+                        $dependent_attachment_data['file'] = $attachment;
+
+                        DependentAttachment::create($dependent_attachment_data);
+                    }
+                }
+
+                //Delete Dependents Attachment
+                if($employee_request_approval_deleted_dependents_attachment){
+                    foreach($employee_request_approval_deleted_dependents_attachment as $deleted_dependent_attachment){
+                        if(isset($deleted_dependent_attachment['id'])){
+                            $employee->dependents_attachments()->where('id',$deleted_dependent_attachment['id'])->delete();
                         }
                    }
                 }

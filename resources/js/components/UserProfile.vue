@@ -524,7 +524,44 @@
                                         </table>
                                     </div>
                                 </div>
+
+                               
                             </div>
+
+                            <div class="col-md-12 mt-5">
+                                <h4>Attachment(s)  - Birth Certificates</h4>
+                            </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="file" multiple="multiple" id="dependents_attachments" class="form-control dependents-attachments-edit" @change="uploadDependentAttachments" placeholder="Attach file"><br>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>File</th>
+                                                <th class="text-center"></th>
+                                                <th class="text-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(attachment, index) in employee_dependent_attachments" v-bind:key="index">
+                                                <td>{{ index + 1 }}</td>
+                                                <td> {{ attachment.file }}</td>
+                                                <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
+                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">Remove</button></td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                    
+                            </div>
+
                         </div>
                         <hr class="my-4">
                         <!-- Identification  -->
@@ -829,33 +866,7 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th class="text-center" width="20%;" colspan="5">CURRENT - HMO DEPENDENTS</th>
-                            </tr>
-                            <tr>
-                                <th width="20%;">#</th>
-                                <th width="20%;">Name</th>
-                                <th width="20%;">Gender</th>
-                                <th width="20%;">Date of Birth</th>
-                                <th width="20%;">Relationship</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(request_original_dependent, index) in employee_request_original.dependents" v-bind:key="index">
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ request_original_dependent.dependent_name }}</td>
-                                <td>{{ request_original_dependent.dependent_gender }}</td>
-                                <td>{{ request_original_dependent.bdate }}</td>
-                                <td>{{ request_original_dependent.relation }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    </div>
-                    
-                    <div class="table-responsive mt-3">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="text-center" width="20%;" colspan="5">NEW/MODIFIED - HMO DEPENDENTS</th>
+                                <th colspan="5"><h4 class="text-success">NEW/MODIFIED - HMO DEPENDENTS</h4> </th>
                             </tr>
                             <tr>
                                 <th width="20%;">#</th>
@@ -881,7 +892,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th class="text-center" width="20%;" colspan="5">DELETED - HMO DEPENDENTS</th>
+                                    <th colspan="5"><h4 class="text-danger">DELETED - HMO DEPENDENTS</h4> </th>
                                 </tr>
                                 <tr>
                                     <th width="20%;">#</th>
@@ -902,6 +913,50 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="table-responsive mt-3" v-if="employee_request_approval.dependent_attachments">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="5"><h4 class="text-success">NEW - HMO DEPENDENTS ATTACHMENT</h4> </th>
+                                </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>FILE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(request_approval_dependent_attachment, index) in employee_request_approval.dependent_attachments" v-bind:key="index">
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ request_approval_dependent_attachment }}</td>
+                                    <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/temps/'+request_approval_dependent_attachment"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-responsive mt-3" v-if="employee_request_approval.deleted_dependent_attachments">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="5"><h4 class="text-danger">DELETED - HMO DEPENDENTS ATTACHMENT</h4> </th>
+                                </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>FILE</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(request_approval_deleted_dependent_attachment, index) in employee_request_approval.deleted_dependent_attachments" v-bind:key="index">
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ request_approval_deleted_dependent_attachment.file }}</td>
+                                    <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+request_approval_deleted_dependent_attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div class="row mt-5" v-if="employee_request_approval.remarks">
                         <div class="col-md-12">
                          
@@ -944,6 +999,7 @@
                 companies : [],
                 divisions : [],
                 departments : [],
+                userformData: new FormData(),
                 locations : [],
                 levels : [],
                 saveEmployee: true,
@@ -960,7 +1016,11 @@
                 keywords : '',
                 currentPage: 0,
                 itemsPerPage: 5,
-                employee_requests_pending : 0
+                employee_requests_pending : 0,
+                employee_dependent_attachments: [],
+                deleted_dependent_attachments: [],
+                dependent_attachments: [],
+                fileSize: 0,
             }
         },
         created(){
@@ -1027,61 +1087,90 @@
                         }
                     })
             },
+            uploadDependentAttachments(e){
+
+                var files = e.target.files || e.dataTransfer.files;
+
+                if(!files.length)
+                    return;
+                
+                for (var i = files.length - 1; i >= 0; i--){
+                    this.dependent_attachments.push(files[i]);
+                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                }
+                if(this.fileSize > 5){
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('dependents_attachments').value = "";
+                    this.dependent_attachments = [];
+                    this.fileSize = 0;
+                }
+                
+            },
+            prepareDependentsAttachment(){
+                if(this.dependent_attachments.length > 0){
+                    for(var i = 0; i < this.dependent_attachments.length; i++){
+                        let dependent_attachments = this.dependent_attachments[i];
+                        this.userformData.append('dependent_attachments[]', dependent_attachments);
+                    }
+                } 
+            },
             updateEmployee(employee_copied){
                 this.errors = [];
                 document.getElementById('edit_btn').disabled = true;
 
-                let formData = new FormData();
-
                 //Personal
                 if(this.profile_image_file){
-                    formData.append('employee_image', this.profile_image_file);
+                    this.userformData.append('employee_image', this.profile_image_file);
                 }
                 if(this.signature_image_file){
-                    formData.append('employee_signature', this.signature_image_file);
+                    this.userformData.append('employee_signature', this.signature_image_file);
                 }
                 
-                formData.append('middle_name', employee_copied.middle_name);
+                this.userformData.append('middle_name', employee_copied.middle_name);
                 
-                formData.append('middle_initial', employee_copied.middle_initial);
+                this.userformData.append('middle_initial', employee_copied.middle_initial);
                 
-                formData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
-                formData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
-                formData.append('gender', employee_copied.gender ? employee_copied.gender : "");
+                this.userformData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
+                this.userformData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
+                this.userformData.append('gender', employee_copied.gender ? employee_copied.gender : "");
 
-                formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
+                this.userformData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
 
 
 
                 if(this.marital_file){
-                    formData.append('marital_status_attachment', this.marital_file);
+                    this.userformData.append('marital_status_attachment', this.marital_file);
                 }
             
                 //Contact
-                formData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
-                formData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
-                formData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
-                formData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
-                formData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
-                formData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
-                formData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
+                this.userformData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
+                this.userformData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
+                this.userformData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
+                this.userformData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
+                this.userformData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
+                this.userformData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
+                this.userformData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
 
                 //Dependents
-                formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
-                formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+                this.userformData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
+                this.userformData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+
+                this.userformData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
+
+                this.prepareDependentsAttachment();
 
                 //IDENTIFICATION
-                formData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
-                formData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
-                formData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
-                formData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
+                this.userformData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
+                this.userformData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
+                this.userformData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
+                this.userformData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
 
-                formData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
+                this.userformData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
 
-                formData.append('_method', 'PATCH');
+                this.userformData.append('_method', 'PATCH');
 
                 axios.post(`/employee-user-profile/${employee_copied.id}`, 
-                    formData,
+                    this.userformData,
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data'
@@ -1090,11 +1179,12 @@
                 )
                 .then(response => {
                     document.getElementById('edit_btn').disabled = false;
+                    document.getElementById('dependents_attachments').value = "";
                     this.copyObject(response.data);
 
                     Swal.fire({
                         title: 'Success!',
-                        text: 'Your employee update has been sent to HR for Verification. See Employee Requests for your updates. Thank you.',
+                        html: 'Your employee update has been sent to HR for Verification/Approval. Click <a href="#" data-toggle="modal" data-target="#employeeRequestsModal"><u><strong class="text-primary">Employee Requests</strong></u></a> to view your requests. Thank you.',
                         icon: 'success',
                         confirmButtonText: 'Okay'
                     })
@@ -1155,6 +1245,7 @@
 
                 //Get Dependents
                 this.fetchDependents();
+                this.fetchDependentAttachments();
 
                 //Validate Marital Status
                 this.validateMartialStatus();
@@ -1170,6 +1261,8 @@
                 profile.value = '';
                 signature.value = '';
                 marital_status.value = ''; 
+
+                document.getElementById('dependents_attachments').value = "";
 
                 //Employee Request
                 this.fetchEmployeeRequest(employee.id);
@@ -1232,6 +1325,22 @@
                     this.errors = error.response.data.error;
                 })
             },
+            fetchDependentAttachments(){
+                let v = this;
+                this.employee_dependent_attachments = [];
+                this.deleted_dependent_attachments = [];
+                axios.get('/employee-dependents-attachments/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.employee_dependent_attachments = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+
             addDependent(){
                 this.dependents.push({
                     id: "",
@@ -1266,6 +1375,28 @@
                 }else{
                     this.dependents.splice(index, 1);
                 } 
+            },
+            removeDependentAttachment: function(index,attachment) {
+                if(attachment){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this attachment?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+
+                            this.deleted_dependent_attachments.push({
+                                id: attachment.id,
+                                file: attachment.file,
+                            });
+
+                            this.employee_dependent_attachments.splice(index, 1);    
+                        }
+                    })
+                }
             },
             profileHandleFileUpload(){
                 var profile = document.getElementById("profile_image_file");
@@ -1452,6 +1583,7 @@
                 this.employee_request_approval = employee_data;
                 this.employee_request_approval.dependents = JSON.parse(employee_data.dependents);
                 this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
+                this.employee_request_approval.deleted_dependent_attachments = JSON.parse(employee_data.deleted_dependent_attachments);
             },
             fetchEmployeeRequestPending(employee_id){
                 this.employee_requests_pending = 0;

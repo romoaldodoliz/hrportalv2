@@ -198,33 +198,7 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" width="20%;" colspan="5">CURRENT - HMO DEPENDENTS</th>
-                                    </tr>
-                                    <tr>
-                                        <th width="20%;">#</th>
-                                        <th width="20%;">Name</th>
-                                        <th width="20%;">Gender</th>
-                                        <th width="20%;">Date of Birth</th>
-                                        <th width="20%;">Relationship</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(request_original_dependent, index) in employee_request_original.dependents" v-bind:key="index">
-                                        <td>{{ index + 1 }}</td>
-                                        <td>{{ request_original_dependent.dependent_name }}</td>
-                                        <td>{{ request_original_dependent.dependent_gender }}</td>
-                                        <td>{{ request_original_dependent.bdate }}</td>
-                                        <td>{{ request_original_dependent.relation }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            </div>
-                            
-                            <div class="table-responsive mt-3">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center" width="20%;" colspan="5">NEW/MODIFIED - HMO DEPENDENTS</th>
+                                        <th colspan="5"><h4 class="text-success">NEW/MODIFIED - HMO DEPENDENTS</h4> </th>
                                     </tr>
                                     <tr>
                                         <th width="20%;">#</th>
@@ -247,30 +221,74 @@
                             </div>
 
                             <div class="table-responsive mt-3">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="5"><h4 class="text-danger">DELETED - HMO DEPENDENTS</h4> </th>
+                                        </tr>
+                                        <tr>
+                                            <th width="20%;">#</th>
+                                            <th width="20%;">Name</th>
+                                            <th width="20%;">Gender</th>
+                                            <th width="20%;">Date of Birth</th>
+                                            <th width="20%;">Relationship</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(request_approval_deleted_dependent, index) in employee_request_approval.deleted_dependents" v-bind:key="index">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ request_approval_deleted_dependent.dependent_name }}</td>
+                                            <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
+                                            <td>{{ request_approval_deleted_dependent.bdate }}</td>
+                                            <td>{{ request_approval_deleted_dependent.relation }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                             <div class="table-responsive mt-3" v-if="employee_request_approval.dependent_attachments">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" width="20%;" colspan="5">DELETED - HMO DEPENDENTS</th>
+                                        <th colspan="5"><h4 class="text-success">NEW - HMO DEPENDENTS ATTACHMENT</h4> </th>
                                     </tr>
                                     <tr>
-                                        <th width="20%;">#</th>
-                                        <th width="20%;">Name</th>
-                                        <th width="20%;">Gender</th>
-                                        <th width="20%;">Date of Birth</th>
-                                        <th width="20%;">Relationship</th>
+                                        <th>#</th>
+                                        <th>FILE</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(request_approval_deleted_dependent, index) in employee_request_approval.deleted_dependents" v-bind:key="index">
+                                    <tr v-for="(request_approval_dependent_attachment, index) in employee_request_approval.dependent_attachments" v-bind:key="index">
                                         <td>{{ index + 1 }}</td>
-                                        <td>{{ request_approval_deleted_dependent.dependent_name }}</td>
-                                        <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
-                                        <td>{{ request_approval_deleted_dependent.bdate }}</td>
-                                        <td>{{ request_approval_deleted_dependent.relation }}</td>
+                                        <td>{{ request_approval_dependent_attachment }}</td>
+                                        <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/temps/'+request_approval_dependent_attachment"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            </div>
+                        </div>
+
+                        <div class="table-responsive mt-3" v-if="employee_request_approval.deleted_dependent_attachments">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th colspan="5"><h4 class="text-danger">DELETED - HMO DEPENDENTS ATTACHMENT</h4> </th>
+                                    </tr>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>FILE</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(request_approval_deleted_dependent_attachment, index) in employee_request_approval.deleted_dependent_attachments" v-bind:key="index">
+                                        <td>{{ index + 1 }}</td>
+                                        <td>{{ request_approval_deleted_dependent_attachment.file }}</td>
+                                        <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+request_approval_deleted_dependent_attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                            
 
                             <div class="row mt-5" v-if="employee_request_approval.remarks">
                                 <div class="col-md-12">
@@ -425,6 +443,7 @@ export default {
             this.employee_request_approval = employee_data;
             this.employee_request_approval.dependents = JSON.parse(employee_data.dependents);
             this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
+            this.employee_request_approval.deleted_dependent_attachments = JSON.parse(employee_data.deleted_dependent_attachments);
         },
 
 

@@ -10625,6 +10625,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -10736,6 +10754,7 @@ __webpack_require__.r(__webpack_exports__);
       this.employee_request_approval = employee_data;
       this.employee_request_approval.dependents = JSON.parse(employee_data.dependents);
       this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
+      this.employee_request_approval.deleted_dependent_attachments = JSON.parse(employee_data.deleted_dependent_attachments);
     },
     fetchEmployeeApprovalRequests: function fetchEmployeeApprovalRequests() {
       var _this2 = this;
@@ -11138,6 +11157,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -12102,7 +12158,9 @@ __webpack_require__.r(__webpack_exports__);
     loader: _Loader__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
-    return {
+    var _ref;
+
+    return _ref = {
       employees: [],
       employee: [],
       employee_copied: [],
@@ -12145,8 +12203,11 @@ __webpack_require__.r(__webpack_exports__);
       location: '',
       department: '',
       employee_status: '',
-      org_chart_src: ''
-    };
+      org_chart_src: '',
+      dependent_attachments: [],
+      employee_dependent_attachments: [],
+      deleted_dependent_attachments: []
+    }, _defineProperty(_ref, "dependent_attachments", []), _defineProperty(_ref, "fileSize", 0), _ref;
   },
   created: function created() {
     this.fetchEmployees();
@@ -12159,6 +12220,59 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchPositionApprovers();
   },
   methods: {
+    removeDependentAttachment: function removeDependentAttachment(index, attachment) {
+      var _this = this;
+
+      if (attachment) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Are you sure you want to remove this attachment?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Remove'
+        }).then(function (result) {
+          if (result.value) {
+            _this.deleted_dependent_attachments.push({
+              id: attachment.id,
+              file: attachment.file
+            });
+
+            _this.employee_dependent_attachments.splice(index, 1);
+          }
+        });
+      }
+    },
+    uploadDependentAttachments: function uploadDependentAttachments(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+
+      for (var i = files.length - 1; i >= 0; i--) {
+        this.dependent_attachments.push(files[i]);
+        this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
+      }
+
+      if (this.fileSize > 5) {
+        alert('File size exceeds 5 MB');
+        document.getElementById('dependents_attachments').value = "";
+        this.dependent_attachments = [];
+        this.fileSize = 0;
+      }
+    },
+    fetchDependentAttachments: function fetchDependentAttachments() {
+      var _this2 = this;
+
+      var v = this;
+      this.employee_dependent_attachments = [];
+      this.deleted_dependent_attachments = [];
+      axios.get('/employee-dependents-attachments/' + this.employee_copied.id).then(function (response) {
+        if (response.data.length > 0) {
+          _this2.employee_dependent_attachments = response.data;
+        }
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.error;
+      });
+    },
     orgChartEmployee: function orgChartEmployee(employee) {
       this.org_chart_src = '/org-chart/' + employee.id;
     },
@@ -12177,7 +12291,7 @@ __webpack_require__.r(__webpack_exports__);
       v.transferEmployeeDetails = employee;
     },
     saveTransferEmployee: function saveTransferEmployee(transfer_employee) {
-      var _this = this;
+      var _this3 = this;
 
       var v = this;
       var index = this.employees.findIndex(function (item) {
@@ -12200,14 +12314,14 @@ __webpack_require__.r(__webpack_exports__);
           formData.append('division', transfer_employee.division ? transfer_employee.division : "");
           formData.append('position', transfer_employee.position ? transfer_employee.position : "");
           formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
-          formData.append('head_approvers', _this.transfer_approvers ? JSON.stringify(_this.transfer_approvers) : "");
+          formData.append('head_approvers', _this3.transfer_approvers ? JSON.stringify(_this3.transfer_approvers) : "");
           formData.append('_method', 'PATCH');
           axios.post("/transfer-employee/".concat(v.transferEmployeeDetails.id), formData).then(function (response) {
-            _this.fetchEmployees();
+            _this3.fetchEmployees();
 
-            _this.clearTransferForm();
+            _this3.clearTransferForm();
 
-            _this.transferEmployeeDetails = response.data;
+            _this3.transferEmployeeDetails = response.data;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Success!',
               text: 'Employee has been successfully transferred.',
@@ -12215,7 +12329,7 @@ __webpack_require__.r(__webpack_exports__);
               confirmButtonText: 'Okay'
             });
           })["catch"](function (error) {
-            _this.transfer_errors = error.response.data.errors;
+            _this3.transfer_errors = error.response.data.errors;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Warning!',
               text: 'Unable to Update Employee. Check Entries and then try again.',
@@ -12227,14 +12341,14 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     viewTransferEmployeeLogs: function viewTransferEmployeeLogs() {
-      var _this2 = this;
+      var _this4 = this;
 
       this.viewTransferLogsList = true;
       this.transferLogsList = [];
       axios.get('/transfer-employee-logs/' + this.transferEmployeeDetails.id).then(function (response) {
-        _this2.transferLogsList = response.data;
+        _this4.transferLogsList = response.data;
       })["catch"](function (error) {
-        _this2.errors = error.response.data.error;
+        _this4.errors = error.response.data.error;
       });
     },
     closeTransferEmployeeLogs: function closeTransferEmployeeLogs() {
@@ -12254,7 +12368,7 @@ __webpack_require__.r(__webpack_exports__);
       return "".concat(head_approver.first_name + " " + head_approver.last_name);
     },
     updateEmployee: function updateEmployee(employee_copied) {
-      var _this3 = this;
+      var _this5 = this;
 
       this.errors = [];
       this.edit_updated = false;
@@ -12341,17 +12455,28 @@ __webpack_require__.r(__webpack_exports__);
 
       formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
       formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+
+      if (this.dependent_attachments.length > 0) {
+        for (var i = 0; i < this.dependent_attachments.length; i++) {
+          var dependent_attachments = this.dependent_attachments[i];
+          formData.append('dependent_attachments[]', dependent_attachments);
+        }
+      }
+
+      formData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
       formData.append('_method', 'PATCH');
       axios.post("/employee/".concat(employee_copied.id), formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }).then(function (response) {
-        _this3.employees.splice(index, 1, response.data);
+        _this5.employees.splice(index, 1, response.data);
 
         document.getElementById('edit_btn').disabled = false;
+        _this5.dependent_attachments = [];
+        document.getElementById('dependents_attachments').value = "";
 
-        _this3.copyObject(response.data);
+        _this5.copyObject(response.data);
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Success!',
@@ -12360,8 +12485,9 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Okay'
         });
       })["catch"](function (error) {
-        _this3.errors = error.response.data.errors;
+        _this5.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
+        document.getElementById('dependents_attachments').value = "";
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
           text: 'Unable to Update Employee. Check Entries and then try again.',
@@ -12389,7 +12515,8 @@ __webpack_require__.r(__webpack_exports__);
 
       this.fetchApprovers(); //Get Dependents
 
-      this.fetchDependents(); //Validate Marital Status
+      this.fetchDependents();
+      this.fetchDependentAttachments(); //Validate Marital Status
 
       this.validateMaritalStatus(); //Attachment
 
@@ -12418,47 +12545,47 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     fetchEmployees: function fetchEmployees() {
-      var _this4 = this;
+      var _this6 = this;
 
       this.table_loading = true;
       axios.get('/employees-all').then(function (response) {
-        _this4.employees = response.data;
-        _this4.table_loading = false;
-      })["catch"](function (error) {
-        _this4.errors = error.response.data.error;
-      });
-    },
-    fetchHeadApprovers: function fetchHeadApprovers() {
-      var _this5 = this;
-
-      axios.get('/employee-head-approvers').then(function (response) {
-        _this5.employee_head_approvers = response.data;
-      })["catch"](function (error) {
-        _this5.errors = error.response.data.error;
-      });
-    },
-    fetchPositionApprovers: function fetchPositionApprovers() {
-      var _this6 = this;
-
-      axios.get('/heads-all').then(function (response) {
-        _this6.employee_position_approvers = response.data;
+        _this6.employees = response.data;
+        _this6.table_loading = false;
       })["catch"](function (error) {
         _this6.errors = error.response.data.error;
       });
     },
-    fetchApprovers: function fetchApprovers() {
+    fetchHeadApprovers: function fetchHeadApprovers() {
       var _this7 = this;
 
-      this.approvers = [];
-      this.deletedApprover = [];
-      axios.get('/employee-approvers/' + this.employee_copied.id).then(function (response) {
-        _this7.approvers = response.data;
+      axios.get('/employee-head-approvers').then(function (response) {
+        _this7.employee_head_approvers = response.data;
       })["catch"](function (error) {
         _this7.errors = error.response.data.error;
       });
     },
-    fetchDependents: function fetchDependents() {
+    fetchPositionApprovers: function fetchPositionApprovers() {
       var _this8 = this;
+
+      axios.get('/heads-all').then(function (response) {
+        _this8.employee_position_approvers = response.data;
+      })["catch"](function (error) {
+        _this8.errors = error.response.data.error;
+      });
+    },
+    fetchApprovers: function fetchApprovers() {
+      var _this9 = this;
+
+      this.approvers = [];
+      this.deletedApprover = [];
+      axios.get('/employee-approvers/' + this.employee_copied.id).then(function (response) {
+        _this9.approvers = response.data;
+      })["catch"](function (error) {
+        _this9.errors = error.response.data.error;
+      });
+    },
+    fetchDependents: function fetchDependents() {
+      var _this10 = this;
 
       var v = this;
       this.dependents = [];
@@ -12477,7 +12604,7 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (error) {
-        _this8.errors = error.response.data.error;
+        _this10.errors = error.response.data.error;
       });
     },
     addApprover: function addApprover() {
@@ -12488,7 +12615,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     removeApprover: function removeApprover(index, id) {
-      var _this9 = this;
+      var _this11 = this;
 
       var head_id = id;
 
@@ -12502,11 +12629,11 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this9.deletedApprover.push({
+            _this11.deletedApprover.push({
               id: head_id
             });
 
-            _this9.approvers.splice(index, 1);
+            _this11.approvers.splice(index, 1);
           }
         });
       } else {
@@ -12533,7 +12660,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     removeDependent: function removeDependent(index, id) {
-      var _this10 = this;
+      var _this12 = this;
 
       var dependent_id = id;
 
@@ -12547,11 +12674,11 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this10.deletedDependent.push({
+            _this12.deletedDependent.push({
               id: dependent_id
             });
 
-            _this10.dependents.splice(index, 1);
+            _this12.dependents.splice(index, 1);
           }
         });
       } else {
@@ -12573,52 +12700,52 @@ __webpack_require__.r(__webpack_exports__);
       this.marital_file = marital.files[0];
     },
     fetchMaritalStatuses: function fetchMaritalStatuses() {
-      var _this11 = this;
-
-      axios.get('/maritals-options').then(function (response) {
-        _this11.marital_statuses = response.data;
-      })["catch"](function (error) {
-        _this11.errors = error.response.data.error;
-      });
-    },
-    fetchCompanies: function fetchCompanies() {
-      var _this12 = this;
-
-      axios.get('/companies-all').then(function (response) {
-        _this12.companies = response.data;
-      })["catch"](function (error) {
-        _this12.errors = error.response.data.error;
-      });
-    },
-    fetchDepartments: function fetchDepartments() {
       var _this13 = this;
 
-      axios.get('/departments-all').then(function (response) {
-        _this13.departments = response.data;
+      axios.get('/maritals-options').then(function (response) {
+        _this13.marital_statuses = response.data;
       })["catch"](function (error) {
         _this13.errors = error.response.data.error;
       });
     },
-    fetchLocations: function fetchLocations() {
+    fetchCompanies: function fetchCompanies() {
       var _this14 = this;
 
-      axios.get('/locations-all').then(function (response) {
-        _this14.locations = response.data;
+      axios.get('/companies-all').then(function (response) {
+        _this14.companies = response.data;
       })["catch"](function (error) {
         _this14.errors = error.response.data.error;
       });
     },
-    fetchLevels: function fetchLevels() {
+    fetchDepartments: function fetchDepartments() {
       var _this15 = this;
 
-      axios.get('/levels-options').then(function (response) {
-        _this15.levels = response.data;
+      axios.get('/departments-all').then(function (response) {
+        _this15.departments = response.data;
       })["catch"](function (error) {
         _this15.errors = error.response.data.error;
       });
     },
-    fetchFilterEmployee: function fetchFilterEmployee() {
+    fetchLocations: function fetchLocations() {
       var _this16 = this;
+
+      axios.get('/locations-all').then(function (response) {
+        _this16.locations = response.data;
+      })["catch"](function (error) {
+        _this16.errors = error.response.data.error;
+      });
+    },
+    fetchLevels: function fetchLevels() {
+      var _this17 = this;
+
+      axios.get('/levels-options').then(function (response) {
+        _this17.levels = response.data;
+      })["catch"](function (error) {
+        _this17.errors = error.response.data.error;
+      });
+    },
+    fetchFilterEmployee: function fetchFilterEmployee() {
+      var _this18 = this;
 
       this.table_loading = true;
       this.employees = [];
@@ -12642,12 +12769,12 @@ __webpack_require__.r(__webpack_exports__);
 
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee', this.formFilterData).then(function (response) {
-        _this16.employees = response.data;
-        _this16.table_loading = false;
-        _this16.errors = [];
+        _this18.employees = response.data;
+        _this18.table_loading = false;
+        _this18.errors = [];
       })["catch"](function (error) {
-        _this16.errors = error.response.data.errors;
-        _this16.table_loading = false;
+        _this18.errors = error.response.data.errors;
+        _this18.table_loading = false;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -12759,12 +12886,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployees: function filteredemployees() {
-      var _this17 = this;
+      var _this19 = this;
 
       var self = this;
       return Object.values(self.employees).filter(function (employee) {
         var full_name = employee.first_name + " " + employee.last_name;
-        return employee.first_name.toLowerCase().includes(_this17.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this17.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this17.keywords.toLowerCase());
+        return employee.first_name.toLowerCase().includes(_this19.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this19.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this19.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -16052,6 +16179,61 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -16072,6 +16254,7 @@ __webpack_require__.r(__webpack_exports__);
       companies: [],
       divisions: [],
       departments: [],
+      userformData: new FormData(),
       locations: [],
       levels: [],
       saveEmployee: true,
@@ -16088,7 +16271,11 @@ __webpack_require__.r(__webpack_exports__);
       keywords: '',
       currentPage: 0,
       itemsPerPage: 5,
-      employee_requests_pending: 0
+      employee_requests_pending: 0,
+      employee_dependent_attachments: [],
+      deleted_dependent_attachments: [],
+      dependent_attachments: [],
+      fileSize: 0
     };
   },
   created: function created() {
@@ -16150,62 +16337,88 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
+    uploadDependentAttachments: function uploadDependentAttachments(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+
+      for (var i = files.length - 1; i >= 0; i--) {
+        this.dependent_attachments.push(files[i]);
+        this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
+      }
+
+      if (this.fileSize > 5) {
+        alert('File size exceeds 5 MB');
+        document.getElementById('dependents_attachments').value = "";
+        this.dependent_attachments = [];
+        this.fileSize = 0;
+      }
+    },
+    prepareDependentsAttachment: function prepareDependentsAttachment() {
+      if (this.dependent_attachments.length > 0) {
+        for (var i = 0; i < this.dependent_attachments.length; i++) {
+          var dependent_attachments = this.dependent_attachments[i];
+          this.userformData.append('dependent_attachments[]', dependent_attachments);
+        }
+      }
+    },
     updateEmployee: function updateEmployee(employee_copied) {
       var _this2 = this;
 
       this.errors = [];
-      document.getElementById('edit_btn').disabled = true;
-      var formData = new FormData(); //Personal
+      document.getElementById('edit_btn').disabled = true; //Personal
 
       if (this.profile_image_file) {
-        formData.append('employee_image', this.profile_image_file);
+        this.userformData.append('employee_image', this.profile_image_file);
       }
 
       if (this.signature_image_file) {
-        formData.append('employee_signature', this.signature_image_file);
+        this.userformData.append('employee_signature', this.signature_image_file);
       }
 
-      formData.append('middle_name', employee_copied.middle_name);
-      formData.append('middle_initial', employee_copied.middle_initial);
-      formData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
-      formData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
-      formData.append('gender', employee_copied.gender ? employee_copied.gender : "");
-      formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
+      this.userformData.append('middle_name', employee_copied.middle_name);
+      this.userformData.append('middle_initial', employee_copied.middle_initial);
+      this.userformData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
+      this.userformData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
+      this.userformData.append('gender', employee_copied.gender ? employee_copied.gender : "");
+      this.userformData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
 
       if (this.marital_file) {
-        formData.append('marital_status_attachment', this.marital_file);
+        this.userformData.append('marital_status_attachment', this.marital_file);
       } //Contact
 
 
-      formData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
-      formData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
-      formData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
-      formData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
-      formData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
-      formData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
-      formData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-"); //Dependents
+      this.userformData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
+      this.userformData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
+      this.userformData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
+      this.userformData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
+      this.userformData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
+      this.userformData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
+      this.userformData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-"); //Dependents
 
-      formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
-      formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : ""); //IDENTIFICATION
+      this.userformData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
+      this.userformData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+      this.userformData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
+      this.prepareDependentsAttachment(); //IDENTIFICATION
 
-      formData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
-      formData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
-      formData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
-      formData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
-      formData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
-      formData.append('_method', 'PATCH');
-      axios.post("/employee-user-profile/".concat(employee_copied.id), formData, {
+      this.userformData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
+      this.userformData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
+      this.userformData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
+      this.userformData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
+      this.userformData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
+      this.userformData.append('_method', 'PATCH');
+      axios.post("/employee-user-profile/".concat(employee_copied.id), this.userformData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }).then(function (response) {
         document.getElementById('edit_btn').disabled = false;
+        document.getElementById('dependents_attachments').value = "";
 
         _this2.copyObject(response.data);
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Success!',
-          text: 'Your employee update has been sent to HR for Verification. See Employee Requests for your updates. Thank you.',
+          html: 'Your employee update has been sent to HR for Verification/Approval. Click <a href="#" data-toggle="modal" data-target="#employeeRequestsModal"><u><strong class="text-primary">Employee Requests</strong></u></a> to view your requests. Thank you.',
           icon: 'success',
           confirmButtonText: 'Okay'
         });
@@ -16258,7 +16471,8 @@ __webpack_require__.r(__webpack_exports__);
       this.profile_image = 'storage/id_image/employee_image/' + employee.id + '.png?v=' + num;
       this.signature_image = 'storage/id_image/employee_signature/' + employee.id + '.png?v=' + num; //Get Dependents
 
-      this.fetchDependents(); //Validate Marital Status
+      this.fetchDependents();
+      this.fetchDependentAttachments(); //Validate Marital Status
 
       this.validateMartialStatus(); //Attachment
 
@@ -16270,7 +16484,8 @@ __webpack_require__.r(__webpack_exports__);
       var marital_status = document.getElementById("marital_file");
       profile.value = '';
       signature.value = '';
-      marital_status.value = ''; //Employee Request
+      marital_status.value = '';
+      document.getElementById('dependents_attachments').value = ""; //Employee Request
 
       this.fetchEmployeeRequest(employee.id);
       this.fetchEmployeeRequestPending(employee.id);
@@ -16330,6 +16545,20 @@ __webpack_require__.r(__webpack_exports__);
         _this5.errors = error.response.data.error;
       });
     },
+    fetchDependentAttachments: function fetchDependentAttachments() {
+      var _this6 = this;
+
+      var v = this;
+      this.employee_dependent_attachments = [];
+      this.deleted_dependent_attachments = [];
+      axios.get('/employee-dependents-attachments/' + this.employee_copied.id).then(function (response) {
+        if (response.data.length > 0) {
+          _this6.employee_dependent_attachments = response.data;
+        }
+      })["catch"](function (error) {
+        _this6.errors = error.response.data.error;
+      });
+    },
     addDependent: function addDependent() {
       this.dependents.push({
         id: "",
@@ -16340,7 +16569,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     removeDependent: function removeDependent(index, dependent) {
-      var _this6 = this;
+      var _this7 = this;
 
       if (dependent) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
@@ -16352,7 +16581,7 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this6.deletedDependent.push({
+            _this7.deletedDependent.push({
               id: dependent.id,
               dependent_name: dependent.dependent_name,
               dependent_gender: dependent.dependent_gender,
@@ -16360,11 +16589,34 @@ __webpack_require__.r(__webpack_exports__);
               relation: dependent.relation
             });
 
-            _this6.dependents.splice(index, 1);
+            _this7.dependents.splice(index, 1);
           }
         });
       } else {
         this.dependents.splice(index, 1);
+      }
+    },
+    removeDependentAttachment: function removeDependentAttachment(index, attachment) {
+      var _this8 = this;
+
+      if (attachment) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Are you sure you want to remove this attachment?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Remove'
+        }).then(function (result) {
+          if (result.value) {
+            _this8.deleted_dependent_attachments.push({
+              id: attachment.id,
+              file: attachment.file
+            });
+
+            _this8.employee_dependent_attachments.splice(index, 1);
+          }
+        });
       }
     },
     profileHandleFileUpload: function profileHandleFileUpload() {
@@ -16382,48 +16634,48 @@ __webpack_require__.r(__webpack_exports__);
       this.marital_file = marital.files[0];
     },
     fetchMaritalStatuses: function fetchMaritalStatuses() {
-      var _this7 = this;
-
-      axios.get('/maritals-options').then(function (response) {
-        _this7.marital_statuses = response.data;
-      })["catch"](function (error) {
-        _this7.errors = error.response.data.error;
-      });
-    },
-    fetchCompanies: function fetchCompanies() {
-      var _this8 = this;
-
-      axios.get('/companies-all').then(function (response) {
-        _this8.companies = response.data;
-      })["catch"](function (error) {
-        _this8.errors = error.response.data.error;
-      });
-    },
-    fetchDepartments: function fetchDepartments() {
       var _this9 = this;
 
-      axios.get('/departments-all').then(function (response) {
-        _this9.departments = response.data;
+      axios.get('/maritals-options').then(function (response) {
+        _this9.marital_statuses = response.data;
       })["catch"](function (error) {
         _this9.errors = error.response.data.error;
       });
     },
-    fetchLocations: function fetchLocations() {
+    fetchCompanies: function fetchCompanies() {
       var _this10 = this;
 
-      axios.get('/locations-all').then(function (response) {
-        _this10.locations = response.data;
+      axios.get('/companies-all').then(function (response) {
+        _this10.companies = response.data;
       })["catch"](function (error) {
         _this10.errors = error.response.data.error;
       });
     },
-    fetchLevels: function fetchLevels() {
+    fetchDepartments: function fetchDepartments() {
       var _this11 = this;
 
-      axios.get('/levels-options').then(function (response) {
-        _this11.levels = response.data;
+      axios.get('/departments-all').then(function (response) {
+        _this11.departments = response.data;
       })["catch"](function (error) {
         _this11.errors = error.response.data.error;
+      });
+    },
+    fetchLocations: function fetchLocations() {
+      var _this12 = this;
+
+      axios.get('/locations-all').then(function (response) {
+        _this12.locations = response.data;
+      })["catch"](function (error) {
+        _this12.errors = error.response.data.error;
+      });
+    },
+    fetchLevels: function fetchLevels() {
+      var _this13 = this;
+
+      axios.get('/levels-options').then(function (response) {
+        _this13.levels = response.data;
+      })["catch"](function (error) {
+        _this13.errors = error.response.data.error;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -16531,29 +16783,30 @@ __webpack_require__.r(__webpack_exports__);
       this.employee_request_approval = employee_data;
       this.employee_request_approval.dependents = JSON.parse(employee_data.dependents);
       this.employee_request_approval.deleted_dependents = JSON.parse(employee_data.deleted_dependents);
+      this.employee_request_approval.deleted_dependent_attachments = JSON.parse(employee_data.deleted_dependent_attachments);
     },
     fetchEmployeeRequestPending: function fetchEmployeeRequestPending(employee_id) {
-      var _this12 = this;
+      var _this14 = this;
 
       this.employee_requests_pending = 0;
       axios.get('/user-pendings/' + employee_id).then(function (response) {
-        _this12.employee_requests_pending = response.data;
+        _this14.employee_requests_pending = response.data;
       })["catch"](function (error) {
-        _this12.errors = error.response.data.error;
+        _this14.errors = error.response.data.error;
       });
     },
     fetchEmployeeRequest: function fetchEmployeeRequest(employee_id) {
-      var _this13 = this;
+      var _this15 = this;
 
       this.employee_requests = [];
       axios.get('/employee-approval-request/' + employee_id).then(function (response) {
-        _this13.employee_requests = response.data;
+        _this15.employee_requests = response.data;
       })["catch"](function (error) {
-        _this13.errors = error.response.data.error;
+        _this15.errors = error.response.data.error;
       });
     },
     removeEmployeeRequest: function removeEmployeeRequest(index, employee_request_id) {
-      var _this14 = this;
+      var _this16 = this;
 
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure you want to delete this request?',
@@ -16566,13 +16819,13 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           axios["delete"]("/employee-user-profile/".concat(employee_request_id)).then(function (response) {
-            _this14.employee_requests.splice(index, 1);
+            _this16.employee_requests.splice(index, 1);
 
-            _this14.fetchEmployeeRequestPending(_this14.employee_copied.id);
+            _this16.fetchEmployeeRequestPending(_this16.employee_copied.id);
 
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Your request has been deleted.', 'success');
           })["catch"](function (error) {
-            _this14.errors = error.response.data.errors;
+            _this16.errors = error.response.data.errors;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Warning!',
               text: 'Unable to delete request. Please try again.',
@@ -16598,11 +16851,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployeerequests: function filteredemployeerequests() {
-      var _this15 = this;
+      var _this17 = this;
 
       var self = this;
       return Object.values(self.employee_requests).filter(function (employee_request) {
-        return employee_request.status.toLowerCase().includes(_this15.keywords.toLowerCase());
+        return employee_request.status.toLowerCase().includes(_this17.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -63714,47 +63967,6 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "tbody",
-                      _vm._l(_vm.employee_request_original.dependents, function(
-                        request_original_dependent,
-                        index
-                      ) {
-                        return _c("tr", { key: index }, [
-                          _c("td", [_vm._v(_vm._s(index + 1))]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              _vm._s(request_original_dependent.dependent_name)
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              _vm._s(
-                                request_original_dependent.dependent_gender
-                              )
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(_vm._s(request_original_dependent.bdate))
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(_vm._s(request_original_dependent.relation))
-                          ])
-                        ])
-                      }),
-                      0
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "table-responsive mt-3" }, [
-                  _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(6),
-                    _vm._v(" "),
-                    _c(
-                      "tbody",
                       _vm._l(_vm.employee_request_approval.dependents, function(
                         request_approval_dependent,
                         index
@@ -63792,7 +64004,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(7),
+                    _vm._m(6),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -63838,6 +64050,119 @@ var render = function() {
                     )
                   ])
                 ]),
+                _vm._v(" "),
+                _vm.employee_request_approval.dependent_attachments
+                  ? _c("div", { staticClass: "table-responsive mt-3" }, [
+                      _c("table", { staticClass: "table table-hover" }, [
+                        _vm._m(7),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(
+                            _vm.employee_request_approval.dependent_attachments,
+                            function(
+                              request_approval_dependent_attachment,
+                              index
+                            ) {
+                              return _c("tr", { key: index }, [
+                                _c("td", [_vm._v(_vm._s(index + 1))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      request_approval_dependent_attachment
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticClass: "text-center" }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: {
+                                        target: "_blank",
+                                        href:
+                                          "storage/dependents_attachments/temps/" +
+                                          request_approval_dependent_attachment
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "btn btn-info btn-sm mt-2"
+                                        },
+                                        [_vm._v(" View ")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            }
+                          ),
+                          0
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.employee_request_approval.deleted_dependent_attachments
+                  ? _c("div", { staticClass: "table-responsive mt-3" }, [
+                      _c("table", { staticClass: "table table-hover" }, [
+                        _vm._m(8),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(
+                            _vm.employee_request_approval
+                              .deleted_dependent_attachments,
+                            function(
+                              request_approval_deleted_dependent_attachment,
+                              index
+                            ) {
+                              return _c("tr", { key: index }, [
+                                _c("td", [_vm._v(_vm._s(index + 1))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      request_approval_deleted_dependent_attachment.file
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticClass: "text-center" }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: {
+                                        target: "_blank",
+                                        href:
+                                          "storage/dependents_attachments/" +
+                                          request_approval_deleted_dependent_attachment.file
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "btn btn-info btn-sm mt-2"
+                                        },
+                                        [_vm._v(" View ")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            }
+                          ),
+                          0
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
                 _vm._v(" "),
                 _vm.employee_request_approval.remarks
                   ? _c("div", { staticClass: "row mt-5" }, [
@@ -64002,14 +64327,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c(
-          "th",
-          {
-            staticClass: "text-center",
-            attrs: { width: "20%;", colspan: "5" }
-          },
-          [_vm._v("CURRENT - HMO DEPENDENTS")]
-        )
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-success" }, [
+            _vm._v("NEW/MODIFIED - HMO DEPENDENTS")
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c("tr", [
@@ -64031,14 +64353,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c(
-          "th",
-          {
-            staticClass: "text-center",
-            attrs: { width: "20%;", colspan: "5" }
-          },
-          [_vm._v("NEW/MODIFIED - HMO DEPENDENTS")]
-        )
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-danger" }, [
+            _vm._v("DELETED - HMO DEPENDENTS")
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c("tr", [
@@ -64060,26 +64379,39 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c(
-          "th",
-          {
-            staticClass: "text-center",
-            attrs: { width: "20%;", colspan: "5" }
-          },
-          [_vm._v("DELETED - HMO DEPENDENTS")]
-        )
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-success" }, [
+            _vm._v("NEW - HMO DEPENDENTS ATTACHMENT")
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c("tr", [
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("#")]),
+        _c("th", [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Name")]),
+        _c("th", [_vm._v("FILE")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-danger" }, [
+            _vm._v("DELETED - HMO DEPENDENTS ATTACHMENT")
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Gender")]),
+        _c("th", [_vm._v("FILE")]),
         _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Date of Birth")]),
-        _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Relationship")])
+        _c("th")
       ])
     ])
   }
@@ -68596,6 +68928,128 @@ var render = function() {
                                     ]
                                   )
                                 ])
+                              ]),
+                              _vm._v(" "),
+                              _vm._m(10),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-md-6" }, [
+                                _c("div", { staticClass: "form-group" }, [
+                                  _c("input", {
+                                    staticClass:
+                                      "form-control dependents-attachments-edit",
+                                    attrs: {
+                                      type: "file",
+                                      multiple: "multiple",
+                                      id: "dependents_attachments",
+                                      placeholder: "Attach file"
+                                    },
+                                    on: {
+                                      change: _vm.uploadDependentAttachments
+                                    }
+                                  }),
+                                  _c("br")
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-md-12" }, [
+                                _c(
+                                  "div",
+                                  { staticClass: "table-responsive mt-3" },
+                                  [
+                                    _c(
+                                      "table",
+                                      { staticClass: "table table-hover" },
+                                      [
+                                        _vm._m(11),
+                                        _vm._v(" "),
+                                        _c(
+                                          "tbody",
+                                          _vm._l(
+                                            _vm.employee_dependent_attachments,
+                                            function(attachment, index) {
+                                              return _c("tr", { key: index }, [
+                                                _c("td", [
+                                                  _vm._v(_vm._s(index + 1))
+                                                ]),
+                                                _vm._v(" "),
+                                                _c("td", [
+                                                  _vm._v(
+                                                    " " +
+                                                      _vm._s(attachment.file)
+                                                  )
+                                                ]),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "td",
+                                                  {
+                                                    staticClass: "text-center"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "a",
+                                                      {
+                                                        attrs: {
+                                                          target: "_blank",
+                                                          href:
+                                                            "storage/dependents_attachments/" +
+                                                            attachment.file
+                                                        }
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "span",
+                                                          {
+                                                            staticClass:
+                                                              "btn btn-info btn-sm mt-2"
+                                                          },
+                                                          [_vm._v(" View ")]
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "td",
+                                                  {
+                                                    staticClass: "text-center"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "button",
+                                                      {
+                                                        staticClass:
+                                                          "btn btn-danger btn-sm mt-2",
+                                                        staticStyle: {
+                                                          float: "right"
+                                                        },
+                                                        attrs: {
+                                                          type: "button"
+                                                        },
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            return _vm.removeDependentAttachment(
+                                                              index,
+                                                              attachment
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [_vm._v("Remove")]
+                                                    )
+                                                  ]
+                                                )
+                                              ])
+                                            }
+                                          ),
+                                          0
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
                               ])
                             ])
                           ]
@@ -69043,9 +69497,9 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(10),
+              _vm._m(12),
               _vm._v(" "),
-              _vm._m(11),
+              _vm._m(13),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "card shadow" }, [
@@ -69186,7 +69640,7 @@ var render = function() {
                                   attrs: { id: "tab_transfer_logs" }
                                 },
                                 [
-                                  _vm._m(12),
+                                  _vm._m(14),
                                   _vm._v(" "),
                                   _c(
                                     "tbody",
@@ -69693,7 +70147,7 @@ var render = function() {
                               attrs: { id: "tab_assign_head" }
                             },
                             [
-                              _vm._m(13),
+                              _vm._m(15),
                               _vm._v(" "),
                               _c(
                                 "tbody",
@@ -69942,9 +70396,9 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(14),
+              _vm._m(16),
               _vm._v(" "),
-              _vm._m(15),
+              _vm._m(17),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "col-md-12 text-center" }, [
@@ -70242,6 +70696,30 @@ var staticRenderFns = [
         ]),
         _vm._v(" "),
         _c("th")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-12 mt-5" }, [
+      _c("h4", [_vm._v("Attachment(s)  - Birth Certificates")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("File")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" })
       ])
     ])
   },
@@ -77245,6 +77723,88 @@ var render = function() {
                       )
                     ])
                   ])
+                ]),
+                _vm._v(" "),
+                _vm._m(3),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-6" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("input", {
+                      staticClass: "form-control dependents-attachments-edit",
+                      attrs: {
+                        type: "file",
+                        multiple: "multiple",
+                        id: "dependents_attachments",
+                        placeholder: "Attach file"
+                      },
+                      on: { change: _vm.uploadDependentAttachments }
+                    }),
+                    _c("br")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "table-responsive mt-3" }, [
+                    _c("table", { staticClass: "table table-hover" }, [
+                      _vm._m(4),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.employee_dependent_attachments, function(
+                          attachment,
+                          index
+                        ) {
+                          return _c("tr", { key: index }, [
+                            _c("td", [_vm._v(_vm._s(index + 1))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(" " + _vm._s(attachment.file))]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "text-center" }, [
+                              _c(
+                                "a",
+                                {
+                                  attrs: {
+                                    target: "_blank",
+                                    href:
+                                      "storage/dependents_attachments/" +
+                                      attachment.file
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "span",
+                                    { staticClass: "btn btn-info btn-sm mt-2" },
+                                    [_vm._v(" View ")]
+                                  )
+                                ]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "text-center" }, [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-danger btn-sm mt-2",
+                                  staticStyle: { float: "right" },
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.removeDependentAttachment(
+                                        index,
+                                        attachment
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Remove")]
+                              )
+                            ])
+                          ])
+                        }),
+                        0
+                      )
+                    ])
+                  ])
                 ])
               ]),
               _vm._v(" "),
@@ -77709,11 +78269,11 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(3),
+              _vm._m(5),
               _vm._v(" "),
               _c("div", { staticClass: "modal-header" }, [
                 _c("div", { staticClass: "row align-items-center" }, [
-                  _vm._m(4),
+                  _vm._m(6),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-xl-12 mb-2 mt-3" }, [
                     _c("input", {
@@ -77749,7 +78309,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("table", { staticClass: "table table-hover" }, [
-                  _vm._m(5),
+                  _vm._m(7),
                   _vm._v(" "),
                   _c(
                     "tbody",
@@ -77760,7 +78320,7 @@ var render = function() {
                       return _c("tr", { key: index }, [
                         _c("td", { staticClass: "text-center" }, [
                           _c("div", { staticClass: "dropdown" }, [
-                            _vm._m(6, true),
+                            _vm._m(8, true),
                             _vm._v(" "),
                             _c(
                               "div",
@@ -77908,7 +78468,7 @@ var render = function() {
                   : _vm._e()
               ]),
               _vm._v(" "),
-              _vm._m(7)
+              _vm._m(9)
             ])
           ]
         )
@@ -77938,7 +78498,7 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(8),
+              _vm._m(10),
               _vm._v(" "),
               _c("div", { staticClass: "modal-header" }, [
                 _c("div", { staticClass: "row align-items-center" }, [
@@ -77960,7 +78520,7 @@ var render = function() {
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "table-responsive" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(9),
+                    _vm._m(11),
                     _vm._v(" "),
                     _c("tbody", [
                       _c("tr", [
@@ -78553,48 +79113,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(10),
-                    _vm._v(" "),
-                    _c(
-                      "tbody",
-                      _vm._l(_vm.employee_request_original.dependents, function(
-                        request_original_dependent,
-                        index
-                      ) {
-                        return _c("tr", { key: index }, [
-                          _c("td", [_vm._v(_vm._s(index + 1))]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              _vm._s(request_original_dependent.dependent_name)
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              _vm._s(
-                                request_original_dependent.dependent_gender
-                              )
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(_vm._s(request_original_dependent.bdate))
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(_vm._s(request_original_dependent.relation))
-                          ])
-                        ])
-                      }),
-                      0
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "table-responsive mt-3" }, [
-                  _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(11),
+                    _vm._m(12),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -78635,7 +79154,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(12),
+                    _vm._m(13),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -78681,6 +79200,119 @@ var render = function() {
                     )
                   ])
                 ]),
+                _vm._v(" "),
+                _vm.employee_request_approval.dependent_attachments
+                  ? _c("div", { staticClass: "table-responsive mt-3" }, [
+                      _c("table", { staticClass: "table table-hover" }, [
+                        _vm._m(14),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(
+                            _vm.employee_request_approval.dependent_attachments,
+                            function(
+                              request_approval_dependent_attachment,
+                              index
+                            ) {
+                              return _c("tr", { key: index }, [
+                                _c("td", [_vm._v(_vm._s(index + 1))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      request_approval_dependent_attachment
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticClass: "text-center" }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: {
+                                        target: "_blank",
+                                        href:
+                                          "storage/dependents_attachments/temps/" +
+                                          request_approval_dependent_attachment
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "btn btn-info btn-sm mt-2"
+                                        },
+                                        [_vm._v(" View ")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            }
+                          ),
+                          0
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.employee_request_approval.deleted_dependent_attachments
+                  ? _c("div", { staticClass: "table-responsive mt-3" }, [
+                      _c("table", { staticClass: "table table-hover" }, [
+                        _vm._m(15),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(
+                            _vm.employee_request_approval
+                              .deleted_dependent_attachments,
+                            function(
+                              request_approval_deleted_dependent_attachment,
+                              index
+                            ) {
+                              return _c("tr", { key: index }, [
+                                _c("td", [_vm._v(_vm._s(index + 1))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      request_approval_deleted_dependent_attachment.file
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticClass: "text-center" }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: {
+                                        target: "_blank",
+                                        href:
+                                          "storage/dependents_attachments/" +
+                                          request_approval_deleted_dependent_attachment.file
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "btn btn-info btn-sm mt-2"
+                                        },
+                                        [_vm._v(" View ")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            }
+                          ),
+                          0
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
                 _vm._v(" "),
                 _vm.employee_request_approval.remarks
                   ? _c("div", { staticClass: "row mt-5" }, [
@@ -78778,6 +79410,30 @@ var staticRenderFns = [
         ]),
         _vm._v(" "),
         _c("th")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-12 mt-5" }, [
+      _c("h4", [_vm._v("Attachment(s)  - Birth Certificates")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("File")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" })
       ])
     ])
   },
@@ -78907,14 +79563,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c(
-          "th",
-          {
-            staticClass: "text-center",
-            attrs: { width: "20%;", colspan: "5" }
-          },
-          [_vm._v("CURRENT - HMO DEPENDENTS")]
-        )
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-success" }, [
+            _vm._v("NEW/MODIFIED - HMO DEPENDENTS")
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c("tr", [
@@ -78936,14 +79589,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c(
-          "th",
-          {
-            staticClass: "text-center",
-            attrs: { width: "20%;", colspan: "5" }
-          },
-          [_vm._v("NEW/MODIFIED - HMO DEPENDENTS")]
-        )
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-danger" }, [
+            _vm._v("DELETED - HMO DEPENDENTS")
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c("tr", [
@@ -78965,26 +79615,39 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c(
-          "th",
-          {
-            staticClass: "text-center",
-            attrs: { width: "20%;", colspan: "5" }
-          },
-          [_vm._v("DELETED - HMO DEPENDENTS")]
-        )
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-success" }, [
+            _vm._v("NEW - HMO DEPENDENTS ATTACHMENT")
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c("tr", [
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("#")]),
+        _c("th", [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Name")]),
+        _c("th", [_vm._v("FILE")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { colspan: "5" } }, [
+          _c("h4", { staticClass: "text-danger" }, [
+            _vm._v("DELETED - HMO DEPENDENTS ATTACHMENT")
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Gender")]),
+        _c("th", [_vm._v("FILE")]),
         _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Date of Birth")]),
-        _vm._v(" "),
-        _c("th", { attrs: { width: "20%;" } }, [_vm._v("Relationship")])
+        _c("th")
       ])
     ])
   }
