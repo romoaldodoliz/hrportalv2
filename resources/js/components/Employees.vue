@@ -171,7 +171,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="row justify-content-center mb-2 mt-2">
-                                                    <img :src="signature_image" @error="signatureImageLoadError()" style="width:250px;height:auto;border-radius:6px;border:2px dotted;">
+                                                    <img :src="signature_image" @error="signatureImageLoadError()" style="width:250px;height:150px;border-radius:6px;border:2px dotted;">
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="form-group">

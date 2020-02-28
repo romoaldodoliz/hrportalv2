@@ -65755,7 +65755,7 @@ var render = function() {
                                       _c("img", {
                                         staticStyle: {
                                           width: "250px",
-                                          height: "auto",
+                                          height: "150px",
                                           "border-radius": "6px",
                                           border: "2px dotted"
                                         },
