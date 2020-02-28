@@ -1,6 +1,5 @@
 <template>
 <div>
-    <loader v-if="loading"></loader>
     <div class="header bg-gradient-success pb-8 pt-5 pt-md-8 container-list"></div>
     <div class="container-fluid mt--9">
         <div class="header-body">
