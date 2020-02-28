@@ -244,19 +244,21 @@ class EmployeeController extends Controller
         ]);
 
         $data = $request->all();
+
+        
         $date_time = Carbon::now()->format('M_d_Y_h_m_s');
 
-        if(empty($request->date_hired)){
+        if($request->date_hired == 'NaN-NaN-NaN'){
             $data['date_hired'] = null;
         }
         
-        if(empty($request->date_regularized)){
+        if(empty($request->date_regularized) || $request->date_regularized == 'NaN-NaN-NaN'){
             $data['date_regularized'] = null;
         }
-        if(empty($request->date_resigned)){
+        if(empty($request->date_resigned) || $request->date_resigned == 'NaN-NaN-NaN'){
             $data['date_resigned'] = null;
         }
-       
+  
         if(isset($request->employee_image)){
             $delete = Storage::disk('public')->delete('id_image/employee_image/'.$employee->id . '.png');
             if($request->file('employee_image')){
@@ -698,7 +700,7 @@ class EmployeeController extends Controller
 
     public function print_id(Employee $employee){
 
-        $employee =  Employee::select('id','id_number','last_name','first_name')->with('departments','locations')->where('id',$employee->id)->first();
+        $employee =  Employee::select('id','id_number','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
         $first_name = strtolower($employee['first_name']);
         $last_name = strtolower($employee['last_name']);
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
