@@ -12153,6 +12153,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12400,6 +12409,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       formData.append('last_name', employee_copied.last_name);
+      formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "-");
       formData.append('name_suffix', employee_copied.name_suffix ? employee_copied.name_suffix : "-");
       formData.append('marital_status', employee_copied.marital_status);
 
@@ -65997,6 +66007,54 @@ var render = function() {
                                         [
                                           _vm._v(
                                             _vm._s(_vm.errors.last_name[0])
+                                          )
+                                        ]
+                                      )
+                                    : _vm._e()
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-md-4" }, [
+                                _c("div", { staticClass: "form-group" }, [
+                                  _c("label", { attrs: { for: "role" } }, [
+                                    _vm._v("Nickname")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.employee_copied.nick_name,
+                                        expression: "employee_copied.nick_name"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    attrs: { type: "text" },
+                                    domProps: {
+                                      value: _vm.employee_copied.nick_name
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.employee_copied,
+                                          "nick_name",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _vm.errors.nick_name
+                                    ? _c(
+                                        "span",
+                                        { staticClass: "text-danger" },
+                                        [
+                                          _vm._v(
+                                            _vm._s(_vm.errors.nick_name[0])
                                           )
                                         ]
                                       )

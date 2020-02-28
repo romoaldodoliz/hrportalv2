@@ -213,11 +213,20 @@
                                         
                                             <div class="col-md-4">
                                                 <div class="form-group">
+                                                    <label for="role">Nickname</label> 
+                                                    <input type="text" class="form-control" v-model="employee_copied.nick_name">
+                                                    <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
                                                     <label for="role">Suffix</label> 
                                                     <input type="text" class="form-control" v-model="employee_copied.name_suffix">
                                                     <span class="text-danger" v-if="errors.name_suffix">{{ errors.name_suffix[0] }}</span>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Status*</label> 
@@ -1241,6 +1250,7 @@
                 }
                 
                 formData.append('last_name', employee_copied.last_name);
+                formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "-");
                 formData.append('name_suffix', employee_copied.name_suffix ? employee_copied.name_suffix : "-");
                 formData.append('marital_status', employee_copied.marital_status);
 

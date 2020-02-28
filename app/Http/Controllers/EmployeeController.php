@@ -701,7 +701,7 @@ class EmployeeController extends Controller
     public function print_id(Employee $employee){
 
         $employee =  Employee::select('id','id_number','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
-        $first_name = strtolower($employee['first_name']);
+        $first_name = $employee['nick_name'] ? strtolower($employee['nick_name']) :  strtolower($employee['first_name']);
         $last_name = strtolower($employee['last_name']);
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
         
