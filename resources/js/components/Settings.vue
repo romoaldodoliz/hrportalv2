@@ -4,7 +4,7 @@
     <div class="container-fluid mt--9">
         <div class="header-body">
             <div class="row">
-                <div class="col-xl-12 col-lg-6">
+                <div class="col-xl-12">
                     <div class="nav-wrapper">
                         <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
                             <li class="nav-item">

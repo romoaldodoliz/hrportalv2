@@ -5,7 +5,7 @@
     <div class="container-fluid mt--9">
         <div class="header-body mb-5">
             <div class="row">
-                <div class="col-xl-12 col-lg-6">
+                <div class="col-xl-12">
                     <div class="card shadow">
                         <div class="card-header">
                             <h2 class="col-12 modal-title text-center" id="addCompanyLabel">EMPLOYEE INFORMATION</h2>

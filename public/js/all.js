@@ -58299,7 +58299,7 @@ var render = function() {
       _c("div", { staticClass: "container-fluid mt--9" }, [
         _c("div", { staticClass: "header-body" }, [
           _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+            _c("div", { staticClass: "col-xl-12" }, [
               _c("div", { staticClass: "card shadow" }, [
                 _c("div", { staticClass: "card-header border-0" }, [
                   _vm._m(0),
@@ -58512,7 +58512,7 @@ var render = function() {
       _c("div", { staticClass: "container-fluid mt--9" }, [
         _c("div", { staticClass: "header-body mb-5" }, [
           _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+            _c("div", { staticClass: "col-xl-12" }, [
               _c("div", { staticClass: "card shadow" }, [
                 _vm._m(0),
                 _vm._v(" "),
@@ -63158,7 +63158,7 @@ var render = function() {
     _c("div", { staticClass: "container-fluid mt--9" }, [
       _c("div", { staticClass: "header-body" }, [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+          _c("div", { staticClass: "col-xl-12" }, [
             _c("div", { staticClass: "card shadow" }, [
               _c("div", { staticClass: "card-header border-0" }, [
                 _vm._m(1),
@@ -65122,7 +65122,7 @@ var render = function() {
     _c("div", { staticClass: "container-fluid mt--9" }, [
       _c("div", { staticClass: "header-body" }, [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+          _c("div", { staticClass: "col-xl-12" }, [
             _c("div", { staticClass: "card shadow" }, [
               _c("div", { staticClass: "card-header border-0" }, [
                 _vm._m(0),
@@ -70954,7 +70954,7 @@ var render = function() {
     _c("div", { staticClass: "container-fluid mt--9" }, [
       _c("div", { staticClass: "header-body" }, [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+          _c("div", { staticClass: "col-xl-12" }, [
             _vm._m(0),
             _vm._v(" "),
             _c("div", { staticClass: "card shadow" }, [
@@ -83448,7 +83448,7 @@ var render = function() {
       _c("div", { staticClass: "container-fluid mt--9" }, [
         _c("div", { staticClass: "header-body" }, [
           _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+            _c("div", { staticClass: "col-xl-12" }, [
               _c("div", { staticClass: "card shadow" }, [
                 _c("div", { staticClass: "card-header border-0" }, [
                   _vm._m(0),
@@ -84350,7 +84350,7 @@ var render = function() {
     _c("div", { staticClass: "container-fluid mt--9" }, [
       _c("div", { staticClass: "header-body" }, [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+          _c("div", { staticClass: "col-xl-12" }, [
             _c("div", { staticClass: "card shadow" }, [
               _c("div", { staticClass: "card-header border-0" }, [
                 _vm._m(1),

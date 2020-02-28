@@ -9,7 +9,7 @@
         <div class="container-fluid mt--9">
             <div class="header-body">
                 <div class="row">
-                    <div class="col-xl-12 col-lg-6">
+                    <div class="col-xl-12">
                          <div class="card shadow">
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
