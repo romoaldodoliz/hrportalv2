@@ -11018,6 +11018,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     previewPrintId: function previewPrintId(employee_id) {
+      this.employee_id_src = '';
       var num = Math.random();
       this.employee_id_src = 'employee_print_id/' + employee_id.id + '#toolbar=0&navpanes=0&scrollbar=0' + '?var=' + num;
       this.employee_id = employee_id;
@@ -11025,16 +11026,17 @@ __webpack_require__.r(__webpack_exports__);
     printEmployeeId: function printEmployeeId() {
       var _this = this;
 
-      // alert(this.employee_id.id);
+      this.errors = [];
       this.formFilterData = new FormData();
+      this.table_loading = false;
+      var index = this.employee_ids.findIndex(function (item) {
+        return item.id == _this.employee_id.id;
+      });
       this.formFilterData.append('employee_id', this.employee_id.id);
       axios.post('/print-id-logs', this.formFilterData).then(function (response) {
-        _this.employee_ids = response.data;
-        _this.errors = [];
-        _this.table_loading = false;
+        _this.employee_ids.splice(index, 1, response.data);
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
-        _this.table_loading = false;
       });
       printJS({
         printable: this.employee_id_src,
@@ -11053,7 +11055,7 @@ __webpack_require__.r(__webpack_exports__);
       this.formFilterData.append('location', this.location);
       this.formFilterData.append('employee_status', this.employee_status);
       this.formFilterData.append('_method', 'POST');
-      axios.post('/filter-employee', this.formFilterData).then(function (response) {
+      axios.post('/filter-employee-id', this.formFilterData).then(function (response) {
         _this2.employee_ids = response.data;
         _this2.errors = [];
         _this2.table_loading = false;
@@ -64959,7 +64961,27 @@ var render = function() {
                           )
                         : _vm._e()
                     ])
-                  : _c("div", { staticClass: "text-center" }, [_vm._m(6)])
+                  : _c("div", { staticClass: "text-center" }, [
+                      _c("span", { staticClass: "badge badge-danger" }, [
+                        _c("strong", [_vm._v("Warning!")]),
+                        _vm._v(
+                          " This employee is not yet verified. Do you want to "
+                        ),
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: { click: _vm.printEmployeeId }
+                          },
+                          [
+                            _c("strong", { staticClass: "text-primary" }, [
+                              _vm._v("print")
+                            ])
+                          ]
+                        ),
+                        _vm._v(" it anyway?")
+                      ])
+                    ])
               ])
             ])
           ]
@@ -65069,15 +65091,6 @@ var staticRenderFns = [
       _c("h2", { staticClass: "col-12 modal-title text-center" }, [
         _vm._v(" Employee ID Preview")
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "badge badge-danger" }, [
-      _c("strong", [_vm._v("Warning!")]),
-      _vm._v(" This employee is not yet verified.")
     ])
   }
 ]

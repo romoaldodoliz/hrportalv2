@@ -144,7 +144,7 @@
                            <button v-if="employee_id.verification.verification == '1'" class="btn btn-primary btn-md" @click="printEmployeeId"> Print </button>
                         </div>
                         <div v-else class="text-center">
-                            <span class="badge badge-danger"><strong>Warning!</strong> This employee is not yet verified.</span>
+                            <span class="badge badge-danger"><strong>Warning!</strong> This employee is not yet verified. Do you want to <a href="#" @click="printEmployeeId"><strong class="text-primary">print</strong></a> it anyway?</span> 
                         </div>
                         
 
@@ -185,23 +185,25 @@ export default {
     },
     methods:{
         previewPrintId(employee_id){
+            this.employee_id_src = '';
             var num = Math.random();
             this.employee_id_src = 'employee_print_id/'+ employee_id.id +'#toolbar=0&navpanes=0&scrollbar=0' + '?var=' + num;
             this.employee_id = employee_id;
         },
         printEmployeeId(){
-            // alert(this.employee_id.id);
+            this.errors = [];
             this.formFilterData = new FormData();
+            this.table_loading = false;
+
+            var index = this.employee_ids.findIndex(item => item.id == this.employee_id.id);
+
             this.formFilterData.append('employee_id',this.employee_id.id);
             axios.post('/print-id-logs', this.formFilterData)
             .then(response => {
-                this.employee_ids = response.data;
-                this.errors = [];
-                this.table_loading = false;
+                this.employee_ids.splice(index,1,response.data);
             })
             .catch(error => {
                 this.errors = error.response.data.errors;
-                this.table_loading = false;
             })
 
             printJS({printable: this.employee_id_src , type:'pdf', showModal:true});
@@ -218,7 +220,7 @@ export default {
            
             this.formFilterData.append('_method', 'POST');
 
-            axios.post('/filter-employee', this.formFilterData)
+            axios.post('/filter-employee-id', this.formFilterData)
             .then(response => {
                 this.employee_ids =  response.data;
                 this.errors = [];

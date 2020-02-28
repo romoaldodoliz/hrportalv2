@@ -70,7 +70,8 @@ Route::get('logout', function(){
             //Employee Filter
             Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
             
-
+             //Employee Filter ID
+            Route::post('/filter-employee-id',['as'=>'employees.employeeFilterID','uses'=>'EmployeeController@employeeFilterID','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
             Route::post('/print-id-logs',['as'=>'employees.print_id_logs','uses'=>'EmployeeController@print_id_logs','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
 
 
