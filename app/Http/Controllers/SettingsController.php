@@ -82,6 +82,7 @@ class SettingsController extends Controller
         try {
 
             if(isset($request->company_image)){
+                $delete = Storage::disk('public')->delete('id_image/company' .$company->id . '.png');
                 if($request->file('company_image')){
                     $attachment = $request->file('company_image');   
                     $filename = $company->id . '.png';

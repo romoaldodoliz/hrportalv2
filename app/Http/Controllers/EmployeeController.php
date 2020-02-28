@@ -256,8 +256,9 @@ class EmployeeController extends Controller
         if(empty($request->date_resigned)){
             $data['date_resigned'] = null;
         }
-
+       
         if(isset($request->employee_image)){
+            $delete = Storage::disk('public')->delete('id_image/employee_image/'.$employee->id . '.png');
             if($request->file('employee_image')){
                 $attachment = $request->file('employee_image');   
                 $filename = $employee->id . '.png';
