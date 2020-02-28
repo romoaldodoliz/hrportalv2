@@ -64444,7 +64444,7 @@ var render = function() {
     _c("div", { staticClass: "container-fluid mt--9" }, [
       _c("div", { staticClass: "header-body" }, [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-xl-12 col-lg-6" }, [
+          _c("div", { staticClass: "col-xl-12" }, [
             _c("div", { staticClass: "card shadow" }, [
               _c("div", { staticClass: "card-header border-0" }, [
                 _vm._m(1),
