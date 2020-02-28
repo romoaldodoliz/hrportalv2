@@ -701,7 +701,8 @@ class EmployeeController extends Controller
     public function print_id(Employee $employee){
 
         $employee =  Employee::select('id','id_number','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
-        $first_name = $employee['nick_name'] ? strtolower($employee['nick_name']) :  strtolower($employee['first_name']);
+        $nick_name = $employee['nick_name'] ? strtolower($employee['nick_name']) :  strtolower($employee['first_name']);
+        $first_name = strtolower($employee['first_name']);
         $last_name = strtolower($employee['last_name']);
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
         
@@ -751,12 +752,12 @@ class EmployeeController extends Controller
 
         $fullname_font = 15;
        
-        $full_name = ucfirst($first_name) .' ' . ucfirst($last_name);
+        $full_name_front = ucfirst($nick_name) .' ' . ucfirst($last_name);
 
         Fpdf::SetFont('Avenir-Bold','',$fullname_font);
         Fpdf::SetXY(1.5,53);
         Fpdf::SetTextColor(3,119, 57);
-        Fpdf::MultiCell(51,5, ucwords($full_name) ,0,'C');
+        Fpdf::MultiCell(51,5, ucwords($full_name_front) ,0,'C');
 
         $current_y = Fpdf::gety();
         Fpdf::SetXY(0,$current_y);
@@ -799,10 +800,10 @@ class EmployeeController extends Controller
             }
             
         }
-
+        $full_name_back = ucfirst($first_name) .' ' . ucfirst($last_name);
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,36);
-        Fpdf::MultiCell(54,6, strtoupper($full_name) ,0,'C');
+        Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
 
 
         Fpdf::Output(utf8_decode($employee->last_name) .'_' . utf8_decode($employee->first_name) . '_' . $employee->employee_number  . ".pdf", 'I');
