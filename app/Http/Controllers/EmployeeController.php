@@ -267,6 +267,7 @@ class EmployeeController extends Controller
         }
 
         if(isset($request->employee_signature)){
+            $delete = Storage::disk('public')->delete('id_image/employee_signature/'.$employee->id . '.png');
             if($request->file('employee_signature')){
                 $attachment = $request->file('employee_signature');   
                 $filename = $employee->id . '.png';
