@@ -12162,6 +12162,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12445,6 +12459,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
       formData.append('status', employee_copied.status ? employee_copied.status : "-");
       formData.append('confidential', employee_copied.confidential ? employee_copied.confidential : "NO");
+      formData.append('generate_id_number', employee_copied.generate_id_number ? employee_copied.generate_id_number : "NO");
       formData.append('date_regularized', employee_copied.date_regularized ? employee_copied.date_regularized : "");
       formData.append('date_resigned', employee_copied.date_resigned ? employee_copied.date_resigned : ""); //Contact
 
@@ -66828,6 +66843,131 @@ var render = function() {
                           },
                           [
                             _c("div", { staticClass: "row" }, [
+                              _c("div", { staticClass: "col-md-12 mb-3" }, [
+                                _vm.employee_copied.id_number
+                                  ? _c("div", [
+                                      _c("h4", [
+                                        _vm._v(
+                                          "Employee ID Number: \r\n                                                        " +
+                                            _vm._s(
+                                              _vm.employee_copied.id_number
+                                            ) +
+                                            "\r\n                                                    "
+                                        )
+                                      ])
+                                    ])
+                                  : _c("div", [
+                                      _c("h4", [
+                                        _vm._v("Employee ID Number: ")
+                                      ]),
+                                      _vm._v(" "),
+                                      _vm.employee_copied.status == "Active"
+                                        ? _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "custom-control custom-checkbox mb-3"
+                                            },
+                                            [
+                                              _c("input", {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value:
+                                                      _vm.employee_copied
+                                                        .generate_id_number,
+                                                    expression:
+                                                      "employee_copied.generate_id_number"
+                                                  }
+                                                ],
+                                                staticClass:
+                                                  "custom-control-input",
+                                                attrs: {
+                                                  id: "confidential",
+                                                  "true-value": "YES",
+                                                  "false-value": "NO",
+                                                  type: "checkbox"
+                                                },
+                                                domProps: {
+                                                  checked: Array.isArray(
+                                                    _vm.employee_copied
+                                                      .generate_id_number
+                                                  )
+                                                    ? _vm._i(
+                                                        _vm.employee_copied
+                                                          .generate_id_number,
+                                                        null
+                                                      ) > -1
+                                                    : _vm._q(
+                                                        _vm.employee_copied
+                                                          .generate_id_number,
+                                                        "YES"
+                                                      )
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    var $$a =
+                                                        _vm.employee_copied
+                                                          .generate_id_number,
+                                                      $$el = $event.target,
+                                                      $$c = $$el.checked
+                                                        ? "YES"
+                                                        : "NO"
+                                                    if (Array.isArray($$a)) {
+                                                      var $$v = null,
+                                                        $$i = _vm._i($$a, $$v)
+                                                      if ($$el.checked) {
+                                                        $$i < 0 &&
+                                                          _vm.$set(
+                                                            _vm.employee_copied,
+                                                            "generate_id_number",
+                                                            $$a.concat([$$v])
+                                                          )
+                                                      } else {
+                                                        $$i > -1 &&
+                                                          _vm.$set(
+                                                            _vm.employee_copied,
+                                                            "generate_id_number",
+                                                            $$a
+                                                              .slice(0, $$i)
+                                                              .concat(
+                                                                $$a.slice(
+                                                                  $$i + 1
+                                                                )
+                                                              )
+                                                          )
+                                                      }
+                                                    } else {
+                                                      _vm.$set(
+                                                        _vm.employee_copied,
+                                                        "generate_id_number",
+                                                        $$c
+                                                      )
+                                                    }
+                                                  }
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c(
+                                                "label",
+                                                {
+                                                  staticClass:
+                                                    "custom-control-label",
+                                                  attrs: { for: "confidential" }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "Please check to generate ID Number."
+                                                  )
+                                                ]
+                                              )
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ])
+                              ]),
+                              _vm._v(" "),
                               _c("div", { staticClass: "col-md-4" }, [
                                 _c("div", { staticClass: "form-group" }, [
                                   _c("label", { attrs: { for: "role" } }, [

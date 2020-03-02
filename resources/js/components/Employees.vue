@@ -340,6 +340,20 @@
                                     <!-- Work -->
                                     <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
                                         <div class="row">
+                                            <div class="col-md-12 mb-3">
+                                                <div v-if="employee_copied.id_number">
+                                                    <h4>Employee ID Number: 
+                                                        {{ employee_copied.id_number }}
+                                                    </h4>
+                                                </div>
+                                                <div v-else>
+                                                    <h4>Employee ID Number: </h4>
+                                                    <div class="custom-control custom-checkbox mb-3" v-if="employee_copied.status == 'Active'">
+                                                        <input id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
+                                                        <label class="custom-control-label" for="confidential">Please check to generate ID Number.</label>
+                                                    </div>   
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Company*</label>
@@ -1285,6 +1299,8 @@
                 formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
                 formData.append('status', employee_copied.status ? employee_copied.status : "-");
                 formData.append('confidential', employee_copied.confidential ? employee_copied.confidential : "NO");
+
+                formData.append('generate_id_number', employee_copied.generate_id_number ? employee_copied.generate_id_number : "NO");
 
                
                 formData.append('date_regularized', employee_copied.date_regularized ? employee_copied.date_regularized : "");      

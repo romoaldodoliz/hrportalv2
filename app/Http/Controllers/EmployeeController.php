@@ -244,8 +244,6 @@ class EmployeeController extends Controller
         ]);
 
         $data = $request->all();
-
-        
         $date_time = Carbon::now()->format('M_d_Y_h_m_s');
 
         if($request->date_hired == 'NaN-NaN-NaN'){
@@ -286,6 +284,23 @@ class EmployeeController extends Controller
             }
         }
 
+        if($data['generate_id_number'] == 'YES'){
+            //Generate New Employee Number
+            $new_id_number = '';
+            $new_series_number = '';
+            $find_last = Employee::select('series_number','date_hired')->whereNotNull('id_number')->orderBy('series_number','DESC')->first();             
+            if($find_last){
+                $series_number = $find_last['series_number'];
+                $new_company = Company::where('id',$data['company_list'])->first();
+                $get_year = $data['date_hired'] ? date('y',strtotime($data['date_hired'])) . '00' : 'XXXX';
+                $year_number = str_pad($get_year,2,'0',STR_PAD_LEFT);
+                $new_series_number = $series_number + 1;
+                $new_id_number = $new_company['company_code'] . '-' . str_pad($new_series_number, 5, '0', STR_PAD_LEFT)  . '-' . $year_number;
+            }
+            $data['id_number'] = $new_id_number;
+            $data['series_number'] = str_pad($new_series_number, 5, '0', STR_PAD_LEFT);
+        }
+        
         DB::beginTransaction();
         try {
 
@@ -701,7 +716,13 @@ class EmployeeController extends Controller
     public function print_id(Employee $employee){
 
         $employee =  Employee::select('id','id_number','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
-        $nick_name = $employee['nick_name'] ? strtolower($employee['nick_name']) :  strtolower($employee['first_name']);
+
+        if($employee['nick_name'] == '' || $employee['nick_name'] == '-'){
+            $nick_name = strtolower($employee['first_name']);
+        }else{
+            $nick_name = strtolower($employee['nick_name']);
+        }
+        
         $first_name = strtolower($employee['first_name']);
         $last_name = strtolower($employee['last_name']);
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
@@ -800,7 +821,7 @@ class EmployeeController extends Controller
             }
             
         }
-        $full_name_back = ucfirst($first_name) .' ' . ucfirst($last_name);
+        $full_name_back = strtoupper($first_name) .' ' . strtoupper($last_name);
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,36);
         Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
@@ -850,7 +871,6 @@ class EmployeeController extends Controller
             $find_last = Employee::select('series_number','date_hired')
                                     ->whereNotNull('id_number')
                                     ->orderBy('series_number','DESC')
-                                    ->where('status','Active')
                                     ->first();             
             if($find_last){
                 $series_number = $find_last['series_number'];
