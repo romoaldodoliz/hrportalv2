@@ -18,10 +18,10 @@
 
                                 <ul style="padding-bottom:0px!important;margin-bottom:0px!important;">
                                     <li>
-                                        Email Address – <strong>firstname.lastname</strong> ex. Juan.delacruz@lafilipinauygongco.com / company.com 
+                                        To sign in, use your username and password in <strong style="color:green">My Portal</strong>
                                     </li>
                                     <li>
-                                        Password – the default password is your <strong>first</strong> and <strong>last</strong> name separated by a dot “ . “ ex. juan.delacruz
+                                        Forgot your password? Just click <a href="http://10.96.4.70/password/reset" target="_blank"><strong style="color:red">here</strong> </a>  to reset.
                                     </li>
                                 </ul>
                             </span>

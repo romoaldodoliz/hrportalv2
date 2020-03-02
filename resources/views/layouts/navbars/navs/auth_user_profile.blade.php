@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <!-- Brand -->
         <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/user_profile">
-            <h2 class="text-white">HR PORTAL <span class="badge badge-danger">Beta</span></h2>
+            <h2 class="text-white">HR PORTAL</h2>
         </a>
       
         <!-- User -->

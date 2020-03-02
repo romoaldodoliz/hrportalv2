@@ -6,7 +6,7 @@
         </button>
         <!-- Brand -->
         <a class="navbar-brand pt-3"><img src="{{ asset('/img/lfug.png') }}"></a>
-        <h2>HR PORTAL <span class="badge badge-danger">Beta</span></h2>
+        <h2>HR PORTAL</h2>
         <!-- Collapse -->
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
             <!-- Collapse header -->
