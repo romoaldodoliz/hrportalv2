@@ -823,7 +823,7 @@ class EmployeeController extends Controller
         }
         $full_name_back = strtoupper($first_name) .' ' . strtoupper($last_name);
         Fpdf::SetFont('Arial','B', 8);
-        Fpdf::SetXY(0,36);
+        Fpdf::SetXY(0,37);
         Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
 
 
