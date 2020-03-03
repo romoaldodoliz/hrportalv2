@@ -817,7 +817,7 @@ class EmployeeController extends Controller
             })->save($destinationPath.'/'. $employee['companies'][0]->id. '.png');
             
             if (file_exists('storage/id_image/temp_company/' . $employee['companies'][0]->id .'.png')){
-                Fpdf::Image(url("storage/id_image/temp_company/") .'/'. $employee['companies'][0]->id.'.png', 17, 13, 23, 23,'PNG');
+                Fpdf::Image(url("storage/id_image/temp_company/") .'/'. $employee['companies'][0]->id.'.png', 16, 13, 23, 23,'PNG');
             }
             
         }
