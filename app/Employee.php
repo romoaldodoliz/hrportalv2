@@ -120,4 +120,9 @@ class Employee extends Model implements AuditableContract
         return $this->hasOne('App\EmployeeDetailVerification');
     }
 
+    public function employee_approval_requests()
+    {
+        return $this->hasOne('App\EmployeeApprovalRequest');
+    }
+
 }

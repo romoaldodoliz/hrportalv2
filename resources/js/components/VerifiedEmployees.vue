@@ -18,10 +18,18 @@
                                             <small class="text-muted">List of verified employees</small>
                                         </div> 
                                     </div>
-                                    <div class="row align-items-center">
-                                        <div class="col-xl-4 mb-2 mt-3 float-right">
-                                            <input type="text" name="employee_approval_requests" class="form-control" placeholder="Search" autocomplete="off" v-model="keywords" id="employee_approval_requests">
+                        
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-xl-12 mb-2 mt-3 float-right">
+                                            <div class="col-xl-6 mb-2 mt-3 float-left">
+                                                <input type="text" name="employee_ids" class="form-control" placeholder="Search by Name" autocomplete="off" v-model="keywords" id="employee_approval_requests">
+                                            </div> 
                                         </div> 
+                                        
+                                        <div class="col-xl-12">
+                                            <button class="btn btn-sm btn-success mt-3 float-right ml-2" @click="exportVerifiedEmployee"> EXPORT XLSX</button>
+                                        </div> 
+                                    
                                     </div>
 
 
@@ -31,13 +39,27 @@
                                             <thead class="thead-light">
                                                 <tr>
                                                     <th scope="col">Name</th>
+                                                    <th scope="col">Company</th>
+                                                    <th scope="col">Department</th>
+                                                    <th scope="col">Location</th>
                                                     <th scope="col">Date</th>
                                                     <th scope="col">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr v-if="table_loading">
+                                                    <td colspan="15">
+                                                        <content-placeholders>
+                                                            <content-placeholders-text :lines="3" />
+                                                        </content-placeholders>
+                                                        <h4>Loading Employee Records.. Please wait a moment... </h4>
+                                                    </td>
+                                                </tr>
                                                 <tr v-for="(verified_employee,index) in filteredQueues" v-bind:key="index">
                                                     <td>{{ verified_employee.employee.first_name }} {{ verified_employee.employee.last_name }}</td>
+                                                    <td>{{ verified_employee.employee.companies ? verified_employee.employee.companies[0].name : ""}}</td>
+                                                    <td>{{ verified_employee.employee.departments ? verified_employee.employee.departments[0].name : ""}}</td>
+                                                    <td>{{ verified_employee.employee.locations ? verified_employee.employee.locations[0].name  : "" }}</td>
                                                     <td>{{ verified_employee.created_at }}</td>
                                                     <td>Ready for ID Printing</td>
                                                     </tr>
@@ -66,7 +88,11 @@
     </div>
 </template>
 
+
+
 <script>
+    import XLSX from 'xlsx'
+
     export default {
        data() {
            return {
@@ -75,21 +101,84 @@
                 itemsPerPage: 25,
                 keywords: "",
                 verified_employees: [],
+                companies : [],
+                company : '',
+                locations : [],
+                location : '',
+                departments : [],
+                department : '',
+                table_loading : false,
            }
        }, 
        created () {
-           this.fetchVerifiedEmpoyees();
+            this.fetchVerifiedEmpoyees();
+            this.fetchCompanies();
+            this.fetchDepartments();
+            this.fetchLocations();
        },
        methods: {
+           exportVerifiedEmployee(){
+                let v = this;
+                var verifiedData = [];
+                Object.entries(v.verified_employees).forEach(([key, data]) => {
+                    var name = data.employee.first_name + ' ' + data.employee.last_name;
+                    var company = data.employee.companies ? data.employee.companies[0].name : '';
+                    var department = data.employee.departments ? data.employee.departments[0].name : '';
+                    var location = data.employee.locations ? data.employee.locations[0].name : '';
+                    verifiedData.push({
+                        "NAME": name,
+                        "COMPANY": company,
+                        "DEPARTMENT": department,
+                        "LOCATION": location,
+                        "DATE": data.created_at,
+                        "STATUS": 'Ready for ID Printing',
+                    });
+                });
+
+                var exportedData  = XLSX.utils.json_to_sheet(verifiedData)
+                var wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, exportedData,'Vehicle List') 
+                XLSX.writeFile(wb, 'Verified Employees List.xlsx')
+            },
            fetchVerifiedEmpoyees() {
+               this.table_loading = true;
+               this.verified_employees = [];
                 axios.get('/verified_employees')
                 .then(response => { 
                     this.verified_employees = response.data;
+                    this.table_loading = false;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
                 })
            },
+           fetchCompanies(){
+                axios.get('/companies-all')
+                .then(response => { 
+                    this.companies = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchLocations(){
+                axios.get('/locations-all')
+                .then(response => { 
+                    this.locations = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchDepartments(){
+                axios.get('/departments-all')
+                .then(response => { 
+                    this.departments = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
            setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },

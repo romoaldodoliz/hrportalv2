@@ -21,7 +21,7 @@ class EmployeeApprovalRequest extends Model implements AuditableContract
 
     public function employee()
     {
-        return $this->belongsTo('App\Employee');
+        return $this->belongsTo('App\Employee')->with('companies','departments','locations');
     }
 
     public function employee_data_request(){

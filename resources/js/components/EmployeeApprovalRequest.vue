@@ -31,6 +31,9 @@
                                             <thead class="thead-light">
                                                 <tr>
                                                     <th scope="col">Name</th>
+                                                    <th scope="col">Company</th>
+                                                    <th scope="col">Department</th>
+                                                    <th scope="col">Location</th>
                                                     <th scope="col">Date</th>
                                                     <th scope="col">Status</th>
                                                 </tr>
@@ -38,6 +41,9 @@
                                             <tbody>
                                                 <tr v-for="(employee_request,index) in filteredQueues" v-bind:key="index">
                                                     <td>{{ employee_request.employee.first_name }} {{ employee_request.employee.last_name }}</td>
+                                                    <td>{{ employee_request.employee.companies ? employee_request.employee.companies[0].name : ""}}</td>
+                                                    <td>{{ employee_request.employee.departments ? employee_request.employee.departments[0].name : ""}}</td>
+                                                    <td>{{ employee_request.employee.locations ? employee_request.employee.locations[0].name  : "" }}</td>
                                                     <td>{{ employee_request.created_at }}</td>
                                                     <td> <button type="button" class="btn btn-sm" v-bind:class="statusClassObject(employee_request.status)" data-toggle="modal" data-target="#viewEmployeeRequestModal" style="cursor: pointer" @click="copyObjectEmployeeRequest(employee_request)"> {{ employee_request.status }} </button></td>
                                                     </tr>
