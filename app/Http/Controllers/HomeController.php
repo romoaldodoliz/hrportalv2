@@ -7,6 +7,7 @@ use App\Employee;
 use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
 use App\DependentAttachment;
+use App\User;
 
 use DB;
 use Illuminate\Http\File;
@@ -37,27 +38,53 @@ class HomeController extends Controller
             session(['employee_id' =>  $employee->id]);
         }
         
-        if(auth()->user()->roles[0]->name){
-            if(auth()->user()->roles[0]->name == "User"){
-                return redirect('/user_profile');
+        $user = User::with('roles')->where('id', auth()->user()->id)->first();
+       
+        if(isset($user->roles)){
+            if(isset(auth()->user()->roles[0])){
+                if(auth()->user()->roles[0]->name == "User"){
+                    return redirect('/user_profile');
+                }
+                elseif(auth()->user()->roles[0]->name == "Administrator Printer"){
+                    return redirect('/employee_ids');
+                }
+                elseif(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "Admin Broadcast" || auth()->user()->roles[0]->name == "IT Broadcast" || auth()->user()->roles[0]->name == "HR Broadcast" || auth()->user()->roles[0]->name == "HR Staff"){
+                    session(['header_text' => 'Dashboard']);
+                    return view('home');
+                }
+                else{
+                    return redirect('/home');
+                }
+            }else{
+                $user->attachRole(2);
+                return redirect('/home');
             }
-            elseif(auth()->user()->roles[0]->name == "Administrator Printer"){
-                return redirect('/employee_ids');
-            }
-            elseif(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "Admin Broadcast" || auth()->user()->roles[0]->name == "IT Broadcast" || auth()->user()->roles[0]->name == "HR Broadcast" || auth()->user()->roles[0]->name == "HR Staff"){
-                session(['header_text' => 'Dashboard']);
-                return view('home');
-            }
-            else{
-                return redirect('/user_profile');
-            }
+
         }else{
-            return redirect('/user_profile');
+            $user->attachRole(2);
+            return redirect('/home');
         }
+        
+        
+        
     }
 
     public function user_profile(){
-        return view('user_profile')->with('employee');
+        $user = User::with('roles')->where('id', auth()->user()->id)->first();
+       
+        if(isset($user->roles)){
+            if(isset(auth()->user()->roles[0])){
+                return view('user_profile')->with('employee');
+            }else{
+                return redirect('/home');
+            }
+        }else{
+            return redirect('/home');
+        }
+        
+        
+        
+        
     }
 
     public function userProfile(){
