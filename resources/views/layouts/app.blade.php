@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>HRPORTALV2</title>
+    <title>HR PORTAL</title>
 
     <!-- Icons -->
     <link href="{{ asset('/img/lfuggoc_icon.png') }}" rel="icon" type="image/png">
