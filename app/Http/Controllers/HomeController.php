@@ -104,6 +104,70 @@ class HomeController extends Controller
         return view('employee_approval_requests.index');
     }
 
+
+    public function downloadDataRequestVerification(){
+        $all_employee = Employee::select('id','id_number','first_name','last_name')
+                                    ->where('status','Active')
+                                    ->with('companies','departments','locations','employee_approval_requests','verification')
+                                    ->orderBy('series_number','ASC')
+                                    ->get();
+
+        $filtered_data = [];
+
+        foreach( $all_employee as $key => $employee ){
+            $filtered_data[$key]['id_number'] = $employee['id_number'];
+            $filtered_data[$key]['name'] = strtoupper($employee['first_name']) . ' ' . strtoupper($employee['last_name']);
+            $filtered_data[$key]['company'] = $employee['companies'][0]['name'];
+            $filtered_data[$key]['department'] = $employee['departments'][0]['name'];
+            $filtered_data[$key]['location'] = $employee['locations'][0]['name'];
+            if($employee['employee_approval_requests']){
+                $filtered_data[$key]['employee_approval_requests'] = $employee['employee_approval_requests']['status'];
+            }else{
+                $filtered_data[$key]['employee_approval_requests'] = "";
+            }
+           
+
+            if($employee['employee_approval_requests']){
+                if($employee['employee_approval_requests']['status'] == 'Approved'){
+                    $filtered_data[$key]['accepted_by_hr'] = "Accepted";
+                }else{
+                    $filtered_data[$key]['accepted_by_hr'] = "";
+                }
+            }else{
+                $filtered_data[$key]['accepted_by_hr'] = "";
+            }
+
+            if($employee['verification']){
+                if($employee['verification']['verification'] == '1'){
+                    $filtered_data[$key]['verified_by_employee'] = "Yes";
+                }else{
+                    $filtered_data[$key]['verified_by_employee'] = "No";
+                }
+            }else{
+                $filtered_data[$key]['verified_by_employee'] = "No";
+            }
+
+            if($employee['verification']){
+                if($employee['verification']['verification'] == '1'){
+                    $filtered_data[$key]['verified_by_employee'] = "Yes";
+                }else{
+                    $filtered_data[$key]['verified_by_employee'] = "";
+                }
+            }else{
+                $filtered_data[$key]['verified_by_employee'] = "";
+            }
+            
+
+            if(!$employee['employee_approval_requests'] && !$employee['verification']){
+                $filtered_data[$key]['unverified'] = "Yes";
+            }else{
+                $filtered_data[$key]['unverified'] = "";
+            }
+        }
+
+        return $filtered_data;
+    }
+
     public function verifiedEmployees(){
         return EmployeeDetailVerification::with('employee')->orderBy('created_at','DESC')->get();
     }

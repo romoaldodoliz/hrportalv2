@@ -26,8 +26,14 @@
                                             </div> 
                                         </div> 
                                         
-                                        <div class="col-xl-12">
-                                            <button class="btn btn-sm btn-success mt-3 float-right ml-2" @click="exportVerifiedEmployee"> EXPORT XLSX</button>
+                                        <div class="col-xl-12 float-right text-right">
+                                            <download-excel
+                                                :data   = "verified_employees"
+                                                :fields = "json_fields"
+                                                class   = "btn btn-sm btn-default"
+                                                name    = "Employee Request and Verification Report.xls">
+                                                    Export to excel
+                                            </download-excel>
                                         </div> 
                                     
                                     </div>
@@ -38,12 +44,15 @@
                                         <table class="table align-items-center table-flush">
                                             <thead class="thead-light">
                                                 <tr>
+                                                    <th scope="col">ID Number</th>
                                                     <th scope="col">Name</th>
                                                     <th scope="col">Company</th>
                                                     <th scope="col">Department</th>
                                                     <th scope="col">Location</th>
-                                                    <th scope="col">Date</th>
-                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Update Requests</th>
+                                                    <th scope="col">Accepted by HR</th>
+                                                    <th scope="col">Verified by Employee</th>
+                                                    <th scope="col">Unverified</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -56,13 +65,23 @@
                                                     </td>
                                                 </tr>
                                                 <tr v-for="(verified_employee,index) in filteredQueues" v-bind:key="index">
-                                                    <td>{{ verified_employee.employee.first_name }} {{ verified_employee.employee.last_name }}</td>
-                                                    <td>{{ verified_employee.employee.companies ? verified_employee.employee.companies[0].name : ""}}</td>
-                                                    <td>{{ verified_employee.employee.departments ? verified_employee.employee.departments[0].name : ""}}</td>
-                                                    <td>{{ verified_employee.employee.locations ? verified_employee.employee.locations[0].name  : "" }}</td>
-                                                    <td>{{ verified_employee.created_at }}</td>
-                                                    <td>Ready for ID Printing</td>
-                                                    </tr>
+                                                    <td>{{ verified_employee.id_number }}</td>
+                                                    <td>{{ verified_employee.name }}</td>
+                                                    <td>{{ verified_employee.company }}</td>
+                                                    <td>{{ verified_employee.department }}</td>
+                                                    <td>{{ verified_employee.location }}</td>
+                                                    <td align="center">{{ verified_employee.employee_approval_requests }}</td>
+                                                    <td align="center">{{ verified_employee.accepted_by_hr }}</td> 
+                                                    <td align="center">
+                                                        <span v-if="verified_employee.verified_by_employee == 'Yes'"> <i class="fas fa-check text-success"></i></span>
+                                                        <span v-else> </span>
+                                                    </td>
+
+                                                    <td align="center">
+                                                        <span v-if="verified_employee.unverified == 'Yes'"> <i class="fas fa-check text-danger"></i></span>
+                                                        <span v-else> </span>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -91,10 +110,11 @@
 
 
 <script>
-    import XLSX from 'xlsx'
+    import JsonExcel from 'vue-json-excel'
 
     export default {
-       data() {
+        components: { 'downloadExcel': JsonExcel }, 
+        data() {
            return {
                errors: [],
                 currentPage: 0,
@@ -108,6 +128,21 @@
                 departments : [],
                 department : '',
                 table_loading : false,
+                json_fields: {
+                    'ID NUMBER': 'id_number',
+                    'NAME': 'name',
+                    'COMPANY': 'company',
+                    'DEPARTMENT': 'department',
+                    'LOCATION': 'location',
+                    'UPDATE REQUESTS': 'employee_approval_requests',
+                    'ACCEPTED BY HR': 'accepted_by_hr',
+                    'VERIFIED BY EMPLOYEE': 'verified_by_employee',
+                    'UNVERIFIED': 'unverified',
+                },
+                totalUpdateRequests : 0,
+                totalAcceptedbyHR : 0,
+                totalVerifiedByEmployee : 0,
+                totalUnverified : 0,
            }
        }, 
        created () {
@@ -117,33 +152,10 @@
             this.fetchLocations();
        },
        methods: {
-           exportVerifiedEmployee(){
-                let v = this;
-                var verifiedData = [];
-                Object.entries(v.verified_employees).forEach(([key, data]) => {
-                    var name = data.employee.first_name + ' ' + data.employee.last_name;
-                    var company = data.employee.companies ? data.employee.companies[0].name : '';
-                    var department = data.employee.departments ? data.employee.departments[0].name : '';
-                    var location = data.employee.locations ? data.employee.locations[0].name : '';
-                    verifiedData.push({
-                        "NAME": name,
-                        "COMPANY": company,
-                        "DEPARTMENT": department,
-                        "LOCATION": location,
-                        "DATE": data.created_at,
-                        "STATUS": 'Ready for ID Printing',
-                    });
-                });
-
-                var exportedData  = XLSX.utils.json_to_sheet(verifiedData)
-                var wb = XLSX.utils.book_new()
-                XLSX.utils.book_append_sheet(wb, exportedData,'Vehicle List') 
-                XLSX.writeFile(wb, 'Verified Employees List.xlsx')
-            },
            fetchVerifiedEmpoyees() {
                this.table_loading = true;
                this.verified_employees = [];
-                axios.get('/verified_employees')
+                axios.get('/download-data-request-verification')
                 .then(response => { 
                     this.verified_employees = response.data;
                     this.table_loading = false;
@@ -198,8 +210,7 @@
            filteredverifiedemployees(){
                 let self = this;
                 return Object.values(self.verified_employees).filter(verified_employee => {
-                    let full_name = verified_employee.employee.first_name + " " + verified_employee.employee.last_name;
-                    return verified_employee.employee.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || verified_employee.employee.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
+                    return  verified_employee.name.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {

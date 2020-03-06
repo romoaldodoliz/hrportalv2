@@ -25,7 +25,7 @@
                         <div class="col-lg-3 order-lg-2">
                             <div class="card-profile-image">
                             <a href="#">
-                                <img :src="profile_image" @error="profileImageLoadError()" class="rounded-circle">
+                                <img :src="profile_image" style="background-color:white;"  @error="profileImageLoadError()" class="rounded-circle">
                             </a>
                             </div>
                         </div>
