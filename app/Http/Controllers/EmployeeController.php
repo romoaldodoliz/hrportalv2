@@ -135,9 +135,9 @@ class EmployeeController extends Controller
             $employee_last = Employee::orderBy('created_at','DESC')->pluck('employee_number')->first();
 
             $user = new User;
-            $user->password = Hash::make($request->input('first_name').".".$request->input('last_name'));
+            $user->password = Hash::make(strtolower($request->input('first_name')).".".strtolower($request->input('last_name')));
             $user->name =  $request->input('first_name') . " " . $request->input('last_name');
-            $user->email = $request->input('first_name').".".$request->input('last_name')."@lafilgroup.com";
+            $user->email = strtolower($request->input('first_name')) .".". strtolower($request->input('last_name')) . "@lafilgroup.com";
             $user->save();
             $user->attachRole('2');
 
