@@ -14,7 +14,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h3 class="mb-0">ALL EMPLOYEE REQUESTS</h3>
+                                            <h3 class="mb-0">EMPLOYEE REQUESTS</h3>
                                             <small class="text-muted">List of all employee requests</small>
                                         </div> 
                                     </div>
@@ -23,8 +23,6 @@
                                             <input type="text" name="employee_approval_requests" class="form-control" placeholder="Search" autocomplete="off" v-model="keywords" id="employee_approval_requests">
                                         </div> 
                                     </div>
-
-
                                     <div class="table-responsive">
                                         <!-- employees table -->
                                         <table class="table align-items-center table-flush">

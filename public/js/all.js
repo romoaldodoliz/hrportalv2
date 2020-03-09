@@ -10320,7 +10320,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue_json_excel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-json-excel */ "./node_modules/vue-json-excel/JsonExcel.vue");
 //
 //
 //
@@ -10648,26 +10647,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      components: {
-        '': vue_json_excel__WEBPACK_IMPORTED_MODULE_1__["default"]
-      },
       errors: [],
       currentPage: 0,
       itemsPerPage: 25,
@@ -63957,31 +63940,7 @@ var render = function() {
                         }
                       }
                     })
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "col-xl-12 text-right" },
-                    [
-                      _c(
-                        "download-excel",
-                        {
-                          staticClass: "btn btn-sm btn-default",
-                          attrs: {
-                            data: _vm.schedules,
-                            fields: _vm.json_fields,
-                            name: "Salesforce Attendance report.xls"
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                                                Export to excel\n                                        "
-                          )
-                        ]
-                      )
-                    ],
-                    1
-                  )
+                  ])
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive" }, [
@@ -65085,7 +65044,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row align-items-center" }, [
       _c("div", { staticClass: "col" }, [
-        _c("h3", { staticClass: "mb-0" }, [_vm._v("ALL EMPLOYEE REQUESTS")]),
+        _c("h3", { staticClass: "mb-0" }, [_vm._v("EMPLOYEE REQUESTS")]),
         _vm._v(" "),
         _c("small", { staticClass: "text-muted" }, [
           _vm._v("List of all employee requests")
