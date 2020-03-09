@@ -723,8 +723,11 @@ class EmployeeController extends Controller
             $nick_name = strtolower($employee['nick_name']);
         }
         
-        $first_name = strtolower($employee['first_name']);
-        $last_name = strtolower($employee['last_name']);
+        $first_name = utf8_decode(strtolower($employee['first_name']));
+        $convert_last_name = mb_strtolower($employee['last_name'],'UTF-8');
+        $last_name_front = utf8_decode($convert_last_name);
+        $last_name_back = utf8_decode($employee['last_name']);
+
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
         
         $address = "";            
@@ -773,12 +776,12 @@ class EmployeeController extends Controller
 
         $fullname_font = 15;
        
-        $full_name_front = ucfirst($nick_name) .' ' . ucfirst($last_name);
+        $full_name = ucfirst($nick_name) .' ' . ucfirst($last_name_front);
 
         Fpdf::SetFont('Avenir-Bold','',$fullname_font);
         Fpdf::SetXY(1.5,53);
         Fpdf::SetTextColor(3,119, 57);
-        Fpdf::MultiCell(51,5, ucwords($full_name_front) ,0,'C');
+        Fpdf::MultiCell(51,5, ucwords($full_name) ,0,'C');
 
         $current_y = Fpdf::gety();
         Fpdf::SetXY(0,$current_y);
@@ -821,7 +824,7 @@ class EmployeeController extends Controller
             }
             
         }
-        $full_name_back = strtoupper($first_name) .' ' . strtoupper($last_name);
+        $full_name_back = strtoupper($first_name) .' ' . strtoupper($last_name_back);
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,37);
         Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
