@@ -166,6 +166,7 @@ Route::get('logout', function(){
         Route::get('activities-all',['as'=>'activities.allActivities','uses'=>'ActivityController@allActivities','middleware' => ['role:Administrator']]);
         Route::get('activities-username/{user_id}',['as'=>'activities.getUsername','uses'=>'ActivityController@getUsername','middleware' => ['role:Administrator']]);
 
+        Route::post('filter-activities-all',['as'=>'activities.filterAllActivities','uses'=>'ActivityController@filterAllActivities','middleware' => ['role:Administrator']]);
         /**
          * User Profile
          */

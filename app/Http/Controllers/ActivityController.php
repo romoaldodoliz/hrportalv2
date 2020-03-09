@@ -35,5 +35,26 @@ class ActivityController extends Controller
         return $admin_users;
     }
 
+    public function filterAllActivities(Request $request){
+        
+        $data = $request->all();
+
+        $this->validate($request,[
+            'startDate' => 'required',
+            'endDate' => 'required'
+        ]);
+
+        $start_date = $data['startDate'];
+        $end_date = $data['endDate'];
+
+        $audits = Audit::with('user')
+                    ->whereDate('created_at', '>=', Carbon::parse($start_date))
+                    ->whereDate('created_at', '<=', Carbon::parse($end_date))
+                    ->orderBy('created_at','ASC')
+                    ->get();
+
+        return $audits;
+    }
+
 
 }

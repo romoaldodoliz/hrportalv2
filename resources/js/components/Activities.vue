@@ -19,6 +19,32 @@
                                             <input type="text" name="keyword" class="form-control" placeholder="Search" autocomplete="off" v-model="keywords" id="keyword">
                                         </div> 
                                     </div>
+                                    <div class="row align-items-center mt-2">
+                                        <div class="col-md-12 mt-2">
+                                             <h4>Filter</h4>    
+                                        </div>
+
+                                        <div class="col-md-4 float-left">
+                                            <div class="form-group">
+                                                <label for="startDate" class="form-control-label">Start Date</label> 
+                                                <input type="date" id="startDate" class="form-control form-control-alternative" v-model="startDate">
+                                                <span class="text-danger" v-if="errors.startDate"> {{ errors.startDate[0] }} </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 float-left">
+                                            <div class="form-group">
+                                                <label for="endDate" class="form-control-label">End Date</label> 
+                                                <input type="date" id="endDate" class="form-control form-control-alternative" v-model="endDate">
+                                                <span class="text-danger" v-if="errors.endDate"> {{ errors.endDate[0] }} </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <button class="btn btn-sm btn-primary" @click="filterFetchActivities"> Filter</button>
+                                        </div>
+
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <!-- Users table -->
@@ -81,6 +107,8 @@
                 itemsPerPage: 50,
                 keywords: "",
                 loading: false,
+                startDate : "",
+                endDate : "",
             }
         },
         created(){
@@ -94,6 +122,21 @@
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
+                })
+            },
+            filterFetchActivities(){
+                this.errors = []; 
+                this.activities = [];
+                axios.post('/filter-activities-all', {
+                    startDate: this.startDate,
+                    endDate: this.endDate,
+                })
+                .then(response => {
+                    this.activities = response.data;
+                    
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
                 })
             },
             fetchActivities(){
@@ -124,7 +167,7 @@
             filteredActivities(){
                 let self = this;
                 return Object.values(self.activities).filter(activity => {
-                    return activity.event.toLowerCase().includes(this.keywords.toLowerCase())
+                    return activity.event.toLowerCase().includes(this.keywords.toLowerCase()) || activity.user.name.toLowerCase().includes(this.keywords.toLowerCase()) 
                 });
             },
             totalPages() {

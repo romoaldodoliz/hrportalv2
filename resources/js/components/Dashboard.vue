@@ -85,8 +85,8 @@
                         </div>
                         </div>
                     </div>
-                    <p class="mt-3 mb-0 text-muted text-sm">
-                        <span class="text-success mr-2"></span>
+                    <p class="mt-2 mb-0 text-muted text-sm">
+                        <span class="text-success mr-2"> {{employee_verify_percentage}}%</span>
                         <span class="text-nowrap">Last updated: Today</span>
                         <span class="ml-4">
                             <a href="/verified-employees" class="btn btn-sm btn-primary">See all</a>
@@ -97,8 +97,6 @@
                     </div>
                 </div>
                 </div>
-
-                
             </div>
             </div>
         </div>
@@ -232,6 +230,7 @@
                 newcurrentPage: 0,
                 newitemsPerPage: 10,
                 newkeywords: "",
+                employee_verify_percentage : 0
             }
         },
         created(){
@@ -240,8 +239,14 @@
             this.fetchNewEmployees();
             this.fetchUpdateEmployees();
             this.fetchEmployeeApprovalRequests();
+            
         },
         methods:{
+           getEmployeeVerifiedPercentage(){
+                let v = this;
+                v.employee_verify_percentage = 0;
+                v.employee_verify_percentage =  Math.floor(v.total_updates/v.employees*100);
+           },
            fetchEmployees(){
                 axios.get('/employees-index-count')
                 .then(response => { 
@@ -273,6 +278,7 @@
                 axios.get('/employees-update-count')
                 .then(response => { 
                     this.total_updates = response.data;
+                     this.getEmployeeVerifiedPercentage();
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;

@@ -8725,6 +8725,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -8738,7 +8764,9 @@ __webpack_require__.r(__webpack_exports__);
       currentPage: 0,
       itemsPerPage: 50,
       keywords: "",
-      loading: false
+      loading: false,
+      startDate: "",
+      endDate: ""
     };
   },
   created: function created() {
@@ -8754,13 +8782,27 @@ __webpack_require__.r(__webpack_exports__);
         _this.errors = error.response.data.error;
       });
     },
-    fetchActivities: function fetchActivities() {
+    filterFetchActivities: function filterFetchActivities() {
       var _this2 = this;
 
-      axios.get('/activities-all').then(function (response) {
+      this.errors = [];
+      this.activities = [];
+      axios.post('/filter-activities-all', {
+        startDate: this.startDate,
+        endDate: this.endDate
+      }).then(function (response) {
         _this2.activities = response.data;
       })["catch"](function (error) {
-        _this2.errors = error.response.data.error;
+        _this2.errors = error.response.data.errors;
+      });
+    },
+    fetchActivities: function fetchActivities() {
+      var _this3 = this;
+
+      axios.get('/activities-all').then(function (response) {
+        _this3.activities = response.data;
+      })["catch"](function (error) {
+        _this3.errors = error.response.data.error;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -8778,11 +8820,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredActivities: function filteredActivities() {
-      var _this3 = this;
+      var _this4 = this;
 
       var self = this;
       return Object.values(self.activities).filter(function (activity) {
-        return activity.event.toLowerCase().includes(_this3.keywords.toLowerCase());
+        return activity.event.toLowerCase().includes(_this4.keywords.toLowerCase()) || activity.user.name.toLowerCase().includes(_this4.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -10154,8 +10196,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -10170,7 +10210,8 @@ __webpack_require__.r(__webpack_exports__);
       requestkeywords: "",
       newcurrentPage: 0,
       newitemsPerPage: 10,
-      newkeywords: ""
+      newkeywords: "",
+      employee_verify_percentage: 0
     };
   },
   created: function created() {
@@ -10181,6 +10222,11 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchEmployeeApprovalRequests();
   },
   methods: {
+    getEmployeeVerifiedPercentage: function getEmployeeVerifiedPercentage() {
+      var v = this;
+      v.employee_verify_percentage = 0;
+      v.employee_verify_percentage = Math.floor(v.total_updates / v.employees * 100);
+    },
     fetchEmployees: function fetchEmployees() {
       var _this = this;
 
@@ -10213,6 +10259,8 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get('/employees-update-count').then(function (response) {
         _this4.total_updates = response.data;
+
+        _this4.getEmployeeVerifiedPercentage();
       })["catch"](function (error) {
         _this4.errors = error.response.data.error;
       });
@@ -59086,6 +59134,105 @@ var render = function() {
                         })
                       ]
                     )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row align-items-center mt-2" }, [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4 float-left" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "form-control-label",
+                            attrs: { for: "startDate" }
+                          },
+                          [_vm._v("Start Date")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.startDate,
+                              expression: "startDate"
+                            }
+                          ],
+                          staticClass: "form-control form-control-alternative",
+                          attrs: { type: "date", id: "startDate" },
+                          domProps: { value: _vm.startDate },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.startDate = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.startDate
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(
+                                " " + _vm._s(_vm.errors.startDate[0]) + " "
+                              )
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4 float-left" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "form-control-label",
+                            attrs: { for: "endDate" }
+                          },
+                          [_vm._v("End Date")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.endDate,
+                              expression: "endDate"
+                            }
+                          ],
+                          staticClass: "form-control form-control-alternative",
+                          attrs: { type: "date", id: "endDate" },
+                          domProps: { value: _vm.endDate },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.endDate = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.endDate
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(" " + _vm._s(_vm.errors.endDate[0]) + " ")
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-sm btn-primary",
+                          on: { click: _vm.filterFetchActivities }
+                        },
+                        [_vm._v(" Filter")]
+                      )
+                    ])
                   ])
                 ]),
                 _vm._v(" "),
@@ -59094,7 +59241,7 @@ var render = function() {
                     "table",
                     { staticClass: "table align-items-center table-flush" },
                     [
-                      _vm._m(1),
+                      _vm._m(2),
                       _vm._v(" "),
                       _c(
                         "tbody",
@@ -59203,6 +59350,14 @@ var staticRenderFns = [
           _vm._v("List of all user logs")
         ])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-12 mt-2" }, [
+      _c("h4", [_vm._v("Filter")])
     ])
   },
   function() {
@@ -63466,7 +63621,19 @@ var render = function() {
                       _vm._m(6)
                     ]),
                     _vm._v(" "),
-                    _vm._m(7)
+                    _c("p", { staticClass: "mt-2 mb-0 text-muted text-sm" }, [
+                      _c("span", { staticClass: "text-success mr-2" }, [
+                        _vm._v(
+                          " " + _vm._s(_vm.employee_verify_percentage) + "%"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "text-nowrap" }, [
+                        _vm._v("Last updated: Today")
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(7)
+                    ])
                   ])
                 ])
               ])
@@ -63790,23 +63957,15 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("p", { staticClass: "mt-3 mb-0 text-muted text-sm" }, [
-      _c("span", { staticClass: "text-success mr-2" }),
-      _vm._v(" "),
-      _c("span", { staticClass: "text-nowrap" }, [
-        _vm._v("Last updated: Today")
-      ]),
-      _vm._v(" "),
-      _c("span", { staticClass: "ml-4" }, [
-        _c(
-          "a",
-          {
-            staticClass: "btn btn-sm btn-primary",
-            attrs: { href: "/verified-employees" }
-          },
-          [_vm._v("See all")]
-        )
-      ])
+    return _c("span", { staticClass: "ml-4" }, [
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-sm btn-primary",
+          attrs: { href: "/verified-employees" }
+        },
+        [_vm._v("See all")]
+      )
     ])
   },
   function() {
@@ -98072,14 +98231,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!***********************************************!*\
   !*** ./resources/js/components/Dashboard.vue ***!
   \***********************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=template&id=040e2ab9& */ "./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&");
 /* harmony import */ var _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=script&lang=js& */ "./resources/js/components/Dashboard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -98109,7 +98269,7 @@ component.options.__file = "resources/js/components/Dashboard.vue"
 /*!************************************************************************!*\
   !*** ./resources/js/components/Dashboard.vue?vue&type=script&lang=js& ***!
   \************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
