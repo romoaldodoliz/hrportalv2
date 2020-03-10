@@ -53,6 +53,7 @@ class HomeController extends Controller
                     return view('home');
                 }
                 else{
+                    $user->attachRole(2);
                     return redirect('/home');
                 }
             }else{
