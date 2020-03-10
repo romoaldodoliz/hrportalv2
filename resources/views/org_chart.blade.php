@@ -52,7 +52,15 @@
     var chart = new OrgChart(document.getElementById("orgChart"), {
             template: "luba",
             menu: {
+                pdf: { text: "Export PDF" },
+                png: { text: "Export PNG" },
                 svg: { text: "Export SVG" },
+                csv: { text: "Export CSV" }
+            },
+            nodeMenu: {
+                pdf: { text: "Export PDF" },
+                png: { text: "Export PNG" },
+                svg: { text: "Export SVG" }
             },
             nodeBinding: {
                 field_0: "name",
