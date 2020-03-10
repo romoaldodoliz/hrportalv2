@@ -137,7 +137,8 @@ class EmployeeController extends Controller
             $user = new User;
             $user->password = Hash::make(strtolower($request->input('first_name')).".".strtolower($request->input('last_name')));
             $user->name =  $request->input('first_name') . " " . $request->input('last_name');
-            $user->email = strtolower($request->input('first_name')) .".". strtolower($request->input('last_name')) . "@lafilgroup.com";
+            $email = strtolower($request->input('first_name')) .".". strtolower($request->input('last_name')) . "@lafilgroup.com";
+            $user->email = str_replace(' ', '', $email);
             $user->save();
             $user->attachRole('2');
 
