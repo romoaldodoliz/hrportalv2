@@ -251,6 +251,8 @@
                 axios.get('/employees-index-count')
                 .then(response => { 
                     this.employees = response.data;
+                    this.getEmployeeVerifiedPercentage();
+
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
