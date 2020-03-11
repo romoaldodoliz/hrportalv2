@@ -201,4 +201,7 @@ Route::get('logout', function(){
         Route::get('verified_employees', 'HomeController@verifiedEmployees');
 
         Route::get('verified-employees', 'HomeController@verifiedEmployeeList');
+
+        Route::get('view_user_profile/{employee}','HomeController@viewUserProfile');
+        Route::get('view-user-profile-data/{employee}','HomeController@viewUserProfileData');
     });

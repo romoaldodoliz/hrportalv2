@@ -90,6 +90,7 @@
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a>
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
+                                                            <a class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>
                                                         </div>
                                                     </div>
                                                 </td>

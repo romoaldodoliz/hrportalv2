@@ -354,5 +354,13 @@ class HomeController extends Controller
             return $employee_request;
         }
     }
+
+    public function viewUserProfile(Employee $employee){
+        return view('view_user_profile')->with('employee_id',$employee->id);
+    }
+
+    public function viewUserProfileData(Employee $employee){
+        return Employee::with('companies','departments','locations','verification')->where('id', $employee->id)->first();
+    }
     
 }
