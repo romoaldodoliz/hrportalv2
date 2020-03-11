@@ -293,7 +293,7 @@ export default {
             });
         },
         totalPages() {
-            return Math.ceil(Object.values(this.employee_ids).length / this.itemsPerPage)
+            return Math.ceil(Object.values(this.filteredemployeeids).length / this.itemsPerPage)
         },
         filteredQueues() {
             var index = this.currentPage * this.itemsPerPage;

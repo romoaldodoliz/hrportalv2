@@ -171,7 +171,7 @@
                 });
             },
             totalPages() {
-                return Math.ceil(Object.values(this.activities).length / this.itemsPerPage)
+                return Math.ceil(Object.values(this.filteredActivities).length / this.itemsPerPage)
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;

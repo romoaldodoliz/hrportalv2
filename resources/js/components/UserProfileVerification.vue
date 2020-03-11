@@ -1412,7 +1412,7 @@
                 });
             },
             totalPages() {
-                return Math.ceil(Object.values(this.employee_requests).length / this.itemsPerPage)
+                return Math.ceil(Object.values(this.filteredemployeerequests).length / this.itemsPerPage)
             },
             filteredQueuesEmployeeRequests() {
                 var index = this.currentPage * this.itemsPerPage;

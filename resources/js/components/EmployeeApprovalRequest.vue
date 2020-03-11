@@ -496,7 +496,7 @@ export default {
             });
         },
         totalPages() {
-            return Math.ceil(Object.values(this.employee_approval_requests).length / this.itemsPerPage)
+            return Math.ceil(Object.values(this.filteredemployeerequests).length / this.itemsPerPage)
         },
         filteredQueues() {
             var index = this.currentPage * this.itemsPerPage;

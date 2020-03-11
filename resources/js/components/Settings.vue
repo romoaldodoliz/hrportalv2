@@ -2088,7 +2088,7 @@
                 });
             },
             companytotalPages() {
-                return Math.ceil(Object.values(this.companies).length / this.companyitemsPerPage)
+                return Math.ceil(Object.values(this.filteredCompanies).length / this.companyitemsPerPage)
             },
             companyfilteredQueues() {
                 var index = this.companycurrentPage * this.companyitemsPerPage;
@@ -2113,7 +2113,7 @@
                 });
             },
             departmenttotalPages() {
-                return Math.ceil(Object.values(this.departments).length / this.departmentitemsPerPage)
+                return Math.ceil(Object.values(this.filteredDepartments).length / this.departmentitemsPerPage)
             },
             departmentfilteredQueues() {
                 var index = this.departmentcurrentPage * this.departmentitemsPerPage;
@@ -2138,7 +2138,7 @@
                 });
             },
             locationtotalPages() {
-                return Math.ceil(Object.values(this.locations).length / this.locationitemsPerPage)
+                return Math.ceil(Object.values(this.filteredLocations).length / this.locationitemsPerPage)
             },
             locationfilteredQueues() {
                 var index = this.locationcurrentPage * this.locationitemsPerPage;
@@ -2163,7 +2163,7 @@
                 });
             },
             addresstotalPages() {
-                return Math.ceil(Object.values(this.addresses).length / this.addressitemsPerPage)
+                return Math.ceil(Object.values(this.filteredAddresses).length / this.addressitemsPerPage)
             },
             addressfilteredQueues() {
                 var index = this.addresscurrentPage * this.addressitemsPerPage;
@@ -2188,7 +2188,7 @@
                 });
             },
             headtotalPages() {
-                return Math.ceil(Object.values(this.heads).length / this.headitemsPerPage)
+                return Math.ceil(Object.values(this.filteredHeads).length / this.headitemsPerPage)
             },
             headfilteredQueues() {
                 var index = this.headcurrentPage * this.headitemsPerPage;
@@ -2213,7 +2213,7 @@
                 });
             },
             leveltotalPages() {
-                return Math.ceil(Object.values(this.levels).length / this.levelitemsPerPage)
+                return Math.ceil(Object.values(this.filteredLevels).length / this.levelitemsPerPage)
             },
             levelfilteredQueues() {
                 var index = this.levelcurrentPage * this.levelitemsPerPage;
@@ -2237,7 +2237,7 @@
                 });
             },
             maritaltotalPages() {
-                return Math.ceil(Object.values(this.maritals).length / this.maritalitemsPerPage)
+                return Math.ceil(Object.values(this.filteredMaritals).length / this.maritalitemsPerPage)
             },
             maritalfilteredQueues() {
                 var index = this.maritalcurrentPage * this.maritalitemsPerPage;

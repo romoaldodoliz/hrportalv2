@@ -8828,7 +8828,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.activities).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.filteredActivities).length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
@@ -10854,7 +10854,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.employee_approval_requests).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.filteredemployeerequests).length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
@@ -11180,7 +11180,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.employee_ids).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.filteredemployeeids).length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
@@ -12976,7 +12976,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.employees).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.filteredemployees).length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
@@ -15145,7 +15145,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     companytotalPages: function companytotalPages() {
-      return Math.ceil(Object.values(this.companies).length / this.companyitemsPerPage);
+      return Math.ceil(Object.values(this.filteredCompanies).length / this.companyitemsPerPage);
     },
     companyfilteredQueues: function companyfilteredQueues() {
       var index = this.companycurrentPage * this.companyitemsPerPage;
@@ -15171,7 +15171,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     departmenttotalPages: function departmenttotalPages() {
-      return Math.ceil(Object.values(this.departments).length / this.departmentitemsPerPage);
+      return Math.ceil(Object.values(this.filteredDepartments).length / this.departmentitemsPerPage);
     },
     departmentfilteredQueues: function departmentfilteredQueues() {
       var index = this.departmentcurrentPage * this.departmentitemsPerPage;
@@ -15197,7 +15197,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     locationtotalPages: function locationtotalPages() {
-      return Math.ceil(Object.values(this.locations).length / this.locationitemsPerPage);
+      return Math.ceil(Object.values(this.filteredLocations).length / this.locationitemsPerPage);
     },
     locationfilteredQueues: function locationfilteredQueues() {
       var index = this.locationcurrentPage * this.locationitemsPerPage;
@@ -15223,7 +15223,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     addresstotalPages: function addresstotalPages() {
-      return Math.ceil(Object.values(this.addresses).length / this.addressitemsPerPage);
+      return Math.ceil(Object.values(this.filteredAddresses).length / this.addressitemsPerPage);
     },
     addressfilteredQueues: function addressfilteredQueues() {
       var index = this.addresscurrentPage * this.addressitemsPerPage;
@@ -15249,7 +15249,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     headtotalPages: function headtotalPages() {
-      return Math.ceil(Object.values(this.heads).length / this.headitemsPerPage);
+      return Math.ceil(Object.values(this.filteredHeads).length / this.headitemsPerPage);
     },
     headfilteredQueues: function headfilteredQueues() {
       var index = this.headcurrentPage * this.headitemsPerPage;
@@ -15275,7 +15275,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     leveltotalPages: function leveltotalPages() {
-      return Math.ceil(Object.values(this.levels).length / this.levelitemsPerPage);
+      return Math.ceil(Object.values(this.filteredLevels).length / this.levelitemsPerPage);
     },
     levelfilteredQueues: function levelfilteredQueues() {
       var index = this.levelcurrentPage * this.levelitemsPerPage;
@@ -15301,7 +15301,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     maritaltotalPages: function maritaltotalPages() {
-      return Math.ceil(Object.values(this.maritals).length / this.maritalitemsPerPage);
+      return Math.ceil(Object.values(this.filteredMaritals).length / this.maritalitemsPerPage);
     },
     maritalfilteredQueues: function maritalfilteredQueues() {
       var index = this.maritalcurrentPage * this.maritalitemsPerPage;
@@ -18341,7 +18341,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.employee_requests).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.filteredemployeerequests).length / this.itemsPerPage);
     },
     filteredQueuesEmployeeRequests: function filteredQueuesEmployeeRequests() {
       var index = this.currentPage * this.itemsPerPage;
@@ -18771,7 +18771,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.users).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.filteredUsers).length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
