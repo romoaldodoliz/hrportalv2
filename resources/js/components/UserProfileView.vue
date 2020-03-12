@@ -86,7 +86,7 @@
                                 </div>
                             </div>
                             <div class="col-4 text-right">
-                                <!-- <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#employeeRequestsModal"><span class="badge badge-pill badge-warning" v-if="employee_requests_pending > 0"><i class="fas fa-exclamation"></i></span> Employee Update Request(s)</button> -->
+                                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#employeeRequestsModal"><span class="badge badge-pill badge-warning" v-if="employee_requests_pending > 0"><i class="fas fa-exclamation"></i></span> Employee Update Request(s)</button>
                             </div>
 
                             
@@ -646,9 +646,9 @@
                     <div class="card-footer bg-white border-0">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <!-- <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                                <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
                                
-                                <button id="verify_btn" :disabled="saveEmployee" v-if="!employee_copied.verification && employee_requests_pending == 0" type="button" class="btn btn-info btn-round btn-fill btn-lg" @click="verifyEmployee(employee_copied)" style="width:150px;">Verify</button> -->
+                                <button id="verify_btn" :disabled="saveEmployee" v-if="!employee_copied.verification && employee_requests_pending == 0" type="button" class="btn btn-info btn-round btn-fill btn-lg" @click="verifyEmployee(employee_copied)" style="width:150px;">Verify</button>
                               
                             </div>
                         </div>

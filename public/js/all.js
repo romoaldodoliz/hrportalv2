@@ -86469,7 +86469,28 @@ var render = function() {
                       ])
                 ]),
                 _vm._v(" "),
-                _c("div", { staticClass: "col-4 text-right" })
+                _c("div", { staticClass: "col-4 text-right" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-sm btn-primary",
+                      attrs: {
+                        "data-toggle": "modal",
+                        "data-target": "#employeeRequestsModal"
+                      }
+                    },
+                    [
+                      _vm.employee_requests_pending > 0
+                        ? _c(
+                            "span",
+                            { staticClass: "badge badge-pill badge-warning" },
+                            [_c("i", { staticClass: "fas fa-exclamation" })]
+                          )
+                        : _vm._e(),
+                      _vm._v(" Employee Update Request(s)")
+                    ]
+                  )
+                ])
               ])
             ]),
             _vm._v(" "),
@@ -89133,7 +89154,52 @@ var render = function() {
               )
             ]),
             _vm._v(" "),
-            _vm._m(5)
+            _c("div", { staticClass: "card-footer bg-white border-0" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12 text-center" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-round btn-fill btn-lg",
+                      staticStyle: { width: "150px" },
+                      attrs: {
+                        id: "edit_btn",
+                        disabled: _vm.saveEmployee,
+                        type: "button"
+                      },
+                      on: {
+                        click: function($event) {
+                          return _vm.updateEmployee(_vm.employee_copied)
+                        }
+                      }
+                    },
+                    [_vm._v("Update")]
+                  ),
+                  _vm._v(" "),
+                  !_vm.employee_copied.verification &&
+                  _vm.employee_requests_pending == 0
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-info btn-round btn-fill btn-lg",
+                          staticStyle: { width: "150px" },
+                          attrs: {
+                            id: "verify_btn",
+                            disabled: _vm.saveEmployee,
+                            type: "button"
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.verifyEmployee(_vm.employee_copied)
+                            }
+                          }
+                        },
+                        [_vm._v("Verify")]
+                      )
+                    : _vm._e()
+                ])
+              ])
+            ])
           ])
         ])
       ])
@@ -89162,11 +89228,11 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(6),
+              _vm._m(5),
               _vm._v(" "),
               _c("div", { staticClass: "modal-header" }, [
                 _c("div", { staticClass: "row align-items-center" }, [
-                  _vm._m(7),
+                  _vm._m(6),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-xl-12 mb-2 mt-3" }, [
                     _c("input", {
@@ -89202,7 +89268,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("table", { staticClass: "table table-hover" }, [
-                  _vm._m(8),
+                  _vm._m(7),
                   _vm._v(" "),
                   _c(
                     "tbody",
@@ -89213,7 +89279,7 @@ var render = function() {
                       return _c("tr", { key: index }, [
                         _c("td", { staticClass: "text-center" }, [
                           _c("div", { staticClass: "dropdown" }, [
-                            _vm._m(9, true),
+                            _vm._m(8, true),
                             _vm._v(" "),
                             _c(
                               "div",
@@ -89361,7 +89427,7 @@ var render = function() {
                   : _vm._e()
               ]),
               _vm._v(" "),
-              _vm._m(10)
+              _vm._m(9)
             ])
           ]
         )
@@ -89391,7 +89457,7 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(11),
+              _vm._m(10),
               _vm._v(" "),
               _c("div", { staticClass: "modal-header" }, [
                 _c("div", { staticClass: "row align-items-center" }, [
@@ -89413,7 +89479,7 @@ var render = function() {
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "table-responsive" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(12),
+                    _vm._m(11),
                     _vm._v(" "),
                     _c("tbody", [
                       _c("tr", [
@@ -90006,7 +90072,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(13),
+                    _vm._m(12),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -90047,7 +90113,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "table-responsive mt-3" }, [
                   _c("table", { staticClass: "table table-hover" }, [
-                    _vm._m(14),
+                    _vm._m(13),
                     _vm._v(" "),
                     _c(
                       "tbody",
@@ -90097,7 +90163,7 @@ var render = function() {
                 _vm.employee_request_approval.dependent_attachments
                   ? _c("div", { staticClass: "table-responsive mt-3" }, [
                       _c("table", { staticClass: "table table-hover" }, [
-                        _vm._m(15),
+                        _vm._m(14),
                         _vm._v(" "),
                         _c(
                           "tbody",
@@ -90153,7 +90219,7 @@ var render = function() {
                 _vm.employee_request_approval.deleted_dependent_attachments
                   ? _c("div", { staticClass: "table-responsive mt-3" }, [
                       _c("table", { staticClass: "table table-hover" }, [
-                        _vm._m(16),
+                        _vm._m(15),
                         _vm._v(" "),
                         _c(
                           "tbody",
@@ -90327,16 +90393,6 @@ var staticRenderFns = [
         _c("th", { staticClass: "text-center" }),
         _vm._v(" "),
         _c("th", { staticClass: "text-center" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-footer bg-white border-0" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-12 text-center" })
       ])
     ])
   },
