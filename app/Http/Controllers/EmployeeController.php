@@ -96,22 +96,22 @@ class EmployeeController extends Controller
 
     public function store(Request $request){
         
-        $this->validate($request, [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'marital_status' => 'required',
-            'gender' => 'required',
-            'birthdate' => 'required',
-            'company_list' => 'required',
-            // 'department_list' => 'required',
-            'location_list' => 'required',
-            'tax_status' => 'required',
-        ],[
-            'company_list.required' => 'This field is required',
-            // 'department_list.required' => 'This field is required',
-            'location_list.required' => 'This field is required',
-            'tax_status.required' => 'This field is required',
-        ]);
+        // $this->validate($request, [
+        //     'first_name' => 'required',
+        //     'last_name' => 'required',
+        //     'marital_status' => 'required',
+        //     'gender' => 'required',
+        //     //'birthdate' => 'required',
+        //     'company_list' => 'required',
+        //     // 'department_list' => 'required',
+        //     'location_list' => 'required',
+        //     'tax_status' => 'required',
+        // ],[
+        //     'company_list.required' => 'This field is required',
+        //     // 'department_list.required' => 'This field is required',
+        //     'location_list.required' => 'This field is required',
+        //     //'tax_status.required' => 'This field is required',
+        // ]);
 
         $data = $request->all();
 
