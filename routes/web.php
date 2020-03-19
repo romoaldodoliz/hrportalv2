@@ -46,6 +46,8 @@ Route::get('logout', function(){
             Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff']]);
 
+            Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff']]);
+
             Route::get('/employees-index-count',['as'=>'employees.employeeindexCount','uses'=>'EmployeeController@employeeindexCount','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-inactive-count',['as'=>'employees.employeeInactiveCount','uses'=>'EmployeeController@employeeInactiveCount','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-new-count',['as'=>'employees.employeeNewCount','uses'=>'EmployeeController@employeeNewCount','middleware' => ['role:Administrator|HR Staff']]);

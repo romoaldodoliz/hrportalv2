@@ -11213,6 +11213,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue_json_excel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-json-excel */ "./node_modules/vue-json-excel/JsonExcel.vue");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -12231,10 +12232,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
+    'downloadExcel': vue_json_excel__WEBPACK_IMPORTED_MODULE_2__["default"],
     loader: _Loader__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
@@ -12287,7 +12300,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       dependent_attachments: [],
       employee_dependent_attachments: [],
       deleted_dependent_attachments: []
-    }, _defineProperty(_ref, "dependent_attachments", []), _defineProperty(_ref, "fileSize", 0), _ref;
+    }, _defineProperty(_ref, "dependent_attachments", []), _defineProperty(_ref, "fileSize", 0), _defineProperty(_ref, "export_employees", []), _defineProperty(_ref, "json_fields", {
+      'ID NUMBER': 'id_number',
+      'FIRST NAME': 'last_name',
+      'LAST NAME': 'first_name',
+      'POSITION': 'position',
+      'COMPANY': 'company',
+      'DEPARTMENT': 'department',
+      'LOCATION': 'location',
+      'MOBILE NUMBER': 'mobile_number',
+      'STATUS': 'status'
+    }), _ref;
   },
   created: function created() {
     this.fetchEmployees();
@@ -12298,10 +12321,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.fetchLevels();
     this.fetchHeadApprovers();
     this.fetchPositionApprovers();
+    this.exportFetchEmployees();
   },
   methods: {
-    removeDependentAttachment: function removeDependentAttachment(index, attachment) {
+    exportFetchEmployees: function exportFetchEmployees() {
       var _this = this;
+
+      this.export_employees = [];
+      axios.get('/export-employees').then(function (response) {
+        if (response.data.length > 0) {
+          _this.export_employees = response.data;
+        }
+      })["catch"](function (error) {
+        _this.errors = error.response.data.error;
+      });
+    },
+    removeDependentAttachment: function removeDependentAttachment(index, attachment) {
+      var _this2 = this;
 
       if (attachment) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
@@ -12313,12 +12349,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this.deleted_dependent_attachments.push({
+            _this2.deleted_dependent_attachments.push({
               id: attachment.id,
               file: attachment.file
             });
 
-            _this.employee_dependent_attachments.splice(index, 1);
+            _this2.employee_dependent_attachments.splice(index, 1);
           }
         });
       }
@@ -12340,17 +12376,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     fetchDependentAttachments: function fetchDependentAttachments() {
-      var _this2 = this;
+      var _this3 = this;
 
       var v = this;
       this.employee_dependent_attachments = [];
       this.deleted_dependent_attachments = [];
       axios.get('/employee-dependents-attachments/' + this.employee_copied.id).then(function (response) {
         if (response.data.length > 0) {
-          _this2.employee_dependent_attachments = response.data;
+          _this3.employee_dependent_attachments = response.data;
         }
       })["catch"](function (error) {
-        _this2.errors = error.response.data.error;
+        _this3.errors = error.response.data.error;
       });
     },
     orgChartEmployee: function orgChartEmployee(employee) {
@@ -12371,7 +12407,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       v.transferEmployeeDetails = employee;
     },
     saveTransferEmployee: function saveTransferEmployee(transfer_employee) {
-      var _this3 = this;
+      var _this4 = this;
 
       var v = this;
       var index = this.employees.findIndex(function (item) {
@@ -12394,14 +12430,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           formData.append('division', transfer_employee.division ? transfer_employee.division : "");
           formData.append('position', transfer_employee.position ? transfer_employee.position : "");
           formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
-          formData.append('head_approvers', _this3.transfer_approvers ? JSON.stringify(_this3.transfer_approvers) : "");
+          formData.append('head_approvers', _this4.transfer_approvers ? JSON.stringify(_this4.transfer_approvers) : "");
           formData.append('_method', 'PATCH');
           axios.post("/transfer-employee/".concat(v.transferEmployeeDetails.id), formData).then(function (response) {
-            _this3.fetchEmployees();
+            _this4.fetchEmployees();
 
-            _this3.clearTransferForm();
+            _this4.clearTransferForm();
 
-            _this3.transferEmployeeDetails = response.data;
+            _this4.transferEmployeeDetails = response.data;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Success!',
               text: 'Employee has been successfully transferred.',
@@ -12409,7 +12445,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               confirmButtonText: 'Okay'
             });
           })["catch"](function (error) {
-            _this3.transfer_errors = error.response.data.errors;
+            _this4.transfer_errors = error.response.data.errors;
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Warning!',
               text: 'Unable to Update Employee. Check Entries and then try again.',
@@ -12421,14 +12457,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     viewTransferEmployeeLogs: function viewTransferEmployeeLogs() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.viewTransferLogsList = true;
       this.transferLogsList = [];
       axios.get('/transfer-employee-logs/' + this.transferEmployeeDetails.id).then(function (response) {
-        _this4.transferLogsList = response.data;
+        _this5.transferLogsList = response.data;
       })["catch"](function (error) {
-        _this4.errors = error.response.data.error;
+        _this5.errors = error.response.data.error;
       });
     },
     closeTransferEmployeeLogs: function closeTransferEmployeeLogs() {
@@ -12448,7 +12484,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return "".concat(head_approver.first_name + " " + head_approver.last_name);
     },
     updateEmployee: function updateEmployee(employee_copied) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.errors = [];
       this.edit_updated = false;
@@ -12552,13 +12588,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           'Content-Type': 'multipart/form-data'
         }
       }).then(function (response) {
-        _this5.employees.splice(index, 1, response.data);
+        _this6.employees.splice(index, 1, response.data);
 
         document.getElementById('edit_btn').disabled = false;
-        _this5.dependent_attachments = [];
+        _this6.dependent_attachments = [];
         document.getElementById('dependents_attachments').value = "";
 
-        _this5.copyObject(response.data);
+        _this6.copyObject(response.data);
 
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Success!',
@@ -12567,7 +12603,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           confirmButtonText: 'Okay'
         });
       })["catch"](function (error) {
-        _this5.errors = error.response.data.errors;
+        _this6.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
         document.getElementById('dependents_attachments').value = "";
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
@@ -12627,47 +12663,47 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     fetchEmployees: function fetchEmployees() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.table_loading = true;
       axios.get('/employees-all').then(function (response) {
-        _this6.employees = response.data;
-        _this6.table_loading = false;
-      })["catch"](function (error) {
-        _this6.errors = error.response.data.error;
-      });
-    },
-    fetchHeadApprovers: function fetchHeadApprovers() {
-      var _this7 = this;
-
-      axios.get('/employee-head-approvers').then(function (response) {
-        _this7.employee_head_approvers = response.data;
+        _this7.employees = response.data;
+        _this7.table_loading = false;
       })["catch"](function (error) {
         _this7.errors = error.response.data.error;
       });
     },
-    fetchPositionApprovers: function fetchPositionApprovers() {
+    fetchHeadApprovers: function fetchHeadApprovers() {
       var _this8 = this;
 
-      axios.get('/heads-all').then(function (response) {
-        _this8.employee_position_approvers = response.data;
+      axios.get('/employee-head-approvers').then(function (response) {
+        _this8.employee_head_approvers = response.data;
       })["catch"](function (error) {
         _this8.errors = error.response.data.error;
       });
     },
-    fetchApprovers: function fetchApprovers() {
+    fetchPositionApprovers: function fetchPositionApprovers() {
       var _this9 = this;
 
-      this.approvers = [];
-      this.deletedApprover = [];
-      axios.get('/employee-approvers/' + this.employee_copied.id).then(function (response) {
-        _this9.approvers = response.data;
+      axios.get('/heads-all').then(function (response) {
+        _this9.employee_position_approvers = response.data;
       })["catch"](function (error) {
         _this9.errors = error.response.data.error;
       });
     },
-    fetchDependents: function fetchDependents() {
+    fetchApprovers: function fetchApprovers() {
       var _this10 = this;
+
+      this.approvers = [];
+      this.deletedApprover = [];
+      axios.get('/employee-approvers/' + this.employee_copied.id).then(function (response) {
+        _this10.approvers = response.data;
+      })["catch"](function (error) {
+        _this10.errors = error.response.data.error;
+      });
+    },
+    fetchDependents: function fetchDependents() {
+      var _this11 = this;
 
       var v = this;
       this.dependents = [];
@@ -12686,7 +12722,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           });
         }
       })["catch"](function (error) {
-        _this10.errors = error.response.data.error;
+        _this11.errors = error.response.data.error;
       });
     },
     addApprover: function addApprover() {
@@ -12697,7 +12733,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     removeApprover: function removeApprover(index, id) {
-      var _this11 = this;
+      var _this12 = this;
 
       var head_id = id;
 
@@ -12711,11 +12747,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this11.deletedApprover.push({
+            _this12.deletedApprover.push({
               id: head_id
             });
 
-            _this11.approvers.splice(index, 1);
+            _this12.approvers.splice(index, 1);
           }
         });
       } else {
@@ -12742,7 +12778,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     removeDependent: function removeDependent(index, id) {
-      var _this12 = this;
+      var _this13 = this;
 
       var dependent_id = id;
 
@@ -12756,11 +12792,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           confirmButtonText: 'Yes, Remove'
         }).then(function (result) {
           if (result.value) {
-            _this12.deletedDependent.push({
+            _this13.deletedDependent.push({
               id: dependent_id
             });
 
-            _this12.dependents.splice(index, 1);
+            _this13.dependents.splice(index, 1);
           }
         });
       } else {
@@ -12782,52 +12818,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.marital_file = marital.files[0];
     },
     fetchMaritalStatuses: function fetchMaritalStatuses() {
-      var _this13 = this;
-
-      axios.get('/maritals-options').then(function (response) {
-        _this13.marital_statuses = response.data;
-      })["catch"](function (error) {
-        _this13.errors = error.response.data.error;
-      });
-    },
-    fetchCompanies: function fetchCompanies() {
       var _this14 = this;
 
-      axios.get('/companies-all').then(function (response) {
-        _this14.companies = response.data;
+      axios.get('/maritals-options').then(function (response) {
+        _this14.marital_statuses = response.data;
       })["catch"](function (error) {
         _this14.errors = error.response.data.error;
       });
     },
-    fetchDepartments: function fetchDepartments() {
+    fetchCompanies: function fetchCompanies() {
       var _this15 = this;
 
-      axios.get('/departments-all').then(function (response) {
-        _this15.departments = response.data;
+      axios.get('/companies-all').then(function (response) {
+        _this15.companies = response.data;
       })["catch"](function (error) {
         _this15.errors = error.response.data.error;
       });
     },
-    fetchLocations: function fetchLocations() {
+    fetchDepartments: function fetchDepartments() {
       var _this16 = this;
 
-      axios.get('/locations-all').then(function (response) {
-        _this16.locations = response.data;
+      axios.get('/departments-all').then(function (response) {
+        _this16.departments = response.data;
       })["catch"](function (error) {
         _this16.errors = error.response.data.error;
       });
     },
-    fetchLevels: function fetchLevels() {
+    fetchLocations: function fetchLocations() {
       var _this17 = this;
 
-      axios.get('/levels-options').then(function (response) {
-        _this17.levels = response.data;
+      axios.get('/locations-all').then(function (response) {
+        _this17.locations = response.data;
       })["catch"](function (error) {
         _this17.errors = error.response.data.error;
       });
     },
-    fetchFilterEmployee: function fetchFilterEmployee() {
+    fetchLevels: function fetchLevels() {
       var _this18 = this;
+
+      axios.get('/levels-options').then(function (response) {
+        _this18.levels = response.data;
+      })["catch"](function (error) {
+        _this18.errors = error.response.data.error;
+      });
+    },
+    fetchFilterEmployee: function fetchFilterEmployee() {
+      var _this19 = this;
 
       this.table_loading = true;
       this.employees = [];
@@ -12851,12 +12887,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee', this.formFilterData).then(function (response) {
-        _this18.employees = response.data;
-        _this18.table_loading = false;
-        _this18.errors = [];
+        _this19.employees = response.data;
+        _this19.table_loading = false;
+        _this19.errors = [];
       })["catch"](function (error) {
-        _this18.errors = error.response.data.errors;
-        _this18.table_loading = false;
+        _this19.errors = error.response.data.errors;
+        _this19.table_loading = false;
       });
     },
     termsConditionsValidate: function termsConditionsValidate() {
@@ -12968,12 +13004,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: {
     filteredemployees: function filteredemployees() {
-      var _this19 = this;
+      var _this20 = this;
 
       var self = this;
       return Object.values(self.employees).filter(function (employee) {
         var full_name = employee.first_name + " " + employee.last_name;
-        return employee.first_name.toLowerCase().includes(_this19.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this19.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this19.keywords.toLowerCase());
+        return employee.first_name.toLowerCase().includes(_this20.keywords.toLowerCase()) || employee.last_name.toLowerCase().includes(_this20.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this20.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -67758,7 +67794,42 @@ var render = function() {
           _c("div", { staticClass: "col-xl-12" }, [
             _c("div", { staticClass: "card shadow" }, [
               _c("div", { staticClass: "card-header border-0" }, [
-                _vm._m(0),
+                _c("div", { staticClass: "row align-items-center" }, [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "col-xl-12 float-right text-right" },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-sm btn-primary",
+                          attrs: { href: "/add-employee" }
+                        },
+                        [_vm._v("Add Employee")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "download-excel",
+                        {
+                          staticClass: "btn btn-sm btn-default",
+                          attrs: {
+                            data: _vm.export_employees,
+                            fields: _vm.json_fields,
+                            name: "All HR Portal Employees.xls"
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\r\n                                                    Export to excel\r\n                                            "
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "row align-items-center" }, [
                   _c(
@@ -73267,24 +73338,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row align-items-center" }, [
-      _c("div", { staticClass: "col" }, [
-        _c("h3", { staticClass: "mb-0" }, [_vm._v("EMPLOYEES")]),
-        _vm._v(" "),
-        _c("small", { staticClass: "text-muted" }, [
-          _vm._v("List of all employees")
-        ])
-      ]),
+    return _c("div", { staticClass: "col" }, [
+      _c("h3", { staticClass: "mb-0" }, [_vm._v("EMPLOYEES")]),
       _vm._v(" "),
-      _c("div", { staticClass: "col text-right" }, [
-        _c(
-          "a",
-          {
-            staticClass: "btn btn-sm btn-primary",
-            attrs: { href: "/add-employee" }
-          },
-          [_vm._v("Add Employee")]
-        )
+      _c("small", { staticClass: "text-muted" }, [
+        _vm._v("List of all employees")
       ])
     ])
   },

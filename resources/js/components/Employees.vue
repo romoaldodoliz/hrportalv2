@@ -12,9 +12,19 @@
                                             <h3 class="mb-0">EMPLOYEES</h3>
                                             <small class="text-muted">List of all employees</small>
                                         </div> 
-                                        <div class="col text-right">
-                                         <a href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
-                                        </div>
+                                  
+                                        <div class="col-xl-12 float-right text-right">
+
+                                            <a href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
+
+                                            <download-excel
+                                                :data   = "export_employees"
+                                                :fields = "json_fields"
+                                                class   = "btn btn-sm btn-default"
+                                                name    = "All HR Portal Employees.xls">
+                                                    Export to excel
+                                            </download-excel>
+                                        </div> 
                                     </div>
                                     <div class="row align-items-center">
                                         <div class="col-xl-12 mb-2 mt-3 float-right">
@@ -1017,11 +1027,10 @@
 <script>
     import loader from './Loader'
     import Swal from 'sweetalert2'
+    import JsonExcel from 'vue-json-excel'
 
     export default {
-         components: {
-            loader
-        },
+        components: { 'downloadExcel': JsonExcel,loader },
         data(){
             return {
                 employees: [],
@@ -1072,6 +1081,18 @@
                 deleted_dependent_attachments: [],
                 dependent_attachments: [],
                 fileSize: 0,
+                export_employees : [],
+                json_fields: {
+                    'ID NUMBER': 'id_number',
+                    'FIRST NAME': 'last_name',
+                    'LAST NAME': 'first_name',
+                    'POSITION': 'position',
+                    'COMPANY': 'company',
+                    'DEPARTMENT': 'department',
+                    'LOCATION': 'location',
+                    'MOBILE NUMBER' : 'mobile_number',
+                    'STATUS' : 'status'
+                },
             }
         },
         created(){
@@ -1083,8 +1104,22 @@
             this.fetchLevels();
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
+            this.exportFetchEmployees();
         },
         methods:{
+            exportFetchEmployees(){
+                this.export_employees = [];
+                axios.get('/export-employees')
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.export_employees = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             removeDependentAttachment: function(index,attachment) {
                 if(attachment){
                     Swal.fire({

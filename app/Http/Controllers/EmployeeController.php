@@ -96,22 +96,22 @@ class EmployeeController extends Controller
 
     public function store(Request $request){
         
-        // $this->validate($request, [
-        //     'first_name' => 'required',
-        //     'last_name' => 'required',
-        //     'marital_status' => 'required',
-        //     'gender' => 'required',
-        //     //'birthdate' => 'required',
-        //     'company_list' => 'required',
-        //     // 'department_list' => 'required',
-        //     'location_list' => 'required',
-        //     'tax_status' => 'required',
-        // ],[
-        //     'company_list.required' => 'This field is required',
-        //     // 'department_list.required' => 'This field is required',
-        //     'location_list.required' => 'This field is required',
-        //     //'tax_status.required' => 'This field is required',
-        // ]);
+        $this->validate($request, [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'marital_status' => 'required',
+            'gender' => 'required',
+            'birthdate' => 'required',
+            'company_list' => 'required',
+            'department_list' => 'required',
+            'location_list' => 'required',
+            'tax_status' => 'required',
+        ],[
+            'company_list.required' => 'This field is required',
+            'department_list.required' => 'This field is required',
+            'location_list.required' => 'This field is required',
+            'tax_status.required' => 'This field is required',
+        ]);
 
         $data = $request->all();
 
@@ -999,6 +999,61 @@ class EmployeeController extends Controller
 
         return view('org_chart',compact('datas','user'));
         
+    }
+
+    public function exportEmployees(){
+        $all_employee = Employee::with('companies','departments','locations')
+                                    ->where('status','Active')
+                                    ->orderBy('id','ASC')
+                                    ->get();
+
+        $filtered_data = [];
+
+        foreach( $all_employee as $key => $employee ){
+            $filtered_data[$key]['id_number'] = $employee['id_number'];
+            $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
+            $filtered_data[$key]['last_name'] = strtoupper($employee['last_name']);
+            $filtered_data[$key]['position'] = $employee['position'];
+
+            if($employee['companies']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['company'] = $employee['companies'][0] ? $employee['companies'][0]['name'] : "";
+                }else{
+                    $filtered_data[$key]['company'] = "";
+                }
+            }else{
+                $filtered_data[$key]['company'] = "";
+            }
+           
+            $filtered_data[$key]['position'] = $employee['position'];
+
+            if($employee['departments']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['department'] = $employee['departments'][0]['name'];
+                }else{
+                    $filtered_data[$key]['department'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['department'] = "";
+            }
+
+            if($employee['locations']){
+                if(isset($employee['locations'][0])){
+                    $filtered_data[$key]['location'] = $employee['locations'][0]['name'];
+                }else{
+                    $filtered_data[$key]['location'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['location'] = "";
+            }
+
+            $filtered_data[$key]['mobile_number'] = $employee['mobile_number'];
+            $filtered_data[$key]['status'] = $employee['status'];
+        }
+
+        return $filtered_data;
     }
 
 }
