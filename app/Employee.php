@@ -125,4 +125,9 @@ class Employee extends Model implements AuditableContract
         return $this->hasOne('App\EmployeeApprovalRequest');
     }
 
+    public function employee_accountabilities()
+    {
+        return $this->hasMany('App\EmployeeAccountabilities','user_id','user_id')->with('inventories');
+    }
+
 }

@@ -1002,11 +1002,10 @@ class EmployeeController extends Controller
     }
 
     public function exportEmployees(){
-        $all_employee = Employee::with('companies','departments','locations')
+        $all_employee = Employee::with('companies','departments','locations','employee_accountabilities')
                                     ->where('status','Active')
                                     ->orderBy('id','ASC')
                                     ->get();
-
         $filtered_data = [];
 
         foreach( $all_employee as $key => $employee ){
@@ -1050,6 +1049,13 @@ class EmployeeController extends Controller
             }
 
             $filtered_data[$key]['mobile_number'] = $employee['mobile_number'];
+
+            if(count($employee['employee_accountabilities']) > 0){
+                $filtered_data[$key]['company_assign_phone'] = $employee['employee_accountabilities'][0]['inventories']['service_number'];
+            }else{
+                $filtered_data[$key]['company_assign_phone'] = "";
+            }
+            
             $filtered_data[$key]['status'] = $employee['status'];
         }
 

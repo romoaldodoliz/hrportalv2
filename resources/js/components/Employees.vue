@@ -1090,7 +1090,8 @@
                     'COMPANY': 'company',
                     'DEPARTMENT': 'department',
                     'LOCATION': 'location',
-                    'MOBILE NUMBER' : 'mobile_number',
+                    'PERSONAL PHONE NUMBER' : 'mobile_number',
+                    'COMPANY ASSIGN PHONE NUMBER' : 'company_assign_phone',
                     'STATUS' : 'status'
                 },
             }

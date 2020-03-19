@@ -12308,7 +12308,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       'COMPANY': 'company',
       'DEPARTMENT': 'department',
       'LOCATION': 'location',
-      'MOBILE NUMBER': 'mobile_number',
+      'PERSONAL PHONE NUMBER': 'mobile_number',
+      'COMPANY ASSIGN PHONE NUMBER': 'company_assign_phone',
       'STATUS': 'status'
     }), _ref;
   },
