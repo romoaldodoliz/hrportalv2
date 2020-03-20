@@ -12301,6 +12301,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       employee_dependent_attachments: [],
       deleted_dependent_attachments: []
     }, _defineProperty(_ref, "dependent_attachments", []), _defineProperty(_ref, "fileSize", 0), _defineProperty(_ref, "export_employees", []), _defineProperty(_ref, "json_fields", {
+      'USER ID': 'user_id',
       'ID NUMBER': 'id_number',
       'FIRST NAME': 'last_name',
       'LAST NAME': 'first_name',

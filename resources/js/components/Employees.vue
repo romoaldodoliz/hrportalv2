@@ -1083,6 +1083,7 @@
                 fileSize: 0,
                 export_employees : [],
                 json_fields: {
+                    'USER ID': 'user_id',
                     'ID NUMBER': 'id_number',
                     'FIRST NAME': 'last_name',
                     'LAST NAME': 'first_name',
