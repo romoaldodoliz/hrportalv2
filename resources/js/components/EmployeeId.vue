@@ -51,7 +51,8 @@
                                                 </select>
                                             </div> 
                                         <div class="col-xl-12">
-                                            <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
+                                            <button class="btn btn-sm btn-primary ml-3 mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
+                                            <button class="btn btn-sm btn-success ml-3 mt-3 float-right" data-toggle="modal" data-target="#printDTIModal" @click="viewPrintDTIEmployees"> Print DTI</button>
                                         </div> 
                                     </div> 
                                 </div>
@@ -62,6 +63,7 @@
                                 <table class="table align-items-center table-flush">
                                     <thead class="thead-light">
                                         <tr>
+                                            <th scope="col"></th>
                                             <th scope="col"></th>
                                             <th scope="col">Employee Number</th>
                                             <th scope="col">Name</th>
@@ -80,7 +82,13 @@
                                                 <h4>Loading Employee Records.. Please wait a moment... </h4>
                                             </td>
                                         </tr>
+
                                         <tr v-for="(employee_id,index) in filteredQueues" v-bind:key="index">
+                                            <td>
+                                                <div class="row justify-content-center mb-2">
+                                                    <img :src="'storage/id_image/employee_image/' + employee_id.id + '.png?v='" class="rounded-circle" style="width:50px;height:50px;border:2px dotted ;">
+                                                </div>
+                                            </td>
                                             <td class="text-center">
                                                 <div class="dropdown">
                                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -152,6 +160,91 @@
                 </div>
             </div>
         </div>
+
+        <!-- Print DTI ID -->
+        <div class="modal fade" id="printDTIModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-sm modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center"> Print DTI ID</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-xl-12 mb-2 mt-3 float-right">
+                            <div class="col-xl-6 mb-2 mt-3 float-left">
+                                <input type="text" name="employee_ids" class="form-control" placeholder="Search by Name" autocomplete="off" v-model="keywords" id="employee_ids">
+                            </div> 
+                        </div>
+                        <br>
+                        <h4>Selected Employee to Print : {{ checkedIDs.length }}</h4>
+                        <div class="table-responsive">
+                            <!-- employees table -->
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">ID Number</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Company</th>
+                                        <th scope="col">Department</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">ID Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-if="table_loading">
+                                        <td colspan="15">
+                                            <content-placeholders>
+                                                <content-placeholders-text :lines="3" />
+                                            </content-placeholders>
+                                            <h4>Loading Employee Records.. Please wait a moment... </h4>
+                                        </td>
+                                    </tr>
+                                    <tr v-for="(employee_id,index) in filteredQueues" v-bind:key="index">
+                                        <td class="text-center">
+                                            <!-- <input type="checkbox" style="font-size:23px;" :id="employee_id.id" :value="employee_id.id" v-model="checkedIDs"> -->
+                                            <label class="container">
+                                                <input type="checkbox" :id="employee_id.id" :value="employee_id.id" v-model="checkedIDs">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </td>
+                                        <td>{{ employee_id.id_number }}</td>
+                                        <td>{{ employee_id.last_name }} {{ employee_id.first_name }} </td>
+                                        <td>{{ employee_id.companies[0] ? employee_id.companies[0].name : '' }}</td>
+                                        <td>{{ employee_id.departments[0] ? employee_id.departments[0].name : '' }}</td>
+                                        <td>{{ employee_id.locations[0] ? employee_id.locations[0].name : '' }}</td>
+                                        <td v-if="employee_id.print_id_logs.length > 0">{{ employee_id.print_id_logs.length }} No. of Print(s)</td>
+                                        <td v-else>Not yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row mb-3 mt-3 ml-1" v-if="filteredQueues.length ">
+                            <div class="col-6">
+                                <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                    <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                                <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                            </div>
+                            <div class="col-6 text-right">
+                                <span class="mr-2">Filtered employee(s) : {{ filteredQueues.length }} </span><br>
+                                <span class="mr-2">Total employee(s) : {{ employee_ids.length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-success ml-3 mt-3 float-right" @click="saveDTTLog"> Print DTI Employees</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
@@ -175,6 +268,7 @@ export default {
             employee_id_src : '',
             employee_status : '',
             table_loading : true,
+            checkedIDs : [],
          }
     },
     created(){
@@ -184,6 +278,22 @@ export default {
         this.fetchLocations();
     },
     methods:{
+        viewPrintDTIEmployees(){
+            this.print_dti_employees = [];
+            this.series_number = '';
+        },
+        saveDTTLog(){
+            axios.post(`/save_print_dti_logs`, {
+                ids: this.checkedIDs,
+                _method: 'POST'
+            })
+            .then(response => {
+                window.location.href = '/print_dti_id_employees/' + response.data;
+            })
+            .catch(error => {
+             
+            })
+        },
         previewPrintId(employee_id){
             this.employee_id_src = '';
             var num = Math.random();
@@ -312,3 +422,73 @@ export default {
     }
 }
 </script>
+
+<style>
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+</style>

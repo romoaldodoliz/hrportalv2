@@ -17,6 +17,7 @@ use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
 use App\EmployeeTransfer;
 use App\DependentAttachment;
+use App\PrintDtiLog;
 use App\Api;
 
 use Carbon\Carbon;
@@ -27,6 +28,8 @@ use Image;
 use Auth;
 use Hash;
 use DB;
+
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EmployeeController extends Controller
 {
@@ -658,7 +661,7 @@ class EmployeeController extends Controller
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');
                     })
-                    ->orderBy('series_number','DESC')
+                    ->orderBy('last_name','DESC')
                     ->get();
         return $employee;
     }
@@ -672,7 +675,7 @@ class EmployeeController extends Controller
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
-                            ->orderBy('series_number','DESC')
+                            ->orderBy('id_number','ASC')
                             ->get();
         return $employee;
     }
@@ -709,7 +712,7 @@ class EmployeeController extends Controller
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');
                     })
-                    ->orderBy('series_number','DESC')
+                    ->orderBy('last_name','ASC')
                     ->get();
         return $employee;
     }
@@ -725,8 +728,10 @@ class EmployeeController extends Controller
         }
         
         $first_name = utf8_decode(strtolower($employee['first_name']));
+
         $convert_last_name = mb_strtolower($employee['last_name'],'UTF-8');
         $last_name_front = utf8_decode($convert_last_name);
+
         $last_name_back = utf8_decode($employee['last_name']);
 
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
@@ -1063,4 +1068,575 @@ class EmployeeController extends Controller
         return $filtered_data;
     }
 
+    public function getToPrint(Request $request)
+    {
+        $this->validate($request, [
+            'emp_ids' => 'required'
+        ]);
+
+        $selectedEmps = Employee::select('id','first_name','last_name','middle_name','name_suffix')
+                                ->whereIn('id',$request->emp_ids)
+                                ->get();
+
+        return $selectedEmps;
+
+    }
+
+    public function print_dti_logs(Request $request){
+        return $request->all();
+
+    }
+  
+    public function print_dti_id($ids){
+
+        // $employees_id = implode(",",str_replace('"','',$ids));
+        // var_dump($employees_id);
+
+        $ter = collect(str_replace('"','',$ids))->collapse()->all();
+        return $ter;
+
+    }
+
+    public function print_dti_id_old($ids){
+
+
+        $employees_id = str_replace('"','',$ids);
+
+        if(count($employees_id) > 0){
+
+            Fpdf::AddPage("P", "Letter");
+            Fpdf::SetMargins(0,0,0,0);
+            Fpdf::SetAutoPageBreak(false);
+
+
+            $page_ctr = 1;
+
+            foreach($employees_id as $id){
+                    $employee = Employee::select('first_name','last_name','middle_name','name_suffix')->where('id',$id)->first();
+
+                    if($page_ctr = 1){
+                        //Front BG 1
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 20, 20, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(27.5,45);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);    
+
+                        if (file_exists('storage/id_image/employee_image/2568.png')){
+                        
+                            $image ='storage/id_image/employee_image/2568.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/2568.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/2568.png')){
+                                Fpdf::Image(url("storage/id_image/employee_image/2568.png"),  27.3, 50, 34.5, 34,'PNG');
+                            }
+                        }
+                        
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,92);
+                        Fpdf::MultiCell(44,3, "Arjay Porlage Lumagdong JR" ,1,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, "ADVANCED AGRISOLUTIONS PHILIPPINES CORPORATION" ,1,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, "ID No.: " ,1,'L');
+                    }
+               
+                    if($page_ctr == 2){
+                        //Front BG 2
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 120, 20, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(127.5,45);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);
+
+                        if (file_exists('storage/id_image/employee_image/2568.png')){
+                        
+                            $image ='storage/id_image/employee_image/2568.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            
+                            
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/2568.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/2568.png')){
+                                Fpdf::Image(url("storage/id_image/employee_image/2568.png"),  127.2, 50, 35, 35,'PNG');
+                            }
+                        }
+
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(120,92);
+                        Fpdf::MultiCell(44,3, "Arjay Porlage Lumagdong JR" ,1,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(120,$getY);
+                        Fpdf::MultiCell(44,3, "Lafilipina Uy Gongco Group Companies" ,1,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(120,$getY);
+                        Fpdf::MultiCell(44,3, "ID No.: " ,1,'L');
+                    }
+
+                    if($page_ctr == 3){
+
+                        //Front BG 3
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 20, 140, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(27.5,165);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);
+
+                        if (file_exists('storage/id_image/employee_image/2568.png')){
+                            
+                            $image ='storage/id_image/employee_image/2568.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            
+                            
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/2568.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/2568.png')){
+                                Fpdf::Image(url("storage/id_image/employee_image/2568.png"),  27.5, 170, 35, 35,'PNG');
+                            }
+                        }
+
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,212);
+                        Fpdf::MultiCell(44,3, "Arjay Porlage Lumagdong JR" ,1,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, "Lafilipina Uy Gongco Group Companies" ,1,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, "ID No.: " ,1,'L');
+                    }
+
+                    if($page_ctr == 4){
+                        //Front BG 4
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 120, 140, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(127.5,165);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);
+
+                        if (file_exists('storage/id_image/employee_image/2568.png')){
+                                
+                            $image ='storage/id_image/employee_image/2568.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/2568.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/2568.png')){
+                                Fpdf::Image(url("storage/id_image/employee_image/2568.png"),  127.2, 170, 35, 35,'PNG');
+                            }
+                        }
+
+                    Fpdf::SetFont('Arial','', 8);
+                    Fpdf::SetXY(120,212);
+                    Fpdf::MultiCell(44,3, "Arjay Porlage Lumagdong JR" ,1,'L');
+
+                    $getY = Fpdf::getY() + 1;
+                    Fpdf::SetFont('Arial','', 8);
+                    Fpdf::SetXY(120,$getY);
+                    Fpdf::MultiCell(44,3, "Lafilipina Uy Gongco Group Companies" ,1,'L');
+
+                    $getY = Fpdf::getY() + 1;
+                    Fpdf::SetFont('Arial','', 8);
+                    Fpdf::SetXY(120,$getY);
+                    Fpdf::MultiCell(44,3, "ID No.: " ,1,'L');
+
+                    Fpdf::AddPage("P", "Letter");
+                    Fpdf::SetMargins(0,0,0,0);
+
+
+                    //Back BG 1
+                    Fpdf::Image(url("storage/dti_img/back.jpg"), 20, 20, 76.2,101.85,'JPG');
+
+                    //Back BG 2
+                    Fpdf::Image(url("storage/dti_img/back.jpg"), 120, 20, 76.2,101.85,'JPG');
+
+                    //Back BG 3
+                    Fpdf::Image(url("storage/dti_img/back.jpg"), 20, 140, 76.2,101.85,'JPG');
+
+                    //Back BG 4
+                    Fpdf::Image(url("storage/dti_img/back.jpg"), 120, 140, 76.2,101.85,'JPG');
+
+                    $page_ctr = 1;
+                }
+
+            }
+        }
+
+        Fpdf::Output("dti_id.pdf", 'I');
+        exit();
+    }
+
+    public function save_print_dti_logs(Request $request){
+        $data = [];
+        $data['ids'] =  json_encode($request->ids);
+        $dti_log = PrintDtiLog::create($data);
+        return $dti_log->id;
+    }
+
+    public function print_dti_id_employees( PrintDtiLog $print_dti_employee){
+
+        $employee_ids = json_decode($print_dti_employee->ids);
+       
+        if(count($employee_ids) > 0){
+
+            Fpdf::AddPage("P", "Letter");
+            Fpdf::SetMargins(0,0,0,0);
+            Fpdf::SetAutoPageBreak(false);
+
+
+            $page_ctr = 1;
+            $id_series = 'M';
+            $series = $print_dti_employee->series_number;
+            // $company = "PHILIPPINE FOREMOST MILLING CORPORATION";
+            // $company = "LAFILIPINA UY GONGCO CORPORATION";
+
+            $last_page = count($employee_ids);
+
+            $page = 1;
+            foreach($employee_ids as  $id){
+                    $employee = Employee::select('id','id_number','first_name','last_name','middle_name','name_suffix','position')->with('companies')->where('id',$id)->first();
+                    
+                    $company = $employee['companies'][0]['name'];
+
+                    $first_name = utf8_decode(strtolower($employee['first_name']));
+                    $middle_name = utf8_decode(strtolower($employee['middle_name']));
+                    if($middle_name == "-"){
+                        $middle_name = " ";
+                    }
+
+                    $name_suffix = utf8_decode(strtolower($employee['name_suffix']));
+                    if($name_suffix == "-"){
+                        $name_suffix = "";
+                    }
+                 
+                    $last_name = mb_strtolower($employee['last_name'],'UTF-8');
+                    $last_name_s = utf8_decode($last_name);
+                    
+                    $full_name =  ucwords($first_name) . ' ' . ucwords($middle_name) . ' ' . ucfirst($last_name_s) . ' ' . ucwords($name_suffix);
+
+                    $qr_code_details = $employee['id_number'] . $last_name . $first_name . $name_suffix . $employee['position'] .  $company;
+
+                    QrCode::format('png')->size(200)->generate($qr_code_details, public_path('qr_employees/'.$id.'.png'));
+
+                    if($page_ctr == 1){
+                        //Front BG 1
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 20, 20, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(27.5,45);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);    
+
+                        if (file_exists('storage/id_image/employee_image/'.$id.'.png')){
+                        
+                            $image ='storage/id_image/employee_image/'.$id.'.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/'.$id.'.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/'.$id.'.png')){
+                                Fpdf::Image(url("storage/id_image/temp_employee_image/".$id.".png"),  27.3, 50, 34.5, 34,'PNG');
+                            }
+                        }
+                        
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,92);
+                        Fpdf::MultiCell(44,3,  $full_name ,0,'L');
+
+                        // if($employee['position']){
+                        //     $getY = Fpdf::getY() + 1;
+                        //     Fpdf::SetFont('Arial','', 8);
+                        //     Fpdf::SetXY(22,$getY);
+                        //     Fpdf::MultiCell(44,3, $employee['position']  ,0,'L');
+                        // }
+                        
+
+                        $getY = Fpdf::getY();
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, $company ,0,'L');
+
+                        $getY = Fpdf::getY();
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, "ID No.: " . $employee['id_number'],0,'L');
+
+                        Fpdf::Image(url("qr_employees/".$id.".png"),  69, 84, 25, 25,'PNG');
+                    }
+               
+                    if($page_ctr == 2){
+                        //Front BG 2
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 120, 20, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(127.5,45);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);
+
+                        if (file_exists('storage/id_image/employee_image/'.$id.'.png')){
+                        
+                            $image ='storage/id_image/employee_image/'.$id.'.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            
+                            
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/'.$id.'.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/'.$id.'.png')){
+                                Fpdf::Image(url("storage/id_image/temp_employee_image/".$id.".png"),  127.2, 50, 35, 35,'PNG');
+                            }
+                        }
+
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(120,92);
+                        Fpdf::MultiCell(44,3, $full_name ,0,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(120,$getY);
+                        Fpdf::MultiCell(44,3, $company ,0,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(120,$getY);
+                        Fpdf::MultiCell(44,3, "ID No.: " . $employee['id_number'],0,'L');
+
+                        Fpdf::Image(url("qr_employees/".$id.".png"),  169, 84, 25, 25,'PNG');
+                    }
+
+                    if($page_ctr == 3){
+
+                        //Front BG 3
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 20, 140, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(27.5,165);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);
+
+                        if (file_exists('storage/id_image/employee_image/'.$id.'.png')){
+                            
+                            $image ='storage/id_image/employee_image/'.$id.'.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            
+                            
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/'.$id.'.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/'.$id.'.png')){
+                                Fpdf::Image(url("storage/id_image/temp_employee_image/".$id.".png"),  27.5, 170, 35, 35,'PNG');
+                            }
+                        }
+
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,212);
+                        Fpdf::MultiCell(44,3, $full_name ,0,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, $company ,0,'L');
+
+                        $getY = Fpdf::getY() + 1;
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetXY(22,$getY);
+                        Fpdf::MultiCell(44,3, "ID No.: " . $employee['id_number'],0,'L');
+
+                        Fpdf::Image(url("qr_employees/".$id.".png"),  69, 204, 25, 25,'PNG');
+                    }
+
+                    if($page_ctr == 4){
+                        //Front BG 4
+                        Fpdf::Image(url("storage/dti_img/front.jpg"), 120, 140, 76.2,101.85,'JPG');
+
+                        Fpdf::SetXY(127.5,165);
+                        Fpdf::SetFont('Arial','', 8);
+                        Fpdf::SetFillColor(255,255,255);
+                        Fpdf::MultiCell(34.7,44.7, "" ,0,'L',true);
+
+                        if (file_exists('storage/id_image/employee_image/'.$id.'.png')){
+                                
+                            $image ='storage/id_image/employee_image/'.$id.'.png';
+                        
+                            $destinationPath = storage_path('app/public/id_image/temp_employee_image');
+
+                            if(!File::isDirectory($destinationPath)){
+                                File::makeDirectory($destinationPath, 0777, true, true);
+                            }
+
+                            $img = Image::make( ($image));
+                    
+                            $img->resize(500, 500, function ($constraint) {
+                                $constraint->aspectRatio();
+                            })->save($destinationPath.'/'.$id.'.png');
+                    
+                            if (file_exists('storage/id_image/temp_employee_image/'.$id.'.png')){
+                                Fpdf::Image(url("storage/id_image/temp_employee_image/".$id.".png"),  127.2, 170, 35, 35,'PNG');
+                            }
+
+                            Fpdf::SetFont('Arial','', 8);
+                            Fpdf::SetXY(120,212);
+                            Fpdf::MultiCell(44,3, $full_name ,0,'L');
+
+                            $getY = Fpdf::getY() + 1;
+                            Fpdf::SetFont('Arial','', 8);
+                            Fpdf::SetXY(120,$getY);
+                            Fpdf::MultiCell(44,3, $company ,0,'L');
+
+                            $getY = Fpdf::getY() + 1;
+                            Fpdf::SetFont('Arial','', 8);
+                            Fpdf::SetXY(120,$getY);
+                            Fpdf::MultiCell(44,3, "ID No.: " . $employee['id_number'],0,'L');
+
+                            Fpdf::Image(url("qr_employees/".$id.".png"),  169, 204, 25, 25,'PNG');
+
+                        }
+
+                        Fpdf::AddPage("P", "Letter");
+                        Fpdf::SetMargins(0,0,0,0);
+                        Fpdf::SetAutoPageBreak(false);
+
+                        //Back BG 1
+                        Fpdf::Image(url("storage/dti_img/back.jpg"), 20, 20, 76.2,101.85,'JPG');
+
+                        //Back BG 2
+                        Fpdf::Image(url("storage/dti_img/back.jpg"), 120, 20, 76.2,101.85,'JPG');
+
+                        //Back BG 3
+                        Fpdf::Image(url("storage/dti_img/back.jpg"), 20, 140, 76.2,101.85,'JPG');
+
+                        //Back BG 4
+                        Fpdf::Image(url("storage/dti_img/back.jpg"), 120, 140, 76.2,101.85,'JPG');
+
+                        Fpdf::AddPage("P", "Letter");
+                            Fpdf::SetMargins(0,0,0,0);
+                            Fpdf::SetAutoPageBreak(false);
+                            
+                        $page_ctr = 1;
+                        
+                    }else{
+
+                        if($page == $last_page){
+                            Fpdf::AddPage("P", "Letter");
+                            Fpdf::SetMargins(0,0,0,0);
+                            Fpdf::SetAutoPageBreak(false);
+    
+                            //Back BG 1
+                            Fpdf::Image(url("storage/dti_img/back.jpg"), 20, 20, 76.2,101.85,'JPG');
+    
+                            //Back BG 2
+                            Fpdf::Image(url("storage/dti_img/back.jpg"), 120, 20, 76.2,101.85,'JPG');
+    
+                            //Back BG 3
+                            Fpdf::Image(url("storage/dti_img/back.jpg"), 20, 140, 76.2,101.85,'JPG');
+    
+                            //Back BG 4
+                            Fpdf::Image(url("storage/dti_img/back.jpg"), 120, 140, 76.2,101.85,'JPG');
+                        }
+
+                        $page_ctr++;
+                    }
+
+                    
+
+                $series ++;    
+                $page++;
+            }
+        }
+
+        Fpdf::Output("dti_id.pdf", 'I');
+        exit();
+    }
+
+    // public function generateQr($qr_code_details)
+    // { 
+    //     $qr = QrCode::format('png')->size(200)->generate($qr_code_details);
+    //     return $qr;
+    // }
+    
 }

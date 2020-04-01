@@ -79,9 +79,21 @@ Route::get('logout', function(){
 
             //Employee Print ID
             Route::get('employee_print_id/{employee}',['as'=>'employees.print','uses'=>'EmployeeController@print_id','middleware' => ['role:Administrator|Administrator Printer']]);
+
             Route::get('/employee_ids',['as'=>'employees.employee_id_index','uses'=>'EmployeeController@employee_id_index','middleware' => ['role:Administrator|Administrator Printer']]);
+            
             Route::get('/employee-ids',['as'=>'employees.employeeIdIndex','uses'=>'EmployeeController@employeeIdIndex','middleware' => ['role:Administrator|Administrator Printer']]);
-        
+
+            //Employee Print DTI ID
+            Route::post('/print_dti_logs',['as'=>'employees.print_dti_logs','uses'=>'EmployeeController@print_dti_logs','middleware' => ['role:Administrator|Administrator Printer']]);
+            
+            Route::get('/print_dti_id/{ids}',['as'=>'employees.print_dti_id','uses'=>'EmployeeController@print_dti_id','middleware' => ['role:Administrator|Administrator Printer']]);
+
+            Route::get('/print_dti_id_employees/{print_dti_employee}',['as'=>'employees.print_dti_id_employees','uses'=>'EmployeeController@print_dti_id_employees','middleware' => ['role:Administrator|Administrator Printer']]);
+
+
+            Route::post('/save_print_dti_logs',['as'=>'employees.save_print_dti_logs','uses'=>'EmployeeController@save_print_dti_logs','middleware' => ['role:Administrator|Administrator Printer']]);
+
             //Transfer Employee 
             Route::patch('/transfer-employee/{employee}', ['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployee','middleware'=>['role:Administrator|HR Staff']]);
 
