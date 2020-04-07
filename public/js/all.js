@@ -11136,6 +11136,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -11144,6 +11152,7 @@ __webpack_require__.r(__webpack_exports__);
       currentPage: 0,
       itemsPerPage: 25,
       keywords: "",
+      companykeyword: "",
       employee_ids: [],
       employee_id: [],
       companies: [],
@@ -11170,11 +11179,14 @@ __webpack_require__.r(__webpack_exports__);
       this.series_number = '';
     },
     saveDTTLog: function saveDTTLog() {
+      var _this = this;
+
       axios.post("/save_print_dti_logs", {
         ids: this.checkedIDs,
         _method: 'POST'
       }).then(function (response) {
-        window.location.href = '/print_dti_id_employees/' + response.data;
+        _this.checkedIDs = [];
+        window.open('/print_dti_id_employees/' + response.data, '_blank'); // window.location.href = '/print_dti_id_employees/' + response.data;
       })["catch"](function (error) {});
     },
     previewPrintId: function previewPrintId(employee_id) {
@@ -11184,19 +11196,19 @@ __webpack_require__.r(__webpack_exports__);
       this.employee_id = employee_id;
     },
     printEmployeeId: function printEmployeeId() {
-      var _this = this;
+      var _this2 = this;
 
       this.errors = [];
       this.formFilterData = new FormData();
       this.table_loading = false;
       var index = this.employee_ids.findIndex(function (item) {
-        return item.id == _this.employee_id.id;
+        return item.id == _this2.employee_id.id;
       });
       this.formFilterData.append('employee_id', this.employee_id.id);
       axios.post('/print-id-logs', this.formFilterData).then(function (response) {
-        _this.employee_ids.splice(index, 1, response.data);
+        _this2.employee_ids.splice(index, 1, response.data);
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this2.errors = error.response.data.errors;
       });
       printJS({
         printable: this.employee_id_src,
@@ -11205,7 +11217,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     fetchFilterEmployee: function fetchFilterEmployee() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.table_loading = true;
       this.employee_ids = [];
@@ -11216,50 +11228,50 @@ __webpack_require__.r(__webpack_exports__);
       this.formFilterData.append('employee_status', this.employee_status);
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee-id', this.formFilterData).then(function (response) {
-        _this2.employee_ids = response.data;
-        _this2.errors = [];
-        _this2.table_loading = false;
+        _this3.employee_ids = response.data;
+        _this3.errors = [];
+        _this3.table_loading = false;
       })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
-        _this2.table_loading = false;
+        _this3.errors = error.response.data.errors;
+        _this3.table_loading = false;
       });
     },
     fetchEmployees: function fetchEmployees() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.table_loading = true;
       axios.get('/employee-ids').then(function (response) {
-        _this3.employee_ids = response.data;
-        _this3.table_loading = false;
-      })["catch"](function (error) {
-        _this3.errors = error.response.data.error;
-      });
-    },
-    fetchCompanies: function fetchCompanies() {
-      var _this4 = this;
-
-      axios.get('/companies-all').then(function (response) {
-        _this4.companies = response.data;
+        _this4.employee_ids = response.data;
+        _this4.table_loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.error;
       });
     },
-    fetchLocations: function fetchLocations() {
+    fetchCompanies: function fetchCompanies() {
       var _this5 = this;
 
-      axios.get('/locations-all').then(function (response) {
-        _this5.locations = response.data;
+      axios.get('/companies-all').then(function (response) {
+        _this5.companies = response.data;
       })["catch"](function (error) {
         _this5.errors = error.response.data.error;
       });
     },
-    fetchDepartments: function fetchDepartments() {
+    fetchLocations: function fetchLocations() {
       var _this6 = this;
 
-      axios.get('/departments-all').then(function (response) {
-        _this6.departments = response.data;
+      axios.get('/locations-all').then(function (response) {
+        _this6.locations = response.data;
       })["catch"](function (error) {
         _this6.errors = error.response.data.error;
+      });
+    },
+    fetchDepartments: function fetchDepartments() {
+      var _this7 = this;
+
+      axios.get('/departments-all').then(function (response) {
+        _this7.departments = response.data;
+      })["catch"](function (error) {
+        _this7.errors = error.response.data.error;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -11277,12 +11289,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployeeids: function filteredemployeeids() {
-      var _this7 = this;
+      var _this8 = this;
 
       var self = this;
       return Object.values(self.employee_ids).filter(function (employee_id) {
         var full_name = employee_id.first_name + " " + employee_id.last_name;
-        return employee_id.first_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this7.keywords.toLowerCase());
+        return employee_id.id_number.toLowerCase().includes(_this8.keywords.toLowerCase()) || employee_id.first_name.toLowerCase().includes(_this8.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(_this8.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this8.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -12407,17 +12419,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       employee_dependent_attachments: [],
       deleted_dependent_attachments: []
     }, _defineProperty(_ref, "dependent_attachments", []), _defineProperty(_ref, "fileSize", 0), _defineProperty(_ref, "export_employees", []), _defineProperty(_ref, "json_fields", {
-      'USER ID': 'user_id',
+      // 'USER ID': 'user_id',
       'ID NUMBER': 'id_number',
-      'FIRST NAME': 'last_name',
-      'LAST NAME': 'first_name',
+      'LAST NAME': 'last_name',
+      'FIRST NAME': 'first_name',
+      'SUFFIX': 'name_suffix',
       'POSITION': 'position',
       'COMPANY': 'company',
       'DEPARTMENT': 'department',
       'LOCATION': 'location',
-      'PERSONAL PHONE NUMBER': 'mobile_number',
-      'COMPANY ASSIGN PHONE NUMBER': 'company_assign_phone',
-      'STATUS': 'status'
+      'QR CODE': 'qrcode' // 'PERSONAL PHONE NUMBER' : 'mobile_number',
+      // 'COMPANY ASSIGN PHONE NUMBER' : 'company_assign_phone',
+      // 'STATUS' : 'status'
+
     }), _ref;
   },
   created: function created() {
@@ -25295,7 +25309,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* The container */\n.container {\r\n  display: block;\r\n  position: relative;\r\n  padding-left: 35px;\r\n  margin-bottom: 12px;\r\n  cursor: pointer;\r\n  font-size: 22px;\r\n  -webkit-user-select: none;\r\n  -moz-user-select: none;\r\n  -ms-user-select: none;\r\n  user-select: none;\n}\r\n\r\n/* Hide the browser's default checkbox */\n.container input {\r\n  position: absolute;\r\n  opacity: 0;\r\n  cursor: pointer;\r\n  height: 0;\r\n  width: 0;\n}\r\n\r\n/* Create a custom checkbox */\n.checkmark {\r\n  position: absolute;\r\n  top: 0;\r\n  left: 0;\r\n  height: 25px;\r\n  width: 25px;\r\n  background-color: #eee;\n}\r\n\r\n/* On mouse-over, add a grey background color */\n.container:hover input ~ .checkmark {\r\n  background-color: #ccc;\n}\r\n\r\n/* When the checkbox is checked, add a blue background */\n.container input:checked ~ .checkmark {\r\n  background-color: #2196F3;\n}\r\n\r\n/* Create the checkmark/indicator (hidden when not checked) */\n.checkmark:after {\r\n  content: \"\";\r\n  position: absolute;\r\n  display: none;\n}\r\n\r\n/* Show the checkmark when checked */\n.container input:checked ~ .checkmark:after {\r\n  display: block;\n}\r\n\r\n/* Style the checkmark/indicator */\n.container .checkmark:after {\r\n  left: 9px;\r\n  top: 5px;\r\n  width: 5px;\r\n  height: 10px;\r\n  border: solid white;\r\n  border-width: 0 3px 3px 0;\r\n  -webkit-transform: rotate(45deg);\r\n  -ms-transform: rotate(45deg);\r\n  transform: rotate(45deg);\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* The container */\n.container {\r\n  display: block;\r\n  position: relative;\r\n  padding-left: 35px;\r\n  margin-bottom: 12px;\r\n  cursor: pointer;\r\n  font-size: 22px;\r\n  -webkit-user-select: none;\r\n  -moz-user-select: none;\r\n  -ms-user-select: none;\r\n  user-select: none;\n}\r\n\r\n/* Hide the browser's default checkbox */\n.container input {\r\n  position: absolute;\r\n  opacity: 0;\r\n  cursor: pointer;\r\n  height: 0;\r\n  width: 0;\n}\r\n\r\n/* Create a custom checkbox */\n.checkmark {\r\n  position: absolute;\r\n  top: 0;\r\n  left: 0;\r\n  height: 25px;\r\n  width: 25px;\r\n  background-color: #eee;\n}\r\n\r\n/* On mouse-over, add a grey background color */\n.container:hover input ~ .checkmark {\r\n  background-color: #ccc;\n}\r\n\r\n/* When the checkbox is checked, add a blue background */\n.container input:checked ~ .checkmark {\r\n  background-color: #2196F3;\n}\r\n\r\n/* Create the checkmark/indicator (hidden when not checked) */\n.checkmark:after {\r\n  content: \"\";\r\n  position: absolute;\r\n  display: none;\n}\r\n\r\n/* Show the checkmark when checked */\n.container input:checked ~ .checkmark:after {\r\n  display: block;\n}\r\n\r\n/* Style the checkmark/indicator */\n.container .checkmark:after {\r\n  left: 9px;\r\n  top: 5px;\r\n  width: 5px;\r\n  height: 10px;\r\n  border: solid white;\r\n  border-width: 0 3px 3px 0;\r\n  -webkit-transform: rotate(45deg);\r\n  -ms-transform: rotate(45deg);\r\n  transform: rotate(45deg);\n}\r\n", ""]);
 
 // exports
 
@@ -67313,6 +67327,59 @@ var render = function() {
                           })
                         ]
                       )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "col-xl-12 mb-2 mt-3 float-right" },
+                    [
+                      _c("div", { staticClass: "col-xl-3 mb-2 float-left" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.companykeyword,
+                                expression: "companykeyword"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { id: "company" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.companykeyword = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Choose Company")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(_vm.companies, function(company, v) {
+                              return _c(
+                                "option",
+                                { key: v, domProps: { value: company.id } },
+                                [_vm._v(" " + _vm._s(company.name))]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
                     ]
                   ),
                   _vm._v(" "),

@@ -1083,17 +1083,19 @@
                 fileSize: 0,
                 export_employees : [],
                 json_fields: {
-                    'USER ID': 'user_id',
+                    // 'USER ID': 'user_id',
                     'ID NUMBER': 'id_number',
-                    'FIRST NAME': 'last_name',
-                    'LAST NAME': 'first_name',
+                    'LAST NAME': 'last_name',
+                    'FIRST NAME': 'first_name',
+                    'SUFFIX': 'name_suffix',
                     'POSITION': 'position',
                     'COMPANY': 'company',
                     'DEPARTMENT': 'department',
                     'LOCATION': 'location',
-                    'PERSONAL PHONE NUMBER' : 'mobile_number',
-                    'COMPANY ASSIGN PHONE NUMBER' : 'company_assign_phone',
-                    'STATUS' : 'status'
+                    'QR CODE': 'qrcode',
+                    // 'PERSONAL PHONE NUMBER' : 'mobile_number',
+                    // 'COMPANY ASSIGN PHONE NUMBER' : 'company_assign_phone',
+                    // 'STATUS' : 'status'
                 },
             }
         },

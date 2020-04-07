@@ -675,6 +675,7 @@ class EmployeeController extends Controller
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
+                            ->where('id_number' , 'like', '%M%')
                             ->orderBy('id_number','ASC')
                             ->get();
         return $employee;
@@ -712,6 +713,7 @@ class EmployeeController extends Controller
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');
                     })
+                    ->where('id_number' , 'like', '%M%')
                     ->orderBy('last_name','ASC')
                     ->get();
         return $employee;
@@ -1009,16 +1011,26 @@ class EmployeeController extends Controller
     public function exportEmployees(){
         $all_employee = Employee::with('companies','departments','locations','employee_accountabilities')
                                     ->where('status','Active')
-                                    ->orderBy('id','ASC')
+                                    ->where('id_number','like','%m%')
+                                    ->orderBy('id_number','ASC')
                                     ->get();
         $filtered_data = [];
 
         foreach( $all_employee as $key => $employee ){
             $filtered_data[$key]['user_id'] = $employee['user_id'];
             $filtered_data[$key]['id_number'] = $employee['id_number'];
-            $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
-            $filtered_data[$key]['last_name'] = strtoupper($employee['last_name']);
+            $filtered_data[$key]['first_name'] = strtolower($employee['first_name']);
+            $filtered_data[$key]['last_name'] = $last_name = mb_strtolower($employee['last_name'],'UTF-8');;
+            if($employee['name_suffix'] == "-"){
+                $filtered_data[$key]['name_suffix'] = "";
+            }else{
+                $filtered_data[$key]['name_suffix'] = strtolower($employee['name_suffix']);
+            }
+            
             $filtered_data[$key]['position'] = $employee['position'];
+
+            $qr_code_details = $employee['id_number'] . $filtered_data[$key]['last_name'] . $filtered_data[$key]['first_name'] . $filtered_data[$key]['name_suffix'] . $employee['position'] .  $employee['companies'][0]['name'];
+            $filtered_data[$key]['qrcode'] = $qr_code_details;
 
             if($employee['companies']){
                 if(isset($employee['departments'][0])){

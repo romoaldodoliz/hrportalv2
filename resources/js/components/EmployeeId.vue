@@ -24,6 +24,14 @@
                                         </div> 
                                     </div> 
                                     <div class="col-xl-12 mb-2 mt-3 float-right">
+                                        <div class="col-xl-3 mb-2 float-left">
+                                            <select class="form-control" v-model="companykeyword" id="company">
+                                                <option value="">Choose Company</option>
+                                                <option v-for="(company,v) in companies" v-bind:key="v" :value="company.id"> {{ company.name }}</option>
+                                            </select>
+                                        </div>
+                                    </div> 
+                                    <div class="col-xl-12 mb-2 mt-3 float-right">
                                         <h4>Filter by: </h4>
                                         <div class="col-xl-3 mb-2 float-left">
                                             <select class="form-control" v-model="company" id="company">
@@ -257,6 +265,7 @@ export default {
             currentPage: 0,
             itemsPerPage: 25,
             keywords: "",
+            companykeyword: "",
             employee_ids: [],
             employee_id: [],
             companies : [],
@@ -288,7 +297,9 @@ export default {
                 _method: 'POST'
             })
             .then(response => {
-                window.location.href = '/print_dti_id_employees/' + response.data;
+                this.checkedIDs = [];
+                window.open('/print_dti_id_employees/' + response.data, '_blank');
+                // window.location.href = '/print_dti_id_employees/' + response.data;
             })
             .catch(error => {
              
@@ -399,7 +410,7 @@ export default {
             let self = this;
             return Object.values(self.employee_ids).filter(employee_id => {
                 let full_name = employee_id.first_name + " " + employee_id.last_name;
-                return  employee_id.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
+                return  employee_id.id_number.toLowerCase().includes(this.keywords.toLowerCase()) || employee_id.first_name.toLowerCase().includes(this.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(this.keywords.toLowerCase()) || full_name.toLowerCase().includes(this.keywords.toLowerCase())
             });
         },
         totalPages() {
