@@ -209,7 +209,7 @@
                                             <content-placeholders>
                                                 <content-placeholders-text :lines="3" />
                                             </content-placeholders>
-                                            <h4>Loading Employee Records.. Please wait a moment... </h4>
+                                            <h4>Loading Truck Records.. Please wait a moment... </h4>
                                         </td>
                                     </tr>
                                     <tr v-for="(employee_id,index) in filteredQueues" v-bind:key="index">
@@ -258,6 +258,7 @@
 
 <script>
 import print from 'print-js'
+
 export default {
     data(){
          return {

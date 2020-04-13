@@ -676,6 +676,7 @@ class EmployeeController extends Controller
                                 $q->where('confidential','NO');
                             })
                             ->where('id_number' , 'like', '%M%')
+                            ->orWhere('id_number' , 'like', '%L%')
                             ->orderBy('id_number','ASC')
                             ->get();
         return $employee;
@@ -714,6 +715,7 @@ class EmployeeController extends Controller
                         $q->where('confidential','NO');
                     })
                     ->where('id_number' , 'like', '%M%')
+                    ->orWhere('id_number' , 'like', '%L%')  
                     ->orderBy('last_name','ASC')
                     ->get();
         return $employee;
@@ -1011,7 +1013,8 @@ class EmployeeController extends Controller
     public function exportEmployees(){
         $all_employee = Employee::with('companies','departments','locations','employee_accountabilities')
                                     ->where('status','Active')
-                                    ->where('id_number','like','%m%')
+                                    ->where('id_number' , 'like', '%M%')
+                                    ->orWhere('id_number' , 'like', '%L%')
                                     ->orderBy('id_number','ASC')
                                     ->get();
         $filtered_data = [];
