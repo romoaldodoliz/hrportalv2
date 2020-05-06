@@ -12,9 +12,9 @@
     <!-- Icons -->
     <link href="{{ asset('/img/lfuggoc_icon.png') }}" rel="icon" type="image/png">
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-
     <!-- Styles -->
+
+    <link href="{{ url('vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     
     <link href="{{ asset('css/all.css') }}" rel="stylesheet">
     <link href="{{ asset('css/nucleo.css') }}" rel="stylesheet">

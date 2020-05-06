@@ -91,6 +91,7 @@
                                                         <a class="dropdown-item" data-toggle="modal" data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id)"><i class="fas fa-print"></i>Print Preview</a>
                                                     </div>
                                                 </div>
+                                                <!-- <button class="btn btn-sm btn-primary " data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id)"><i class="fas fa-print"></i> Print Preview</button> -->
                                             </td>
                                             <td>{{ employee_id.id_number }}</td>
                                             <td>{{ employee_id.first_name }} {{ employee_id.last_name }}</td>
