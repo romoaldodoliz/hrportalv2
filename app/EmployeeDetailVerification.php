@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmployeeDetailVerification extends Model
 {
+
+    protected $connection = "mysql";
+    
     protected $auditTimestamps = true;
 
     protected $fillable = [

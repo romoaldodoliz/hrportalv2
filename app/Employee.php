@@ -10,6 +10,8 @@ use Carbon\Carbon;
 
 class Employee extends Model implements AuditableContract
 {
+    protected $connection = "mysql";
+    
     use Auditable;
     protected $auditIncluded = [];
     protected $auditTimestamps = true;
@@ -67,6 +69,8 @@ class Employee extends Model implements AuditableContract
         'vocational_course',
         'vocational_year',
         'confidential',
+        'rfid_26',
+        'rfid_64',
     ];
     
 

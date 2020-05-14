@@ -8,5 +8,5 @@ use Zizaco\Entrust\EntrustRole;
 
 class Role extends Model
 {
-    //
+    protected $connection = "mysql";
 }

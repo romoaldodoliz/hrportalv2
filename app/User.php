@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Auth;
 
 class User extends Model implements Auditable, Authenticatable
 {
+
+    protected $connection = "mysql";
+
     use Notifiable;
     use AuthenticableTrait;
     use EntrustUserTrait;

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmployeeTransfer extends Model
 {
+    protected $connection = "mysql";
+    
     protected $fillable  = [
     	'employee_id',
         'previous_id_number',

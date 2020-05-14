@@ -206,4 +206,12 @@ Route::get('logout', function(){
 
         Route::get('view_user_profile/{employee}','HomeController@viewUserProfile');
         Route::get('view-user-profile-data/{employee}','HomeController@viewUserProfileData');
+
+
+        Route::get('rfid_number','HomeController@getRfidNumber');
+
+
+        Route::post('save-rfid','HomeController@saveRFID');
+        Route::get('scan-rfids','HomeController@scansRFID');
+
     });

@@ -8,6 +8,7 @@ use App\EmployeeApprovalRequest;
 use App\EmployeeDetailVerification;
 use App\DependentAttachment;
 use App\User;
+use App\RfidNumber;
 
 use DB;
 use Illuminate\Http\File;
@@ -361,6 +362,84 @@ class HomeController extends Controller
 
     public function viewUserProfileData(Employee $employee){
         return Employee::with('companies','departments','locations','verification')->where('id', $employee->id)->first();
+    }
+
+    public function getRfidNumber(){
+
+        $rfid_64 = RfidNumber::where('CardBits' , '64')->orderBy('LocalTime','DESC')->first();
+        $rfid_26 = RfidNumber::where('CardBits' , '26')->orderBy('LocalTime','DESC')->first();
+
+        $rfid_number_data = [];
+
+       
+        if($rfid_26){
+                $validate_rfid_26 = Employee::where('rfid_26',$rfid_26['CardCode'])->first();
+
+                if(empty($validate_rfid_26)){
+                    $rfid_door_access_code = $rfid_26['CardCode'];
+                    $rfid_door = ltrim($rfid_door_access_code,"0x");
+                    $rfid_door_str = ltrim($rfid_door, '0');
+                    
+                    $hex_to_decimal = hexdec($rfid_door_str);
+                    $decimal_to_binary = decbin($hex_to_decimal);
+
+                    //Facility Code 
+                    $get_facility_code = substr($decimal_to_binary, 0, 9);
+                    $get_facility_code = substr($get_facility_code, 1);
+                    $facility_code = bindec($get_facility_code);
+
+                    //Card Code
+                    $get_card_code = substr($decimal_to_binary, -17);
+                    $get_card_code = substr($get_card_code, 0,16);
+                    $card_code = bindec($get_card_code);
+                    $rfid_number_data['facility_code'] = '0' . $facility_code;
+                    $rfid_number_data['card_code'] =  $card_code;
+                    $rfid_number_data['rfid_26'] = '0' . $facility_code . '-' .$card_code;
+                }
+        }else{
+            $rfid_number_data['facility_code'] = "";
+            $rfid_number_data['card_code'] = "";
+            $rfid_number_data['rfid_26'] = "";
+        }
+        if($rfid_64){
+            $validate_rfid_64 = Employee::where('rfid_64',$rfid_64['CardCode'])->first();
+
+            if(empty($validate_rfid_64)){
+                $rfid_code = $rfid_64['CardCode'];
+                $rfid_door = ltrim($rfid_code,"0x");
+                $rfid_number_data['rfid_64'] = $rfid_door;
+            }
+            
+        }else{
+            $rfid_number_data['rfid_64'] = "";
+        }
+
+        return $rfid_number_data;
+    }
+
+    public function saveRFID(Request $request){
+
+        $request->validate([
+            'rfid_26' => 'required|unique:employees,rfid_26,' . $request->id,
+            'rfid_64' => 'required|unique:employees,rfid_64,' . $request->id
+        ]);
+
+
+        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64')->where('id',$request->id)->first();
+        if($employee){
+            $data = [];
+            $data['rfid_26'] = $request->rfid_26;
+            $data['rfid_64'] = $request->rfid_64;
+            if($employee->update($data)){
+                return  $employee;
+            }   
+        }else{
+            return $employee;
+        }
+    }
+
+    public function scansRFID(){
+        return $rfid_scans = RfidNumber::orderBy('LocalTime','DESC')->orderBy('CardBits','DESC')->get()->take(2);
     }
     
 }

@@ -9,6 +9,8 @@ use OwenIt\Auditing\Auditable;
 
 class Location extends Model implements AuditableContract
 {
+    protected $connection = "mysql";
+    
     use Auditable;
     protected $auditIncluded = [];
     protected $auditTimestamps = true;

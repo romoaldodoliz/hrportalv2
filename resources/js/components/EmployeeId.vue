@@ -89,6 +89,7 @@
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                         <a class="dropdown-item" data-toggle="modal" data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id)"><i class="fas fa-print"></i>Print Preview</a>
+                                                        <a class="dropdown-item" data-toggle="modal" data-target="#scanModal" style="cursor: pointer" @click="scanRFID(employee_id)"><i class="fas fa-id-card"></i>Scan RFID</a>
                                                     </div>
                                                 </div>
                                                 <!-- <button class="btn btn-sm btn-primary " data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id)"><i class="fas fa-print"></i> Print Preview</button> -->
@@ -153,6 +154,74 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="scanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-sm modal-employee" role="document">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center"> SCAN RFID</h2>
+                        
+                    </div>
+                    <div class="modal-body">
+                       <h2 class="text-center">{{scan_rfid.first_name + " " + scan_rfid.last_name + " | " + scan_rfid.id_number }}</h2>
+                       <h4 class="text-center text-default">{{scan_rfid.rfid_26 + " | " + scan_rfid.rfid_64 }}</h4>
+
+                       <div class="row">
+                           <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="role">RFID 26 BIT</label>
+                                    <input type="text" class="form-control" v-model="rfid_number.rfid_26">
+                                    <span class="text-danger" v-if="errors.rfid_26">{{ errors.rfid_26[0] }}</span> 
+                                </div>
+                            </div>
+                           <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="role">RFID 64 BIT</label>
+                                    <input type="text" class="form-control" v-model="rfid_number.rfid_64">
+                                    <span class="text-danger" v-if="errors.rfid_64">{{ errors.rfid_64[0] }}</span> 
+                                </div>
+                            </div>
+                       </div>
+
+                       <div class="row">
+                           <div class="table-responsive">
+                               <table class="table align-items-center table-flush">
+                                    <thead class="thead-light">
+                                        <tr>
+                                             <th scope="col">Card Bits</th>
+                                            <th scope="col">Card Code</th>
+                                            <th scope="col">Date/Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(rfid,index) in scanned_rfid_logs" v-bind:key="index">
+                                            <td>{{ rfid.CardBits }}</td>
+                                            <td>{{ rfid.CardCode }}</td>
+                                            <td>{{ rfid.LocalTime }}</td>  
+                                        </tr>
+                                    </tbody>
+                                </table>
+                           </div>
+                            <div v-if="error_tap">
+                                <p class="text-warning">RFID is not defined. Please tap again.</p>
+                            </div>
+                            <div v-else>
+                                <p class="text-success">RFID is defined. Click Get Scan.</p>
+                            </div>
+                           
+                       </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" :disabled="error_tap" @click="fetchRfidNumber()">Get Scan</button>
+                        <button class="btn btn-primary" @click="saveRFID(rfid_number)">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -176,6 +245,12 @@ export default {
             employee_id_src : '',
             employee_status : '',
             table_loading : true,
+            scanned_rfid_logs : [],
+            scan_rfid : [],
+            rfid_number : [],
+            scan_rfid_data : [],
+            timer : '',
+            error_tap : true
          }
     },
     created(){
@@ -183,8 +258,70 @@ export default {
         this.fetchCompanies();
         this.fetchDepartments();
         this.fetchLocations();
+        this.fetchRFIDScans();
     },
     methods:{
+        fetchRFIDScans(){
+            axios.get('/scan-rfids')
+            .then(response => { 
+                this.scanned_rfid_logs = response.data;
+
+                if(this.scanned_rfid_logs[0].CardBits == '64' && this.scanned_rfid_logs[1].CardBits == '64'){
+                    this.error_tap = true;
+                }
+                else if(this.scanned_rfid_logs[0].CardBits == '26' && this.scanned_rfid_logs[1].CardBits == '26'){
+                    this.error_tap = true;
+                }
+                else if(this.scanned_rfid_logs[0].CardBits == '26' && this.scanned_rfid_logs[1].CardBits == '64'){
+                    this.error_tap = true;
+                }
+                else if(this.scanned_rfid_logs[0].LocalTime < this.scanned_rfid_logs[1].LocalTime){
+                    this.error_tap = true;
+                }
+                else if(this.scanned_rfid_logs[0].LocalTime > this.scanned_rfid_logs[1].LocalTime){
+                    this.error_tap = true;
+                }
+                else{
+                     this.error_tap = false;
+                }
+            })
+            .catch(error => { 
+                this.errors = error.response.data.error;
+            })
+        },
+        saveRFID(rfid_number){
+            let v = this;
+            this.formFilterData = new FormData();
+            this.formFilterData.append('id',this.scan_rfid.id);
+            this.formFilterData.append('rfid_26',this.rfid_number.rfid_26);
+            this.formFilterData.append('rfid_64',this.rfid_number.rfid_64);
+
+            var index = this.employee_ids.findIndex(item => item.id == v.scan_rfid.id);
+
+            axios.post('/save-rfid', this.formFilterData)
+            .then(response => {
+                alert(this.scan_rfid.first_name + ' ' + this.scan_rfid.last_name  + ' Rfid Number Successfully saved.');
+                this.employee_ids.splice(index,1,response.data);
+            })
+            .catch(error => {
+                this.errors = error.response.data.errors;
+               alert('Error: Please try again.');
+            })
+        },
+        fetchRfidNumber(){
+            axios.get('/rfid_number')
+            .then(response => { 
+                this.rfid_number = response.data;
+            })
+            .catch(error => { 
+                this.errors = error.response.data.error;
+            })
+        },
+        scanRFID(employee_id){
+            this.timer = setInterval(this.fetchRFIDScans, 3000)
+            this.scan_rfid = employee_id;
+            this.rfid_number = [];
+        },
         previewPrintId(employee_id){
             this.employee_id_src = '';
             var num = Math.random();

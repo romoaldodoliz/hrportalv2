@@ -8,6 +8,8 @@ use OwenIt\Auditing\Auditable;
 
 class Head extends Model implements AuditableContract
 {
+    protected $connection = "mysql";
+    
     use Auditable;
     protected $auditIncluded = [];
     protected $auditTimestamps = true;

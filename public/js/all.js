@@ -11044,6 +11044,75 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -11062,7 +11131,13 @@ __webpack_require__.r(__webpack_exports__);
       department: '',
       employee_id_src: '',
       employee_status: '',
-      table_loading: true
+      table_loading: true,
+      scanned_rfid_logs: [],
+      scan_rfid: [],
+      rfid_number: [],
+      scan_rfid_data: [],
+      timer: '',
+      error_tap: true
     };
   },
   created: function created() {
@@ -11070,8 +11145,66 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchCompanies();
     this.fetchDepartments();
     this.fetchLocations();
+    this.fetchRFIDScans();
   },
   methods: {
+    fetchRFIDScans: function fetchRFIDScans() {
+      var _this = this;
+
+      axios.get('/scan-rfids').then(function (response) {
+        _this.scanned_rfid_logs = response.data;
+
+        if (_this.scanned_rfid_logs[0].CardBits == '64' && _this.scanned_rfid_logs[1].CardBits == '64') {
+          _this.error_tap = true;
+        } else if (_this.scanned_rfid_logs[0].CardBits == '26' && _this.scanned_rfid_logs[1].CardBits == '26') {
+          _this.error_tap = true;
+        } else if (_this.scanned_rfid_logs[0].CardBits == '26' && _this.scanned_rfid_logs[1].CardBits == '64') {
+          _this.error_tap = true;
+        } else if (_this.scanned_rfid_logs[0].LocalTime < _this.scanned_rfid_logs[1].LocalTime) {
+          _this.error_tap = true;
+        } else if (_this.scanned_rfid_logs[0].LocalTime > _this.scanned_rfid_logs[1].LocalTime) {
+          _this.error_tap = true;
+        } else {
+          _this.error_tap = false;
+        }
+      })["catch"](function (error) {
+        _this.errors = error.response.data.error;
+      });
+    },
+    saveRFID: function saveRFID(rfid_number) {
+      var _this2 = this;
+
+      var v = this;
+      this.formFilterData = new FormData();
+      this.formFilterData.append('id', this.scan_rfid.id);
+      this.formFilterData.append('rfid_26', this.rfid_number.rfid_26);
+      this.formFilterData.append('rfid_64', this.rfid_number.rfid_64);
+      var index = this.employee_ids.findIndex(function (item) {
+        return item.id == v.scan_rfid.id;
+      });
+      axios.post('/save-rfid', this.formFilterData).then(function (response) {
+        alert(_this2.scan_rfid.first_name + ' ' + _this2.scan_rfid.last_name + ' Rfid Number Successfully saved.');
+
+        _this2.employee_ids.splice(index, 1, response.data);
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+        alert('Error: Please try again.');
+      });
+    },
+    fetchRfidNumber: function fetchRfidNumber() {
+      var _this3 = this;
+
+      axios.get('/rfid_number').then(function (response) {
+        _this3.rfid_number = response.data;
+      })["catch"](function (error) {
+        _this3.errors = error.response.data.error;
+      });
+    },
+    scanRFID: function scanRFID(employee_id) {
+      this.timer = setInterval(this.fetchRFIDScans, 3000);
+      this.scan_rfid = employee_id;
+      this.rfid_number = [];
+    },
     previewPrintId: function previewPrintId(employee_id) {
       this.employee_id_src = '';
       var num = Math.random();
@@ -11079,19 +11212,19 @@ __webpack_require__.r(__webpack_exports__);
       this.employee_id = employee_id;
     },
     printEmployeeId: function printEmployeeId() {
-      var _this = this;
+      var _this4 = this;
 
       this.errors = [];
       this.formFilterData = new FormData();
       this.table_loading = false;
       var index = this.employee_ids.findIndex(function (item) {
-        return item.id == _this.employee_id.id;
+        return item.id == _this4.employee_id.id;
       });
       this.formFilterData.append('employee_id', this.employee_id.id);
       axios.post('/print-id-logs', this.formFilterData).then(function (response) {
-        _this.employee_ids.splice(index, 1, response.data);
+        _this4.employee_ids.splice(index, 1, response.data);
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this4.errors = error.response.data.errors;
       });
       printJS({
         printable: this.employee_id_src,
@@ -11100,7 +11233,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     fetchFilterEmployee: function fetchFilterEmployee() {
-      var _this2 = this;
+      var _this5 = this;
 
       this.table_loading = true;
       this.employee_ids = [];
@@ -11111,50 +11244,50 @@ __webpack_require__.r(__webpack_exports__);
       this.formFilterData.append('employee_status', this.employee_status);
       this.formFilterData.append('_method', 'POST');
       axios.post('/filter-employee-id', this.formFilterData).then(function (response) {
-        _this2.employee_ids = response.data;
-        _this2.errors = [];
-        _this2.table_loading = false;
+        _this5.employee_ids = response.data;
+        _this5.errors = [];
+        _this5.table_loading = false;
       })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
-        _this2.table_loading = false;
+        _this5.errors = error.response.data.errors;
+        _this5.table_loading = false;
       });
     },
     fetchEmployees: function fetchEmployees() {
-      var _this3 = this;
+      var _this6 = this;
 
       this.table_loading = true;
       axios.get('/employee-ids').then(function (response) {
-        _this3.employee_ids = response.data;
-        _this3.table_loading = false;
+        _this6.employee_ids = response.data;
+        _this6.table_loading = false;
       })["catch"](function (error) {
-        _this3.errors = error.response.data.error;
+        _this6.errors = error.response.data.error;
       });
     },
     fetchCompanies: function fetchCompanies() {
-      var _this4 = this;
+      var _this7 = this;
 
       axios.get('/companies-all').then(function (response) {
-        _this4.companies = response.data;
+        _this7.companies = response.data;
       })["catch"](function (error) {
-        _this4.errors = error.response.data.error;
+        _this7.errors = error.response.data.error;
       });
     },
     fetchLocations: function fetchLocations() {
-      var _this5 = this;
+      var _this8 = this;
 
       axios.get('/locations-all').then(function (response) {
-        _this5.locations = response.data;
+        _this8.locations = response.data;
       })["catch"](function (error) {
-        _this5.errors = error.response.data.error;
+        _this8.errors = error.response.data.error;
       });
     },
     fetchDepartments: function fetchDepartments() {
-      var _this6 = this;
+      var _this9 = this;
 
       axios.get('/departments-all').then(function (response) {
-        _this6.departments = response.data;
+        _this9.departments = response.data;
       })["catch"](function (error) {
-        _this6.errors = error.response.data.error;
+        _this9.errors = error.response.data.error;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -11172,12 +11305,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredemployeeids: function filteredemployeeids() {
-      var _this7 = this;
+      var _this10 = this;
 
       var self = this;
       return Object.values(self.employee_ids).filter(function (employee_id) {
         var full_name = employee_id.first_name + " " + employee_id.last_name;
-        return employee_id.first_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(_this7.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this7.keywords.toLowerCase());
+        return employee_id.first_name.toLowerCase().includes(_this10.keywords.toLowerCase()) || employee_id.last_name.toLowerCase().includes(_this10.keywords.toLowerCase()) || full_name.toLowerCase().includes(_this10.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -67447,6 +67580,29 @@ var render = function() {
                                         }),
                                         _vm._v("Print Preview")
                                       ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "dropdown-item",
+                                        staticStyle: { cursor: "pointer" },
+                                        attrs: {
+                                          "data-toggle": "modal",
+                                          "data-target": "#scanModal"
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.scanRFID(employee_id)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-id-card"
+                                        }),
+                                        _vm._v("Scan RFID")
+                                      ]
                                     )
                                   ]
                                 )
@@ -67658,6 +67814,209 @@ var render = function() {
           ]
         )
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "scanModal",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true",
+          "data-backdrop": "static"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass:
+              "modal-dialog modal-dialog-centered modal-sm modal-employee",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(6),
+              _vm._v(" "),
+              _vm._m(7),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("h2", { staticClass: "text-center" }, [
+                  _vm._v(
+                    _vm._s(
+                      _vm.scan_rfid.first_name +
+                        " " +
+                        _vm.scan_rfid.last_name +
+                        " | " +
+                        _vm.scan_rfid.id_number
+                    )
+                  )
+                ]),
+                _vm._v(" "),
+                _c("h4", { staticClass: "text-center text-default" }, [
+                  _vm._v(
+                    _vm._s(
+                      _vm.scan_rfid.rfid_26 + " | " + _vm.scan_rfid.rfid_64
+                    )
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-md-6" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("RFID 26 BIT")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.rfid_number.rfid_26,
+                            expression: "rfid_number.rfid_26"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.rfid_number.rfid_26 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.rfid_number,
+                              "rfid_26",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.rfid_26
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.rfid_26[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-6" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("RFID 64 BIT")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.rfid_number.rfid_64,
+                            expression: "rfid_number.rfid_64"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.rfid_number.rfid_64 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.rfid_number,
+                              "rfid_64",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.rfid_64
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.rfid_64[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "table-responsive" }, [
+                    _c(
+                      "table",
+                      { staticClass: "table align-items-center table-flush" },
+                      [
+                        _vm._m(8),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.scanned_rfid_logs, function(rfid, index) {
+                            return _c("tr", { key: index }, [
+                              _c("td", [_vm._v(_vm._s(rfid.CardBits))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(rfid.CardCode))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(rfid.LocalTime))])
+                            ])
+                          }),
+                          0
+                        )
+                      ]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm.error_tap
+                    ? _c("div", [
+                        _c("p", { staticClass: "text-warning" }, [
+                          _vm._v("RFID is not defined. Please tap again.")
+                        ])
+                      ])
+                    : _c("div", [
+                        _c("p", { staticClass: "text-success" }, [
+                          _vm._v("RFID is defined. Click Get Scan.")
+                        ])
+                      ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success",
+                    attrs: { disabled: _vm.error_tap },
+                    on: {
+                      click: function($event) {
+                        return _vm.fetchRfidNumber()
+                      }
+                    }
+                  },
+                  [_vm._v("Get Scan")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    on: {
+                      click: function($event) {
+                        return _vm.saveRFID(_vm.rfid_number)
+                      }
+                    }
+                  },
+                  [_vm._v("Save")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
     )
   ])
 }
@@ -67761,6 +68120,49 @@ var staticRenderFns = [
     return _c("div", { staticClass: "modal-header" }, [
       _c("h2", { staticClass: "col-12 modal-title text-center" }, [
         _vm._v(" Employee ID Preview")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h2", { staticClass: "col-12 modal-title text-center" }, [
+        _vm._v(" SCAN RFID")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", { staticClass: "thead-light" }, [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Card Bits")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Card Code")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Date/Time")])
       ])
     ])
   }
