@@ -716,7 +716,7 @@ class EmployeeController extends Controller
 
     public function print_id(Employee $employee){
 
-        $employee =  Employee::select('id','id_number','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
+        $employee =  Employee::select('id','id_number','middle_initial','name_suffix','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
 
         if($employee['nick_name'] == '' || $employee['nick_name'] == '-'){
             $nick_name = strtolower($employee['first_name']);
@@ -728,6 +728,20 @@ class EmployeeController extends Controller
         $convert_last_name = mb_strtolower($employee['last_name'],'UTF-8');
         $last_name_front = utf8_decode($convert_last_name);
         $last_name_back = utf8_decode($employee['last_name']);
+
+        if($employee['middle_initial'] != '-' && !empty($employee['middle_initial'])){
+            $last_middle_initial_back = $employee['middle_initial'];
+        }else{
+            $last_middle_initial_back = "";
+        }
+
+        if($employee['name_suffix'] != '-' && !empty($employee['name_suffix'])){
+            $last_name_suffix_back = $employee['name_suffix'];
+        }else{
+            $last_name_suffix_back = "";
+        }
+
+
 
         $department = $employee->departments ? strtolower($employee->departments[0]['name']) : "";
         
@@ -777,7 +791,7 @@ class EmployeeController extends Controller
 
         $fullname_font = 15;
        
-        $full_name = ucfirst($nick_name) .' ' . ucfirst($last_name_front);
+        $full_name = ucfirst($nick_name) . ' ' . ucfirst($last_name_front);
 
         Fpdf::SetFont('Avenir-Bold','',$fullname_font);
         Fpdf::SetXY(1.5,53);
@@ -825,7 +839,7 @@ class EmployeeController extends Controller
             }
             
         }
-        $full_name_back = strtoupper($first_name) .' ' . strtoupper($last_name_back);
+        $full_name_back = strtoupper($first_name) . ' ' . $last_middle_initial_back . '. ' . strtoupper($last_name_back) . ' ' . $last_name_suffix_back . '.';
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,37);
         Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
