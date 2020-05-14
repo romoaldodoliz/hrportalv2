@@ -730,13 +730,13 @@ class EmployeeController extends Controller
         $last_name_back = utf8_decode($employee['last_name']);
 
         if($employee['middle_initial'] != '-' && !empty($employee['middle_initial'])){
-            $last_middle_initial_back = $employee['middle_initial'];
+            $last_middle_initial_back = $employee['middle_initial'] . '.';
         }else{
             $last_middle_initial_back = "";
         }
 
         if($employee['name_suffix'] != '-' && !empty($employee['name_suffix'])){
-            $last_name_suffix_back = $employee['name_suffix'];
+            $last_name_suffix_back = $employee['name_suffix'] . '.';
         }else{
             $last_name_suffix_back = "";
         }
@@ -839,7 +839,7 @@ class EmployeeController extends Controller
             }
             
         }
-        $full_name_back = strtoupper($first_name) . ' ' . $last_middle_initial_back . '. ' . strtoupper($last_name_back) . ' ' . $last_name_suffix_back . '.';
+        $full_name_back = strtoupper($first_name) . ' ' . $last_middle_initial_back . ' ' . strtoupper($last_name_back) . ' ' . $last_name_suffix_back;
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,37);
         Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
