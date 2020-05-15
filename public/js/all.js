@@ -11194,6 +11194,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/save-rfid', this.formFilterData).then(function (response) {
         _this2.scan_rfid.rfid_26 = response.data.rfid_26;
         _this2.scan_rfid.rfid_64 = response.data.rfid_64;
+        _this2.scan_rfid.decimal_number = response.data.door_id_number;
 
         _this2.fetchEmployees();
 

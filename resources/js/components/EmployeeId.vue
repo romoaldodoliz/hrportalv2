@@ -312,6 +312,7 @@ export default {
             .then(response => {
                 this.scan_rfid.rfid_26 = response.data.rfid_26;
                 this.scan_rfid.rfid_64 = response.data.rfid_64;
+                this.scan_rfid.decimal_number = response.data.door_id_number;
                 this.fetchEmployees();
                 alert(this.scan_rfid.first_name + ' ' + this.scan_rfid.last_name  + ' Rfid Number Successfully saved.');
             })
