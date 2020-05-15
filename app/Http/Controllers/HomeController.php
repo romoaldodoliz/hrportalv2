@@ -13,6 +13,11 @@ use App\RfidNumber;
 use DB;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+
 class HomeController extends Controller
 {
     /**
@@ -366,55 +371,14 @@ class HomeController extends Controller
 
     public function getRfidNumber(){
 
-        $rfid_64 = RfidNumber::where('CardBits' , '64')->orderBy('LocalTime','DESC')->first();
-        $rfid_26 = RfidNumber::where('CardBits' , '26')->orderBy('LocalTime','DESC')->first();
+        $client = new Client();
 
-        $rfid_number_data = [];
+        $response = $client->request('GET', 'http://10.96.4.132/vdi_report_monitoring_portal/public/api/rfid_number');
 
-       
-        if($rfid_26){
-                $validate_rfid_26 = Employee::where('rfid_26',$rfid_26['CardCode'])->first();
+        $response = json_decode($response->getBody(), true);
 
-                if(empty($validate_rfid_26)){
-                    $rfid_door_access_code = $rfid_26['CardCode'];
-                    $rfid_door = ltrim($rfid_door_access_code,"0x");
-                    $rfid_door_str = ltrim($rfid_door, '0');
-                    
-                    $hex_to_decimal = hexdec($rfid_door_str);
-                    $decimal_to_binary = decbin($hex_to_decimal);
+        return $response;
 
-                    //Facility Code 
-                    $get_facility_code = substr($decimal_to_binary, 0, 9);
-                    $get_facility_code = substr($get_facility_code, 1);
-                    $facility_code = bindec($get_facility_code);
-
-                    //Card Code
-                    $get_card_code = substr($decimal_to_binary, -17);
-                    $get_card_code = substr($get_card_code, 0,16);
-                    $card_code = bindec($get_card_code);
-                    $rfid_number_data['facility_code'] = '0' . $facility_code;
-                    $rfid_number_data['card_code'] =  $card_code;
-                    $rfid_number_data['rfid_26'] = '0' . $facility_code . '-' .$card_code;
-                }
-        }else{
-            $rfid_number_data['facility_code'] = "";
-            $rfid_number_data['card_code'] = "";
-            $rfid_number_data['rfid_26'] = "";
-        }
-        if($rfid_64){
-            $validate_rfid_64 = Employee::where('rfid_64',$rfid_64['CardCode'])->first();
-
-            if(empty($validate_rfid_64)){
-                $rfid_code = $rfid_64['CardCode'];
-                $rfid_door = ltrim($rfid_code,"0x");
-                $rfid_number_data['rfid_64'] = $rfid_door;
-            }
-            
-        }else{
-            $rfid_number_data['rfid_64'] = "";
-        }
-
-        return $rfid_number_data;
     }
 
     public function saveRFID(Request $request){
@@ -439,7 +403,13 @@ class HomeController extends Controller
     }
 
     public function scansRFID(){
-        return $rfid_scans = RfidNumber::orderBy('LocalTime','DESC')->orderBy('CardBits','DESC')->get()->take(2);
+        $client = new Client();
+
+        $response = $client->request('GET', 'http://10.96.4.132/vdi_report_monitoring_portal/public/api/scan-rfids');
+
+        $response = json_decode($response->getBody(), true);
+
+        return $response;
     }
     
 }
