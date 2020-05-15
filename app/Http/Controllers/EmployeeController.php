@@ -668,7 +668,7 @@ class EmployeeController extends Controller
 
         $check_user = User::where('id',Auth::user()->id)->first();
 
-        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64')->with('companies','departments','locations','print_id_logs','verification')
+        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64','door_id_number')->with('companies','departments','locations','print_id_logs','verification')
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
@@ -687,7 +687,7 @@ class EmployeeController extends Controller
         
         $check_user = User::where('id',Auth::user()->id)->first();
 
-        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64')->with('companies','departments','locations','print_id_logs','verification')
+        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64','door_id_number')->with('companies','departments','locations','print_id_logs','verification')
                     ->when(!empty($request->company), function($q) use($company) {
                         $q->whereHas('companies', function ($w) use($company)  {
                             $w->where('id', '=', $company);

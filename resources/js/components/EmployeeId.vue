@@ -168,7 +168,7 @@
                     </div>
                     <div class="modal-body">
                        <h2 class="text-center">{{scan_rfid.first_name + " " + scan_rfid.last_name + " | " + scan_rfid.id_number }}</h2>
-                       <h4 class="text-center text-default">{{scan_rfid.rfid_26 + " | " + scan_rfid.rfid_64 }}</h4>
+                       <h4 class="text-center text-default">{{scan_rfid.rfid_26 + " | " + scan_rfid.rfid_64 + " | " + scan_rfid.door_id_number }}</h4>
 
                        <div class="row">
                            <div class="col-md-6">

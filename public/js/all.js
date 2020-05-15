@@ -67871,7 +67871,11 @@ var render = function() {
                 _c("h4", { staticClass: "text-center text-default" }, [
                   _vm._v(
                     _vm._s(
-                      _vm.scan_rfid.rfid_26 + " | " + _vm.scan_rfid.rfid_64
+                      _vm.scan_rfid.rfid_26 +
+                        " | " +
+                        _vm.scan_rfid.rfid_64 +
+                        " | " +
+                        _vm.scan_rfid.door_id_number
                     )
                   )
                 ]),

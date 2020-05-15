@@ -389,13 +389,14 @@ class HomeController extends Controller
         ]);
 
 
-        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64')->where('id',$request->id)->first();
+        $employee = Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64','door_id_number')->where('id',$request->id)->first();
         if($employee){
             $data = [];
             $data['rfid_26'] = $request->rfid_26;
             $data['rfid_64'] = $request->rfid_64;
+            $data['door_id_number'] = $request->door_id_number;
             if($employee->update($data)){
-                return  Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64')->where('id',$request->id)->first();
+                return  Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64','door_id_number')->where('id',$request->id)->first();
             }   
         }else{
             return $employee;

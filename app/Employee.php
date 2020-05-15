@@ -71,6 +71,7 @@ class Employee extends Model implements AuditableContract
         'confidential',
         'rfid_26',
         'rfid_64',
+        'door_id_number',
     ];
     
 
