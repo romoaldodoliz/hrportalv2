@@ -11154,16 +11154,20 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/scan-rfids').then(function (response) {
         _this.scanned_rfid_logs = response.data;
 
-        if (_this.scanned_rfid_logs[0].CardBits == '64' && _this.scanned_rfid_logs[1].CardBits == '64') {
-          _this.error_tap = true;
-        } else if (_this.scanned_rfid_logs[0].CardBits == '26' && _this.scanned_rfid_logs[1].CardBits == '26') {
-          _this.error_tap = true;
-        } else if (_this.scanned_rfid_logs[0].CardBits == '26' && _this.scanned_rfid_logs[1].CardBits == '64') {
-          _this.error_tap = true;
-        } else if (_this.scanned_rfid_logs[0].LocalTime < _this.scanned_rfid_logs[1].LocalTime) {
-          _this.error_tap = true;
-        } else if (_this.scanned_rfid_logs[0].LocalTime > _this.scanned_rfid_logs[1].LocalTime) {
-          _this.error_tap = true;
+        if (_this.scanned_rfid_logs) {
+          if (_this.scanned_rfid_logs[0].CardBits == '64' && _this.scanned_rfid_logs[1].CardBits == '64') {
+            _this.error_tap = true;
+          } else if (_this.scanned_rfid_logs[0].CardBits == '26' && _this.scanned_rfid_logs[1].CardBits == '26') {
+            _this.error_tap = true;
+          } else if (_this.scanned_rfid_logs[0].CardBits == '26' && _this.scanned_rfid_logs[1].CardBits == '64') {
+            _this.error_tap = true;
+          } else if (_this.scanned_rfid_logs[0].LocalTime < _this.scanned_rfid_logs[1].LocalTime) {
+            _this.error_tap = true;
+          } else if (_this.scanned_rfid_logs[0].LocalTime > _this.scanned_rfid_logs[1].LocalTime) {
+            _this.error_tap = true;
+          } else {
+            _this.error_tap = false;
+          }
         } else {
           _this.error_tap = false;
         }
@@ -11179,13 +11183,13 @@ __webpack_require__.r(__webpack_exports__);
       this.formFilterData.append('id', this.scan_rfid.id);
       this.formFilterData.append('rfid_26', this.rfid_number.rfid_26);
       this.formFilterData.append('rfid_64', this.rfid_number.rfid_64);
-      var index = this.employee_ids.findIndex(function (item) {
-        return item.id == v.scan_rfid.id;
-      });
       axios.post('/save-rfid', this.formFilterData).then(function (response) {
-        alert(_this2.scan_rfid.first_name + ' ' + _this2.scan_rfid.last_name + ' Rfid Number Successfully saved.');
+        _this2.scan_rfid.rfid_26 = response.data.rfid_26;
+        _this2.scan_rfid.rfid_64 = response.data.rfid_64;
 
-        _this2.employee_ids.splice(index, 1, response.data);
+        _this2.fetchEmployees();
+
+        alert(_this2.scan_rfid.first_name + ' ' + _this2.scan_rfid.last_name + ' Rfid Number Successfully saved.');
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         alert('Error: Please try again.');

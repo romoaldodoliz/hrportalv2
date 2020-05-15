@@ -265,25 +265,29 @@ export default {
             axios.get('/scan-rfids')
             .then(response => { 
                 this.scanned_rfid_logs = response.data;
-
-                if(this.scanned_rfid_logs[0].CardBits == '64' && this.scanned_rfid_logs[1].CardBits == '64'){
-                    this.error_tap = true;
+                if(this.scanned_rfid_logs){
+                     if(this.scanned_rfid_logs[0].CardBits == '64' && this.scanned_rfid_logs[1].CardBits == '64'){
+                        this.error_tap = true;
+                    }
+                    else if(this.scanned_rfid_logs[0].CardBits == '26' && this.scanned_rfid_logs[1].CardBits == '26'){
+                        this.error_tap = true;
+                    }
+                    else if(this.scanned_rfid_logs[0].CardBits == '26' && this.scanned_rfid_logs[1].CardBits == '64'){
+                        this.error_tap = true;
+                    }
+                    else if(this.scanned_rfid_logs[0].LocalTime < this.scanned_rfid_logs[1].LocalTime){
+                        this.error_tap = true;
+                    }
+                    else if(this.scanned_rfid_logs[0].LocalTime > this.scanned_rfid_logs[1].LocalTime){
+                        this.error_tap = true;
+                    }
+                    else{
+                        this.error_tap = false;
+                    }
+                }else{
+                    this.error_tap = false;
                 }
-                else if(this.scanned_rfid_logs[0].CardBits == '26' && this.scanned_rfid_logs[1].CardBits == '26'){
-                    this.error_tap = true;
-                }
-                else if(this.scanned_rfid_logs[0].CardBits == '26' && this.scanned_rfid_logs[1].CardBits == '64'){
-                    this.error_tap = true;
-                }
-                else if(this.scanned_rfid_logs[0].LocalTime < this.scanned_rfid_logs[1].LocalTime){
-                    this.error_tap = true;
-                }
-                else if(this.scanned_rfid_logs[0].LocalTime > this.scanned_rfid_logs[1].LocalTime){
-                    this.error_tap = true;
-                }
-                else{
-                     this.error_tap = false;
-                }
+               
             })
             .catch(error => { 
                 this.errors = error.response.data.error;
@@ -296,12 +300,12 @@ export default {
             this.formFilterData.append('rfid_26',this.rfid_number.rfid_26);
             this.formFilterData.append('rfid_64',this.rfid_number.rfid_64);
 
-            var index = this.employee_ids.findIndex(item => item.id == v.scan_rfid.id);
-
             axios.post('/save-rfid', this.formFilterData)
             .then(response => {
+                this.scan_rfid.rfid_26 = response.data.rfid_26;
+                this.scan_rfid.rfid_64 = response.data.rfid_64;
+                this.fetchEmployees();
                 alert(this.scan_rfid.first_name + ' ' + this.scan_rfid.last_name  + ' Rfid Number Successfully saved.');
-                this.employee_ids.splice(index,1,response.data);
             })
             .catch(error => {
                 this.errors = error.response.data.errors;

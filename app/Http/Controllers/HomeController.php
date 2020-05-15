@@ -395,7 +395,7 @@ class HomeController extends Controller
             $data['rfid_26'] = $request->rfid_26;
             $data['rfid_64'] = $request->rfid_64;
             if($employee->update($data)){
-                return  $employee;
+                return  Employee::select('id','id_number','series_number','first_name','last_name','rfid_26','rfid_64')->where('id',$request->id)->first();
             }   
         }else{
             return $employee;
