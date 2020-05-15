@@ -11113,6 +11113,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -11183,6 +11190,7 @@ __webpack_require__.r(__webpack_exports__);
       this.formFilterData.append('id', this.scan_rfid.id);
       this.formFilterData.append('rfid_26', this.rfid_number.rfid_26);
       this.formFilterData.append('rfid_64', this.rfid_number.rfid_64);
+      this.formFilterData.append('door_id_number', this.rfid_number.decimal_number);
       axios.post('/save-rfid', this.formFilterData).then(function (response) {
         _this2.scan_rfid.rfid_26 = response.data.rfid_26;
         _this2.scan_rfid.rfid_64 = response.data.rfid_64;
@@ -67944,6 +67952,46 @@ var render = function() {
                       _vm.errors.rfid_64
                         ? _c("span", { staticClass: "text-danger" }, [
                             _vm._v(_vm._s(_vm.errors.rfid_64[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-6" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("DOOR ID NUMBER")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.rfid_number.decimal_number,
+                            expression: "rfid_number.decimal_number"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.rfid_number.decimal_number },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.rfid_number,
+                              "decimal_number",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.decimal_number
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.decimal_number[0]))
                           ])
                         : _vm._e()
                     ])

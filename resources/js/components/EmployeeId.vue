@@ -185,6 +185,13 @@
                                     <span class="text-danger" v-if="errors.rfid_64">{{ errors.rfid_64[0] }}</span> 
                                 </div>
                             </div>
+                           <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="role">DOOR ID NUMBER</label>
+                                    <input type="text" class="form-control" v-model="rfid_number.decimal_number">
+                                    <span class="text-danger" v-if="errors.decimal_number">{{ errors.decimal_number[0] }}</span> 
+                                </div>
+                            </div>
                        </div>
 
                        <div class="row">
@@ -299,6 +306,7 @@ export default {
             this.formFilterData.append('id',this.scan_rfid.id);
             this.formFilterData.append('rfid_26',this.rfid_number.rfid_26);
             this.formFilterData.append('rfid_64',this.rfid_number.rfid_64);
+            this.formFilterData.append('door_id_number',this.rfid_number.decimal_number);
 
             axios.post('/save-rfid', this.formFilterData)
             .then(response => {
