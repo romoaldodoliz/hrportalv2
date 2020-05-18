@@ -37,6 +37,10 @@ Vue.component('verifiedemployees', require('./components/VerifiedEmployees.vue')
 
 Vue.component('changepassword', require('./components/ChangePassword.vue').default);
 
+
+
+Vue.component('health-declaration-forms', require('./components/HealthDeclarationForms.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

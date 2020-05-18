@@ -15,6 +15,9 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
+Route::post('/fetch-filter-employee-health', 'HealthDeclationFormController@fetchEmployees');
+
 Auth::routes();
 Route::get('logout', function(){
     return redirect('/');

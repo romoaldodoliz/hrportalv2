@@ -1,0 +1,233 @@
+<template>
+    <div>
+        <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 300px; background-image: url(/img/bg.jpg); background-size: cover; background-position: center bottom;">
+            <!-- Mask -->
+            <span class="mask bg-gradient-success opacity-7"></span>
+            <!-- Header container -->
+            <div class="container-fluid d-flex align-items-center">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <h1 class="display-2 text-white text-uppercase">HEALTH DECLARATION FORM</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt--7">
+            <div class="row">
+                <div class="col-xl-12 order-xl-1">
+                    <div class="card bg-secondary shadow  mb-5">
+                        <div class="card-header bg-white border-0">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <h3 class="mb-0 text-uppercase">Search Employee</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="role">Search Employee</label> 
+                                        <input type="text"  class="form-control" v-model="keyword" placeholder="Search Last Name / First Name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="fetchEmployees">Search</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" style="font-size:14px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Department/BU/Position</th>
+                                                <th>Contact Number</th>
+                                                <th>Check</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(employee, u) in employees" v-bind:key="u">
+                                                <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
+                                                <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.companies[0] ? employee.companies[0].name : "" }} / {{ employee.position }}</td>
+                                                <td>{{ employee.mobile_number}}</td>
+                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Check</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                 </div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center" id="addCompanyLabel">HEALTH DECLARATION FORM</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Name: {{employee.last_name + ', '+  employee.first_name}}</h3>
+                                <h3>Dept./BU/Position: {{ employee.departments ? employee.departments[0].name : "" }} / {{ employee.companies ? employee.companies[0].name : "" }} / {{ employee.position }} </h3>
+                                <h3>Contact Number: {{ employee.mobile_number}}</h3>
+                                <hr>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>1. Did you visit a hospital, clinic or medical health facility in the past 14 days?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes1" name="one_question" class="custom-control-input" value="Yes" v-model="form.one_question">
+                                    <label class="custom-control-label" for="yes1" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no1" name="one_question" class="custom-control-input" value="No" v-model="form.one_question">
+                                    <label class="custom-control-label" for="no1">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>2. In the last 14 days, did you have any of the following: fever, colds, cough, sore throat, aches and\ pains, nasal congestion, runny nose, diarrhea or difficulty in breathing?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes2" name="two_question" class="custom-control-input" value="Yes" v-model="form.two_question">
+                                    <label class="custom-control-label" for="yes2" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no2" name="two_question" class="custom-control-input" value="No" v-model="form.two_question">
+                                    <label class="custom-control-label" for="no2">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>3. Do you have any of the following illnes:: Asthma, TB, Diabetes, Hypertension, Cardio Vascular Disease, Obesity or other that can compromise your immunity?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes3" name="three_question" class="custom-control-input" value="Yes" v-model="form.three_question">
+                                    <label class="custom-control-label" for="yes3" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no3" name="three_question" class="custom-control-input" value="No" v-model="form.three_question">
+                                    <label class="custom-control-label" for="no3">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>4. Any members of your household experience any of the symptoms in #2?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes4" name="four_question" class="custom-control-input" value="Yes" v-model="form.four_question">
+                                    <label class="custom-control-label" for="yes4" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no4" name="four_question" class="custom-control-input" value="No" v-model="form.four_question">
+                                    <label class="custom-control-label" for="no4">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>5. Have you worked together or stayed in the same close environment of a confirmed COVID19 Case?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes5" name="five_question" class="custom-control-input" value="Yes" v-model="form.five_question">
+                                    <label class="custom-control-label" for="yes5" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no5" name="five_question" class="custom-control-input" value="No" v-model="form.five_question">
+                                    <label class="custom-control-label" for="no5">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>6. Have you had any contacts with anyone with fever, colds, cough, sore throat, aches and pains, nasal congestion, runny nose, diarrhea or difficulty in breathing in the past 14 days?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes6" name="six_question" class="custom-control-input" value="Yes" v-model="form.six_question">
+                                    <label class="custom-control-label" for="yes6" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no6" name="six_question" class="custom-control-input" value="No" v-model="form.six_question">
+                                    <label class="custom-control-label" for="no6">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h4>7. Have you travelled to any area in NCR aside from your home?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes" name="seven_question" class="custom-control-input" value="Yes" v-model="form.seven_question">
+                                    <label class="custom-control-label" for="yes7" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no7" name="seven_question" class="custom-control-input" value="No" v-model="form.seven_question">
+                                    <label class="custom-control-label" for="no7">No</label>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <h4>If yes</h4> 
+                                        <input type="text" class="form-control" v-model="form.seven_yes_desc">
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h4>Temperature</h4> 
+                                    <input type="text" class="form-control" v-model="form.temperature">
+                                </div>
+                            </div>
+                        </div>             
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        <button id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveCheckForm(form)" style="width:150px;">Save</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    import loader from './Loader'
+    import Swal from 'sweetalert2'
+    export default {
+        data(){
+            return {
+                keyword : '',
+                searchEmployees: [],
+                employees: [],
+                employee: [],
+                errors: [],
+                form: []
+            }
+        },
+        created(){
+
+        },
+        methods:{
+            fetchEmployees(){
+                this.errors = []; 
+                this.employees = [];
+                axios.post('/fetch-filter-employee-health', {
+                    keyword: this.keyword
+                })
+                .then(response => {
+                    this.employees = response.data;
+                    
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+            },
+            checkEmployee(employee){
+                this.employee = employee;
+            },
+            saveCheckForm(form){
+
+            }
+        }
+    }
+</script>
+
+<style lang="scss" scoped>
+
+</style>
