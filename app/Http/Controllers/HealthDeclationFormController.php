@@ -18,25 +18,41 @@ class HealthDeclationFormController extends Controller
 
     public function fetchEmployees(Request $request){
         $keyword = $request->keyword;
-        $employee = Employee::select('id','first_name','last_name','position','mobile_number')->with('companies','departments','locations')
+        $employees = Employee::select('id','first_name','last_name','position','mobile_number')->with('companies','departments','locations')
                             ->where('first_name', 'like' , '%' .  $keyword . '%')
                             ->orWhere('last_name', 'like' , '%' .  $keyword . '%')
                             ->where('status','=','Active')
                             ->orderBy('last_name','DESC')
                             ->get();
 
-        // $get_users = $this->getUserAccess();
-        // $user =  $this->get_user($get_users, $keyword);
+        if($employees){
+            $get_users = $this->getUserAccess();
+            
+            foreach($employees as $key => $employee){
+                $name = '';
+                $user_id = '';
+              
+                $employee_name = $employee['first_name'] . ' ' . $employee['last_name'];
+                $user =  $this->get_user($get_users, $employee_name);
+                foreach($user as $user_data){
+                    $name = $user_data['name'];
+                    $user_id = $user_data['user_id'];
+                }
+                $employees[$key]['name'] = $name;
+                $employees[$key]['user_id'] = $user_id;
+            
+                $card_access = $this->getCardAccess($user_id);
 
-        // if($user){
-        //     $name = "";
-        //     foreach($user as $user_data){
-        //         $name = $user_data['name'];
-        //     }
-        //     $employee['name'] = $name;
-        // }
+                if($card_access['card_list']){
+                    $employees[$key]['card_access_blocked'] =  $card_access['card_list'][0]['is_blocked'];
+                }else{
+                    $employees[$key]['card_access_blocked'] = '';
+                }
+            }
+        }
 
-        return $employee;
+
+        return $employees;
     }
 
     public function saveDeclaration(Request $request){
@@ -86,41 +102,28 @@ class HealthDeclationFormController extends Controller
             }
 
             //Save Data
-            $data['date_time'] = date('h:m A Y-m-d');
+            $data['date_time'] = date('h:m:s A m/d/Y');
             
-            $validate_hdf = HealthDeclarationForm::whereDate('date_time',date('Y-m-d'))->first();
-            if(empty($validate_hdf)){
-                if($yes_count > 1){
+            
+            if($yes_count > 1){
+                
+                $user_id = $data['user_id'];
 
-                    $get_users = $this->getUserAccess();
-        
-                    $user =  $this->get_user($get_users, $data['name']);
+                $card_access = $this->getCardAccess($user_id);
 
-                    if($user){
-                        $user_id = "";
-                        foreach($user as $user_data){
-                            $user_id = $user_data['user_id'];
-                        }
-                    }
-
-                    $card_access = $this->getCardAccess($user_id);
-
-                    if($card_access['card_list']){
-                        $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id']);
-                    }
-
-                    $data['status'] = 'Not Allowed';
-                    HealthDeclarationForm::create($data);
-                    return 'not_allowed';
-                }else{
-                    $data['status'] = 'Allowed';
-                    HealthDeclarationForm::create($data);
-                    return 'saved';
+                if($card_access['card_list']){
+                    $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id']);
                 }
+
+                $data['status'] = 'Not Allowed';
+                HealthDeclarationForm::create($data);
+                return 'not_allowed';
             }else{
-                return 'cannot';
+                $data['status'] = 'Allowed';
+                HealthDeclarationForm::create($data);
+                return 'saved';
             }
-           
+            
         }else{
             return 'error';
         }

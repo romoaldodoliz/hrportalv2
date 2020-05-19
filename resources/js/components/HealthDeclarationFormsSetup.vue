@@ -1,5 +1,6 @@
 <template>
     <div>
+        <loader v-if="loading"></loader>
         <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 300px; background-image: url(/img/bg.jpg); background-size: cover; background-position: center bottom;">
             <!-- Mask -->
             <span class="mask bg-gradient-success opacity-7"></span>
@@ -40,18 +41,20 @@
                                         <thead>
                                             <tr>
                                                 <th>Employee Name</th>
-                                                <th>Department/BU/Position</th>
+                                                <th>Department/Position</th>
                                                 <th>Contact Number</th>
-                                                <th>Overide</th>
+                                                <th>Card Access Blocked</th>
+                                                <th>Overide Access</th>
                                                 <th>Forms</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="(employee, u) in employees" v-bind:key="u">
                                                 <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
-                                                <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.companies[0] ? employee.companies[0].name : "" }} / {{ employee.position }}</td>
+                                                <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
                                                 <td>{{ employee.mobile_number}}</td>
-                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Overide</button></td>
+                                                 <td>{{ employee.card_access_blocked }}</td>
+                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Overide Access</button></td>
                                                 <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewForms(employee)" data-toggle="modal" data-target="#viewFormsModal" >View Forms</button></td>
                                             </tr>
                                         </tbody>
@@ -120,7 +123,7 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="(form, u) in forms" v-bind:key="u">
-                                            <td>{{ form.date_time}}</td>
+                                            <td>{{ form.created_at}}</td>
                                             <td>{{ form.temperature}}</td>
                                             <td>{{ form.one_question}}</td>
                                             <td>{{ form.two_question}}</td>
@@ -154,7 +157,8 @@
                 employees: [],
                 employee: [],
                 errors: [],
-                forms: []
+                forms: [],
+                loading : false
             }
         },
         created(){
@@ -192,25 +196,42 @@
                 this.employee = employee;
             },
             saveCheckForm(form){
-                let formData = new FormData();
-                formData.append('employee_id',  this.employee.id);
-                 
-                axios.post(`/save-health-declaration-overide`, 
-                    formData
-                )
-                .then(response => {
-                    var message = response.data;
+                if(this.employee.card_access_blocked == true){
+
+                    this.loading = true;
+
+                    let formData = new FormData();
+                    formData.append('employee_id',  this.employee.id);
+                    
+                    axios.post(`/save-health-declaration-overide`, 
+                        formData
+                    )
+                    .then(response => {
+                        var message = response.data;
+                        Swal.fire({
+                                title: 'Success!',
+                                text: 'Employee has been successfully overide.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            });
+                        $('#checkModal').modal('hide');
+                        this.loading = false;
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data.errors;
+                        this.loading = false;
+                    })
+
+                }else{
                     Swal.fire({
-                            title: 'Success!',
-                            text: 'Employee has been successfully overide.',
-                            icon: 'success',
-                            confirmButtonText: 'Okay'
-                        });
-                    $('#checkModal').modal('hide');
-                })
-                .catch(error => {
-                    this.errors = error.response.data.errors;
-                })
+                        title: 'Warning!',
+                        text: 'Cannot access overide.',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+
+                    $('#checkModal').modal('hide'); 
+                }
             }   
         }
     }

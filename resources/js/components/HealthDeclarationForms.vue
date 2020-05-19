@@ -1,5 +1,6 @@
 <template>
     <div>
+         <loader v-if="loading"></loader>
         <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 300px; background-image: url(/img/bg.jpg); background-size: cover; background-position: center bottom;">
             <!-- Mask -->
             <span class="mask bg-gradient-success opacity-7"></span>
@@ -46,9 +47,17 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr v-if="table_loading">
+                                                <td colspan="15">
+                                                    <content-placeholders>
+                                                        <content-placeholders-text :lines="3" />
+                                                    </content-placeholders>
+                                                    <h4>Loading Employee Records.. Please wait a moment... </h4>
+                                                </td>
+                                            </tr>
                                             <tr v-for="(employee, u) in employees" v-bind:key="u">
                                                 <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
-                                                <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.companies[0] ? employee.companies[0].name : "" }} / {{ employee.position }}</td>
+                                                <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
                                                 <td>{{ employee.mobile_number}}</td>
                                                 <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Check</button></td>
                                             </tr>
@@ -77,7 +86,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h3>Name: {{employee.last_name + ', '+  employee.first_name}}</h3>
-                                <h3>Dept./BU/Position: {{ employee.departments ? employee.departments[0].name : "" }} / {{ employee.companies ? employee.companies[0].name : "" }} / {{ employee.position }} </h3>
+                                <h3>Dept./Position: {{ employee.departments ? employee.departments[0].name : "" }} / {{ employee.companies ? employee.companies[0].name : "" }} / {{ employee.position }} </h3>
                                 <h3>Contact Number: {{ employee.mobile_number}}</h3>
                                 <hr>
                             </div>
@@ -233,7 +242,9 @@
                 employees: [],
                 employee: [],
                 errors: [],
-                form: []
+                form: [],
+                loading : false,
+                table_loading : false,
             }
         },
         created(){
@@ -243,19 +254,31 @@
             fetchEmployees(){
                 this.errors = []; 
                 this.employees = [];
+                this.table_loading = true; 
                 axios.post('/fetch-filter-employee-health', {
                     keyword: this.keyword
                 })
                 .then(response => {
                     this.employees = response.data;
+                    this.table_loading = false; 
                     
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.table_loading = false; 
                 })
             },
             checkEmployee(employee){
-                this.employee = employee;
+                if(employee.name){
+                    this.employee = employee;
+                }else{
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+                }
             },
             clearForm(){
                 this.employee = [];
@@ -272,58 +295,83 @@
                 this.form.eight_question = "";
             },
             saveCheckForm(form){
-                let formData = new FormData();
-                 formData.append('employee_id',  this.employee.id);
-                 formData.append('name',  this.employee.first_name + ' ' + this.employee.last_name);
-                 var dept =  this.employee.departments ? this.employee.departments[0].name : "";
-                 var company =  this.employee.companies ? this.employee.companies[0].name : "";
-                 formData.append('dept_bu_position', dept  + '/' + company + '/' + this.employee.position);
-                 formData.append('contact_number',  this.employee.mobile_number);
-                 formData.append('temperature', form.temperature ? form.temperature  : "");
-                 formData.append('one_question', form.one_question ? form.one_question : "");
-                 formData.append('two_question', form.two_question ? form.two_question : "");
-                 formData.append('three_question', form.three_question ? form.three_question : "");
-                 formData.append('four_question', form.four_question ? form.four_question : "");
-                 formData.append('five_question', form.five_question ? form.five_question : "");
-                 formData.append('six_question', form.six_question ? form.six_question : "");
-                 formData.append('seven_question', form.seven_question ? form.seven_question : "");
-                 formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
-                 formData.append('eight_question', form.eight_question ? form.eight_question : "");
-                
-                axios.post(`/save-health-declaration`, 
-                    formData
-                )
-                .then(response => {
-                    var message = response.data;
-                    if(message == 'save'){
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Congratulations! Successfully Passed.',
-                            icon: 'success',
-                            confirmButtonText: 'Okay'
-                        });
+                this.loading = true;
+                if(this.employee.name){
+                   
 
-                        $('#checkModal').modal('hide');
+                    let formData = new FormData();
+                    formData.append('employee_id',  this.employee.id);
+                    formData.append('name',  this.employee.name);
+                    formData.append('user_id',  this.employee.user_id);
+                    var dept =  this.employee.departments ? this.employee.departments[0].name : "";
+                    var company =  this.employee.companies ? this.employee.companies[0].name : "";
+                    formData.append('dept_bu_position', dept  + '/' + company + '/' + this.employee.position);
+                    formData.append('contact_number',  this.employee.mobile_number);
+                    formData.append('temperature', form.temperature ? form.temperature  : "");
+                    formData.append('one_question', form.one_question ? form.one_question : "");
+                    formData.append('two_question', form.two_question ? form.two_question : "");
+                    formData.append('three_question', form.three_question ? form.three_question : "");
+                    formData.append('four_question', form.four_question ? form.four_question : "");
+                    formData.append('five_question', form.five_question ? form.five_question : "");
+                    formData.append('six_question', form.six_question ? form.six_question : "");
+                    formData.append('seven_question', form.seven_question ? form.seven_question : "");
+                    formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
+                    formData.append('eight_question', form.eight_question ? form.eight_question : "");
+                    
+                    axios.post(`/save-health-declaration`, 
+                        formData
+                    )
+                    .then(response => {
+                        var message = response.data;
+                        if(message == 'saved'){
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Successfully Checked.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            });
 
-                        this.clearForm();
+                            $('#checkModal').modal('hide');
+
+                            this.clearForm();
+                            this.loading = false;
+                        }
+                        else if(message == 'not_allowed'){
+                            Swal.fire({
+                                title: 'Warning!',
+                                text: 'You are not allowed to pass. Your access has been temporarily disabled.',
+                                icon: 'warning',
+                                confirmButtonText: 'Okay'
+                            });
+                            $('#checkModal').modal('hide');
+
+                            this.clearForm();
+                            this.loading = false;
                         
-                    }
-                    else if(message == 'not_allowed'){
+                        }
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data.errors;
+
                         Swal.fire({
                             title: 'Warning!',
-                            text: 'You are not allowed to pass. Your access has been temporary disabled.',
+                            text: 'Warning!',
                             icon: 'warning',
                             confirmButtonText: 'Okay'
                         });
-                        $('#checkModal').modal('hide');
 
-                        this.clearForm();
-                       
-                    }
-                })
-                .catch(error => {
-                    this.errors = error.response.data.errors;
-                })
+                        this.loading = false;
+                    })
+                }else{
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+
+                    this.loading = false;
+                }
             }   
         }
     }
