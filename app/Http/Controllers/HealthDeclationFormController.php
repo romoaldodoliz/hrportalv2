@@ -40,14 +40,6 @@ class HealthDeclationFormController extends Controller
                 }
                 $employees[$key]['name'] = $name;
                 $employees[$key]['user_id'] = $user_id;
-            
-                $card_access = $this->getCardAccess($user_id);
-
-                if($card_access['card_list']){
-                    $employees[$key]['card_access_blocked'] =  $card_access['card_list'][0]['is_blocked'];
-                }else{
-                    $employees[$key]['card_access_blocked'] = '';
-                }
             }
         }
 
