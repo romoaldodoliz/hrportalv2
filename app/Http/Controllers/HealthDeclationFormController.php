@@ -9,6 +9,7 @@ use App\HealthDeclarationForm;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ServerException;
 
 class HealthDeclationFormController extends Controller
 {
@@ -31,7 +32,6 @@ class HealthDeclationFormController extends Controller
             foreach($employees as $key => $employee){
                 $name = '';
                 $user_id = '';
-              
                 $employee_name = $employee['first_name'] . ' ' . $employee['last_name'];
                 $user =  $this->get_user($get_users, $employee_name);
                 foreach($user as $user_data){
@@ -40,6 +40,14 @@ class HealthDeclationFormController extends Controller
                 }
                 $employees[$key]['name'] = $name;
                 $employees[$key]['user_id'] = $user_id;
+
+                $card_access = $this->getCardAccess($user_id);
+
+                if($card_access['card_list']){
+                    $employees[$key]['card_access_blocked'] =  $card_access['card_list'][0]['is_blocked'];
+                }else{
+                    $employees[$key]['card_access_blocked'] = '';
+                }
             }
         }
 
@@ -98,9 +106,9 @@ class HealthDeclationFormController extends Controller
             
             
             if($yes_count > 1){
+
                 
                 $user_id = $data['user_id'];
-
                 $card_access = $this->getCardAccess($user_id);
 
                 if($card_access['card_list']){
@@ -212,12 +220,18 @@ class HealthDeclationFormController extends Controller
                 'user_id' => 'admin'
             ]
         ]);
+        $cards = [];
+        try{
+            $response = $client->request('POST', 'cards/' .$card_id . '/block' );
+            return $cards = json_decode($response->getBody(), true);
+        }catch(ServerException $e){
+            return $cards = [];
+        }
+        catch(RequestException $e){
+            return $cards = [];
+        }
 
-
-        $response = $client->request('POST', 'cards/' .$card_id . '/block' );
-
-        $cards = json_decode($response->getBody(), true);
-
+    
         return $cards;
 
     }
