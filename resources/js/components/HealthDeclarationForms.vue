@@ -292,6 +292,7 @@
                         $('#checkModal').modal('hide');
 
                         this.employee = [];
+                        this.form = [];
                     }
                     else if(message == 'not_allowed'){
                         Swal.fire({

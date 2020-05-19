@@ -13515,6 +13515,7 @@ __webpack_require__.r(__webpack_exports__);
           });
           $('#checkModal').modal('hide');
           _this2.employee = [];
+          _this2.form = [];
         } else if (message == 'not_allowed') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
