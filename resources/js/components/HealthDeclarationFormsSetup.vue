@@ -49,6 +49,14 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr v-if="table_loading">
+                                                <td colspan="15">
+                                                    <content-placeholders>
+                                                        <content-placeholders-text :lines="3" />
+                                                    </content-placeholders>
+                                                    <h4>Loading Employee Records.. Please wait a moment... </h4>
+                                                </td>
+                                            </tr>
                                             <tr v-for="(employee, u) in employees" v-bind:key="u">
                                                 <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
                                                 <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
@@ -158,7 +166,8 @@
                 employee: [],
                 errors: [],
                 forms: [],
-                loading : false
+                loading : false,
+                table_loading : false,
             }
         },
         created(){
@@ -181,15 +190,18 @@
             fetchEmployees(){
                 this.errors = []; 
                 this.employees = [];
+                this.table_loading = true; 
                 axios.post('/fetch-filter-employee-health', {
                     keyword: this.keyword
                 })
                 .then(response => {
                     this.employees = response.data;
+                    this.table_loading = false; 
                     
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.table_loading = false; 
                 })
             },
             checkEmployee(employee){

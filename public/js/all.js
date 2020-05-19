@@ -13757,6 +13757,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -13768,7 +13776,8 @@ __webpack_require__.r(__webpack_exports__);
       employee: [],
       errors: [],
       forms: [],
-      loading: false
+      loading: false,
+      table_loading: false
     };
   },
   created: function created() {},
@@ -13790,12 +13799,15 @@ __webpack_require__.r(__webpack_exports__);
 
       this.errors = [];
       this.employees = [];
+      this.table_loading = true;
       axios.post('/fetch-filter-employee-health', {
         keyword: this.keyword
       }).then(function (response) {
         _this2.employees = response.data;
+        _this2.table_loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
+        _this2.table_loading = false;
       });
     },
     checkEmployee: function checkEmployee(employee) {
@@ -76274,82 +76286,111 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.employees, function(employee, u) {
-                            return _c("tr", { key: u }, [
-                              _c("td", [
-                                _vm._v(
-                                  _vm._s(
-                                    employee.last_name +
-                                      ", " +
-                                      employee.first_name
+                          [
+                            _vm.table_loading
+                              ? _c("tr", [
+                                  _c(
+                                    "td",
+                                    { attrs: { colspan: "15" } },
+                                    [
+                                      _c(
+                                        "content-placeholders",
+                                        [
+                                          _c("content-placeholders-text", {
+                                            attrs: { lines: 3 }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c("h4", [
+                                        _vm._v(
+                                          "Loading Employee Records.. Please wait a moment... "
+                                        )
+                                      ])
+                                    ],
+                                    1
                                   )
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", [
-                                _vm._v(
-                                  _vm._s(
-                                    employee.departments[0]
-                                      ? employee.departments[0].name
-                                      : ""
-                                  ) +
-                                    " / " +
-                                    _vm._s(employee.position)
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", [
-                                _vm._v(_vm._s(employee.mobile_number))
-                              ]),
-                              _vm._v(" "),
-                              _c("td", [
-                                _vm._v(_vm._s(employee.card_access_blocked))
-                              ]),
-                              _vm._v(" "),
-                              _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-primary btn-sm",
-                                    staticStyle: { "font-size": "14px" },
-                                    attrs: {
-                                      type: "button",
-                                      "data-toggle": "modal",
-                                      "data-target": "#checkModal"
-                                    },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.checkEmployee(employee)
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm._l(_vm.employees, function(employee, u) {
+                              return _c("tr", { key: u }, [
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      employee.last_name +
+                                        ", " +
+                                        employee.first_name
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      employee.departments[0]
+                                        ? employee.departments[0].name
+                                        : ""
+                                    ) +
+                                      " / " +
+                                      _vm._s(employee.position)
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(_vm._s(employee.mobile_number))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(_vm._s(employee.card_access_blocked))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-primary btn-sm",
+                                      staticStyle: { "font-size": "14px" },
+                                      attrs: {
+                                        type: "button",
+                                        "data-toggle": "modal",
+                                        "data-target": "#checkModal"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.checkEmployee(employee)
+                                        }
                                       }
-                                    }
-                                  },
-                                  [_vm._v("Overide Access")]
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-primary btn-sm",
-                                    staticStyle: { "font-size": "14px" },
-                                    attrs: {
-                                      type: "button",
-                                      "data-toggle": "modal",
-                                      "data-target": "#viewFormsModal"
                                     },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.viewForms(employee)
+                                    [_vm._v("Overide Access")]
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-primary btn-sm",
+                                      staticStyle: { "font-size": "14px" },
+                                      attrs: {
+                                        type: "button",
+                                        "data-toggle": "modal",
+                                        "data-target": "#viewFormsModal"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.viewForms(employee)
+                                        }
                                       }
-                                    }
-                                  },
-                                  [_vm._v("View Forms")]
-                                )
+                                    },
+                                    [_vm._v("View Forms")]
+                                  )
+                                ])
                               ])
-                            ])
-                          }),
-                          0
+                            })
+                          ],
+                          2
                         )
                       ]
                     )
