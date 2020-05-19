@@ -257,6 +257,20 @@
             checkEmployee(employee){
                 this.employee = employee;
             },
+            clearForm(){
+                this.employee = [];
+                this.form = [];
+                this.form.temperature = "";
+                this.form.one_question = "";
+                this.form.two_question = "";
+                this.form.three_question = "";
+                this.form.four_question = "";
+                this.form.five_question = "";
+                this.form.six_question = "";
+                this.form.seven_question = "";
+                this.form.seven_yes_desc = "";
+                this.form.eight_question = "";
+            },
             saveCheckForm(form){
                 let formData = new FormData();
                  formData.append('employee_id',  this.employee.id);
@@ -291,8 +305,8 @@
 
                         $('#checkModal').modal('hide');
 
-                        this.employee = [];
-                        this.form = [];
+                        this.clearForm();
+                        
                     }
                     else if(message == 'not_allowed'){
                         Swal.fire({
@@ -303,7 +317,8 @@
                         });
                         $('#checkModal').modal('hide');
 
-                        this.employee = [];
+                        this.clearForm();
+                       
                     }
                 })
                 .catch(error => {

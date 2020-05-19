@@ -13483,6 +13483,20 @@ __webpack_require__.r(__webpack_exports__);
     checkEmployee: function checkEmployee(employee) {
       this.employee = employee;
     },
+    clearForm: function clearForm() {
+      this.employee = [];
+      this.form = [];
+      this.form.temperature = "";
+      this.form.one_question = "";
+      this.form.two_question = "";
+      this.form.three_question = "";
+      this.form.four_question = "";
+      this.form.five_question = "";
+      this.form.six_question = "";
+      this.form.seven_question = "";
+      this.form.seven_yes_desc = "";
+      this.form.eight_question = "";
+    },
     saveCheckForm: function saveCheckForm(form) {
       var _this2 = this;
 
@@ -13514,8 +13528,8 @@ __webpack_require__.r(__webpack_exports__);
             confirmButtonText: 'Okay'
           });
           $('#checkModal').modal('hide');
-          _this2.employee = [];
-          _this2.form = [];
+
+          _this2.clearForm();
         } else if (message == 'not_allowed') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
@@ -13524,7 +13538,8 @@ __webpack_require__.r(__webpack_exports__);
             confirmButtonText: 'Okay'
           });
           $('#checkModal').modal('hide');
-          _this2.employee = [];
+
+          _this2.clearForm();
         }
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
