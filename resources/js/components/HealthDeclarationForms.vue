@@ -81,6 +81,15 @@
                                 <h3>Contact Number: {{ employee.mobile_number}}</h3>
                                 <hr>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h4>Temperature</h4> 
+                                    <input type="text" class="form-control" v-model="form.temperature">
+                                    <br>
+                                    <span class="text-danger" v-if="errors.temperature">{{ errors.temperature[0] }}</span>
+                                </div>
+                                
+                            </div>
                             <div class="col-md-12 mb-3">
                                 <h4>1. Did you visit a hospital, clinic or medical health facility in the past 14 days?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
@@ -91,6 +100,8 @@
                                     <input type="radio" id="no1" name="one_question" class="custom-control-input" value="No" v-model="form.one_question">
                                     <label class="custom-control-label" for="no1">No</label>
                                 </div>
+                                <br>
+                                <span class="text-danger" v-if="errors.one_question">{{ errors.one_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <h4>2. In the last 14 days, did you have any of the following: fever, colds, cough, sore throat, aches and\ pains, nasal congestion, runny nose, diarrhea or difficulty in breathing?</h4>
@@ -102,6 +113,8 @@
                                     <input type="radio" id="no2" name="two_question" class="custom-control-input" value="No" v-model="form.two_question">
                                     <label class="custom-control-label" for="no2">No</label>
                                 </div>
+                                <br>
+                                <span class="text-danger" v-if="errors.two_question">{{ errors.two_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <h4>3. Do you have any of the following illnes:: Asthma, TB, Diabetes, Hypertension, Cardio Vascular Disease, Obesity or other that can compromise your immunity?</h4>
@@ -113,6 +126,8 @@
                                     <input type="radio" id="no3" name="three_question" class="custom-control-input" value="No" v-model="form.three_question">
                                     <label class="custom-control-label" for="no3">No</label>
                                 </div>
+                                <br>
+                                 <span class="text-danger" v-if="errors.three_question">{{ errors.three_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <h4>4. Any members of your household experience any of the symptoms in #2?</h4>
@@ -124,6 +139,8 @@
                                     <input type="radio" id="no4" name="four_question" class="custom-control-input" value="No" v-model="form.four_question">
                                     <label class="custom-control-label" for="no4">No</label>
                                 </div>
+                                <br>    
+                                 <span class="text-danger" v-if="errors.four_question">{{ errors.four_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <h4>5. Have you worked together or stayed in the same close environment of a confirmed COVID19 Case?</h4>
@@ -135,6 +152,8 @@
                                     <input type="radio" id="no5" name="five_question" class="custom-control-input" value="No" v-model="form.five_question">
                                     <label class="custom-control-label" for="no5">No</label>
                                 </div>
+                                <br>
+                                <span class="text-danger" v-if="errors.five_question">{{ errors.five_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <h4>6. Have you had any contacts with anyone with fever, colds, cough, sore throat, aches and pains, nasal congestion, runny nose, diarrhea or difficulty in breathing in the past 14 days?</h4>
@@ -146,11 +165,13 @@
                                     <input type="radio" id="no6" name="six_question" class="custom-control-input" value="No" v-model="form.six_question">
                                     <label class="custom-control-label" for="no6">No</label>
                                 </div>
+                                <br>
+                                <span class="text-danger" v-if="errors.six_question">{{ errors.six_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <h4>7. Have you travelled to any area in NCR aside from your home?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes" name="seven_question" class="custom-control-input" value="Yes" v-model="form.seven_question">
+                                    <input type="radio" id="yes7" name="seven_question" class="custom-control-input" value="Yes" v-model="form.seven_question">
                                     <label class="custom-control-label" for="yes7" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
@@ -160,18 +181,33 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <h4>If yes</h4> 
+                                        <h4>If yes, where?</h4> 
                                         <input type="text" class="form-control" v-model="form.seven_yes_desc">
                                     </div>
                                 </div>
+
+                                <br>
+                                <span class="text-danger" v-if="errors.seven_question">{{ errors.seven_question[0] }}</span>
+                                
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <h4>8. Was there any confirmed cases of COVID19 within your barangay?</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="yes8" name="eight_question" class="custom-control-input" value="Yes" v-model="form.eight_question">
+                                    <label class="custom-control-label" for="yes8" >Yes</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="no8" name="eight_question" class="custom-control-input" value="No" v-model="form.eight_question">
+                                    <label class="custom-control-label" for="no8">No</label>
+                                </div>
+                                <br>
+                                <span class="text-danger" v-if="errors.eight_question">{{ errors.eight_question[0] }}</span>
+
                                 <hr>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <h4>Temperature</h4> 
-                                    <input type="text" class="form-control" v-model="form.temperature">
-                                </div>
-                            </div>
+
+                           
                         </div>             
                     </div>
 
@@ -222,8 +258,57 @@
                 this.employee = employee;
             },
             saveCheckForm(form){
+                let formData = new FormData();
+                 formData.append('employee_id',  this.employee.id);
+                 formData.append('name',  this.employee.first_name + ' ' + this.employee.last_name);
+                 var dept =  this.employee.departments ? this.employee.departments[0].name : "";
+                 var company =  this.employee.companies ? this.employee.companies[0].name : "";
+                 formData.append('dept_bu_position', dept  + '/' + company + '/' + this.employee.position);
+                 formData.append('contact_number',  this.employee.mobile_number);
+                 formData.append('temperature', form.temperature ? form.temperature  : "");
+                 formData.append('one_question', form.one_question ? form.one_question : "");
+                 formData.append('two_question', form.two_question ? form.two_question : "");
+                 formData.append('three_question', form.three_question ? form.three_question : "");
+                 formData.append('four_question', form.four_question ? form.four_question : "");
+                 formData.append('five_question', form.five_question ? form.five_question : "");
+                 formData.append('six_question', form.six_question ? form.six_question : "");
+                 formData.append('seven_question', form.seven_question ? form.seven_question : "");
+                 formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
+                 formData.append('eight_question', form.eight_question ? form.eight_question : "");
+                
+                axios.post(`/save-health-declaration`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                    if(message == 'save'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Congratulations! Successfully Passed.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
 
-            }
+                        $('#checkModal').modal('hide');
+
+                        this.employee = [];
+                    }
+                    else if(message == 'not_allowed'){
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'You are not allowed to pass. Your access has been temporary disabled.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                        $('#checkModal').modal('hide');
+
+                        this.employee = [];
+                    }
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+            }   
         }
     }
 </script>

@@ -13416,6 +13416,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -13447,7 +13483,275 @@ __webpack_require__.r(__webpack_exports__);
     checkEmployee: function checkEmployee(employee) {
       this.employee = employee;
     },
-    saveCheckForm: function saveCheckForm(form) {}
+    saveCheckForm: function saveCheckForm(form) {
+      var _this2 = this;
+
+      var formData = new FormData();
+      formData.append('employee_id', this.employee.id);
+      formData.append('name', this.employee.first_name + ' ' + this.employee.last_name);
+      var dept = this.employee.departments ? this.employee.departments[0].name : "";
+      var company = this.employee.companies ? this.employee.companies[0].name : "";
+      formData.append('dept_bu_position', dept + '/' + company + '/' + this.employee.position);
+      formData.append('contact_number', this.employee.mobile_number);
+      formData.append('temperature', form.temperature ? form.temperature : "");
+      formData.append('one_question', form.one_question ? form.one_question : "");
+      formData.append('two_question', form.two_question ? form.two_question : "");
+      formData.append('three_question', form.three_question ? form.three_question : "");
+      formData.append('four_question', form.four_question ? form.four_question : "");
+      formData.append('five_question', form.five_question ? form.five_question : "");
+      formData.append('six_question', form.six_question ? form.six_question : "");
+      formData.append('seven_question', form.seven_question ? form.seven_question : "");
+      formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
+      formData.append('eight_question', form.eight_question ? form.eight_question : "");
+      axios.post("/save-health-declaration", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'save') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Congratulations! Successfully Passed.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+          _this2.employee = [];
+        } else if (message == 'not_allowed') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You are not allowed to pass. Your access has been temporary disabled.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+          _this2.employee = [];
+        }
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      keyword: '',
+      searchEmployees: [],
+      employees: [],
+      employee: [],
+      errors: [],
+      forms: []
+    };
+  },
+  created: function created() {},
+  methods: {
+    viewForms: function viewForms(employee) {
+      var _this = this;
+
+      this.forms = [];
+      axios.post('/fetch-form-list', {
+        employee_id: employee.id
+      }).then(function (response) {
+        _this.forms = response.data;
+      })["catch"](function (error) {
+        _this.errors = error.response.data.errors;
+      });
+    },
+    fetchEmployees: function fetchEmployees() {
+      var _this2 = this;
+
+      this.errors = [];
+      this.employees = [];
+      axios.post('/fetch-filter-employee-health', {
+        keyword: this.keyword
+      }).then(function (response) {
+        _this2.employees = response.data;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+      });
+    },
+    checkEmployee: function checkEmployee(employee) {
+      this.employee = employee;
+    },
+    saveCheckForm: function saveCheckForm(form) {
+      var _this3 = this;
+
+      var formData = new FormData();
+      formData.append('employee_id', this.employee.id);
+      axios.post("/save-health-declaration-overide", formData).then(function (response) {
+        var message = response.data;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Success!',
+          text: 'Employee has been successfully overide.',
+          icon: 'success',
+          confirmButtonText: 'Okay'
+        });
+        $('#checkModal').modal('hide');
+      })["catch"](function (error) {
+        _this3.errors = error.response.data.errors;
+      });
+    }
   }
 });
 
@@ -74700,6 +75004,46 @@ var render = function() {
                     _c("hr")
                   ]),
                   _vm._v(" "),
+                  _c("div", { staticClass: "col-md-4" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("h4", [_vm._v("Temperature")]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form.temperature,
+                            expression: "form.temperature"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.form.temperature },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.form,
+                              "temperature",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.temperature
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.temperature[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
                     _c("h4", [
                       _vm._v(
@@ -74793,7 +75137,15 @@ var render = function() {
                           [_vm._v("No")]
                         )
                       ]
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.one_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.one_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
@@ -74889,7 +75241,15 @@ var render = function() {
                           [_vm._v("No")]
                         )
                       ]
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.two_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.two_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
@@ -74985,7 +75345,15 @@ var render = function() {
                           [_vm._v("No")]
                         )
                       ]
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.three_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.three_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
@@ -75081,7 +75449,15 @@ var render = function() {
                           [_vm._v("No")]
                         )
                       ]
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.four_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.four_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
@@ -75177,7 +75553,15 @@ var render = function() {
                           [_vm._v("No")]
                         )
                       ]
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.five_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.five_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
@@ -75273,7 +75657,15 @@ var render = function() {
                           [_vm._v("No")]
                         )
                       ]
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.six_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.six_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12 mb-3" }, [
@@ -75302,7 +75694,7 @@ var render = function() {
                           staticClass: "custom-control-input",
                           attrs: {
                             type: "radio",
-                            id: "yes",
+                            id: "yes7",
                             name: "seven_question",
                             value: "Yes"
                           },
@@ -75373,7 +75765,7 @@ var render = function() {
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-4" }, [
                       _c("div", { staticClass: "form-group" }, [
-                        _c("h4", [_vm._v("If yes")]),
+                        _c("h4", [_vm._v("If yes, where?")]),
                         _vm._v(" "),
                         _c("input", {
                           directives: [
@@ -75403,39 +75795,119 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("hr")
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.seven_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.seven_question[0]))
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "col-md-4" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("h4", [_vm._v("Temperature")]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.temperature,
-                            expression: "form.temperature"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text" },
-                        domProps: { value: _vm.form.temperature },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                  _c("div", { staticClass: "col-md-12 mb-3" }, [
+                    _c("h4", [
+                      _vm._v(
+                        "8. Was there any confirmed cases of COVID19 within your barangay?"
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "custom-control custom-radio custom-control-inline ml-4"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.eight_question,
+                              expression: "form.eight_question"
                             }
-                            _vm.$set(
-                              _vm.form,
-                              "temperature",
-                              $event.target.value
-                            )
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            type: "radio",
+                            id: "yes8",
+                            name: "eight_question",
+                            value: "Yes"
+                          },
+                          domProps: {
+                            checked: _vm._q(_vm.form.eight_question, "Yes")
+                          },
+                          on: {
+                            change: function($event) {
+                              return _vm.$set(_vm.form, "eight_question", "Yes")
+                            }
                           }
-                        }
-                      })
-                    ])
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "yes8" }
+                          },
+                          [_vm._v("Yes")]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "custom-control custom-radio custom-control-inline"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.eight_question,
+                              expression: "form.eight_question"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            type: "radio",
+                            id: "no8",
+                            name: "eight_question",
+                            value: "No"
+                          },
+                          domProps: {
+                            checked: _vm._q(_vm.form.eight_question, "No")
+                          },
+                          on: {
+                            change: function($event) {
+                              return _vm.$set(_vm.form, "eight_question", "No")
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "no8" }
+                          },
+                          [_vm._v("No")]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
+                    _vm._v(" "),
+                    _vm.errors.eight_question
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(_vm._s(_vm.errors.eight_question[0]))
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("hr")
                   ])
                 ])
               ]),
@@ -75562,6 +76034,499 @@ var staticRenderFns = [
         },
         [_vm._v("HEALTH DECLARATION FORM")]
       )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true&":
+/*!******************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true& ***!
+  \******************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "container-fluid mt--7" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-xl-12 order-xl-1" }, [
+          _c("div", { staticClass: "card bg-secondary shadow  mb-5" }, [
+            _vm._m(1),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-lg-4" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { for: "role" } }, [
+                      _vm._v("Search Employee")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.keyword,
+                          expression: "keyword"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        placeholder: "Search Last Name / First Name"
+                      },
+                      domProps: { value: _vm.keyword },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.keyword = $event.target.value
+                        }
+                      }
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-lg-4" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary btn-md mt-4",
+                      attrs: { type: "button" },
+                      on: { click: _vm.fetchEmployees }
+                    },
+                    [_vm._v("Search")]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "table-responsive" }, [
+                  _c(
+                    "table",
+                    {
+                      staticClass: "table table-bordered",
+                      staticStyle: { "font-size": "14px" }
+                    },
+                    [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.employees, function(employee, u) {
+                          return _c("tr", { key: u }, [
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  employee.last_name +
+                                    ", " +
+                                    employee.first_name
+                                )
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  employee.departments[0]
+                                    ? employee.departments[0].name
+                                    : ""
+                                ) +
+                                  " / " +
+                                  _vm._s(
+                                    employee.companies[0]
+                                      ? employee.companies[0].name
+                                      : ""
+                                  ) +
+                                  " / " +
+                                  _vm._s(employee.position)
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(employee.mobile_number))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary btn-sm",
+                                  staticStyle: { "font-size": "14px" },
+                                  attrs: {
+                                    type: "button",
+                                    "data-toggle": "modal",
+                                    "data-target": "#checkModal"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.checkEmployee(employee)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Overide")]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary btn-sm",
+                                  staticStyle: { "font-size": "14px" },
+                                  attrs: {
+                                    type: "button",
+                                    "data-toggle": "modal",
+                                    "data-target": "#viewFormsModal"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.viewForms(employee)
+                                    }
+                                  }
+                                },
+                                [_vm._v("View Forms")]
+                              )
+                            ])
+                          ])
+                        }),
+                        0
+                      )
+                    ]
+                  )
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "checkModal",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true",
+          "data-backdrop": "static"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(3),
+              _vm._v(" "),
+              _vm._m(4),
+              _vm._v(" "),
+              _vm._m(5),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer text-center" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success btn-round btn-fill btn-lg",
+                    staticStyle: { width: "150px" },
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.saveCheckForm(_vm.form)
+                      }
+                    }
+                  },
+                  [_vm._v("YES")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary btn-round btn-fill btn-lg",
+                    staticStyle: { width: "150px" },
+                    attrs: { type: "button", "data-dismiss": "modal" }
+                  },
+                  [_vm._v("NO")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "viewFormsModal",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true",
+          "data-backdrop": "static"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass:
+              "modal-dialog modal-dialog-centered modal-lg modal-employee",
+            staticStyle: { width: "80%!important" },
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(6),
+              _vm._v(" "),
+              _vm._m(7),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "table-responsive" }, [
+                  _c(
+                    "table",
+                    {
+                      staticClass: "table table-bordered",
+                      staticStyle: { "font-size": "14px" }
+                    },
+                    [
+                      _vm._m(8),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.forms, function(form, u) {
+                          return _c("tr", { key: u }, [
+                            _c("td", [_vm._v(_vm._s(form.date_time))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.temperature))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.one_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.two_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.three_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.four_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.five_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.six_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.seven_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.eight_question))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(form.status))])
+                          ])
+                        }),
+                        0
+                      )
+                    ]
+                  )
+                ])
+              ])
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "header pb-8 pt-5 pt-lg-8 d-flex align-items-center",
+        staticStyle: {
+          "min-height": "300px",
+          "background-image": "url(/img/bg.jpg)",
+          "background-size": "cover",
+          "background-position": "center bottom"
+        }
+      },
+      [
+        _c("span", { staticClass: "mask bg-gradient-success opacity-7" }),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "container-fluid d-flex align-items-center" },
+          [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-lg-12 col-md-12" }, [
+                _c(
+                  "h1",
+                  { staticClass: "display-2 text-white text-uppercase" },
+                  [_vm._v("HEALTH DECLARATION FORM - USERS OVERIDE")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header bg-white border-0" }, [
+      _c("div", { staticClass: "row align-items-center" }, [
+        _c("div", { staticClass: "col-12" }, [
+          _c("h3", { staticClass: "mb-0 text-uppercase" }, [
+            _vm._v("Search Employee")
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Employee Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Department/BU/Position")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Contact Number")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Overide")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Forms")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h2",
+        {
+          staticClass: "col-12 modal-title text-center",
+          attrs: { id: "addCompanyLabel" }
+        },
+        [_vm._v("HEALTH DECLARATION FORM")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("h3", [
+        _vm._v("Are you sure you want to overide this employee to access?")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h2",
+        {
+          staticClass: "col-12 modal-title text-center",
+          attrs: { id: "addCompanyLabel" }
+        },
+        [_vm._v("HEALTH DECLARATION FORM - LIST")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Temperature")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("1")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("2")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("3")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("4")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("5")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("6")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("7")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("8")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")])
+      ])
     ])
   }
 ]
@@ -105890,6 +106855,7 @@ Vue.component('employeeid', __webpack_require__(/*! ./components/EmployeeId.vue 
 Vue.component('verifiedemployees', __webpack_require__(/*! ./components/VerifiedEmployees.vue */ "./resources/js/components/VerifiedEmployees.vue")["default"]);
 Vue.component('changepassword', __webpack_require__(/*! ./components/ChangePassword.vue */ "./resources/js/components/ChangePassword.vue")["default"]);
 Vue.component('health-declaration-forms', __webpack_require__(/*! ./components/HealthDeclarationForms.vue */ "./resources/js/components/HealthDeclarationForms.vue")["default"]);
+Vue.component('health-declaration-forms-set-up', __webpack_require__(/*! ./components/HealthDeclarationFormsSetup.vue */ "./resources/js/components/HealthDeclarationFormsSetup.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -106581,6 +107547,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationForms_vue_vue_type_template_id_6ae9a8fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationForms_vue_vue_type_template_id_6ae9a8fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/HealthDeclarationFormsSetup.vue":
+/*!*****************************************************************!*\
+  !*** ./resources/js/components/HealthDeclarationFormsSetup.vue ***!
+  \*****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _HealthDeclarationFormsSetup_vue_vue_type_template_id_610622de_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true& */ "./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true&");
+/* harmony import */ var _HealthDeclarationFormsSetup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./HealthDeclarationFormsSetup.vue?vue&type=script&lang=js& */ "./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _HealthDeclarationFormsSetup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _HealthDeclarationFormsSetup_vue_vue_type_template_id_610622de_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _HealthDeclarationFormsSetup_vue_vue_type_template_id_610622de_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "610622de",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/HealthDeclarationFormsSetup.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsSetup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./HealthDeclarationFormsSetup.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsSetup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true&":
+/*!************************************************************************************************************!*\
+  !*** ./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true& ***!
+  \************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsSetup_vue_vue_type_template_id_610622de_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsSetup.vue?vue&type=template&id=610622de&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsSetup_vue_vue_type_template_id_610622de_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsSetup_vue_vue_type_template_id_610622de_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

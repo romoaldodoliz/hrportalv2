@@ -17,6 +17,14 @@ Route::get('/', function () {
 
 Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
 Route::post('/fetch-filter-employee-health', 'HealthDeclationFormController@fetchEmployees');
+Route::post('/save-health-declaration', 'HealthDeclationFormController@saveDeclaration');
+
+Route::post('/save-health-declaration-overide', 'HealthDeclationFormController@saveDeclarationOveride');
+Route::get('/health_declaration_form_users_disable_set_up', 'HealthDeclationFormController@health_declaration_form_users_disable_set_up');
+
+Route::post('/fetch-form-list', 'HealthDeclationFormController@fetchFormList');
+
+Route::get('/user-access', 'HealthDeclationFormController@getUserAccess');
 
 Auth::routes();
 Route::get('logout', function(){

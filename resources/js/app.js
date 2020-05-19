@@ -40,6 +40,7 @@ Vue.component('changepassword', require('./components/ChangePassword.vue').defau
 
 
 Vue.component('health-declaration-forms', require('./components/HealthDeclarationForms.vue').default);
+Vue.component('health-declaration-forms-set-up', require('./components/HealthDeclarationFormsSetup.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
