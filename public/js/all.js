@@ -13530,6 +13530,7 @@ __webpack_require__.r(__webpack_exports__);
         formData.append('employee_id', this.employee.id);
         formData.append('name', this.employee.name);
         formData.append('user_id', this.employee.user_id);
+        formData.append('face_user_id', this.employee.face_user_id);
         var dept = this.employee.departments ? this.employee.departments[0].name : "";
         var company = this.employee.companies ? this.employee.companies[0].name : "";
         formData.append('dept_bu_position', dept + '/' + company + '/' + this.employee.position);
@@ -13765,6 +13766,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -13807,21 +13810,22 @@ __webpack_require__.r(__webpack_exports__);
         _this2.table_loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
-        _this2.table_loading = false;
       });
     },
     checkEmployee: function checkEmployee(employee) {
       this.employee = employee;
     },
-    saveCheckForm: function saveCheckForm(form) {
+    saveCheckForm: function saveCheckForm() {
       var _this3 = this;
 
-      if (this.employee.card_access_blocked == true) {
-        this.loading = true;
-        var formData = new FormData();
-        formData.append('employee_id', this.employee.id);
-        axios.post("/save-health-declaration-overide", formData).then(function (response) {
-          var message = response.data;
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('user_id', this.employee.user_id);
+      formData.append('face_user_id', this.employee.face_user_id);
+      axios.post("/save-health-declaration-overide", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'Overide') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Success!',
             text: 'Employee has been successfully overide.',
@@ -13829,20 +13833,21 @@ __webpack_require__.r(__webpack_exports__);
             confirmButtonText: 'Okay'
           });
           $('#checkModal').modal('hide');
-          _this3.loading = false;
-        })["catch"](function (error) {
-          _this3.errors = error.response.data.errors;
-          _this3.loading = false;
-        });
-      } else {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-          title: 'Warning!',
-          text: 'Cannot access overide.',
-          icon: 'warning',
-          confirmButtonText: 'Okay'
-        });
-        $('#checkModal').modal('hide');
-      }
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Cannot Overide',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+        }
+
+        _this3.loading = false;
+      })["catch"](function (error) {
+        _this3.errors = error.response.data.errors;
+        _this3.loading = false;
+      });
     }
   }
 });
@@ -76343,10 +76348,6 @@ var render = function() {
                                 ]),
                                 _vm._v(" "),
                                 _c("td", [
-                                  _vm._v(_vm._s(employee.card_access_blocked))
-                                ]),
-                                _vm._v(" "),
-                                _c("td", [
                                   _c(
                                     "button",
                                     {
@@ -76437,11 +76438,7 @@ var render = function() {
                       staticClass: "btn btn-success btn-round btn-fill btn-lg",
                       staticStyle: { width: "150px" },
                       attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          return _vm.saveCheckForm(_vm.form)
-                        }
-                      }
+                      on: { click: _vm.saveCheckForm }
                     },
                     [_vm._v("YES")]
                   ),
@@ -76605,8 +76602,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Department/Position")]),
         _vm._v(" "),
         _c("th", [_vm._v("Contact Number")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Card Access Blocked")]),
         _vm._v(" "),
         _c("th", [_vm._v("Overide Access")]),
         _vm._v(" "),

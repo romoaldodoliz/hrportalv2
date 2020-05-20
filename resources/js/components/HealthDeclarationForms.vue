@@ -303,6 +303,7 @@
                     formData.append('employee_id',  this.employee.id);
                     formData.append('name',  this.employee.name);
                     formData.append('user_id',  this.employee.user_id);
+                    formData.append('face_user_id',  this.employee.face_user_id);
                     var dept =  this.employee.departments ? this.employee.departments[0].name : "";
                     var company =  this.employee.companies ? this.employee.companies[0].name : "";
                     formData.append('dept_bu_position', dept  + '/' + company + '/' + this.employee.position);
