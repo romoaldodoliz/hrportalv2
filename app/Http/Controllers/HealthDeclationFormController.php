@@ -341,9 +341,10 @@ class HealthDeclationFormController extends Controller
             if($card_access['card_list']){
                 if($card_access['card_list'][0]['is_blocked'] == 'true'){
                     $disable_card_access = $this->enableCardAccess($card_access['card_list'][0]['id']);
+                    $overide = true;
                 }
             }
-            $overide = true;
+           
         }
         
         //Face Access
@@ -354,9 +355,10 @@ class HealthDeclationFormController extends Controller
             if($face_card_access['card_list']){
                 if($face_card_access['card_list'][0]['is_blocked'] == 'true'){
                     $disable_face_card_access = $this->enableFaceCardAccess($face_card_access['card_list'][0]['id']);
+                    $overide = true;
                 }
             }
-            $overide = true;
+           
         }
 
         if($overide == true){
