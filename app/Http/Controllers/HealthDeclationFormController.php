@@ -492,11 +492,16 @@ class HealthDeclationFormController extends Controller
             ]
         ]);
 
-
-        $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
-
-        $cards = json_decode($response->getBody(), true);
-
+        $cards = [];
+        try{
+            $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
+            return $cards = json_decode($response->getBody(), true);
+        }catch(ServerException $e){
+            return $cards = [];
+        }
+        catch(RequestException $e){
+            return $cards = [];
+        }    
         return $cards;
 
     }

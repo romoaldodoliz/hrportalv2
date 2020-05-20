@@ -13824,6 +13824,7 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('face_user_id', this.employee.face_user_id);
       axios.post("/save-health-declaration-overide", formData).then(function (response) {
         var message = response.data;
+        console.log(message);
 
         if (message == 'Overide') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({

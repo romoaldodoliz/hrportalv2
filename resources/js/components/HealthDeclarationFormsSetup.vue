@@ -221,7 +221,7 @@
                 )
                 .then(response => {
                     var message = response.data;
-
+                    console.log(message);
                     if(message == 'Overide'){
                         Swal.fire({
                             title: 'Success!',
