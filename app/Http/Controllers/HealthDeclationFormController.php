@@ -123,10 +123,6 @@ class HealthDeclationFormController extends Controller
                 $yes_count++;
             }
 
-            if($data['seven_question'] == 'Yes'){
-                $yes_count++;
-            }
-
             if($data['eight_question'] == 'Yes'){
                 $yes_count++;
             }
