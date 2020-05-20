@@ -26,6 +26,9 @@ Route::post('/fetch-form-list', 'HealthDeclationFormController@fetchFormList');
 
 Route::get('/user-access', 'HealthDeclationFormController@getUserAccess');
 
+Route::get('/face-user-access', 'HealthDeclationFormController@fetchFaceUserAccess');
+
+
 Auth::routes();
 Route::get('logout', function(){
     return redirect('/');

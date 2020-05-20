@@ -43,7 +43,8 @@
                                                 <th>Employee Name</th>
                                                 <th>Department/Position</th>
                                                 <th>Contact Number</th>
-                                                <th>Card Access Blocked</th>
+                                                <!-- <th>Card Access is Blocked</th>
+                                                <th>Face Access is Blocked</th> -->
                                                 <th>Overide Access</th>
                                                 <th>Forms</th>
                                             </tr>
@@ -61,7 +62,8 @@
                                                 <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
                                                 <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
                                                 <td>{{ employee.mobile_number}}</td>
-                                                 <td>{{ employee.card_access_blocked }}</td>
+                                                 <!-- <td>{{ employee.card_access_blocked }}</td>
+                                                 <td>{{ employee.face_access_blocked }}</td> -->
                                                 <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Overide Access</button></td>
                                                 <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewForms(employee)" data-toggle="modal" data-target="#viewFormsModal" >View Forms</button></td>
                                             </tr>
@@ -91,7 +93,7 @@
                     </div>
 
                     <div class="modal-footer text-center">
-                        <button  type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveCheckForm(form)" style="width:150px;">YES</button>
+                        <button  type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveCheckForm" style="width:150px;">YES</button>
                         <button type="button" class="btn btn-primary btn-round btn-fill btn-lg" data-dismiss="modal" style="width:150px;" >NO</button>
                     </div>
 
@@ -201,49 +203,49 @@
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.table_loading = false; 
                 })
             },
             checkEmployee(employee){
                 this.employee = employee;
             },
-            saveCheckForm(form){
-                if(this.employee.card_access_blocked == true){
+            saveCheckForm(){
+            
+                this.loading = true;
 
-                    this.loading = true;
+                let formData = new FormData();
+                formData.append('user_id',  this.employee.user_id);
+                    formData.append('face_user_id',  this.employee.face_user_id);
+                
+                axios.post(`/save-health-declaration-overide`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
 
-                    let formData = new FormData();
-                    formData.append('employee_id',  this.employee.id);
-                    
-                    axios.post(`/save-health-declaration-overide`, 
-                        formData
-                    )
-                    .then(response => {
-                        var message = response.data;
+                    if(message == 'Overide'){
                         Swal.fire({
-                                title: 'Success!',
-                                text: 'Employee has been successfully overide.',
-                                icon: 'success',
-                                confirmButtonText: 'Okay'
-                            });
+                            title: 'Success!',
+                            text: 'Employee has been successfully overide.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
                         $('#checkModal').modal('hide');
-                        this.loading = false;
-                    })
-                    .catch(error => {
-                        this.errors = error.response.data.errors;
-                        this.loading = false;
-                    })
-
-                }else{
-                    Swal.fire({
-                        title: 'Warning!',
-                        text: 'Cannot access overide.',
-                        icon: 'warning',
-                        confirmButtonText: 'Okay'
-                    });
-
-                    $('#checkModal').modal('hide'); 
-                }
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Cannot Overide',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                        $('#checkModal').modal('hide');   
+                    }
+                    
+                    this.loading = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
             }   
         }
     }

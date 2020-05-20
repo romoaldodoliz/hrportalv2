@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Employee;
 use App\HealthDeclarationForm;
+use App\RfidUser;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -27,29 +28,56 @@ class HealthDeclationFormController extends Controller
                             ->get();
 
         if($employees){
-            $get_users = $this->getUserAccess();
+            $get_rfid_users = RfidUser::first();
+            $get_users = json_decode($get_rfid_users['door_users'],true);
+            $get_face_users = json_decode($get_rfid_users['face_users'],true);
             
             foreach($employees as $key => $employee){
                 $name = '';
                 $user_id = '';
+                $face_name = '';
+                $face_user_id = '';
+
                 $employee_name = $employee['first_name'] . ' ' . $employee['last_name'];
                 $user =  $this->get_user($get_users, $employee_name);
+                $face_user =  $this->get_user($get_face_users, $employee_name);
+
                 foreach($user as $user_data){
                     $name = $user_data['name'];
                     $user_id = $user_data['user_id'];
                 }
+                foreach($face_user as $user_data){
+                    $face_name = $user_data['name'];
+                    $face_user_id = $user_data['user_id'];
+                }
                 $employees[$key]['name'] = $name;
                 $employees[$key]['user_id'] = $user_id;
+                $employees[$key]['face_name'] = $face_name;
+                $employees[$key]['face_user_id'] = $face_user_id;
 
-                if($user_id){
-                    $card_access = $this->getCardAccess($user_id);
+                //Get Door Access if  Blocked
+                // if($user_id){
+                //     $card_access = $this->getCardAccess($user_id);
 
-                    if($card_access['card_list']){
-                        $employees[$key]['card_access_blocked'] =  $card_access['card_list'][0]['is_blocked'];
-                    }else{
-                        $employees[$key]['card_access_blocked'] = '';
-                    }
-                }
+                //     if($card_access['card_list']){
+                //         $employees[$key]['card_access_blocked'] =  $card_access['card_list'][0]['is_blocked'];
+                //     }else{
+                //         $employees[$key]['card_access_blocked'] = '';
+                //     }
+                // }
+
+                //Get Door Access if  Blocked
+                // if($face_user_id){
+                //     $face_access = $this->getFaceCardAccess($face_user_id);
+
+                //     if($face_access['card_list']){
+                //         $employees[$key]['face_access_blocked'] =  $face_access['card_list'][0]['is_blocked'];
+                //     }else{
+                //         $employees[$key]['face_access_blocked'] = '';
+                //     }
+                // }
+
+
             }
         }
 
@@ -109,13 +137,30 @@ class HealthDeclationFormController extends Controller
             
             if($yes_count > 1){
 
-                
-                $user_id = $data['user_id'];
-                $card_access = $this->getCardAccess($user_id);
+                //Door Access
+                if($data['user_id']){
+                    $user_id = $data['user_id'];
+                    $card_access = $this->getCardAccess($user_id);
 
-                if($card_access['card_list']){
-                    $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id']);
+                    if($card_access['card_list']){
+                        if($card_access['card_list'][0]['is_blocked'] == false){
+                            $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id']);
+                        }
+                    }
                 }
+
+                //Face Access
+                if($data['face_user_id']){
+                    $face_user_id = $data['face_user_id'];
+                    $face_card_access = $this->getFaceCardAccess($face_user_id);
+
+                    if($face_card_access['card_list']){
+                        if($face_card_access['card_list'][0]['is_blocked'] == false){
+                            $disable_face_card_access = $this->disableFaceCardAccess($face_card_access['card_list'][0]['id']);
+                        }
+                    }
+                }
+                
 
                 $data['status'] = 'Not Allowed';
                 HealthDeclarationForm::create($data);
@@ -150,7 +195,7 @@ class HealthDeclationFormController extends Controller
         return $result;
     }
 
-
+    //DOOR ACCESS
     public function getUserAccess(){
 
         $client = new Client();
@@ -168,7 +213,7 @@ class HealthDeclationFormController extends Controller
             ]
         ]);
 
-        $response = $client->request('GET', 'users?limit=10000&offset=10');
+        $response = $client->request('GET', 'users?limit=10000&offset=0');
 
         $users = json_decode($response->getBody(), true);
         
@@ -179,6 +224,19 @@ class HealthDeclationFormController extends Controller
                 $user_data[$key]['user_id'] = $user['user_id'];
             }
         }
+
+        $check_rfid_user = RfidUser::orderBy('created_at','DESC')->first();
+
+        if($check_rfid_user){
+            $data = [];
+            $data['door_users'] = json_encode($user_data);
+            $check_rfid_user->update($data);
+        }else{
+            $data = [];
+            $data['door_users'] = json_encode($user_data);
+            RfidUser::create($data);
+        }
+
         return $user_data;
     }
 
@@ -238,7 +296,6 @@ class HealthDeclationFormController extends Controller
 
     }
 
-
     public function enableCardAccess($card_id){
 
         $client = new Client();
@@ -256,45 +313,63 @@ class HealthDeclationFormController extends Controller
             ]
         ]);
 
-
-        $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
-
-        $cards = json_decode($response->getBody(), true);
+        try{        
+            $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
+            return $cards = json_decode($response->getBody(), true);
+        }catch(ServerException $e){
+            return $cards = [];
+        }
+        catch(RequestException $e){
+            return $cards = [];
+        }
 
         return $cards;
 
     }
 
+    //SAVING OVERIDE ACCESS
     public function health_declaration_form_users_disable_set_up(){
         return view('health_declartion_form.health_declaration_form_users_disable_set_up');
     }
 
     public function saveDeclarationOveride(Request $request){
-        $employee_id = $request->employee_id;
 
-        $employee = Employee::where('id',$employee_id)->first();
+        $data = $request->all();
 
+        //Door Access
+        $overide = false;
+        if($data['face_user_id']){
+            $user_id = $data['user_id'];
+            $card_access = $this->getCardAccess($user_id);
 
-        $get_users = $this->getUserAccess();
-        
-        $name = $employee['first_name'] . ' ' . $employee['last_name'];
-        $user =  $this->get_user($get_users, $name);
-        if($user){
-            $user_id = "";
-            foreach($user as $user_data){
-                $user_id = $user_data['user_id'];
+            if($card_access['card_list']){
+                if($card_access['card_list'][0]['is_blocked'] == 'true'){
+                    $disable_card_access = $this->enableCardAccess($card_access['card_list'][0]['id']);
+                }
             }
-        }
-
-        $card_access = $this->getCardAccess($user_id);
-
-        if($card_access['card_list']){
-            $enable_card_access = $this->enableCardAccess($card_access['card_list'][0]['id']);
+            $overide = true;
         }
         
-        return $employee;
-    }
+        //Face Access
+        if($data['face_user_id']){
+            $face_user_id = $data['face_user_id'];
+            $face_card_access = $this->getFaceCardAccess($face_user_id);
 
+            if($face_card_access['card_list']){
+                if($face_card_access['card_list'][0]['is_blocked'] == 'true'){
+                    $disable_face_card_access = $this->enableFaceCardAccess($face_card_access['card_list'][0]['id']);
+                }
+            }
+            $overide = true;
+        }
+
+        if($overide == true){
+            return 'Overide';
+        }else{
+            return 'Cannot Overide';
+        }
+        
+    }
 
     public function fetchFormList(Request $request){
         $employee_id = $request->employee_id;
@@ -304,6 +379,131 @@ class HealthDeclationFormController extends Controller
         return $employees;
     }
 
+
+    //FACE ID ACCESS
+    public function fetchFaceUserAccess(){
+        $client_face = new Client();
+
+        $client_face = new Client([
+            'base_uri' => 'http://10.96.4.61:8795/v2/',
+            'cookies' => true,
+        ]);
+
+        $client_face->request('POST', 'login', [
+            'json' => [
+                'name' => 'fcovid19',
+                'password' => '$upr3m@!',
+                'user_id' => 'admin'
+            ]
+        ]);
+
+        $response = $client_face->request('GET', 'users?limit=10000&offset=0');
+
+        $users = json_decode($response->getBody(), true);
+        // return $users;
+        $user_data = [];
+        if($users){
+            foreach($users['records'] as $key => $user){
+                $user_data[$key]['name'] = $user['name'];
+                $user_data[$key]['user_id'] = $user['user_id'];
+            }
+        }
+
+        $check_rfid_user = RfidUser::orderBy('created_at','DESC')->first();
+
+        if($check_rfid_user){
+            $data = [];
+            $data['face_users'] = json_encode($user_data);
+            $check_rfid_user->update($data);
+        }else{
+            $data = [];
+            $data['face_users'] = json_encode($user_data);
+            RfidUser::create($data);
+        }
+        return $user_data;
+    }
+
+    public function getFaceCardAccess($user_id){
+
+        $client = new Client();
+
+        $client = new Client([
+            'base_uri' => 'http://10.96.4.61:8795/v2/',
+            'cookies' => true,
+        ]);
+
+        $client->request('POST', 'login', [
+            'json' => [
+                'name' => 'fcovid19',
+                'password' => '$upr3m@!',
+                'user_id' => 'admin'
+            ]
+        ]);
+
+        $response = $client->request('GET', 'users/' . $user_id . '/cards');
+
+        $cards = json_decode($response->getBody(), true);
+
+        return $cards;
+    }
+
+    public function disableFaceCardAccess($card_id){
+
+        $client = new Client();
+
+        $client = new Client([
+            'base_uri' => 'http://10.96.4.61:8795/v2/',
+            'cookies' => true,
+        ]);
+
+        $client->request('POST', 'login', [
+            'json' => [
+                'name' => 'fcovid19',
+                'password' => '$upr3m@!',
+                'user_id' => 'admin'
+            ]
+        ]);
+        $cards = [];
+        try{
+            $response = $client->request('POST', 'cards/' .$card_id . '/block' );
+            return $cards = json_decode($response->getBody(), true);
+        }catch(ServerException $e){
+            return $cards = [];
+        }
+        catch(RequestException $e){
+            return $cards = [];
+        }
+
     
+        return $cards;
+
+    }
+
+    public function enableFaceCardAccess($card_id){
+
+        $client = new Client();
+
+        $client = new Client([
+            'base_uri' => 'http://10.96.4.61:8795/v2/',
+            'cookies' => true,
+        ]);
+
+        $client->request('POST', 'login', [
+            'json' => [
+                'name' => 'fcovid19',
+                'password' => '$upr3m@!',
+                'user_id' => 'admin'
+            ]
+        ]);
+
+
+        $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
+
+        $cards = json_decode($response->getBody(), true);
+
+        return $cards;
+
+    }
+
 
 }
