@@ -227,11 +227,13 @@ class HealthDeclationFormController extends Controller
                 // }
                 
 
-                $data['status'] = 'Not Allowed';
+                
                
                 $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
 
                 if(empty($check_hdf_employee)){
+                    $data['status'] = 'Not Allowed';
+
                     $hdf_employee = [];
                     $hdf_employee['employee_id'] = $data['employee_id'];
                     $hdf_employee['name'] = $data['name'];
@@ -244,9 +246,13 @@ class HealthDeclationFormController extends Controller
                     $send_message = $this->send_message($data['name'],"not_allowed");
 
                     HealthDeclarationForm::create($data);
+
+                    return 'not_allowed';
+                }else{
+                    return 'warning';
                 }
 
-                return 'not_allowed';
+               
             }else{
                 $data['status'] = 'Allowed';
 
@@ -263,10 +269,12 @@ class HealthDeclationFormController extends Controller
                     HdfEmployee::create($hdf_employee);
 
                     HealthDeclarationForm::create($data);
-                }
 
+                    return 'saved';
+                }else{
+                    return 'warning';
+                }
                 
-                return 'saved';
             }
             
         }else{
@@ -300,11 +308,21 @@ class HealthDeclationFormController extends Controller
         $data = $request->all();
         if($data['user_id']){
             $user_id = $data['user_id'];
+            $employee_id = $data['employee_id'];
+            $name = $data['name'];
             
             $card_access = $this->getCardAccess($user_id);
             if($card_access['card_list']){
                 if($card_access['card_list'][0]['is_blocked'] == true){
-                    $enable_card_access = $this->enableCardAccess($card_access['card_list'][0]['id']);
+                    $enable_card_access = $this->enableCardAccess($card_access['card_list'][0]['id'],$name);
+
+                    $check_hdf_employee = HdfEmployee::where('employee_id',$employee_id)->whereDate('created_at',date('Y-m-d'))->first();
+                    if($check_hdf_employee){
+                        $hdf_employee = [];
+                        $hdf_employee['status'] = 'Allowed : Overide';
+                        $check_hdf_employee->update($hdf_employee);
+                    }
+
                     return 'Overide';
                 }else{
                     return 'Not';
@@ -321,11 +339,21 @@ class HealthDeclationFormController extends Controller
         $data = $request->all();
         if($data['user_id']){
             $user_id = $data['user_id'];
+            $employee_id = $data['employee_id'];
+            $name = $data['name'];
             
             $card_access = $this->getCardAccess($user_id);
             if($card_access['card_list']){
                 if($card_access['card_list'][0]['is_blocked'] == false){
-                    $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id']);
+                    $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id'], $name);
+
+                    $check_hdf_employee = HdfEmployee::where('employee_id',$employee_id)->whereDate('created_at',date('Y-m-d'))->first();
+                    if($check_hdf_employee){
+                        $hdf_employee = [];
+                        $hdf_employee['status'] = 'Not Allowed : Go Home';
+                        $check_hdf_employee->update($hdf_employee);
+                    }
+
                     return 'Overide';
                 }else{
                     return 'Not';
@@ -406,7 +434,7 @@ class HealthDeclationFormController extends Controller
         return $cards;
     }
 
-    public function disableCardAccess($card_id){
+    public function disableCardAccess($card_id,$name){
 
         $client = new Client();
 
@@ -425,6 +453,9 @@ class HealthDeclationFormController extends Controller
         $cards = [];
         try{
             $response = $client->request('POST', 'cards/' .$card_id . '/block' );
+
+            $send_message = $this->send_message($name,"door_not_allowed");
+
             return $cards = json_decode($response->getBody(), true);
         }catch(ServerException $e){
             return $cards = [];
@@ -438,7 +469,7 @@ class HealthDeclationFormController extends Controller
 
     }
 
-    public function enableCardAccess($card_id){
+    public function enableCardAccess($card_id,$name){
 
         $client = new Client();
 
@@ -457,6 +488,9 @@ class HealthDeclationFormController extends Controller
 
         try{        
             $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
+
+            $send_message = $this->send_message($name,"door_allowed");
+
             return $cards = json_decode($response->getBody(), true);
         }catch(ServerException $e){
             return $cards = [];
@@ -528,13 +562,27 @@ class HealthDeclationFormController extends Controller
     public function enableFaceAccessOveride(Request $request){
 
         $data = $request->all();
+
+        
+
         if($data['face_user_id']){
             $face_user_id = $data['face_user_id'];
-            
+            $employee_id = $data['employee_id'];
+            $name = $data['name'];
+
             $card_access = $this->getFaceCardAccess($face_user_id);
+
             if($card_access['card_list']){
+
                 if($card_access['card_list'][0]['is_blocked'] == true){
-                    $enable_card_access = $this->enableFaceCardAccess($card_access['card_list'][0]['id']);
+                    $enable_card_access = $this->enableFaceCardAccess($card_access['card_list'][0]['id'],$name);
+                    $check_hdf_employee = HdfEmployee::where('employee_id',$employee_id)->whereDate('created_at',date('Y-m-d'))->first();
+                    if($check_hdf_employee){
+                        $hdf_employee = [];
+                        $hdf_employee['status'] = 'Allowed : Overide';
+                        $check_hdf_employee->update($hdf_employee);
+                    }
+
                     return 'Overide';
                 }else{
                     return 'Not';
@@ -546,16 +594,30 @@ class HealthDeclationFormController extends Controller
             return 'Not';
         }
     }
+
     public function disableFaceAccessOveride(Request $request){
 
         $data = $request->all();
+
+
         if($data['face_user_id']){
             $face_user_id = $data['face_user_id'];
-            
+            $employee_id = $data['employee_id'];
+            $name = $data['name'];
+
             $card_access = $this->getFaceCardAccess($face_user_id);
-            if($card_access['card_list']){
+
+            if($card_access['card_list']){              
                 if($card_access['card_list'][0]['is_blocked'] == false){
-                    $disable_card_access = $this->disableFaceCardAccess($card_access['card_list'][0]['id']);
+                    $disable_card_access = $this->disableFaceCardAccess($card_access['card_list'][0]['id'],$name);
+
+                    $check_hdf_employee = HdfEmployee::where('employee_id',$employee_id)->whereDate('created_at',date('Y-m-d'))->first();
+                    if($check_hdf_employee){
+                        $hdf_employee = [];
+                        $hdf_employee['status'] = 'Not Allowed : Go Home';
+                        $check_hdf_employee->update($hdf_employee);
+                    }
+
                     return 'Overide';
                 }else{
                     return 'Not';
@@ -567,6 +629,7 @@ class HealthDeclationFormController extends Controller
             return 'Not';
         }
     }
+
     public function fetchFaceUserAccess(){
         $client_face = new Client();
 
@@ -623,7 +686,9 @@ class HealthDeclationFormController extends Controller
                 'name' => 'fcovid19',
                 'password' => '$upr3m@!',
                 'user_id' => 'admin'
-            ]
+            ],
+            ['timeout' => 60],
+            ['delay' => 10000]
         ]);
 
         $response = $client->request('GET', 'users/' . $user_id . '/cards');
@@ -633,7 +698,7 @@ class HealthDeclationFormController extends Controller
         return $cards;
     }
 
-    public function disableFaceCardAccess($card_id){
+    public function disableFaceCardAccess($card_id,$name){
 
         $client = new Client();
 
@@ -647,11 +712,16 @@ class HealthDeclationFormController extends Controller
                 'name' => 'fcovid19',
                 'password' => '$upr3m@!',
                 'user_id' => 'admin'
-            ]
+            ],
+            ['timeout' => 60],
+            ['delay' => 10000]
         ]);
         $cards = [];
         try{
             $response = $client->request('POST', 'cards/' .$card_id . '/block' );
+
+            $send_message = $this->send_message($name,"face_not_allowed");
+
             return $cards = json_decode($response->getBody(), true);
         }catch(ServerException $e){
             return $cards = [];
@@ -665,7 +735,7 @@ class HealthDeclationFormController extends Controller
 
     }
 
-    public function enableFaceCardAccess($card_id){
+    public function enableFaceCardAccess($card_id,$name){
 
         $client = new Client();
 
@@ -679,13 +749,16 @@ class HealthDeclationFormController extends Controller
                 'name' => 'fcovid19',
                 'password' => '$upr3m@!',
                 'user_id' => 'admin'
-            ]
+            ],
+            ['timeout' => 60],
+            ['delay' => 10000]
         ]);
 
         $cards = [];
         try{
             $response = $client->request('POST', 'cards/' .$card_id . '/unblock' );
 
+            $send_message = $this->send_message($name,"face_allowed");
 
             return $cards = json_decode($response->getBody(), true);
 
@@ -702,36 +775,47 @@ class HealthDeclationFormController extends Controller
     public function send_message($name,$message){
 
         $httpClient = new Client(); 
+
         if($message == 'not_allowed'){
             $message_data = "Attention: " . $name . ' is not allowed to pass. - ('.date('m/d/Y').')';    
+        }else if($message == 'door_allowed'){
+            $message_data = "Attention: " . $name . ' door access successfully enabled. - ('.date('m/d/Y').')';    
+        }else if($message == 'door_not_allowed'){
+            $message_data = "Attention: " . $name . ' door access successfully disabled. - ('.date('m/d/Y').')';    
+        }else if($message == 'face_allowed'){
+            $message_data = "Attention: " . $name . ' face access successfully enabled. - ('.date('m/d/Y').')';    
+        }else if($message == 'face_not_allowed'){
+            $message_data = "Attention: " . $name . ' face access successfully disabled. - ('.date('m/d/Y').')';    
         }else{
             $message_data = "";
         }     
         
-        $body = [
-            'roomId' => "Y2lzY29zcGFyazovL3VzL1JPT00vMzIzMDY1OTAtOWE1ZC0xMWVhLThiNjktYzFjN2Q4MDQxODBm",
-            'text' => $message_data
-        ];
+        if($message_data){
+            $body = [
+                'roomId' => "Y2lzY29zcGFyazovL3VzL1JPT00vMzIzMDY1OTAtOWE1ZC0xMWVhLThiNjktYzFjN2Q4MDQxODBm",
+                'text' => $message_data
+            ];
 
-        try{
-            $response = $httpClient->post(
-                'https://api.ciscospark.com/v1/messages',
-                [
-                    RequestOptions::BODY => json_encode($body),
-                    RequestOptions::HEADERS => [
-                        'Content-Type' => 'application/json',
-                        'Authorization' => 'Bearer NWNiZjI4YTgtOGViZS00NGMxLWFhMTUtOGU3YTdjOWZjMWQ4ODc0Mjg0YmUtNjUy_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
-                    ],
-                ]
-            );
+            try{
+                $response = $httpClient->post(
+                    'https://api.ciscospark.com/v1/messages',
+                    [
+                        RequestOptions::BODY => json_encode($body),
+                        RequestOptions::HEADERS => [
+                            'Content-Type' => 'application/json',
+                            'Authorization' => 'Bearer NWNiZjI4YTgtOGViZS00NGMxLWFhMTUtOGU3YTdjOWZjMWQ4ODc0Mjg0YmUtNjUy_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
+                        ],
+                    ]
+                );
 
-           return 'sent';
+            return 'sent';
 
-        }catch(ServerException $e){
-            return 'not';
-        }
-        catch(RequestException $e){
-            return 'not';
+            }catch(ServerException $e){
+                return 'not';
+            }
+            catch(RequestException $e){
+                return 'not';
+            }
         }
     }
 
