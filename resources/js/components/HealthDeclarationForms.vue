@@ -221,7 +221,7 @@
                     </div>
 
                     <div class="modal-footer text-center">
-                        <button id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveCheckForm(form)" style="width:150px;">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveCheckForm(form)" style="width:150px;">Check</button>
                     </div>
 
                 </div>
@@ -349,6 +349,17 @@
                             this.clearForm();
                             this.loading = false;
                         
+                        }else{
+                             Swal.fire({
+                                title: 'Error!',
+                                text: 'Unable to saved.',
+                                icon: 'warning',
+                                confirmButtonText: 'Okay'
+                            });
+                            $('#checkModal').modal('hide');
+
+                            this.clearForm();
+                            this.loading = false;
                         }
                     })
                     .catch(error => {

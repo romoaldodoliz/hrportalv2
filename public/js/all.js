@@ -13572,6 +13572,18 @@ __webpack_require__.r(__webpack_exports__);
             _this2.clearForm();
 
             _this2.loading = false;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+              title: 'Error!',
+              text: 'Unable to saved.',
+              icon: 'warning',
+              confirmButtonText: 'Okay'
+            });
+            $('#checkModal').modal('hide');
+
+            _this2.clearForm();
+
+            _this2.loading = false;
           }
         })["catch"](function (error) {
           _this2.errors = error.response.data.errors;
@@ -13857,6 +13869,8 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       var formData = new FormData();
       formData.append('user_id', employee.user_id);
+      formData.append('employee_id', employee.employee_id);
+      formData.append('name', employee.name);
       axios.post("/enable-door-access-overide", formData).then(function (response) {
         var message = response.data;
         console.log(message);
@@ -13889,6 +13903,8 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       var formData = new FormData();
       formData.append('user_id', employee.user_id);
+      formData.append('employee_id', employee.employee_id);
+      formData.append('name', employee.name);
       axios.post("/disable-door-access-overide", formData).then(function (response) {
         var message = response.data;
         console.log(message);
@@ -13921,6 +13937,8 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       var formData = new FormData();
       formData.append('face_user_id', employee.face_user_id);
+      formData.append('employee_id', employee.employee_id);
+      formData.append('name', employee.name);
       axios.post("/enable-face-access-overide", formData).then(function (response) {
         var message = response.data;
         console.log(message);
@@ -13953,6 +13971,8 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       var formData = new FormData();
       formData.append('face_user_id', employee.face_user_id);
+      formData.append('employee_id', employee.employee_id);
+      formData.append('name', employee.name);
       axios.post("/disable-face-access-overide", formData).then(function (response) {
         var message = response.data;
         console.log(message);
@@ -76249,7 +76269,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("Save")]
+                    [_vm._v("Check")]
                   )
                 ])
               ])
@@ -76399,7 +76419,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
                 _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-lg-4" }, [
+                  _c("div", { staticClass: "col-lg-3" }, [
                     _c("div", { staticClass: "form-group" }, [
                       _c("label", { attrs: { for: "role" } }, [
                         _vm._v("Search Employee")
@@ -76438,7 +76458,7 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "col-lg-4" }, [
+                  _c("div", { staticClass: "col-lg-8" }, [
                     _c(
                       "button",
                       {

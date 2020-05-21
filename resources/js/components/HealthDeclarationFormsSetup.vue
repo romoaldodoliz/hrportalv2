@@ -27,14 +27,14 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-3">
                                     <div class="form-group">
                                         <label for="role">Search Employee</label> 
                                         <input type="text"  class="form-control" v-model="keyword" placeholder="Search Last Name / First Name">
                                         <span class="text-danger" v-if="errors.keyword">{{ errors.keyword[0] }}</span>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-8">
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="fetchEmployees">Search</button>
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshDoorUsers">Refresh Door User</button>
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshFaceusers">Refresh Face User</button>
@@ -250,6 +250,8 @@
                 this.loading = true;
                 let formData = new FormData();
                 formData.append('user_id', employee.user_id);
+                formData.append('employee_id', employee.employee_id);
+                formData.append('name', employee.name);
 
                 axios.post(`/enable-door-access-overide`, 
                     formData
@@ -283,6 +285,8 @@
                 this.loading = true;
                 let formData = new FormData();
                 formData.append('user_id', employee.user_id);
+                formData.append('employee_id', employee.employee_id);
+                formData.append('name', employee.name);
 
                 axios.post(`/disable-door-access-overide`, 
                     formData
@@ -316,6 +320,8 @@
                 this.loading = true;
                 let formData = new FormData();
                 formData.append('face_user_id', employee.face_user_id);
+                formData.append('employee_id', employee.employee_id);
+                formData.append('name', employee.name);
 
                 axios.post(`/enable-face-access-overide`, 
                     formData
@@ -349,6 +355,8 @@
                 this.loading = true;
                 let formData = new FormData();
                 formData.append('face_user_id', employee.face_user_id);
+                formData.append('employee_id', employee.employee_id);
+                formData.append('name', employee.name);
 
                 axios.post(`/disable-face-access-overide`, 
                     formData
