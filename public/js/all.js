@@ -13563,7 +13563,7 @@ __webpack_require__.r(__webpack_exports__);
           } else if (message == 'not_allowed') {
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
               title: 'Warning!',
-              text: 'You are not allowed to pass. Your access has been temporarily disabled.',
+              text: 'You are not allowed to pass. Please seek assistance.',
               icon: 'warning',
               confirmButtonText: 'Okay'
             });
@@ -13768,6 +13768,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -13785,38 +13799,188 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {},
   methods: {
-    viewForms: function viewForms(employee) {
+    refreshDoorUsers: function refreshDoorUsers() {
       var _this = this;
+
+      axios.get('/user-access').then(function (response) {
+        if (response.data.length > 0) {
+          alert('Door access is refreshed');
+        }
+      })["catch"](function (error) {
+        _this.errors = error.response.data.error;
+      });
+    },
+    refreshFaceusers: function refreshFaceusers() {
+      var _this2 = this;
+
+      axios.get('/face-user-access').then(function (response) {
+        if (response.data.length > 0) {
+          alert('Face access is refreshed');
+        }
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.error;
+      });
+    },
+    viewForms: function viewForms(employee) {
+      var _this3 = this;
 
       this.forms = [];
       axios.post('/fetch-form-list', {
-        employee_id: employee.id
+        employee_id: employee.employee_id
       }).then(function (response) {
-        _this.forms = response.data;
+        _this3.forms = response.data;
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this3.errors = error.response.data.errors;
       });
     },
     fetchEmployees: function fetchEmployees() {
-      var _this2 = this;
+      var _this4 = this;
 
       this.errors = [];
       this.employees = [];
       this.table_loading = true;
-      axios.post('/fetch-filter-employee-health', {
+      axios.post('/fetch-filter-employee-health-overide', {
         keyword: this.keyword
       }).then(function (response) {
-        _this2.employees = response.data;
-        _this2.table_loading = false;
+        _this4.employees = response.data;
+        _this4.table_loading = false;
       })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
+        _this4.errors = error.response.data.errors;
       });
     },
     checkEmployee: function checkEmployee(employee) {
       this.employee = employee;
     },
+    enableDoorAccess: function enableDoorAccess(employee) {
+      var _this5 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('user_id', employee.user_id);
+      axios.post("/enable-door-access-overide", formData).then(function (response) {
+        var message = response.data;
+        console.log(message);
+
+        if (message == 'Overide') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Employee door access has been successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Enable Door access cannot overide.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+        }
+
+        _this5.loading = false;
+      })["catch"](function (error) {
+        _this5.errors = error.response.data.errors;
+        _this5.loading = false;
+      });
+    },
+    disableDoorAccess: function disableDoorAccess(employee) {
+      var _this6 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('user_id', employee.user_id);
+      axios.post("/disable-door-access-overide", formData).then(function (response) {
+        var message = response.data;
+        console.log(message);
+
+        if (message == 'Overide') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Employee door access has been successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Disable Door access cannot overide.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+        }
+
+        _this6.loading = false;
+      })["catch"](function (error) {
+        _this6.errors = error.response.data.errors;
+        _this6.loading = false;
+      });
+    },
+    enableFaceAccess: function enableFaceAccess(employee) {
+      var _this7 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('face_user_id', employee.face_user_id);
+      axios.post("/enable-face-access-overide", formData).then(function (response) {
+        var message = response.data;
+        console.log(message);
+
+        if (message == 'Overide') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Employee face access has been successfully enabled.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Enable Face access cannot overide.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+        }
+
+        _this7.loading = false;
+      })["catch"](function (error) {
+        _this7.errors = error.response.data.errors;
+        _this7.loading = false;
+      });
+    },
+    disableFaceAccess: function disableFaceAccess(employee) {
+      var _this8 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('face_user_id', employee.face_user_id);
+      axios.post("/disable-face-access-overide", formData).then(function (response) {
+        var message = response.data;
+        console.log(message);
+
+        if (message == 'Overide') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Employee face access has been successfully disabled.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Disable Face access cannot overide.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+        }
+
+        _this8.loading = false;
+      })["catch"](function (error) {
+        _this8.errors = error.response.data.errors;
+        _this8.loading = false;
+      });
+    },
     saveCheckForm: function saveCheckForm() {
-      var _this3 = this;
+      var _this9 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -13844,10 +14008,10 @@ __webpack_require__.r(__webpack_exports__);
           $('#checkModal').modal('hide');
         }
 
-        _this3.loading = false;
+        _this9.loading = false;
       })["catch"](function (error) {
-        _this3.errors = error.response.data.errors;
-        _this3.loading = false;
+        _this9.errors = error.response.data.errors;
+        _this9.loading = false;
       });
     }
   }
@@ -76264,7 +76428,13 @@ var render = function() {
                             _vm.keyword = $event.target.value
                           }
                         }
-                      })
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.keyword
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.keyword[0]))
+                          ])
+                        : _vm._e()
                     ])
                   ]),
                   _vm._v(" "),
@@ -76277,6 +76447,26 @@ var render = function() {
                         on: { click: _vm.fetchEmployees }
                       },
                       [_vm._v("Search")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-md mt-4",
+                        attrs: { type: "button" },
+                        on: { click: _vm.refreshDoorUsers }
+                      },
+                      [_vm._v("Refresh Door User")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-md mt-4",
+                        attrs: { type: "button" },
+                        on: { click: _vm.refreshFaceusers }
+                      },
+                      [_vm._v("Refresh Face User")]
                     )
                   ]),
                   _vm._v(" "),
@@ -76322,50 +76512,73 @@ var render = function() {
                             _vm._v(" "),
                             _vm._l(_vm.employees, function(employee, u) {
                               return _c("tr", { key: u }, [
-                                _c("td", [
-                                  _vm._v(
-                                    _vm._s(
-                                      employee.last_name +
-                                        ", " +
-                                        employee.first_name
-                                    )
-                                  )
-                                ]),
+                                _c("td", [_vm._v(_vm._s(employee.date_time))]),
+                                _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(employee.name))]),
+                                _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(employee.status))]),
                                 _vm._v(" "),
                                 _c("td", [
-                                  _vm._v(
-                                    _vm._s(
-                                      employee.departments[0]
-                                        ? employee.departments[0].name
-                                        : ""
-                                    ) +
-                                      " / " +
-                                      _vm._s(employee.position)
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("td", [
-                                  _vm._v(_vm._s(employee.mobile_number))
+                                  employee.user_id
+                                    ? _c(
+                                        "button",
+                                        {
+                                          staticClass: "btn btn-success btn-sm",
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.enableDoorAccess(
+                                                employee
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Enable Door Access")]
+                                      )
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  employee.user_id
+                                    ? _c(
+                                        "button",
+                                        {
+                                          staticClass: "btn btn-danger btn-sm",
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.disableDoorAccess(
+                                                employee
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Disable Door Access")]
+                                      )
+                                    : _vm._e()
                                 ]),
                                 _vm._v(" "),
                                 _c("td", [
                                   _c(
                                     "button",
                                     {
-                                      staticClass: "btn btn-primary btn-sm",
-                                      staticStyle: { "font-size": "14px" },
-                                      attrs: {
-                                        type: "button",
-                                        "data-toggle": "modal",
-                                        "data-target": "#checkModal"
-                                      },
+                                      staticClass: "btn btn-success btn-sm",
                                       on: {
                                         click: function($event) {
-                                          return _vm.checkEmployee(employee)
+                                          return _vm.enableFaceAccess(employee)
                                         }
                                       }
                                     },
-                                    [_vm._v("Overide Access")]
+                                    [_vm._v("Enable Face Access")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-danger btn-sm",
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.disableFaceAccess(employee)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("Disable Face Access")]
                                   )
                                 ]),
                                 _vm._v(" "),
@@ -76598,13 +76811,15 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Employee Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Department/Position")]),
+        _c("th", [_vm._v("Status")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Contact Number")]),
+        _c("th", [_vm._v("Door Access")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Overide Access")]),
+        _c("th", [_vm._v("Face Access")]),
         _vm._v(" "),
         _c("th", [_vm._v("Forms")])
       ])

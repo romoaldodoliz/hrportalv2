@@ -31,21 +31,23 @@
                                     <div class="form-group">
                                         <label for="role">Search Employee</label> 
                                         <input type="text"  class="form-control" v-model="keyword" placeholder="Search Last Name / First Name">
+                                        <span class="text-danger" v-if="errors.keyword">{{ errors.keyword[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="fetchEmployees">Search</button>
+                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshDoorUsers">Refresh Door User</button>
+                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshFaceusers">Refresh Face User</button>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered" style="font-size:14px;">
                                         <thead>
                                             <tr>
+                                                <th>Date</th>
                                                 <th>Employee Name</th>
-                                                <th>Department/Position</th>
-                                                <th>Contact Number</th>
-                                                <!-- <th>Card Access is Blocked</th>
-                                                <th>Face Access is Blocked</th> -->
-                                                <th>Overide Access</th>
+                                                <th>Status</th>
+                                                <th>Door Access</th>
+                                                <th>Face Access</th>
                                                 <th>Forms</th>
                                             </tr>
                                         </thead>
@@ -59,13 +61,25 @@
                                                 </td>
                                             </tr>
                                             <tr v-for="(employee, u) in employees" v-bind:key="u">
-                                                <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
-                                                <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
-                                                <td>{{ employee.mobile_number}}</td>
-                                                 <!-- <td>{{ employee.card_access_blocked }}</td>
-                                                 <td>{{ employee.face_access_blocked }}</td> -->
-                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Overide Access</button></td>
-                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewForms(employee)" data-toggle="modal" data-target="#viewFormsModal" >View Forms</button></td>
+                                                <td>{{ employee.date_time }}</td>
+                                                <td>{{ employee.name }}</td>
+                                                <td>{{ employee.status }}</td>
+                                                <td>
+                                                    
+                                                    <button v-if="employee.user_id" class="btn btn-success btn-sm" @click="enableDoorAccess(employee)">Enable Door Access</button>
+                                                    <button v-if="employee.user_id" class="btn btn-danger btn-sm" @click="disableDoorAccess(employee)">Disable Door Access</button>
+
+                                                    <!-- <button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Overide Access</button> -->
+                                                
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-success btn-sm" @click="enableFaceAccess(employee)">Enable Face Access</button>
+                                                    <button class="btn btn-danger btn-sm" @click="disableFaceAccess(employee)">Disable Face Access</button>
+                
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewForms(employee)" data-toggle="modal" data-target="#viewFormsModal" >View Forms</button>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -176,10 +190,34 @@
 
         },
         methods:{
+            refreshDoorUsers(){
+                axios.get('/user-access')
+                .then(response => { 
+                    if(response.data.length > 0){
+                       alert('Door access is refreshed');
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            refreshFaceusers(){
+                axios.get('/face-user-access')
+                .then(response => { 
+                    if(response.data.length > 0){
+                       alert('Face access is refreshed');
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             viewForms(employee){
                 this.forms = [];
                 axios.post('/fetch-form-list', {
-                    employee_id: employee.id
+                    employee_id: employee.employee_id
                 })
                 .then(response => {
                     this.forms = response.data;
@@ -193,7 +231,7 @@
                 this.errors = []; 
                 this.employees = [];
                 this.table_loading = true; 
-                axios.post('/fetch-filter-employee-health', {
+                axios.post('/fetch-filter-employee-health-overide', {
                     keyword: this.keyword
                 })
                 .then(response => {
@@ -207,6 +245,138 @@
             },
             checkEmployee(employee){
                 this.employee = employee;
+            },
+            enableDoorAccess(employee){
+                this.loading = true;
+                let formData = new FormData();
+                formData.append('user_id', employee.user_id);
+
+                axios.post(`/enable-door-access-overide`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                    console.log(message);
+                    if(message == 'Overide'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Employee door access has been successfully enabled.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Enable Door access cannot overide.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+                    this.loading = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
+            },
+            disableDoorAccess(employee){
+                this.loading = true;
+                let formData = new FormData();
+                formData.append('user_id', employee.user_id);
+
+                axios.post(`/disable-door-access-overide`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                    console.log(message);
+                    if(message == 'Overide'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Employee door access has been successfully disabled.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Disable Door access cannot overide.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+                    this.loading = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
+            },
+            enableFaceAccess(employee){
+                this.loading = true;
+                let formData = new FormData();
+                formData.append('face_user_id', employee.face_user_id);
+
+                axios.post(`/enable-face-access-overide`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                    console.log(message);
+                    if(message == 'Overide'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Employee face access has been successfully enabled.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Enable Face access cannot overide.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+                    this.loading = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
+            },
+            disableFaceAccess(employee){
+                this.loading = true;
+                let formData = new FormData();
+                formData.append('face_user_id', employee.face_user_id);
+
+                axios.post(`/disable-face-access-overide`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                    console.log(message);
+                    if(message == 'Overide'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Employee face access has been successfully disabled.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Disable Face access cannot overide.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+                    this.loading = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
             },
             saveCheckForm(){
             

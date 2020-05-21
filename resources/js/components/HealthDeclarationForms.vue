@@ -340,7 +340,7 @@
                         else if(message == 'not_allowed'){
                             Swal.fire({
                                 title: 'Warning!',
-                                text: 'You are not allowed to pass. Your access has been temporarily disabled.',
+                                text: 'You are not allowed to pass. Please seek assistance.',
                                 icon: 'warning',
                                 confirmButtonText: 'Okay'
                             });
