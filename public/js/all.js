@@ -13478,6 +13478,29 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {},
   methods: {
+    validateTemperature: function validateTemperature() {
+      var v = this;
+
+      if (v.form.temperature) {
+        if (v.form.temperature > 37.5) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          v.clearForm();
+          $('#checkModal').modal('hide');
+        }
+      } else {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Please fill up temperature.',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+      }
+    },
     fetchEmployees: function fetchEmployees() {
       var _this = this;
 
@@ -13508,7 +13531,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearForm: function clearForm() {
       this.employee = [];
-      this.form = [];
       this.form.temperature = "";
       this.form.one_question = "";
       this.form.two_question = "";
@@ -13519,6 +13541,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form.seven_question = "";
       this.form.seven_yes_desc = "";
       this.form.eight_question = "";
+      this.form = [];
     },
     saveCheckForm: function saveCheckForm(form) {
       var _this2 = this;
@@ -13589,7 +13612,7 @@ __webpack_require__.r(__webpack_exports__);
           _this2.errors = error.response.data.errors;
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
-            text: 'Warning!',
+            text: 'Some error occured. Please try again!',
             icon: 'warning',
             confirmButtonText: 'Okay'
           });
@@ -75330,7 +75353,7 @@ var render = function() {
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: { type: "text" },
+                          attrs: { type: "number" },
                           domProps: { value: _vm.form.temperature },
                           on: {
                             input: function($event) {
@@ -75390,6 +75413,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.one_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "one_question", "Yes")
                               }
@@ -75434,6 +75458,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.one_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "one_question", "No")
                               }
@@ -75494,6 +75519,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.two_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "two_question", "Yes")
                               }
@@ -75538,6 +75564,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.two_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "two_question", "No")
                               }
@@ -75598,6 +75625,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.three_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -75646,6 +75674,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.three_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -75710,6 +75739,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.four_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -75758,6 +75788,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.four_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "four_question", "No")
                               }
@@ -75818,6 +75849,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.five_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -75866,6 +75898,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.five_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "five_question", "No")
                               }
@@ -75926,6 +75959,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.six_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "six_question", "Yes")
                               }
@@ -75970,6 +76004,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.six_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(_vm.form, "six_question", "No")
                               }
@@ -76030,6 +76065,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.seven_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -76078,6 +76114,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.seven_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -76116,6 +76153,7 @@ var render = function() {
                             attrs: { type: "text" },
                             domProps: { value: _vm.form.seven_yes_desc },
                             on: {
+                              click: _vm.validateTemperature,
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
@@ -76174,6 +76212,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.eight_question, "Yes")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
@@ -76222,6 +76261,7 @@ var render = function() {
                               checked: _vm._q(_vm.form.eight_question, "No")
                             },
                             on: {
+                              click: _vm.validateTemperature,
                               change: function($event) {
                                 return _vm.$set(
                                   _vm.form,
