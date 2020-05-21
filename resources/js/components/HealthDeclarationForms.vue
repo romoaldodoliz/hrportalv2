@@ -93,7 +93,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h4>Temperature</h4> 
-                                    <input type="text" class="form-control" v-model="form.temperature">
+                                    <input type="number" class="form-control" v-model="form.temperature">
                                     <br>
                                     <span class="text-danger" v-if="errors.temperature">{{ errors.temperature[0] }}</span>
                                 </div>
@@ -102,11 +102,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>1. Did you visit a hospital, clinic or medical health facility in the past 14 days?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes1" name="one_question" class="custom-control-input" value="Yes" v-model="form.one_question">
+                                    <input type="radio" id="yes1" name="one_question" class="custom-control-input" value="Yes" v-model="form.one_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes1" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no1" name="one_question" class="custom-control-input" value="No" v-model="form.one_question">
+                                    <input type="radio" id="no1" name="one_question" class="custom-control-input" value="No" v-model="form.one_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no1">No</label>
                                 </div>
                                 <br>
@@ -115,11 +115,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>2. In the last 14 days, did you have any of the following: fever, colds, cough, sore throat, aches and\ pains, nasal congestion, runny nose, diarrhea or difficulty in breathing?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes2" name="two_question" class="custom-control-input" value="Yes" v-model="form.two_question">
+                                    <input type="radio" id="yes2" name="two_question" class="custom-control-input" value="Yes" v-model="form.two_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes2" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no2" name="two_question" class="custom-control-input" value="No" v-model="form.two_question">
+                                    <input type="radio" id="no2" name="two_question" class="custom-control-input" value="No" v-model="form.two_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no2">No</label>
                                 </div>
                                 <br>
@@ -128,11 +128,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>3. Do you have any of the following illnes:: Asthma, TB, Diabetes, Hypertension, Cardio Vascular Disease, Obesity or other that can compromise your immunity?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes3" name="three_question" class="custom-control-input" value="Yes" v-model="form.three_question">
+                                    <input type="radio" id="yes3" name="three_question" class="custom-control-input" value="Yes" v-model="form.three_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes3" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no3" name="three_question" class="custom-control-input" value="No" v-model="form.three_question">
+                                    <input type="radio" id="no3" name="three_question" class="custom-control-input" value="No" v-model="form.three_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no3">No</label>
                                 </div>
                                 <br>
@@ -141,11 +141,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>4. Any members of your household experience any of the symptoms in #2?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes4" name="four_question" class="custom-control-input" value="Yes" v-model="form.four_question">
+                                    <input type="radio" id="yes4" name="four_question" class="custom-control-input" value="Yes" v-model="form.four_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes4" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no4" name="four_question" class="custom-control-input" value="No" v-model="form.four_question">
+                                    <input type="radio" id="no4" name="four_question" class="custom-control-input" value="No" v-model="form.four_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no4">No</label>
                                 </div>
                                 <br>    
@@ -154,11 +154,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>5. Have you worked together or stayed in the same close environment of a confirmed COVID19 Case?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes5" name="five_question" class="custom-control-input" value="Yes" v-model="form.five_question">
+                                    <input type="radio" id="yes5" name="five_question" class="custom-control-input" value="Yes" v-model="form.five_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes5" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no5" name="five_question" class="custom-control-input" value="No" v-model="form.five_question">
+                                    <input type="radio" id="no5" name="five_question" class="custom-control-input" value="No" v-model="form.five_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no5">No</label>
                                 </div>
                                 <br>
@@ -167,11 +167,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>6. Have you had any contacts with anyone with fever, colds, cough, sore throat, aches and pains, nasal congestion, runny nose, diarrhea or difficulty in breathing in the past 14 days?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes6" name="six_question" class="custom-control-input" value="Yes" v-model="form.six_question">
+                                    <input type="radio" id="yes6" name="six_question" class="custom-control-input" value="Yes" v-model="form.six_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes6" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no6" name="six_question" class="custom-control-input" value="No" v-model="form.six_question">
+                                    <input type="radio" id="no6" name="six_question" class="custom-control-input" value="No" v-model="form.six_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no6">No</label>
                                 </div>
                                 <br>
@@ -180,18 +180,18 @@
                             <div class="col-md-12 mb-3">
                                 <h4>7. Have you travelled to any area in NCR aside from your home?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes7" name="seven_question" class="custom-control-input" value="Yes" v-model="form.seven_question">
+                                    <input type="radio" id="yes7" name="seven_question" class="custom-control-input" value="Yes" v-model="form.seven_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes7" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no7" name="seven_question" class="custom-control-input" value="No" v-model="form.seven_question">
+                                    <input type="radio" id="no7" name="seven_question" class="custom-control-input" value="No" v-model="form.seven_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no7">No</label>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <h4>If yes, where?</h4> 
-                                        <input type="text" class="form-control" v-model="form.seven_yes_desc">
+                                        <input type="text" class="form-control" v-model="form.seven_yes_desc" @click="validateTemperature">
                                     </div>
                                 </div>
 
@@ -203,11 +203,11 @@
                             <div class="col-md-12 mb-3">
                                 <h4>8. Was there any confirmed cases of COVID19 within your barangay?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="yes8" name="eight_question" class="custom-control-input" value="Yes" v-model="form.eight_question">
+                                    <input type="radio" id="yes8" name="eight_question" class="custom-control-input" value="Yes" v-model="form.eight_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes8" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no8" name="eight_question" class="custom-control-input" value="No" v-model="form.eight_question">
+                                    <input type="radio" id="no8" name="eight_question" class="custom-control-input" value="No" v-model="form.eight_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="no8">No</label>
                                 </div>
                                 <br>
@@ -251,6 +251,29 @@
 
         },
         methods:{
+            validateTemperature(){
+                let v = this;
+                if(v.form.temperature){
+                    if(v.form.temperature > 37.5){
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                        v.clearForm();
+                        $('#checkModal').modal('hide');
+                        
+                    }
+                }else{
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'Please fill up temperature.',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+                }
+            },
             fetchEmployees(){
                 this.errors = []; 
                 this.employees = [];
@@ -282,7 +305,6 @@
             },
             clearForm(){
                 this.employee = [];
-                this.form = [];
                 this.form.temperature = "";
                 this.form.one_question = "";
                 this.form.two_question = "";
@@ -293,97 +315,86 @@
                 this.form.seven_question = "";
                 this.form.seven_yes_desc = "";
                 this.form.eight_question = "";
+                this.form = [];
             },
             saveCheckForm(form){
                 this.loading = true;
-                if(this.employee.name){
-                   
-
-                    let formData = new FormData();
-                    formData.append('employee_id',  this.employee.id);
-                    formData.append('name',  this.employee.name);
-                    formData.append('user_id',  this.employee.user_id);
-                    formData.append('face_user_id',  this.employee.face_user_id);
-                    var dept =  this.employee.departments ? this.employee.departments[0].name : "";
-                    var company =  this.employee.companies ? this.employee.companies[0].name : "";
-                    formData.append('dept_bu_position', dept  + '/' + company + '/' + this.employee.position);
-                    formData.append('contact_number',  this.employee.mobile_number);
-                    formData.append('temperature', form.temperature ? form.temperature  : "");
-                    formData.append('one_question', form.one_question ? form.one_question : "");
-                    formData.append('two_question', form.two_question ? form.two_question : "");
-                    formData.append('three_question', form.three_question ? form.three_question : "");
-                    formData.append('four_question', form.four_question ? form.four_question : "");
-                    formData.append('five_question', form.five_question ? form.five_question : "");
-                    formData.append('six_question', form.six_question ? form.six_question : "");
-                    formData.append('seven_question', form.seven_question ? form.seven_question : "");
-                    formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
-                    formData.append('eight_question', form.eight_question ? form.eight_question : "");
-                    
-                    axios.post(`/save-health-declaration`, 
-                        formData
-                    )
-                    .then(response => {
-                        var message = response.data;
-                        if(message == 'saved'){
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'Successfully Checked.',
-                                icon: 'success',
-                                confirmButtonText: 'Okay'
-                            });
-
-                            $('#checkModal').modal('hide');
-
-                            this.clearForm();
-                            this.loading = false;
-                        }
-                        else if(message == 'not_allowed'){
-                            Swal.fire({
-                                title: 'Warning!',
-                                text: 'You are not allowed to pass. Please seek assistance.',
-                                icon: 'warning',
-                                confirmButtonText: 'Okay'
-                            });
-                            $('#checkModal').modal('hide');
-
-                            this.clearForm();
-                            this.loading = false;
-                        
-                        }else{
-                             Swal.fire({
-                                title: 'Error!',
-                                text: 'Unable to saved.',
-                                icon: 'warning',
-                                confirmButtonText: 'Okay'
-                            });
-                            $('#checkModal').modal('hide');
-
-                            this.clearForm();
-                            this.loading = false;
-                        }
-                    })
-                    .catch(error => {
-                        this.errors = error.response.data.errors;
-
+                
+                let formData = new FormData();
+                formData.append('employee_id',  this.employee.id);
+                formData.append('name',  this.employee.name);
+                formData.append('user_id',  this.employee.user_id);
+                formData.append('face_user_id',  this.employee.face_user_id);
+                var dept =  this.employee.departments ? this.employee.departments[0].name : "";
+                var company =  this.employee.companies ? this.employee.companies[0].name : "";
+                formData.append('dept_bu_position', dept  + '/' + company + '/' + this.employee.position);
+                formData.append('contact_number',  this.employee.mobile_number);
+                formData.append('temperature', form.temperature ? form.temperature  : "");
+                formData.append('one_question', form.one_question ? form.one_question : "");
+                formData.append('two_question', form.two_question ? form.two_question : "");
+                formData.append('three_question', form.three_question ? form.three_question : "");
+                formData.append('four_question', form.four_question ? form.four_question : "");
+                formData.append('five_question', form.five_question ? form.five_question : "");
+                formData.append('six_question', form.six_question ? form.six_question : "");
+                formData.append('seven_question', form.seven_question ? form.seven_question : "");
+                formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
+                formData.append('eight_question', form.eight_question ? form.eight_question : "");
+                
+                axios.post(`/save-health-declaration`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                    if(message == 'saved'){
                         Swal.fire({
-                            title: 'Warning!',
-                            text: 'Warning!',
-                            icon: 'warning',
+                            title: 'Success!',
+                            text: 'Successfully Checked.',
+                            icon: 'success',
                             confirmButtonText: 'Okay'
                         });
 
+                        $('#checkModal').modal('hide');
+
+                        this.clearForm();
                         this.loading = false;
-                    })
-                }else{
+                    }
+                    else if(message == 'not_allowed'){
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'You are not allowed to pass. Please seek assistance.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                        $('#checkModal').modal('hide');
+
+                        this.clearForm();
+                        this.loading = false;
+                    
+                    }else{
+                            Swal.fire({
+                            title: 'Error!',
+                            text: 'Unable to saved.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                        $('#checkModal').modal('hide');
+
+                        this.clearForm();
+                        this.loading = false;
+                    }
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+                        text: 'Some error occured. Please try again!',
                         icon: 'warning',
                         confirmButtonText: 'Okay'
                     });
 
                     this.loading = false;
-                }
+                })
             }   
         }
     }
