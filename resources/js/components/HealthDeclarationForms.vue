@@ -126,7 +126,7 @@
                                 <span class="text-danger" v-if="errors.two_question">{{ errors.two_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <h4>3. In the last 14 days, did you have contact with anyone with symptops in #2?</h4>
+                                <h4>3. In the last 14 days, did you have contact with anyone with symptoms indicated in item #2?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
                                     <input type="radio" id="yes3" name="three_question" class="custom-control-input" value="Yes" v-model="form.three_question" @click="validateTemperature">
                                     <label class="custom-control-label" for="yes3" >Yes</label>
@@ -324,7 +324,7 @@
                                 <span class="text-danger" v-if="errors.two_question">{{ errors.two_question[0] }}</span>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <h4>3. In the last 14 days, did you have contact with anyone with symptops in #2?</h4>
+                                <h4>3. In the last 14 days, did you have contact with anyone with symptoms indicated in item #2?</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
                                     <input type="radio" id="ic_yes3" name="ic_three_question" class="custom-control-input" value="Yes" v-model="form_ic.three_question" @click="validateICTemperature">
                                     <label class="custom-control-label" for="ic_yes3" >Yes</label>
@@ -517,16 +517,18 @@
                 })
             },
             checkEmployee(employee){
-                if(employee.name){
+                if(employee.face_user_id){
                     this.employee = employee;
                 }else{
+                    this.employee = employee;
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+                        text: 'Your name is not similar to Biometric Access. Please contact the administrator for the assistance. Thank you.',
                         icon: 'warning',
                         confirmButtonText: 'Okay'
                     });
                 }
+
             },
             checkICEmployee(ic_employee){
                 this.ic_employee = ic_employee;
