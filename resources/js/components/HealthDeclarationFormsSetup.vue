@@ -228,7 +228,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Employee Name</th>
-                                                <th>Department/BU/Position</th>
+                                                <th>Agency</th>
                                                 <th>Status</th>
                                                 <th>Remarks</th>
                                                 <th>Forms</th>
