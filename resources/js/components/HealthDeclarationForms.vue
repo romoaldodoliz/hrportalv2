@@ -59,7 +59,7 @@
                                                 <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
                                                 <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
                                                 <td>{{ employee.mobile_number}}</td>
-                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Check</button></td>
+                                                <td class="text-center"><button type="button" :disabled="employee.already_check" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Check</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -178,7 +178,7 @@
                                 <div class="col-md-4 mt-3">
                                     <div class="form-group">
                                         <h4>If yes, where?</h4> 
-                                        <input type="text" class="form-control" v-model="form.six_yes_desc" @click="validateTemperature">
+                                        <input type="text" class="form-control" v-model="form.six_yes_desc" @click="validateTemperature" @input="form.six_yes_desc=$event.target.value.toUpperCase()">
                                     </div>
                                 </div>
 
@@ -256,7 +256,7 @@
                                             <tr v-for="(ic_employee, u) in ic_employees" v-bind:key="u">
                                                 <td>{{ ic_employee.name  }}</td>
                                                 <td>{{ ic_employee.agency_name }}</td>
-                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkICEmployee(ic_employee)" data-toggle="modal" data-target="#iccheckModal" >Check</button></td>
+                                                <td><button type="button" :disabled="ic_employee.already_check" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkICEmployee(ic_employee)" data-toggle="modal" data-target="#iccheckModal" >Check</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -376,7 +376,7 @@
                                 <div class="col-md-4 mt-3">
                                     <div class="form-group">
                                         <h4>If yes, where?</h4> 
-                                        <input type="text" class="form-control" v-model="form_ic.six_yes_desc">
+                                        <input type="text" class="form-control" v-model="form_ic.six_yes_desc" @input="form_ic.six_yes_desc=$event.target.value.toUpperCase()">
                                     </div>
                                 </div>
 
@@ -438,10 +438,17 @@
 
         },
         methods:{
+            forceUppercase(e, o, prop) {
+                const start = e.target.selectionStart;
+                e.target.value = e.target.value.toUpperCase();
+                this.$set(o, prop, e.target.value);
+                e.target.setSelectionRange(start, start);
+            },
             validateTemperature(){
                 let v = this;
                 if(v.form.temperature){
                     if(v.form.temperature > 37.5){
+                        this.playSound('/sound/alarm.mp3');
                         Swal.fire({
                             title: 'Warning!',
                             text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
@@ -464,6 +471,7 @@
                 let v = this;
                 if(v.form_ic.temperature){
                     if(v.form_ic.temperature > 37.5){
+                        this.playSound('/sound/alarm.mp3');
                         Swal.fire({
                             title: 'Warning!',
                             text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
