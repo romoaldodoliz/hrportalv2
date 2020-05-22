@@ -13665,11 +13665,18 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {},
   methods: {
+    forceUppercase: function forceUppercase(e, o, prop) {
+      var start = e.target.selectionStart;
+      e.target.value = e.target.value.toUpperCase();
+      this.$set(o, prop, e.target.value);
+      e.target.setSelectionRange(start, start);
+    },
     validateTemperature: function validateTemperature() {
       var v = this;
 
       if (v.form.temperature) {
         if (v.form.temperature > 37.5) {
+          this.playSound('/sound/alarm.mp3');
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
             text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
@@ -13693,6 +13700,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (v.form_ic.temperature) {
         if (v.form_ic.temperature > 37.5) {
+          this.playSound('/sound/alarm.mp3');
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
             text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
@@ -75826,7 +75834,7 @@ var render = function() {
                                   _vm._v(_vm._s(employee.mobile_number))
                                 ]),
                                 _vm._v(" "),
-                                _c("td", [
+                                _c("td", { staticClass: "text-center" }, [
                                   _c(
                                     "button",
                                     {
@@ -75834,6 +75842,7 @@ var render = function() {
                                       staticStyle: { "font-size": "14px" },
                                       attrs: {
                                         type: "button",
+                                        disabled: employee.already_check,
                                         "data-toggle": "modal",
                                         "data-target": "#checkModal"
                                       },
@@ -76634,16 +76643,21 @@ var render = function() {
                             domProps: { value: _vm.form.six_yes_desc },
                             on: {
                               click: _vm.validateTemperature,
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
+                              input: [
+                                function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.form,
+                                    "six_yes_desc",
+                                    $event.target.value
+                                  )
+                                },
+                                function($event) {
+                                  _vm.form.six_yes_desc = $event.target.value.toUpperCase()
                                 }
-                                _vm.$set(
-                                  _vm.form,
-                                  "six_yes_desc",
-                                  $event.target.value
-                                )
-                              }
+                              ]
                             }
                           })
                         ])
@@ -76905,6 +76919,7 @@ var render = function() {
                                       staticStyle: { "font-size": "14px" },
                                       attrs: {
                                         type: "button",
+                                        disabled: ic_employee.already_check,
                                         "data-toggle": "modal",
                                         "data-target": "#iccheckModal"
                                       },
@@ -77708,16 +77723,21 @@ var render = function() {
                             attrs: { type: "text" },
                             domProps: { value: _vm.form_ic.six_yes_desc },
                             on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
+                              input: [
+                                function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.form_ic,
+                                    "six_yes_desc",
+                                    $event.target.value
+                                  )
+                                },
+                                function($event) {
+                                  _vm.form_ic.six_yes_desc = $event.target.value.toUpperCase()
                                 }
-                                _vm.$set(
-                                  _vm.form_ic,
-                                  "six_yes_desc",
-                                  $event.target.value
-                                )
-                              }
+                              ]
                             }
                           })
                         ])

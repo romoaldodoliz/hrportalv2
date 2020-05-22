@@ -59,28 +59,12 @@ class HealthDeclationFormController extends Controller
                 $employees[$key]['face_name'] = $face_name;
                 $employees[$key]['face_user_id'] = $face_user_id;
 
-                //Get Door Access if  Blocked
-                // if($user_id){
-                //     $card_access = $this->getCardAccess($user_id);
-
-                //     if($card_access['card_list']){
-                //         $employees[$key]['card_access_blocked'] =  $card_access['card_list'][0]['is_blocked'];
-                //     }else{
-                //         $employees[$key]['card_access_blocked'] = '';
-                //     }
-                // }
-
-                //Get Door Access if  Blocked
-                // if($face_user_id){
-                //     $face_access = $this->getFaceCardAccess($face_user_id);
-
-                //     if($face_access['card_list']){
-                //         $employees[$key]['face_access_blocked'] =  $face_access['card_list'][0]['is_blocked'];
-                //     }else{
-                //         $employees[$key]['face_access_blocked'] = '';
-                //     }
-                // }
-
+                $already_check_hdf_employee = HdfEmployee::where('employee_id',$employee['id'])->whereDate('created_at',date('Y-m-d'))->first();
+                if($already_check_hdf_employee){
+                    $employees[$key]['already_check'] = true;
+                }else{
+                    $employees[$key]['already_check'] = false;
+                }
 
             }
         }
@@ -97,7 +81,26 @@ class HealthDeclationFormController extends Controller
 
         $ic_employees = json_decode($response->getBody(), true);
 
-        return $get_ic_employee = $this->get_ic_employee($ic_employees, $keyword_ic);
+        $get_ic_employees = $this->get_ic_employee($ic_employees, $keyword_ic);
+
+        if($get_ic_employees){
+            foreach($get_ic_employees as $key => $employee){
+                $get_ic_employees[$key]['name'] = $employee['name'];
+                $get_ic_employees[$key]['agency_name'] = $employee['agency_name'];
+                $get_ic_employees[$key]['active'] = $employee['active'];
+                $get_ic_employees[$key]['usruid'] = $employee['usruid'];
+
+                $already_check_hdf_employee = HdfIcEmployee::where('employee_id',$employee['usruid'])->whereDate('created_at',date('Y-m-d'))->first();
+                if($already_check_hdf_employee){
+                    $get_ic_employees[$key]['already_check'] = true;
+                }else{
+                    $get_ic_employees[$key]['already_check'] = false;
+                }
+            }
+
+        }
+
+        return $get_ic_employees;
     }
 
     public function get_ic_employee($get_users, $user){
