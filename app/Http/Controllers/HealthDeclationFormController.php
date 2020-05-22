@@ -938,4 +938,50 @@ class HealthDeclationFormController extends Controller
     }
 
 
+
+    public function employeeUpdateStatus(Request $request){
+        $data = $request->all();
+       
+        $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+
+            if($check_hdf_employee){
+                if($data){
+                    $hdf_employee = [];
+                    $hdf_employee['remarks'] =  $data['remarks'];
+                    $hdf_employee['status'] =$data['status'];
+
+                   $check_hdf_employee->update($hdf_employee);
+
+                   return 'saved';
+                }else{
+                    return 'not saved';
+                }
+            }else{
+                return 'warning';
+            }
+
+    }
+
+    public function employeeICUpdateStatus(Request $request){
+        $data = $request->all();
+    
+        $check_hdf_employee = HdfIcEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+            if($check_hdf_employee){
+                if($data){
+                    $hdf_employee = [];
+                    $hdf_employee['remarks'] =  $data['remarks'];
+                    $hdf_employee['status'] =$data['status'];
+
+                   $check_hdf_employee->update($hdf_employee);
+
+                   return 'saved';
+                }else{
+                    return 'not saved';
+                }
+            }else{
+                return 'warning';
+            }
+
+    }
+
 }

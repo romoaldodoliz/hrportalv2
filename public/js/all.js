@@ -14227,6 +14227,70 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -14243,7 +14307,9 @@ __webpack_require__.r(__webpack_exports__);
       loading: false,
       table_loading: false,
       table_loading_ic: false,
-      ic_employees: []
+      ic_employees: [],
+      remarks: [],
+      ic_remarks: []
     };
   },
   created: function created() {},
@@ -14273,6 +14339,7 @@ __webpack_require__.r(__webpack_exports__);
     viewForms: function viewForms(employee) {
       var _this3 = this;
 
+      this.employee = employee;
       this.forms = [];
       axios.post('/fetch-form-list', {
         employee_id: employee.employee_id
@@ -14286,6 +14353,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this4 = this;
 
       this.forms = [];
+      this.ic_employee = employee;
       axios.post('/fetch-form-list-ic', {
         employee_id: employee.employee_id
       }).then(function (response) {
@@ -14497,6 +14565,76 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         _this11.errors = error.response.data.errors;
         _this11.table_loading_ic = false;
+      });
+    },
+    updateEmployee: function updateEmployee(remarks) {
+      var _this12 = this;
+
+      var v = this;
+      var formData = new FormData();
+      formData.append('employee_id', v.employee.employee_id);
+      formData.append('status', v.remarks.status_remarks ? v.remarks.status_remarks : "");
+      formData.append('remarks', v.remarks.remarks ? v.remarks.remarks : "");
+      axios.post("/employee-update-status", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'saved') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Employee has been updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Unable to update.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+        }
+
+        v.remarks.status_remarks = "";
+        v.remarks.remarks = "";
+        v.fetchEmployees();
+        console.log(message);
+      })["catch"](function (error) {
+        _this12.errors = error.response.data.errors;
+      });
+    },
+    updateICEmployee: function updateICEmployee(remarks) {
+      var _this13 = this;
+
+      var v = this;
+      var formData = new FormData();
+      formData.append('employee_id', v.ic_employee.employee_id);
+      formData.append('status', v.ic_remarks.status_remarks ? v.ic_remarks.status_remarks : "");
+      formData.append('remarks', v.ic_remarks.remarks ? v.ic_remarks.remarks : "");
+      axios.post("/ic-employee-update-status", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'saved') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Employee has been updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'Unable to update.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+        }
+
+        v.ic_remarks.status_remarks = "";
+        v.ic_remarks.remarks = "";
+        v.fetchICEmployees();
+        console.log(message);
+      })["catch"](function (error) {
+        _this13.errors = error.response.data.errors;
       });
     }
   }
@@ -78040,6 +78178,8 @@ var render = function() {
                                 _vm._v(" "),
                                 _c("td", [_vm._v(_vm._s(employee.status))]),
                                 _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(employee.remarks))]),
+                                _vm._v(" "),
                                 _c("td", [
                                   employee.user_id
                                     ? _c(
@@ -78224,6 +78364,8 @@ var render = function() {
                 _vm._m(7),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-body" }, [
+                  _c("h4", [_vm._v("Name: " + _vm._s(_vm.employee.name))]),
+                  _vm._v(" "),
                   _c("div", { staticClass: "table-responsive" }, [
                     _c(
                       "table",
@@ -78258,14 +78400,173 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(form.seven_question))]),
                               _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(form.status))])
+                              _c("td", [_vm._v(_vm._s(form.status))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.remarks))])
                             ])
                           }),
                           0
                         )
                       ]
                     )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-12 mb-3" }, [
+                    _c("h4", [_vm._v("Change Allowed / Not Allowed Status")]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "custom-control custom-radio custom-control-inline ml-4"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.remarks.status_remarks,
+                              expression: "remarks.status_remarks"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            type: "radio",
+                            id: "remark_status_yes",
+                            name: "remark_status",
+                            value: "Allowed : Overide"
+                          },
+                          domProps: {
+                            checked: _vm._q(
+                              _vm.remarks.status_remarks,
+                              "Allowed : Overide"
+                            )
+                          },
+                          on: {
+                            change: function($event) {
+                              return _vm.$set(
+                                _vm.remarks,
+                                "status_remarks",
+                                "Allowed : Overide"
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "remark_status_yes" }
+                          },
+                          [_vm._v("Yes")]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "custom-control custom-radio custom-control-inline"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.remarks.status_remarks,
+                              expression: "remarks.status_remarks"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            type: "radio",
+                            id: "remark_status_no",
+                            name: "remark_status",
+                            value: "Not Allowed : Go Home"
+                          },
+                          domProps: {
+                            checked: _vm._q(
+                              _vm.remarks.status_remarks,
+                              "Not Allowed : Go Home"
+                            )
+                          },
+                          on: {
+                            change: function($event) {
+                              return _vm.$set(
+                                _vm.remarks,
+                                "status_remarks",
+                                "Not Allowed : Go Home"
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "remark_status_no" }
+                          },
+                          [_vm._v("No")]
+                        )
+                      ]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("h4", [_vm._v("Remarks")]),
+                      _vm._v(" "),
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.remarks.remarks,
+                            expression: "remarks.remarks"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { placeholder: "Remarks" },
+                        domProps: { value: _vm.remarks.remarks },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.remarks,
+                              "remarks",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("br")
+                    ])
                   ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-footer text-center" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-round btn-fill btn-lg",
+                      staticStyle: { width: "150px" },
+                      attrs: { id: "edit_btn", type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.updateEmployee(_vm.remarks)
+                        }
+                      }
+                    },
+                    [_vm._v("Update")]
+                  )
                 ])
               ])
             ]
@@ -78374,6 +78675,10 @@ var render = function() {
                                   _vm._v(_vm._s(ic_employee.dept_bu_position))
                                 ]),
                                 _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(ic_employee.status))]),
+                                _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(ic_employee.remarks))]),
+                                _vm._v(" "),
                                 _c("td", [
                                   _c(
                                     "button",
@@ -78479,7 +78784,164 @@ var render = function() {
                         )
                       ]
                     )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-12 mb-3" }, [
+                    _c("h4", [_vm._v("Change Allowed / Not Allowed Status")]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "custom-control custom-radio custom-control-inline ml-4"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.ic_remarks.status_remarks,
+                              expression: "ic_remarks.status_remarks"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            type: "radio",
+                            id: "ic_remark_status_yes",
+                            name: "ic_remark_status",
+                            value: "Allowed : Overide"
+                          },
+                          domProps: {
+                            checked: _vm._q(
+                              _vm.ic_remarks.status_remarks,
+                              "Allowed : Overide"
+                            )
+                          },
+                          on: {
+                            change: function($event) {
+                              return _vm.$set(
+                                _vm.ic_remarks,
+                                "status_remarks",
+                                "Allowed : Overide"
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "ic_remark_status_yes" }
+                          },
+                          [_vm._v("Yes")]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "custom-control custom-radio custom-control-inline"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.ic_remarks.status_remarks,
+                              expression: "ic_remarks.status_remarks"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            type: "radio",
+                            id: "ic_remark_status_no",
+                            name: "ic_remark_status",
+                            value: "Not Allowed : Go Home"
+                          },
+                          domProps: {
+                            checked: _vm._q(
+                              _vm.ic_remarks.status_remarks,
+                              "Not Allowed : Go Home"
+                            )
+                          },
+                          on: {
+                            change: function($event) {
+                              return _vm.$set(
+                                _vm.ic_remarks,
+                                "status_remarks",
+                                "Not Allowed : Go Home"
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "ic_remark_status_no" }
+                          },
+                          [_vm._v("No")]
+                        )
+                      ]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("h4", [_vm._v("Remarks")]),
+                      _vm._v(" "),
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.ic_remarks.remarks,
+                            expression: "ic_remarks.remarks"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { placeholder: "Remarks" },
+                        domProps: { value: _vm.ic_remarks.remarks },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.ic_remarks,
+                              "remarks",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("br")
+                    ])
                   ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-footer text-center" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-round btn-fill btn-lg",
+                      staticStyle: { width: "150px" },
+                      attrs: { id: "edit_btn", type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.updateICEmployee(_vm.ic_remarks)
+                        }
+                      }
+                    },
+                    [_vm._v("Update")]
+                  )
                 ])
               ])
             ]
@@ -78552,6 +79014,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Employee Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Remarks")]),
         _vm._v(" "),
         _c("th", [_vm._v("Door Access")]),
         _vm._v(" "),
@@ -78665,7 +79129,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("7")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Status")])
+        _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Remarks")])
       ])
     ])
   },
@@ -78692,6 +79158,10 @@ var staticRenderFns = [
         _c("th", [_vm._v("Employee Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Department/BU/Position")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Remarks")]),
         _vm._v(" "),
         _c("th", [_vm._v("Forms")])
       ])

@@ -12,6 +12,7 @@ class HdfIcEmployee extends Model
         'dept_bu_position',
         'contact_number',
         'status',
+        'remarks',
         'date_time'
     ];
 
