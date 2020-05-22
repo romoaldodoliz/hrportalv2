@@ -517,16 +517,18 @@
                 })
             },
             checkEmployee(employee){
-                if(employee.name){
+                if(employee.face_user_id){
                     this.employee = employee;
                 }else{
+                    this.employee = employee;
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+                        text: 'Your name is not similar to Biometric Access. Please contact the administrator for the assistance. Thank you.',
                         icon: 'warning',
                         confirmButtonText: 'Okay'
                     });
                 }
+
             },
             checkICEmployee(ic_employee){
                 this.ic_employee = ic_employee;

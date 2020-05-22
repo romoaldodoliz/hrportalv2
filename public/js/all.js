@@ -13744,12 +13744,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     checkEmployee: function checkEmployee(employee) {
-      if (employee.name) {
+      if (employee.face_user_id) {
         this.employee = employee;
       } else {
+        this.employee = employee;
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
-          text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+          text: 'Your name is not similar to Biometric Access. Please contact the administrator for the assistance. Thank you.',
           icon: 'warning',
           confirmButtonText: 'Okay'
         });
