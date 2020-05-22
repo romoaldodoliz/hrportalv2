@@ -46,6 +46,7 @@
                                                 <th>Date</th>
                                                 <th>Employee Name</th>
                                                 <th>Status</th>
+                                                <th>Remarks</th>
                                                 <th>Door Access</th>
                                                 <th>Biometric Access</th>
                                                 <th>Forms</th>
@@ -64,6 +65,7 @@
                                                 <td>{{ employee.date_time }}</td>
                                                 <td>{{ employee.name }}</td>
                                                 <td>{{ employee.status }}</td>
+                                                <td>{{ employee.remarks }}</td>
                                                 <td>
                                                     
                                                     <button v-if="employee.user_id" class="btn btn-success btn-sm" @click="enableDoorAccess(employee)">Enable Door Access</button>
@@ -127,6 +129,7 @@
                         <h2 class="col-12 modal-title text-center" id="addCompanyLabel">HEALTH DECLARATION FORM - LIST</h2> 
                     </div>
                     <div class="modal-body">
+                        <h4>Name: {{ employee.name }}</h4>
                            <div class="table-responsive">
                                 <table class="table table-bordered" style="font-size:14px;">
                                     <thead>
@@ -142,6 +145,7 @@
                                             <th>6 Yes</th>
                                             <th>7</th>
                                             <th>Status</th>
+                                            <th>Remarks</th>
                                            
                                         </tr>
                                     </thead>
@@ -158,11 +162,39 @@
                                             <td>{{ form.six_yes_desc}}</td>
                                             <td>{{ form.seven_question}}</td>
                                             <td>{{ form.status}}</td>
+                                            <td>{{ form.remarks}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <h4>Change Allowed / Not Allowed Status</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="remark_status_yes" name="remark_status" class="custom-control-input" value="Allowed : Overide" v-model="remarks.status_remarks">
+                                    <label class="custom-control-label" for="remark_status_yes" >Yes</label>
                                 </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="remark_status_no" name="remark_status" class="custom-control-input" value="Not Allowed : Go Home" v-model="remarks.status_remarks">
+                                    <label class="custom-control-label" for="remark_status_no">No</label>
+                                </div>
+                            </div>
+
+                             <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4>Remarks</h4> 
+                                        <textarea  class="form-control" v-model="remarks.remarks" placeholder="Remarks"></textarea>
+                                    <br>
+                                </div>
+                                
+                            </div>
+
                     </div>
+
+                     <div class="modal-footer text-center">
+                        <button id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(remarks)" style="width:150px;">Update</button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -197,6 +229,8 @@
                                             <tr>
                                                 <th>Employee Name</th>
                                                 <th>Department/BU/Position</th>
+                                                <th>Status</th>
+                                                <th>Remarks</th>
                                                 <th>Forms</th>
                                             </tr>
                                         </thead>
@@ -212,6 +246,8 @@
                                             <tr v-for="(ic_employee, u) in ic_employees" v-bind:key="u">
                                                 <td>{{ ic_employee.name  }}</td>
                                                 <td>{{ ic_employee.dept_bu_position }}</td>
+                                                <td>{{ ic_employee.status }}</td>
+                                                <td>{{ ic_employee.remarks }}</td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewICForms(ic_employee)" data-toggle="modal" data-target="#viewICFormsModal" >View Forms</button>
                                                 </td>
@@ -272,9 +308,37 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <h4>Change Allowed / Not Allowed Status</h4>
+                                <div class="custom-control custom-radio custom-control-inline ml-4">
+                                    <input type="radio" id="ic_remark_status_yes" name="ic_remark_status" class="custom-control-input" value="Allowed : Overide" v-model="ic_remarks.status_remarks">
+                                    <label class="custom-control-label" for="ic_remark_status_yes" >Yes</label>
                                 </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="ic_remark_status_no" name="ic_remark_status" class="custom-control-input" value="Not Allowed : Go Home" v-model="ic_remarks.status_remarks">
+                                    <label class="custom-control-label" for="ic_remark_status_no">No</label>
+                                </div>
+                            </div>
+
+                             <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4>Remarks</h4> 
+                                        <textarea  class="form-control" v-model="ic_remarks.remarks" placeholder="Remarks"></textarea>
+                                    <br>
+                                </div>
+                                
+                            </div>
+
                     </div>
+                
+                    <div class="modal-footer text-center">
+                            <button id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateICEmployee(ic_remarks)" style="width:150px;">Update</button>
+                    </div>
+
                 </div>
+
             </div>
         </div>
 
@@ -299,6 +363,9 @@
                 table_loading : false,
                 table_loading_ic : false,
                 ic_employees: [],
+
+                remarks : [],
+                ic_remarks : [],
             }
         },
         created(){
@@ -330,6 +397,7 @@
                 })
             },
             viewForms(employee){
+                this.employee = employee;
                 this.forms = [];
                 axios.post('/fetch-form-list', {
                     employee_id: employee.employee_id
@@ -344,6 +412,7 @@
             },
             viewICForms(employee){
                 this.forms = [];
+                this.ic_employee = employee;
                 axios.post('/fetch-form-list-ic', {
                     employee_id: employee.employee_id
                 })
@@ -570,6 +639,85 @@
                     this.table_loading_ic = false; 
                 })
             },   
+
+            updateEmployee(remarks){
+                let v = this;
+                let formData = new FormData();
+                formData.append('employee_id', v.employee.employee_id);
+                formData.append('status', v.remarks.status_remarks ? v.remarks.status_remarks : "");
+                formData.append('remarks', v.remarks.remarks ? v.remarks.remarks : "");
+
+                axios.post(`/employee-update-status`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                     if(message == 'saved'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Employee has been updated successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Unable to update.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+
+                    v.remarks.status_remarks = "";
+                    v.remarks.remarks = "";
+
+                    v.fetchEmployees();
+                    console.log(message);   
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+
+            },
+            updateICEmployee(remarks){
+                let v = this;
+                let formData = new FormData();
+                formData.append('employee_id', v.ic_employee.employee_id);
+                formData.append('status', v.ic_remarks.status_remarks ? v.ic_remarks.status_remarks : "");
+                formData.append('remarks', v.ic_remarks.remarks ? v.ic_remarks.remarks : "");
+
+                axios.post(`/ic-employee-update-status`, 
+                    formData
+                )
+                .then(response => {
+                    var message = response.data;
+                     if(message == 'saved'){
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Employee has been updated successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Unable to update.',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+
+                    v.ic_remarks.status_remarks = "";
+                    v.ic_remarks.remarks = "";
+
+                    v.fetchICEmployees();
+                    console.log(message);   
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+
+            }
         }
     }
 </script>

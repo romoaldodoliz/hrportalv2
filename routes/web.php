@@ -51,6 +51,10 @@ Route::get('/send_message', 'HealthDeclationFormController@send_message');
 Route::post('/ic-employees', 'HealthDeclationFormController@fetchICEmployees');
 
 
+Route::post('/employee-update-status', 'HealthDeclationFormController@employeeUpdateStatus');
+Route::post('/ic-employee-update-status', 'HealthDeclationFormController@employeeICUpdateStatus');
+
+
 Auth::routes();
 Route::get('logout', function(){
     return redirect('/');
