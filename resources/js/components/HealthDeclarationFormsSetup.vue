@@ -47,7 +47,7 @@
                                                 <th>Employee Name</th>
                                                 <th>Status</th>
                                                 <th>Door Access</th>
-                                                <th>Face Access</th>
+                                                <th>Biometric Access</th>
                                                 <th>Forms</th>
                                             </tr>
                                         </thead>
@@ -73,8 +73,8 @@
                                                 
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-success btn-sm" @click="enableFaceAccess(employee)">Enable Face Access</button>
-                                                    <button class="btn btn-danger btn-sm" @click="disableFaceAccess(employee)">Disable Face Access</button>
+                                                    <button class="btn btn-success btn-sm" @click="enableFaceAccess(employee)">Enable Biometric Access</button>
+                                                    <button class="btn btn-danger btn-sm" @click="disableFaceAccess(employee)">Disable Biometric Access</button>
                 
                                                 </td>
                                                 <td>
@@ -139,8 +139,8 @@
                                             <th>4</th>
                                             <th>5</th>
                                             <th>6</th>
+                                            <th>6 Yes</th>
                                             <th>7</th>
-                                            <th>8</th>
                                             <th>Status</th>
                                            
                                         </tr>
@@ -155,8 +155,119 @@
                                             <td>{{ form.four_question}}</td>
                                             <td>{{ form.five_question}}</td>
                                             <td>{{ form.six_question}}</td>
+                                            <td>{{ form.six_yes_desc}}</td>
                                             <td>{{ form.seven_question}}</td>
-                                            <td>{{ form.eight_question}}</td>
+                                            <td>{{ form.status}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IC EMPLOYEE -->
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-12 order-xl-1">
+                    <div class="card bg-secondary shadow  mb-5">
+                        <div class="card-header bg-white border-0">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <h3 class="mb-0 text-uppercase">Search IC Employee</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="role">Search Employee</label> 
+                                        <input type="text"  class="form-control" v-model="keyword_ic" placeholder="Search Last Name / First Name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="fetchICEmployees">Search</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" style="font-size:14px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Department/BU/Position</th>
+                                                <th>Forms</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-if="table_loading_ic">
+                                                <td colspan="15">
+                                                    <content-placeholders>
+                                                        <content-placeholders-text :lines="3" />
+                                                    </content-placeholders>
+                                                    <h4>Loading Employee Records.. Please wait a moment... </h4>
+                                                </td>
+                                            </tr>
+                                            <tr v-for="(ic_employee, u) in ic_employees" v-bind:key="u">
+                                                <td>{{ ic_employee.name  }}</td>
+                                                <td>{{ ic_employee.dept_bu_position }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewICForms(ic_employee)" data-toggle="modal" data-target="#viewICFormsModal" >View Forms</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                 </div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="modal fade" id="viewICFormsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center" id="addCompanyLabel">HEALTH DECLARATION FORM - LIST</h2> 
+                    </div>
+                    <div class="modal-body">
+                           <div class="table-responsive">
+                                <table class="table table-bordered" style="font-size:14px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Temperature</th>
+                                            <th>1</th>
+                                            <th>2</th>
+                                            <th>3</th>
+                                            <th>4</th>
+                                            <th>5</th>
+                                            <th>6</th>
+                                            <th>6 Yes</th>
+                                            <th>7</th>
+                                            <th>Status</th>
+                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(form, u) in forms" v-bind:key="u">
+                                            <td>{{ form.created_at}}</td>
+                                            <td>{{ form.temperature}}</td>
+                                            <td>{{ form.one_question}}</td>
+                                            <td>{{ form.two_question}}</td>
+                                            <td>{{ form.three_question}}</td>
+                                            <td>{{ form.four_question}}</td>
+                                            <td>{{ form.five_question}}</td>
+                                            <td>{{ form.six_question}}</td>
+                                            <td>{{ form.six_yes_desc}}</td>
+                                            <td>{{ form.seven_question}}</td>
                                             <td>{{ form.status}}</td>
                                         </tr>
                                     </tbody>
@@ -176,14 +287,18 @@
     export default {
         data(){
             return {
+                keyword_ic : '',
                 keyword : '',
                 searchEmployees: [],
                 employees: [],
                 employee: [],
+                ic_employee: [],
                 errors: [],
                 forms: [],
                 loading : false,
                 table_loading : false,
+                table_loading_ic : false,
+                ic_employees: [],
             }
         },
         created(){
@@ -217,6 +332,19 @@
             viewForms(employee){
                 this.forms = [];
                 axios.post('/fetch-form-list', {
+                    employee_id: employee.employee_id
+                })
+                .then(response => {
+                    this.forms = response.data;
+                    
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+            },
+            viewICForms(employee){
+                this.forms = [];
+                axios.post('/fetch-form-list-ic', {
                     employee_id: employee.employee_id
                 })
                 .then(response => {
@@ -332,14 +460,14 @@
                     if(message == 'Overide'){
                         Swal.fire({
                             title: 'Success!',
-                            text: 'Employee face access has been successfully enabled.',
+                            text: 'Employee biometric access has been successfully enabled.',
                             icon: 'success',
                             confirmButtonText: 'Okay'
                         });
                     }else{
                         Swal.fire({
                             title: 'Warning!',
-                            text: 'Enable Face access cannot overide.',
+                            text: 'Enable biometric access cannot overide.',
                             icon: 'warning',
                             confirmButtonText: 'Okay'
                         });
@@ -367,14 +495,14 @@
                     if(message == 'Overide'){
                         Swal.fire({
                             title: 'Success!',
-                            text: 'Employee face access has been successfully disabled.',
+                            text: 'Employee biometric access has been successfully disabled.',
                             icon: 'success',
                             confirmButtonText: 'Okay'
                         });
                     }else{
                         Swal.fire({
                             title: 'Warning!',
-                            text: 'Disable Face access cannot overide.',
+                            text: 'Disable biometric access cannot overide.',
                             icon: 'warning',
                             confirmButtonText: 'Okay'
                         });
@@ -424,7 +552,24 @@
                     this.errors = error.response.data.errors;
                     this.loading = false;
                 })
-            }   
+            },
+            fetchICEmployees(){
+                this.errors = []; 
+                this.ic_employees = [];
+                this.table_loading_ic = true; 
+                axios.post('/fetch-filter-ic-employee-health-overide', {
+                    keyword_ic: this.keyword_ic
+                })
+                .then(response => {
+                    this.ic_employees = response.data;
+                    this.table_loading_ic = false; 
+                    
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.table_loading_ic = false; 
+                })
+            },   
         }
     }
 </script>

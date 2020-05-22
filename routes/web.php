@@ -16,9 +16,16 @@ Route::get('/', function () {
 });
 
 Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
+
 Route::post('/fetch-filter-employee-health', 'HealthDeclationFormController@fetchEmployees');
+
 Route::post('/fetch-filter-employee-health-overide', 'HealthDeclationFormController@fetchEmployeesOveride');
+
+Route::post('/fetch-filter-ic-employee-health-overide', 'HealthDeclationFormController@fetchEmployeesOverideIC');
+
 Route::post('/save-health-declaration', 'HealthDeclationFormController@saveDeclaration');
+
+Route::post('/save-health-declaration-ic', 'HealthDeclationFormController@saveDeclarationIC');
 
 Route::post('/enable-door-access-overide', 'HealthDeclationFormController@enableDoorAccessOveride');
 Route::post('/disable-door-access-overide', 'HealthDeclationFormController@disableDoorAccessOveride');
@@ -27,15 +34,21 @@ Route::post('/enable-face-access-overide', 'HealthDeclationFormController@enable
 Route::post('/disable-face-access-overide', 'HealthDeclationFormController@disableFaceAccessOveride');
 
 Route::post('/save-health-declaration-overide', 'HealthDeclationFormController@saveDeclarationOveride');
+
 Route::get('/health_declaration_form_users_disable_set_up', 'HealthDeclationFormController@health_declaration_form_users_disable_set_up');
 
 Route::post('/fetch-form-list', 'HealthDeclationFormController@fetchFormList');
+
+Route::post('/fetch-form-list-ic', 'HealthDeclationFormController@fetchFormListIC');
 
 Route::get('/user-access', 'HealthDeclationFormController@getUserAccess');
 
 Route::get('/face-user-access', 'HealthDeclationFormController@fetchFaceUserAccess');
 
 Route::get('/send_message', 'HealthDeclationFormController@send_message');
+
+
+Route::post('/ic-employees', 'HealthDeclationFormController@fetchICEmployees');
 
 
 Auth::routes();
