@@ -240,7 +240,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Employee Name</th>
-                                                <th>Department/BU/Position</th>
+                                                <th>Agency</th>
                                                 <th>Check</th>
                                             </tr>
                                         </thead>

@@ -78016,7 +78016,7 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("Employee Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Department/BU/Position")]),
+        _c("th", [_vm._v("Agency")]),
         _vm._v(" "),
         _c("th", [_vm._v("Check")])
       ])
@@ -79191,7 +79191,7 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("Employee Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Department/BU/Position")]),
+        _c("th", [_vm._v("Agency")]),
         _vm._v(" "),
         _c("th", [_vm._v("Status")]),
         _vm._v(" "),
