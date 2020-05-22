@@ -588,6 +588,8 @@
                 .then(response => {
                     var message = response.data;
                     if(message == 'saved'){
+                        this.playSound('/sound/success.mp3');
+
                         Swal.fire({
                             title: 'Success!',
                             text: 'Successfully Checked.',
@@ -601,6 +603,7 @@
                         this.loading = false;
                     }
                     else if(message == 'not_allowed'){
+                        this.playSound('/sound/alarm.mp3');
                         Swal.fire({
                             title: 'Warning!',
                             text: 'You are not allowed to pass. Please seek assistance.',
@@ -608,6 +611,7 @@
                             confirmButtonText: 'Okay'
                         });
                         $('#checkModal').modal('hide');
+
 
                         this.clearForm();
                         this.loading = false;
@@ -661,6 +665,7 @@
                 .then(response => {
                     var message = response.data;
                     if(message == 'saved'){
+                        this.playSound('/sound/success.mp3');
                         Swal.fire({
                             title: 'Success!',
                             text: 'Successfully Checked.',
@@ -674,6 +679,9 @@
                         this.loading = false;
                     }
                     else if(message == 'not_allowed'){
+
+                        this.playSound('/sound/alarm.mp3');
+
                         Swal.fire({
                             title: 'Warning!',
                             text: 'You are not allowed to pass. Please seek assistance.',
@@ -710,7 +718,13 @@
 
                     this.loading = false;
                 })
-            }   
+            },
+            playSound (sound) {
+                if(sound) {
+                    var audio = new Audio(sound);
+                    audio.play();
+                }
+            }
         }
     }
 </script>
