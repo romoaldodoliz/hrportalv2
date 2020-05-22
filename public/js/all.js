@@ -76036,7 +76036,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "3. In the last 14 days, did you have contact with anyone with symptops in #2?"
+                          "3. In the last 14 days, did you have contact with anyone with symptoms indicated in item #2?"
                         )
                       ]),
                       _vm._v(" "),
@@ -77095,7 +77095,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "3. In the last 14 days, did you have contact with anyone with symptops in #2?"
+                          "3. In the last 14 days, did you have contact with anyone with symptoms indicated in item #2?"
                         )
                       ]),
                       _vm._v(" "),
