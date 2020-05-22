@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HealthDeclarationForm extends Model
+class HealthDeclarationIcForm extends Model
 {
     protected $fillable = [
         'employee_id',

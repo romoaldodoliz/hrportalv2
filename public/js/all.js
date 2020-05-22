@@ -13461,19 +13461,206 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      keyword_ic: '',
       keyword: '',
-      searchEmployees: [],
+      searchICEmployees: [],
+      ic_employees: [],
       employees: [],
+      ic_employee: [],
       employee: [],
       errors: [],
       form: [],
+      form_ic: [],
+      ic_form: [],
       loading: false,
-      table_loading: false
+      table_loading: false,
+      table_loading_ic: false
     };
   },
   created: function created() {},
@@ -13501,6 +13688,29 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
+    validateICTemperature: function validateICTemperature() {
+      var v = this;
+
+      if (v.form_ic.temperature) {
+        if (v.form_ic.temperature > 37.5) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          v.clearICForm();
+          $('#iccheckModal').modal('hide');
+        }
+      } else {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Please fill up temperature.',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+      }
+    },
     fetchEmployees: function fetchEmployees() {
       var _this = this;
 
@@ -13517,6 +13727,22 @@ __webpack_require__.r(__webpack_exports__);
         _this.table_loading = false;
       });
     },
+    fetchICEmployees: function fetchICEmployees() {
+      var _this2 = this;
+
+      this.errors = [];
+      this.ic_employees = [];
+      this.table_loading_ic = true;
+      axios.post('/ic-employees', {
+        keyword_ic: this.keyword_ic
+      }).then(function (response) {
+        _this2.ic_employees = response.data;
+        _this2.table_loading_ic = false;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+        _this2.table_loading_ic = false;
+      });
+    },
     checkEmployee: function checkEmployee(employee) {
       if (employee.name) {
         this.employee = employee;
@@ -13528,6 +13754,9 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'Okay'
         });
       }
+    },
+    checkICEmployee: function checkICEmployee(ic_employee) {
+      this.ic_employee = ic_employee;
     },
     clearForm: function clearForm() {
       this.employee = [];
@@ -13543,90 +13772,159 @@ __webpack_require__.r(__webpack_exports__);
       this.form.eight_question = "";
       this.form = [];
     },
+    clearICForm: function clearICForm() {
+      this.ic_employee = [];
+      this.form_ic.temperature = "";
+      this.form_ic.one_question = "";
+      this.form_ic.two_question = "";
+      this.form_ic.three_question = "";
+      this.form_ic.four_question = "";
+      this.form_ic.five_question = "";
+      this.form_ic.six_question = "";
+      this.form_ic.six_yes_desc = "";
+      this.form_ic.seven_question = "";
+      this.form_ic = [];
+    },
     saveCheckForm: function saveCheckForm(form) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.loading = true;
+      var formData = new FormData();
+      formData.append('employee_id', this.employee.id);
+      formData.append('name', this.employee.name);
+      formData.append('user_id', this.employee.user_id);
+      formData.append('face_user_id', this.employee.face_user_id);
+      var dept = this.employee.departments ? this.employee.departments[0].name : "";
+      var company = this.employee.companies ? this.employee.companies[0].name : "";
+      formData.append('dept_bu_position', dept + '/' + company + '/' + this.employee.position);
+      formData.append('contact_number', this.employee.mobile_number);
+      formData.append('temperature', form.temperature ? form.temperature : "");
+      formData.append('one_question', form.one_question ? form.one_question : "");
+      formData.append('two_question', form.two_question ? form.two_question : "");
+      formData.append('three_question', form.three_question ? form.three_question : "");
+      formData.append('four_question', form.four_question ? form.four_question : "");
+      formData.append('five_question', form.five_question ? form.five_question : "");
+      formData.append('six_question', form.six_question ? form.six_question : "");
+      formData.append('six_yes_desc', form.six_yes_desc ? form.six_yes_desc : "");
+      formData.append('seven_question', form.seven_question ? form.seven_question : "");
+      axios.post("/save-health-declaration", formData).then(function (response) {
+        var message = response.data;
 
-      if (this.employee.name) {
-        var formData = new FormData();
-        formData.append('employee_id', this.employee.id);
-        formData.append('name', this.employee.name);
-        formData.append('user_id', this.employee.user_id);
-        formData.append('face_user_id', this.employee.face_user_id);
-        var dept = this.employee.departments ? this.employee.departments[0].name : "";
-        var company = this.employee.companies ? this.employee.companies[0].name : "";
-        formData.append('dept_bu_position', dept + '/' + company + '/' + this.employee.position);
-        formData.append('contact_number', this.employee.mobile_number);
-        formData.append('temperature', form.temperature ? form.temperature : "");
-        formData.append('one_question', form.one_question ? form.one_question : "");
-        formData.append('two_question', form.two_question ? form.two_question : "");
-        formData.append('three_question', form.three_question ? form.three_question : "");
-        formData.append('four_question', form.four_question ? form.four_question : "");
-        formData.append('five_question', form.five_question ? form.five_question : "");
-        formData.append('six_question', form.six_question ? form.six_question : "");
-        formData.append('seven_question', form.seven_question ? form.seven_question : "");
-        formData.append('seven_yes_desc', form.seven_yes_desc ? form.seven_yes_desc : "");
-        formData.append('eight_question', form.eight_question ? form.eight_question : "");
-        axios.post("/save-health-declaration", formData).then(function (response) {
-          var message = response.data;
+        if (message == 'saved') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Successfully Checked.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
 
-          if (message == 'saved') {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-              title: 'Success!',
-              text: 'Successfully Checked.',
-              icon: 'success',
-              confirmButtonText: 'Okay'
-            });
-            $('#checkModal').modal('hide');
+          _this3.clearForm();
 
-            _this2.clearForm();
-
-            _this2.loading = false;
-          } else if (message == 'not_allowed') {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-              title: 'Warning!',
-              text: 'You are not allowed to pass. Please seek assistance.',
-              icon: 'warning',
-              confirmButtonText: 'Okay'
-            });
-            $('#checkModal').modal('hide');
-
-            _this2.clearForm();
-
-            _this2.loading = false;
-          } else {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-              title: 'Error!',
-              text: 'Unable to saved.',
-              icon: 'warning',
-              confirmButtonText: 'Okay'
-            });
-            $('#checkModal').modal('hide');
-
-            _this2.clearForm();
-
-            _this2.loading = false;
-          }
-        })["catch"](function (error) {
-          _this2.errors = error.response.data.errors;
+          _this3.loading = false;
+        } else if (message == 'not_allowed') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
-            text: 'Some error occured. Please try again!',
+            text: 'You are not allowed to pass. Please seek assistance.',
             icon: 'warning',
             confirmButtonText: 'Okay'
           });
-          _this2.loading = false;
-        });
-      } else {
+          $('#checkModal').modal('hide');
+
+          _this3.clearForm();
+
+          _this3.loading = false;
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Error!',
+            text: 'Unable to saved.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+
+          _this3.clearForm();
+
+          _this3.loading = false;
+        }
+      })["catch"](function (error) {
+        _this3.errors = error.response.data.errors;
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           title: 'Warning!',
-          text: 'Your name is not similar to Door/Face ID Access. Please contact the administrator for the assistance. Thank you.',
+          text: 'Some error occured. Please try again!',
           icon: 'warning',
           confirmButtonText: 'Okay'
         });
-        this.loading = false;
-      }
+        _this3.loading = false;
+      });
+    },
+    saveICCheckForm: function saveICCheckForm(form_ic) {
+      var _this4 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('employee_id', this.ic_employee.usruid);
+      formData.append('name', this.ic_employee.name);
+      formData.append('dept_bu_position', this.ic_employee.agency_name);
+      formData.append('temperature', form_ic.temperature ? form_ic.temperature : "");
+      formData.append('one_question', form_ic.one_question ? form_ic.one_question : "");
+      formData.append('two_question', form_ic.two_question ? form_ic.two_question : "");
+      formData.append('three_question', form_ic.three_question ? form_ic.three_question : "");
+      formData.append('four_question', form_ic.four_question ? form_ic.four_question : "");
+      formData.append('five_question', form_ic.five_question ? form_ic.five_question : "");
+      formData.append('six_question', form_ic.six_question ? form_ic.six_question : "");
+      formData.append('six_yes_desc', form_ic.six_yes_desc ? form_ic.six_yes_desc : "");
+      formData.append('seven_question', form_ic.seven_question ? form_ic.seven_question : "");
+      axios.post("/save-health-declaration-ic", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'saved') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Successfully Checked.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+          $('#iccheckModal').modal('hide');
+
+          _this4.clearICForm();
+
+          _this4.loading = false;
+        } else if (message == 'not_allowed') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You are not allowed to pass. Please seek assistance.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+
+          _this4.clearForm();
+
+          _this4.loading = false;
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Error!',
+            text: 'Unable to saved.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#iccheckModal').modal('hide');
+
+          _this4.clearICForm();
+
+          _this4.loading = false;
+        }
+      })["catch"](function (error) {
+        _this4.errors = error.response.data.errors;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Some error occured. Please try again!',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+        _this4.loading = false;
+      });
     }
   }
 });
@@ -13817,19 +14115,134 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      keyword_ic: '',
       keyword: '',
       searchEmployees: [],
       employees: [],
       employee: [],
+      ic_employee: [],
       errors: [],
       forms: [],
       loading: false,
-      table_loading: false
+      table_loading: false,
+      table_loading_ic: false,
+      ic_employees: []
     };
   },
   created: function created() {},
@@ -13868,8 +14281,20 @@ __webpack_require__.r(__webpack_exports__);
         _this3.errors = error.response.data.errors;
       });
     },
-    fetchEmployees: function fetchEmployees() {
+    viewICForms: function viewICForms(employee) {
       var _this4 = this;
+
+      this.forms = [];
+      axios.post('/fetch-form-list-ic', {
+        employee_id: employee.employee_id
+      }).then(function (response) {
+        _this4.forms = response.data;
+      })["catch"](function (error) {
+        _this4.errors = error.response.data.errors;
+      });
+    },
+    fetchEmployees: function fetchEmployees() {
+      var _this5 = this;
 
       this.errors = [];
       this.employees = [];
@@ -13877,17 +14302,17 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/fetch-filter-employee-health-overide', {
         keyword: this.keyword
       }).then(function (response) {
-        _this4.employees = response.data;
-        _this4.table_loading = false;
+        _this5.employees = response.data;
+        _this5.table_loading = false;
       })["catch"](function (error) {
-        _this4.errors = error.response.data.errors;
+        _this5.errors = error.response.data.errors;
       });
     },
     checkEmployee: function checkEmployee(employee) {
       this.employee = employee;
     },
     enableDoorAccess: function enableDoorAccess(employee) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -13914,14 +14339,14 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
-        _this5.loading = false;
+        _this6.loading = false;
       })["catch"](function (error) {
-        _this5.errors = error.response.data.errors;
-        _this5.loading = false;
+        _this6.errors = error.response.data.errors;
+        _this6.loading = false;
       });
     },
     disableDoorAccess: function disableDoorAccess(employee) {
-      var _this6 = this;
+      var _this7 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -13948,14 +14373,14 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
-        _this6.loading = false;
+        _this7.loading = false;
       })["catch"](function (error) {
-        _this6.errors = error.response.data.errors;
-        _this6.loading = false;
+        _this7.errors = error.response.data.errors;
+        _this7.loading = false;
       });
     },
     enableFaceAccess: function enableFaceAccess(employee) {
-      var _this7 = this;
+      var _this8 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -13969,27 +14394,27 @@ __webpack_require__.r(__webpack_exports__);
         if (message == 'Overide') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Success!',
-            text: 'Employee face access has been successfully enabled.',
+            text: 'Employee biometric access has been successfully enabled.',
             icon: 'success',
             confirmButtonText: 'Okay'
           });
         } else {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
-            text: 'Enable Face access cannot overide.',
+            text: 'Enable biometric access cannot overide.',
             icon: 'warning',
             confirmButtonText: 'Okay'
           });
         }
 
-        _this7.loading = false;
+        _this8.loading = false;
       })["catch"](function (error) {
-        _this7.errors = error.response.data.errors;
-        _this7.loading = false;
+        _this8.errors = error.response.data.errors;
+        _this8.loading = false;
       });
     },
     disableFaceAccess: function disableFaceAccess(employee) {
-      var _this8 = this;
+      var _this9 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -14003,27 +14428,27 @@ __webpack_require__.r(__webpack_exports__);
         if (message == 'Overide') {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Success!',
-            text: 'Employee face access has been successfully disabled.',
+            text: 'Employee biometric access has been successfully disabled.',
             icon: 'success',
             confirmButtonText: 'Okay'
           });
         } else {
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
-            text: 'Disable Face access cannot overide.',
+            text: 'Disable biometric access cannot overide.',
             icon: 'warning',
             confirmButtonText: 'Okay'
           });
         }
 
-        _this8.loading = false;
+        _this9.loading = false;
       })["catch"](function (error) {
-        _this8.errors = error.response.data.errors;
-        _this8.loading = false;
+        _this9.errors = error.response.data.errors;
+        _this9.loading = false;
       });
     },
     saveCheckForm: function saveCheckForm() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -14051,10 +14476,26 @@ __webpack_require__.r(__webpack_exports__);
           $('#checkModal').modal('hide');
         }
 
-        _this9.loading = false;
+        _this10.loading = false;
       })["catch"](function (error) {
-        _this9.errors = error.response.data.errors;
-        _this9.loading = false;
+        _this10.errors = error.response.data.errors;
+        _this10.loading = false;
+      });
+    },
+    fetchICEmployees: function fetchICEmployees() {
+      var _this11 = this;
+
+      this.errors = [];
+      this.ic_employees = [];
+      this.table_loading_ic = true;
+      axios.post('/fetch-filter-ic-employee-health-overide', {
+        keyword_ic: this.keyword_ic
+      }).then(function (response) {
+        _this11.ic_employees = response.data;
+        _this11.table_loading_ic = false;
+      })["catch"](function (error) {
+        _this11.errors = error.response.data.errors;
+        _this11.table_loading_ic = false;
       });
     }
   }
@@ -75594,7 +76035,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "3. Do you have any of the following illnes:: Asthma, TB, Diabetes, Hypertension, Cardio Vascular Disease, Obesity or other that can compromise your immunity?"
+                          "3. In the last 14 days, did you have contact with anyone with symptops in #2?"
                         )
                       ]),
                       _vm._v(" "),
@@ -75708,7 +76149,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "4. Any members of your household experience any of the symptoms in #2?"
+                          "4. Have you worked together or stayed in the same close environment of a confirmed COVID19 Case?"
                         )
                       ]),
                       _vm._v(" "),
@@ -75818,7 +76259,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "5. Have you worked together or stayed in the same close environment of a confirmed COVID19 Case?"
+                          "5. Was there any confirmed cases of Covid19 within your block?"
                         )
                       ]),
                       _vm._v(" "),
@@ -75928,7 +76369,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "6. Have you had any contacts with anyone with fever, colds, cough, sore throat, aches and pains, nasal congestion, runny nose, diarrhea or difficulty in breathing in the past 14 days?"
+                          "6. Have you travelled to any area in your city aside from your home?"
                         )
                       ]),
                       _vm._v(" "),
@@ -76022,6 +76463,39 @@ var render = function() {
                         ]
                       ),
                       _vm._v(" "),
+                      _c("div", { staticClass: "col-md-4 mt-3" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("h4", [_vm._v("If yes, where?")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.six_yes_desc,
+                                expression: "form.six_yes_desc"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.form.six_yes_desc },
+                            on: {
+                              click: _vm.validateTemperature,
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "six_yes_desc",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
                       _c("br"),
                       _vm._v(" "),
                       _vm.errors.six_question
@@ -76034,7 +76508,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "7. Have you travelled to any area in NCR aside from your home?"
+                          "7. Do you have any of the following illness: Asthma, TB, Diabetes, Hypertension, Cardio Vascular Disease, Obesity or other that can compromise your immunity?"
                         )
                       ]),
                       _vm._v(" "),
@@ -76136,39 +76610,6 @@ var render = function() {
                         ]
                       ),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-md-4" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("h4", [_vm._v("If yes, where?")]),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.form.seven_yes_desc,
-                                expression: "form.seven_yes_desc"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: { type: "text" },
-                            domProps: { value: _vm.form.seven_yes_desc },
-                            on: {
-                              click: _vm.validateTemperature,
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.form,
-                                  "seven_yes_desc",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
                       _c("br"),
                       _vm._v(" "),
                       _vm.errors.seven_question
@@ -76176,12 +76617,256 @@ var render = function() {
                             _vm._v(_vm._s(_vm.errors.seven_question[0]))
                           ])
                         : _vm._e()
+                    ])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-footer text-center" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-round btn-fill btn-lg",
+                      staticStyle: { width: "150px" },
+                      attrs: { id: "edit_btn", type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.saveCheckForm(_vm.form)
+                        }
+                      }
+                    },
+                    [_vm._v("Check")]
+                  )
+                ])
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-xl-12 order-xl-1" }, [
+            _c("div", { staticClass: "card bg-secondary shadow  mb-5" }, [
+              _vm._m(5),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-lg-4" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("Search Employee")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.keyword_ic,
+                            expression: "keyword_ic"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "text",
+                          placeholder: "Search Last Name / First Name"
+                        },
+                        domProps: { value: _vm.keyword_ic },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.keyword_ic = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-lg-4" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-md mt-4",
+                        attrs: { type: "button" },
+                        on: { click: _vm.fetchICEmployees }
+                      },
+                      [_vm._v("Search")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "table-responsive" }, [
+                    _c(
+                      "table",
+                      {
+                        staticClass: "table table-bordered",
+                        staticStyle: { "font-size": "14px" }
+                      },
+                      [
+                        _vm._m(6),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          [
+                            _vm.table_loading_ic
+                              ? _c("tr", [
+                                  _c(
+                                    "td",
+                                    { attrs: { colspan: "15" } },
+                                    [
+                                      _c(
+                                        "content-placeholders",
+                                        [
+                                          _c("content-placeholders-text", {
+                                            attrs: { lines: 3 }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c("h4", [
+                                        _vm._v(
+                                          "Loading Employee Records.. Please wait a moment... "
+                                        )
+                                      ])
+                                    ],
+                                    1
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm._l(_vm.ic_employees, function(ic_employee, u) {
+                              return _c("tr", { key: u }, [
+                                _c("td", [_vm._v(_vm._s(ic_employee.name))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(_vm._s(ic_employee.agency_name))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-primary btn-sm",
+                                      staticStyle: { "font-size": "14px" },
+                                      attrs: {
+                                        type: "button",
+                                        "data-toggle": "modal",
+                                        "data-target": "#iccheckModal"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.checkICEmployee(
+                                            ic_employee
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("Check")]
+                                  )
+                                ])
+                              ])
+                            })
+                          ],
+                          2
+                        )
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "iccheckModal",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "exampleModalLabel",
+            "aria-hidden": "true",
+            "data-backdrop": "static"
+          }
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass:
+                "modal-dialog modal-dialog-centered modal-lg modal-employee",
+              staticStyle: { width: "80%!important" },
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _vm._m(7),
+                _vm._v(" "),
+                _vm._m(8),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-12" }, [
+                      _c("h3", [
+                        _vm._v("Name: " + _vm._s(_vm.ic_employee.name))
+                      ]),
+                      _vm._v(" "),
+                      _c("h3", [
+                        _vm._v("Agency: " + _vm._s(_vm.ic_employee.agency_name))
+                      ]),
+                      _vm._v(" "),
+                      _c("hr")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-4" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("h4", [_vm._v("Temperature")]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form_ic.temperature,
+                              expression: "form_ic.temperature"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "number" },
+                          domProps: { value: _vm.form_ic.temperature },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.form_ic,
+                                "temperature",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _vm.errors.temperature
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors.temperature[0]))
+                            ])
+                          : _vm._e()
+                      ])
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-12 mb-3" }, [
                       _c("h4", [
                         _vm._v(
-                          "8. Was there any confirmed cases of COVID19 within your barangay?"
+                          "1. Did you visit a hospital, clinic or medical health facility in the past 14 days?"
                         )
                       ]),
                       _vm._v(" "),
@@ -76197,26 +76882,26 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.form.eight_question,
-                                expression: "form.eight_question"
+                                value: _vm.form_ic.one_question,
+                                expression: "form_ic.one_question"
                               }
                             ],
                             staticClass: "custom-control-input",
                             attrs: {
                               type: "radio",
-                              id: "yes8",
-                              name: "eight_question",
+                              id: "ic_yes1",
+                              name: "ic_one_question",
                               value: "Yes"
                             },
                             domProps: {
-                              checked: _vm._q(_vm.form.eight_question, "Yes")
+                              checked: _vm._q(_vm.form_ic.one_question, "Yes")
                             },
                             on: {
-                              click: _vm.validateTemperature,
+                              click: _vm.validateICTemperature,
                               change: function($event) {
                                 return _vm.$set(
-                                  _vm.form,
-                                  "eight_question",
+                                  _vm.form_ic,
+                                  "one_question",
                                   "Yes"
                                 )
                               }
@@ -76227,7 +76912,7 @@ var render = function() {
                             "label",
                             {
                               staticClass: "custom-control-label",
-                              attrs: { for: "yes8" }
+                              attrs: { for: "ic_yes1" }
                             },
                             [_vm._v("Yes")]
                           )
@@ -76246,26 +76931,26 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.form.eight_question,
-                                expression: "form.eight_question"
+                                value: _vm.form_ic.one_question,
+                                expression: "form_ic.one_question"
                               }
                             ],
                             staticClass: "custom-control-input",
                             attrs: {
                               type: "radio",
-                              id: "no8",
-                              name: "eight_question",
+                              id: "ic_no1",
+                              name: "ic_one_question",
                               value: "No"
                             },
                             domProps: {
-                              checked: _vm._q(_vm.form.eight_question, "No")
+                              checked: _vm._q(_vm.form_ic.one_question, "No")
                             },
                             on: {
-                              click: _vm.validateTemperature,
+                              click: _vm.validateICTemperature,
                               change: function($event) {
                                 return _vm.$set(
-                                  _vm.form,
-                                  "eight_question",
+                                  _vm.form_ic,
+                                  "one_question",
                                   "No"
                                 )
                               }
@@ -76276,7 +76961,7 @@ var render = function() {
                             "label",
                             {
                               staticClass: "custom-control-label",
-                              attrs: { for: "no8" }
+                              attrs: { for: "ic_no1" }
                             },
                             [_vm._v("No")]
                           )
@@ -76285,13 +76970,727 @@ var render = function() {
                       _vm._v(" "),
                       _c("br"),
                       _vm._v(" "),
-                      _vm.errors.eight_question
+                      _vm.errors.one_question
                         ? _c("span", { staticClass: "text-danger" }, [
-                            _vm._v(_vm._s(_vm.errors.eight_question[0]))
+                            _vm._v(_vm._s(_vm.errors.one_question[0]))
                           ])
-                        : _vm._e(),
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12 mb-3" }, [
+                      _c("h4", [
+                        _vm._v(
+                          "2. In the last 14 days, did you have any of the following: fever, colds, cough, sore throat, aches and\\ pains, nasal congestion, runny nose, diarrhea or difficulty in breathing?"
+                        )
+                      ]),
                       _vm._v(" "),
-                      _c("hr")
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline ml-4"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.two_question,
+                                expression: "form_ic.two_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_yes2",
+                              name: "ic_two_question",
+                              value: "Yes"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.two_question, "Yes")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "two_question",
+                                  "Yes"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_yes2" }
+                            },
+                            [_vm._v("Yes")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.two_question,
+                                expression: "form_ic.two_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_no2",
+                              name: "ic_two_question",
+                              value: "No"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.two_question, "No")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "two_question",
+                                  "No"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_no2" }
+                            },
+                            [_vm._v("No")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.two_question
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.two_question[0]))
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12 mb-3" }, [
+                      _c("h4", [
+                        _vm._v(
+                          "3. In the last 14 days, did you have contact with anyone with symptops in #2?"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline ml-4"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.three_question,
+                                expression: "form_ic.three_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_yes3",
+                              name: "ic_three_question",
+                              value: "Yes"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.three_question, "Yes")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "three_question",
+                                  "Yes"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_yes3" }
+                            },
+                            [_vm._v("Yes")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.three_question,
+                                expression: "form_ic.three_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_no3",
+                              name: "ic_three_question",
+                              value: "No"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.three_question, "No")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "three_question",
+                                  "No"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_no3" }
+                            },
+                            [_vm._v("No")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.three_question
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.three_question[0]))
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12 mb-3" }, [
+                      _c("h4", [
+                        _vm._v(
+                          "4. Have you worked together or stayed in the same close environment of a confirmed COVID19 Case?"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline ml-4"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.four_question,
+                                expression: "form_ic.four_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_yes4",
+                              name: "ic_four_question",
+                              value: "Yes"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.four_question, "Yes")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "four_question",
+                                  "Yes"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_yes4" }
+                            },
+                            [_vm._v("Yes")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.four_question,
+                                expression: "form_ic.four_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_no4",
+                              name: "ic_four_question",
+                              value: "No"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.four_question, "No")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "four_question",
+                                  "No"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_no4" }
+                            },
+                            [_vm._v("No")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.four_question
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.four_question[0]))
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12 mb-3" }, [
+                      _c("h4", [
+                        _vm._v(
+                          "5. Was there any confirmed cases of Covid19 within your block?"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline ml-4"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.five_question,
+                                expression: "form_ic.five_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_yes5",
+                              name: "ic_five_question",
+                              value: "Yes"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.five_question, "Yes")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "five_question",
+                                  "Yes"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_yes5" }
+                            },
+                            [_vm._v("Yes")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.five_question,
+                                expression: "form_ic.five_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_no5",
+                              name: "ic_five_question",
+                              value: "No"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.five_question, "No")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "five_question",
+                                  "No"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_no5" }
+                            },
+                            [_vm._v("No")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.five_question
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.five_question[0]))
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12 mb-3" }, [
+                      _c("h4", [
+                        _vm._v(
+                          "6. Have you travelled to any area in your city aside from your home?"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline ml-4"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.six_question,
+                                expression: "form_ic.six_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_yes6",
+                              name: "ic_six_question",
+                              value: "Yes"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.six_question, "Yes")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "six_question",
+                                  "Yes"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_yes6" }
+                            },
+                            [_vm._v("Yes")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.six_question,
+                                expression: "form_ic.six_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_no6",
+                              name: "ic_six_question",
+                              value: "No"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.six_question, "No")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "six_question",
+                                  "No"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_no6" }
+                            },
+                            [_vm._v("No")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-4 mt-3" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("h4", [_vm._v("If yes, where?")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.six_yes_desc,
+                                expression: "form_ic.six_yes_desc"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.form_ic.six_yes_desc },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form_ic,
+                                  "six_yes_desc",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.six_question
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.six_question[0]))
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-12 mb-3" }, [
+                      _c("h4", [
+                        _vm._v(
+                          "7. Do you have any of the following illness: Asthma, TB, Diabetes, Hypertension, Cardio Vascular Disease, Obesity or other that can compromise your immunity?"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline ml-4"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.seven_question,
+                                expression: "form_ic.seven_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_yes7",
+                              name: "ic_seven_question",
+                              value: "Yes"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.seven_question, "Yes")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "seven_question",
+                                  "Yes"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_yes7" }
+                            },
+                            [_vm._v("Yes")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "custom-control custom-radio custom-control-inline"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form_ic.seven_question,
+                                expression: "form_ic.seven_question"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "radio",
+                              id: "ic_no7",
+                              name: "ic_seven_question",
+                              value: "No"
+                            },
+                            domProps: {
+                              checked: _vm._q(_vm.form_ic.seven_question, "No")
+                            },
+                            on: {
+                              click: _vm.validateICTemperature,
+                              change: function($event) {
+                                return _vm.$set(
+                                  _vm.form_ic,
+                                  "seven_question",
+                                  "No"
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "custom-control-label",
+                              attrs: { for: "ic_no7" }
+                            },
+                            [_vm._v("No")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm.errors.seven_question
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.seven_question[0]))
+                          ])
+                        : _vm._e()
                     ])
                   ])
                 ]),
@@ -76305,7 +77704,7 @@ var render = function() {
                       attrs: { id: "edit_btn", type: "button" },
                       on: {
                         click: function($event) {
-                          return _vm.saveCheckForm(_vm.form)
+                          return _vm.saveICCheckForm(_vm.form_ic)
                         }
                       }
                     },
@@ -76383,6 +77782,68 @@ var staticRenderFns = [
         _c("th", [_vm._v("Department/BU/Position")]),
         _vm._v(" "),
         _c("th", [_vm._v("Contact Number")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Check")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h2",
+        {
+          staticClass: "col-12 modal-title text-center",
+          attrs: { id: "addCompanyLabel" }
+        },
+        [_vm._v("HEALTH DECLARATION FORM")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header bg-white border-0" }, [
+      _c("div", { staticClass: "row align-items-center" }, [
+        _c("div", { staticClass: "col-12" }, [
+          _c("h3", { staticClass: "mb-0 text-uppercase" }, [
+            _vm._v("Search IC Employee")
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Employee Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Department/BU/Position")]),
         _vm._v(" "),
         _c("th", [_vm._v("Check")])
       ])
@@ -76625,7 +78086,7 @@ var render = function() {
                                         }
                                       }
                                     },
-                                    [_vm._v("Enable Face Access")]
+                                    [_vm._v("Enable Biometric Access")]
                                   ),
                                   _vm._v(" "),
                                   _c(
@@ -76638,7 +78099,7 @@ var render = function() {
                                         }
                                       }
                                     },
-                                    [_vm._v("Disable Face Access")]
+                                    [_vm._v("Disable Biometric Access")]
                                   )
                                 ]),
                                 _vm._v(" "),
@@ -76792,9 +78253,223 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(form.six_question))]),
                               _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.six_yes_desc))]),
+                              _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(form.seven_question))]),
                               _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(form.eight_question))]),
+                              _c("td", [_vm._v(_vm._s(form.status))])
+                            ])
+                          }),
+                          0
+                        )
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-xl-12 order-xl-1" }, [
+            _c("div", { staticClass: "card bg-secondary shadow  mb-5" }, [
+              _vm._m(9),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-lg-4" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("Search Employee")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.keyword_ic,
+                            expression: "keyword_ic"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "text",
+                          placeholder: "Search Last Name / First Name"
+                        },
+                        domProps: { value: _vm.keyword_ic },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.keyword_ic = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-lg-4" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-md mt-4",
+                        attrs: { type: "button" },
+                        on: { click: _vm.fetchICEmployees }
+                      },
+                      [_vm._v("Search")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "table-responsive" }, [
+                    _c(
+                      "table",
+                      {
+                        staticClass: "table table-bordered",
+                        staticStyle: { "font-size": "14px" }
+                      },
+                      [
+                        _vm._m(10),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          [
+                            _vm.table_loading_ic
+                              ? _c("tr", [
+                                  _c(
+                                    "td",
+                                    { attrs: { colspan: "15" } },
+                                    [
+                                      _c(
+                                        "content-placeholders",
+                                        [
+                                          _c("content-placeholders-text", {
+                                            attrs: { lines: 3 }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c("h4", [
+                                        _vm._v(
+                                          "Loading Employee Records.. Please wait a moment... "
+                                        )
+                                      ])
+                                    ],
+                                    1
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm._l(_vm.ic_employees, function(ic_employee, u) {
+                              return _c("tr", { key: u }, [
+                                _c("td", [_vm._v(_vm._s(ic_employee.name))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(_vm._s(ic_employee.dept_bu_position))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-primary btn-sm",
+                                      staticStyle: { "font-size": "14px" },
+                                      attrs: {
+                                        type: "button",
+                                        "data-toggle": "modal",
+                                        "data-target": "#viewICFormsModal"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.viewICForms(ic_employee)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("View Forms")]
+                                  )
+                                ])
+                              ])
+                            })
+                          ],
+                          2
+                        )
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "viewICFormsModal",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "exampleModalLabel",
+            "aria-hidden": "true",
+            "data-backdrop": "static"
+          }
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass:
+                "modal-dialog modal-dialog-centered modal-lg modal-employee",
+              staticStyle: { width: "80%!important" },
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _vm._m(11),
+                _vm._v(" "),
+                _vm._m(12),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c("div", { staticClass: "table-responsive" }, [
+                    _c(
+                      "table",
+                      {
+                        staticClass: "table table-bordered",
+                        staticStyle: { "font-size": "14px" }
+                      },
+                      [
+                        _vm._m(13),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.forms, function(form, u) {
+                            return _c("tr", { key: u }, [
+                              _c("td", [_vm._v(_vm._s(form.created_at))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.temperature))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.one_question))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.two_question))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.three_question))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.four_question))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.five_question))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.six_question))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.six_yes_desc))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(form.seven_question))]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(form.status))])
                             ])
@@ -76879,7 +78554,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Door Access")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Face Access")]),
+        _c("th", [_vm._v("Biometric Access")]),
         _vm._v(" "),
         _c("th", [_vm._v("Forms")])
       ])
@@ -76985,9 +78660,101 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("6")]),
         _vm._v(" "),
+        _c("th", [_vm._v("6 Yes")]),
+        _vm._v(" "),
         _c("th", [_vm._v("7")]),
         _vm._v(" "),
-        _c("th", [_vm._v("8")]),
+        _c("th", [_vm._v("Status")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header bg-white border-0" }, [
+      _c("div", { staticClass: "row align-items-center" }, [
+        _c("div", { staticClass: "col-12" }, [
+          _c("h3", { staticClass: "mb-0 text-uppercase" }, [
+            _vm._v("Search IC Employee")
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Employee Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Department/BU/Position")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Forms")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h2",
+        {
+          staticClass: "col-12 modal-title text-center",
+          attrs: { id: "addCompanyLabel" }
+        },
+        [_vm._v("HEALTH DECLARATION FORM - LIST")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Temperature")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("1")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("2")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("3")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("4")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("5")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("6")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("6 Yes")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("7")]),
         _vm._v(" "),
         _c("th", [_vm._v("Status")])
       ])

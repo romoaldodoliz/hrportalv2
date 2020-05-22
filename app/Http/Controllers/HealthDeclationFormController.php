@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Employee;
+use App\HdfIcEmployee;
 use App\HealthDeclarationForm;
+use App\HealthDeclarationIcForm;
 use App\RfidUser;
 use App\HdfEmployee;
 
@@ -87,6 +89,36 @@ class HealthDeclationFormController extends Controller
         return $employees;
     }
 
+    public function fetchICEmployees(Request $request){
+        $keyword_ic = $request->keyword_ic;
+        
+        $client = new Client();
+        $response = $client->request('GET', 'http://10.96.4.87:8668/api/get-laborers');
+
+        $ic_employees = json_decode($response->getBody(), true);
+
+        return $get_ic_employee = $this->get_ic_employee($ic_employees, $keyword_ic);
+    }
+
+    public function get_ic_employee($get_users, $user){
+        $get_users_arr = [];
+
+        $result = array_filter($get_users, function ($item) use ($user) {
+            if (stripos($item['name'], $user) !== false) {
+                $get_users_arr['name'] = $item['name'];
+                $get_users_arr['usruid'] = $item['usruid'];
+                $get_users_arr['agency_name'] = $item['agency_name'];
+                $get_users_arr['active'] = $item['active'];
+
+                return $get_users_arr;
+            }else{
+                return $get_users_arr = [];
+            }
+        });
+
+        return $result;
+    }
+
     public function fetchEmployeesOveride(Request $request){
         $keyword = $request->keyword;
 
@@ -94,7 +126,7 @@ class HealthDeclationFormController extends Controller
             'keyword' => 'required',
         ]);
 
-        $employees = HdfEmployee::where('name', 'like' , '%' .  $keyword . '%')
+       $employees = HdfEmployee::where('name', 'like' , '%' .  $keyword . '%')
                             ->whereDate('created_at',date('Y-m-d'))
                             ->orderBy('name','DESC')
                             ->get();
@@ -154,6 +186,21 @@ class HealthDeclationFormController extends Controller
         return $employees;
     }
 
+    public function fetchEmployeesOverideIC(Request $request){
+        $keyword_ic = $request->keyword_ic;
+
+        $this->validate($request, [
+            'keyword_ic' => 'required',
+        ]);
+
+        $employees = HdfIcEmployee::where('name', 'like' , '%' .  $keyword_ic . '%')
+                            ->whereDate('created_at',date('Y-m-d'))
+                            ->orderBy('name','DESC')
+                            ->get();
+
+        return $employees;
+    }
+
     public function saveDeclaration(Request $request){
 
         $this->validate($request, [
@@ -163,8 +210,8 @@ class HealthDeclationFormController extends Controller
             'three_question' => 'required',
             'four_question' => 'required',
             'five_question' => 'required',
+            'six_question' => 'required',
             'seven_question' => 'required',
-            'eight_question' => 'required',
         ]);
 
         $data = $request->all();
@@ -180,6 +227,10 @@ class HealthDeclationFormController extends Controller
                 $yes_count++;
             }
 
+            if($data['three_question'] == 'Yes'){
+                $yes_count++;
+            }
+
             if($data['four_question'] == 'Yes'){
                 $yes_count++;
             }
@@ -188,47 +239,12 @@ class HealthDeclationFormController extends Controller
                 $yes_count++;
             }
 
-            if($data['six_question'] == 'Yes'){
-                $yes_count++;
-            }
-
-            if($data['eight_question'] == 'Yes'){
-                $yes_count++;
-            }
-
             //Save Data
             $data['date_time'] = date('h:m:s A m/d/Y');
             
             
-            if($yes_count > 1){
-
-                //Door Access
-                // if($data['user_id']){
-                //     $user_id = $data['user_id'];
-                //     $card_access = $this->getCardAccess($user_id);
-
-                //     if($card_access['card_list']){
-                //         if($card_access['card_list'][0]['is_blocked'] == false){
-                //             $disable_card_access = $this->disableCardAccess($card_access['card_list'][0]['id']);
-                //         }
-                //     }
-                // }
-
-                //Face Access
-                // if($data['face_user_id']){
-                //     $face_user_id = $data['face_user_id'];
-                //     $face_card_access = $this->getFaceCardAccess($face_user_id);
-
-                //     if($face_card_access['card_list']){
-                //         if($face_card_access['card_list'][0]['is_blocked'] == false){
-                //             $disable_face_card_access = $this->disableFaceCardAccess($face_card_access['card_list'][0]['id']);
-                //         }
-                //     }
-                // }
-                
-
-                
-               
+            if($yes_count >= 1){
+  
                 $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
 
                 if(empty($check_hdf_employee)){
@@ -282,7 +298,100 @@ class HealthDeclationFormController extends Controller
         }
     }
 
+    public function saveDeclarationIC(Request $request){
 
+        $this->validate($request, [
+            'temperature' => 'required',
+            'one_question' => 'required',
+            'two_question' => 'required',
+            'three_question' => 'required',
+            'four_question' => 'required',
+            'five_question' => 'required',
+            'six_question' => 'required',
+            'seven_question' => 'required',
+        ]);
+
+        $data = $request->all();
+
+        if($data){
+            $not_allowed = false;
+        
+            $yes_count = 0;
+            if($data['one_question'] == 'Yes'){
+                $yes_count++;
+            }
+            if($data['two_question'] == 'Yes'){
+                $yes_count++;
+            }
+
+            if($data['three_question'] == 'Yes'){
+                $yes_count++;
+            }
+
+            if($data['four_question'] == 'Yes'){
+                $yes_count++;
+            }
+
+            if($data['five_question'] == 'Yes'){
+                $yes_count++;
+            }
+
+            //Save Data
+            $data['date_time'] = date('h:m:s A m/d/Y');
+            
+            
+            if($yes_count >= 1){
+  
+                $check_hdf_employee = HdfIcEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+
+                if(empty($check_hdf_employee)){
+                    $data['status'] = 'Not Allowed';
+
+                    $hdf_employee = [];
+                    $hdf_employee['employee_id'] = $data['employee_id'];
+                    $hdf_employee['name'] = $data['name'];
+                    $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
+                    $hdf_employee['status'] = 'Not Allowed';
+                    $hdf_employee['date_time'] = date('Y-m-d');
+                    HdfIcEmployee::create($hdf_employee);
+
+                    $send_message = $this->send_message($data['name'],"not_allowed");
+
+                    HealthDeclarationIcForm::create($data);
+
+                    return 'not_allowed';
+                }else{
+                    return 'warning';
+                }
+
+               
+            }else{
+                $data['status'] = 'Allowed';
+
+                $check_hdf_employee = HdfIcEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+
+                if(empty($check_hdf_employee)){
+                    $hdf_employee = [];
+                    $hdf_employee['employee_id'] = $data['employee_id'];
+                    $hdf_employee['name'] = $data['name'];
+                    $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
+                    $hdf_employee['status'] = 'Allowed';
+                    $hdf_employee['date_time'] = date('Y-m-d');
+                    HdfIcEmployee::create($hdf_employee);
+
+                    HealthDeclarationIcForm::create($data);
+
+                    return 'saved';
+                }else{
+                    return 'warning';
+                }
+                
+            }
+            
+        }else{
+            return 'error';
+        }
+    }
 
     public function get_user($get_users, $user){
         $get_users_arr = [];
@@ -334,6 +443,7 @@ class HealthDeclationFormController extends Controller
             return 'Not';
         }
     }
+
     public function disableDoorAccessOveride(Request $request){
 
         $data = $request->all();
@@ -553,6 +663,14 @@ class HealthDeclationFormController extends Controller
         $employee_id = $request->employee_id;
 
         $employees = HealthDeclarationForm::where('employee_id',$employee_id)->whereDate('created_at' ,'>=',date('Y-m-d'))->get();
+
+        return $employees;
+    }
+
+    public function fetchFormListIC(Request $request){
+        $employee_id = $request->employee_id;
+
+        $employees = HealthDeclarationIcForm::where('employee_id',$employee_id)->whereDate('created_at' ,'>=',date('Y-m-d'))->get();
 
         return $employees;
     }
@@ -783,9 +901,9 @@ class HealthDeclationFormController extends Controller
         }else if($message == 'door_not_allowed'){
             $message_data = "Attention: " . $name . ' door access successfully disabled. - ('.date('m/d/Y').')';    
         }else if($message == 'face_allowed'){
-            $message_data = "Attention: " . $name . ' face access successfully enabled. - ('.date('m/d/Y').')';    
+            $message_data = "Attention: " . $name . ' biometric access successfully enabled. - ('.date('m/d/Y').')';    
         }else if($message == 'face_not_allowed'){
-            $message_data = "Attention: " . $name . ' face access successfully disabled. - ('.date('m/d/Y').')';    
+            $message_data = "Attention: " . $name . ' biometric access successfully disabled. - ('.date('m/d/Y').')';    
         }else{
             $message_data = "";
         }     
