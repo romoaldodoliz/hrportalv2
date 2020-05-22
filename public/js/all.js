@@ -13812,6 +13812,8 @@ __webpack_require__.r(__webpack_exports__);
         var message = response.data;
 
         if (message == 'saved') {
+          _this3.playSound('/sound/success.mp3');
+
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Success!',
             text: 'Successfully Checked.',
@@ -13824,6 +13826,8 @@ __webpack_require__.r(__webpack_exports__);
 
           _this3.loading = false;
         } else if (message == 'not_allowed') {
+          _this3.playSound('/sound/alarm.mp3');
+
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
             text: 'You are not allowed to pass. Please seek assistance.',
@@ -13880,6 +13884,8 @@ __webpack_require__.r(__webpack_exports__);
         var message = response.data;
 
         if (message == 'saved') {
+          _this4.playSound('/sound/success.mp3');
+
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Success!',
             text: 'Successfully Checked.',
@@ -13892,6 +13898,8 @@ __webpack_require__.r(__webpack_exports__);
 
           _this4.loading = false;
         } else if (message == 'not_allowed') {
+          _this4.playSound('/sound/alarm.mp3');
+
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
             title: 'Warning!',
             text: 'You are not allowed to pass. Please seek assistance.',
@@ -13926,6 +13934,12 @@ __webpack_require__.r(__webpack_exports__);
         });
         _this4.loading = false;
       });
+    },
+    playSound: function playSound(sound) {
+      if (sound) {
+        var audio = new Audio(sound);
+        audio.play();
+      }
     }
   }
 });

@@ -908,7 +908,7 @@ class HealthDeclationFormController extends Controller
             $message_data = "";
         }     
         
-        if($message_data){
+        if($message_data && $name){
             $body = [
                 'roomId' => "Y2lzY29zcGFyazovL3VzL1JPT00vMzIzMDY1OTAtOWE1ZC0xMWVhLThiNjktYzFjN2Q4MDQxODBm",
                 'text' => $message_data
