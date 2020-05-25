@@ -21699,6 +21699,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue_json_excel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-json-excel */ "./node_modules/vue-json-excel/JsonExcel.vue");
 //
 //
 //
@@ -21922,11 +21923,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    loader: _Loader__WEBPACK_IMPORTED_MODULE_0__["default"]
+    loader: _Loader__WEBPACK_IMPORTED_MODULE_0__["default"],
+    'downloadExcel': vue_json_excel__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     return {
@@ -21941,7 +21955,19 @@ __webpack_require__.r(__webpack_exports__);
       keywords: "",
       loading: false,
       user_id: '',
-      table_loading: true
+      table_loading: true,
+      json_fields: {
+        'Name': 'name',
+        'Email': 'email',
+        'Role': {
+          callback: function callback(value) {
+            if (value.roles[0]) {
+              return "".concat(value.roles[0].name);
+            }
+          }
+        },
+        'Creation Date': 'created_at'
+      }
     };
   },
   created: function created() {
@@ -96338,6 +96364,31 @@ var render = function() {
                           }
                         })
                       ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-12" },
+                      [
+                        _c(
+                          "download-excel",
+                          {
+                            staticClass:
+                              "btn btn-sm btn-default mt-3 ml-3 mr-3 float-right",
+                            attrs: {
+                              data: _vm.users,
+                              fields: _vm.json_fields,
+                              name: "Users.xls"
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\r\n                                                    Export to excel\r\n                                            "
+                            )
+                          ]
+                        )
+                      ],
+                      1
                     )
                   ])
                 ]),
@@ -96430,6 +96481,14 @@ var render = function() {
                               _c("td", [_vm._v(_vm._s(user.name))]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(user.email))]),
+                              _vm._v(" "),
+                              _c("td", [
+                                _vm._v(
+                                  _vm._s(
+                                    user.roles[0] ? user.roles[0].name : ""
+                                  )
+                                )
+                              ]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(user.created_at))])
                             ])
@@ -97041,6 +97100,8 @@ var staticRenderFns = [
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Name")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Email")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Role")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Creation Date")])
       ])

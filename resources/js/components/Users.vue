@@ -18,6 +18,15 @@
                                         <div class="col-xl-4 mb-2 mt-3 float-right">
                                             <input type="text" name="keyword" class="form-control" placeholder="Search" autocomplete="off" v-model="keywords" id="keyword">
                                         </div> 
+                                        <div class="col-md-12">
+                                             <download-excel
+                                                :data   = "users"
+                                                :fields = "json_fields"
+                                                class   = "btn btn-sm btn-default mt-3 ml-3 mr-3 float-right"
+                                                name    = "Users.xls">
+                                                    Export to excel
+                                            </download-excel>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
@@ -28,6 +37,7 @@
                                                 <th scope="col"></th>
                                                 <th scope="col">Name</th>
                                                 <th scope="col">Email</th>
+                                                <th scope="col">Role</th>
                                                 <th scope="col">Creation Date</th>
                                              
                                                
@@ -57,6 +67,7 @@
                                                 </td>
                                                 <td>{{ user.name }}</td>
                                                 <td>{{ user.email }}</td>
+                                                <td>{{ user.roles[0] ? user.roles[0].name : "" }}</td>
                                                 <td>{{ user.created_at }}</td>  
                                             </tr>
                                             
@@ -217,16 +228,19 @@
         </div>
         
     </div>
-</div>
+
 </template>
 
 
 <script>
     import loader from './Loader'
     import Swal from 'sweetalert2'
+    import JsonExcel from 'vue-json-excel'
+
     export default {
          components: {
-            loader
+            loader,
+            'downloadExcel': JsonExcel
         },
         data(){
             return {
@@ -242,6 +256,18 @@
                 loading: false,
                 user_id: '',
                 table_loading : true,
+                json_fields: {
+                    'Name' : 'name',
+                    'Email' : 'email',
+                    'Role' :  {
+                        callback: (value) => {
+                            if(value.roles[0]){
+                                return `${value.roles[0].name}`;
+                            }
+                        }
+                    },
+                    'Creation Date' : 'created_at'
+                }
             }
         },
         created(){
