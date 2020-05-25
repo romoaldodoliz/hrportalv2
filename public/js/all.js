@@ -10886,6 +10886,17 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var print_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! print-js */ "./node_modules/print-js/dist/print.js");
 /* harmony import */ var print_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(print_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_json_excel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-json-excel */ "./node_modules/vue-json-excel/JsonExcel.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -11127,7 +11138,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    'downloadExcel': vue_json_excel__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   data: function data() {
     return {
       errors: [],
@@ -11150,7 +11165,42 @@ __webpack_require__.r(__webpack_exports__);
       rfid_number: [],
       scan_rfid_data: [],
       timer: '',
-      error_tap: true
+      error_tap: true,
+      json_fields: {
+        'Employee number': 'id_number',
+        'First Name': 'first_name',
+        'Last Name': 'last_name',
+        'Company': {
+          callback: function callback(value) {
+            if (value.companies) {
+              return "".concat(value.companies[0].name);
+            }
+          }
+        },
+        'Department': {
+          callback: function callback(value) {
+            if (value.departments) {
+              return "".concat(value.departments[0].name);
+            }
+          }
+        },
+        'Location': {
+          callback: function callback(value) {
+            if (value.locations) {
+              return "".concat(value.locations[0].name);
+            }
+          }
+        },
+        'ID Print Logs': {
+          callback: function callback(value) {
+            if (value.print_id_logs.length > 0) {
+              return "".concat(value.print_id_logs.length, " No. of Print(s)");
+            } else {
+              return "0 No. of Print(s)";
+            }
+          }
+        }
+      }
     };
   },
   created: function created() {
@@ -68955,17 +69005,40 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-xl-12" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass:
-                              "btn btn-sm btn-primary mt-3 float-right",
-                            on: { click: _vm.fetchFilterEmployee }
-                          },
-                          [_vm._v(" Apply Filter")]
-                        )
-                      ])
+                      _c(
+                        "div",
+                        { staticClass: "col-xl-12" },
+                        [
+                          _c(
+                            "download-excel",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-default mt-3 ml-3 mr-3 float-right",
+                              attrs: {
+                                data: _vm.employee_ids,
+                                fields: _vm.json_fields,
+                                name: "ID Filtered Employees.xls"
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                                Export to excel\n                                        "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-primary mt-3 float-right",
+                              on: { click: _vm.fetchFilterEmployee }
+                            },
+                            [_vm._v(" Apply Filter")]
+                          )
+                        ],
+                        1
+                      )
                     ]
                   )
                 ])
@@ -69095,11 +69168,6 @@ var render = function() {
                                         "storage/id_image/employee_image/" +
                                         employee_id.id +
                                         ".png?v="
-                                    },
-                                    on: {
-                                      error: function($event) {
-                                        return _vm.signatureImageLoadError()
-                                      }
                                     }
                                   })
                                 ]

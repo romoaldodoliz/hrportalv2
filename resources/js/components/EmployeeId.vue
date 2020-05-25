@@ -51,6 +51,16 @@
                                                 </select>
                                             </div> 
                                         <div class="col-xl-12">
+                                            
+
+                                             <download-excel
+                                                :data   = "employee_ids"
+                                                :fields = "json_fields"
+                                                class   = "btn btn-sm btn-default mt-3 ml-3 mr-3 float-right"
+                                                name    = "ID Filtered Employees.xls">
+                                                    Export to excel
+                                            </download-excel>
+
                                             <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
                                         </div> 
                                     </div> 
@@ -97,7 +107,7 @@
                                             </td>
                                              <td>
                                                 <div class="row justify-content-center mb-2">
-                                                    <img :src="'storage/id_image/employee_image/' + employee_id.id + '.png?v='" class="rounded-circle" @error="signatureImageLoadError()"  style="width:50px;height:50px;border:2px dotted ;">
+                                                    <img :src="'storage/id_image/employee_image/' + employee_id.id + '.png?v='" class="rounded-circle" style="width:50px;height:50px;border:2px dotted ;">
                                                 </div>
                                             </td>
                                             <td>{{ employee_id.id_number }}</td>
@@ -240,7 +250,9 @@
 
 <script>
 import print from 'print-js'
+import JsonExcel from 'vue-json-excel'
 export default {
+    components: { 'downloadExcel': JsonExcel },
     data(){
          return {
             errors: [],
@@ -263,7 +275,42 @@ export default {
             rfid_number : [],
             scan_rfid_data : [],
             timer : '',
-            error_tap : true
+            error_tap : true,
+            json_fields: {
+                'Employee number' : 'id_number',
+                'First Name' : 'first_name',
+                'Last Name' : 'last_name',
+                'Company' :  {
+                    callback: (value) => {
+                        if(value.companies){
+                            return `${value.companies[0].name}`;
+                        }
+                    }
+                },
+                'Department' :  {
+                    callback: (value) => {
+                        if(value.departments){
+                            return `${value.departments[0].name}`;
+                        }
+                    }
+                },
+                'Location' :  {
+                    callback: (value) => {
+                        if(value.locations){
+                            return `${value.locations[0].name}`;
+                        }
+                    }
+                },
+                'ID Print Logs' :  {
+                    callback: (value) => {
+                        if(value.print_id_logs.length > 0){
+                            return `${value.print_id_logs.length } No. of Print(s)`;
+                        }else{
+                            return `0 No. of Print(s)`;
+                        }
+                    }
+                },
+             }
          }
     },
     created(){
