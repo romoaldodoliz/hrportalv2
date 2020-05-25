@@ -63,6 +63,7 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th scope="col"></th>
+                                            <th scope="col"></th>
                                             <th scope="col">Employee Number</th>
                                             <th scope="col">Name</th>
                                             <th scope="col">Company</th>
@@ -93,6 +94,11 @@
                                                     </div>
                                                 </div>
                                                 <!-- <button class="btn btn-sm btn-primary " data-target="#printModal" style="cursor: pointer" @click="previewPrintId(employee_id)"><i class="fas fa-print"></i> Print Preview</button> -->
+                                            </td>
+                                             <td>
+                                                <div class="row justify-content-center mb-2">
+                                                    <img :src="'storage/id_image/employee_image/' + employee_id.id + '.png?v='" class="rounded-circle" @error="signatureImageLoadError()"  style="width:50px;height:50px;border:2px dotted ;">
+                                                </div>
                                             </td>
                                             <td>{{ employee_id.id_number }}</td>
                                             <td>{{ employee_id.first_name }} {{ employee_id.last_name }}</td>

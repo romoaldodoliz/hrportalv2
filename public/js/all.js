@@ -11120,6 +11120,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -69070,6 +69076,36 @@ var render = function() {
                               ])
                             ]),
                             _vm._v(" "),
+                            _c("td", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "row justify-content-center mb-2"
+                                },
+                                [
+                                  _c("img", {
+                                    staticClass: "rounded-circle",
+                                    staticStyle: {
+                                      width: "50px",
+                                      height: "50px",
+                                      border: "2px dotted"
+                                    },
+                                    attrs: {
+                                      src:
+                                        "storage/id_image/employee_image/" +
+                                        employee_id.id +
+                                        ".png?v="
+                                    },
+                                    on: {
+                                      error: function($event) {
+                                        return _vm.signatureImageLoadError()
+                                      }
+                                    }
+                                  })
+                                ]
+                              )
+                            ]),
+                            _vm._v(" "),
                             _c("td", [_vm._v(_vm._s(employee_id.id_number))]),
                             _vm._v(" "),
                             _c("td", [
@@ -69564,6 +69600,8 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", { staticClass: "thead-light" }, [
       _c("tr", [
+        _c("th", { attrs: { scope: "col" } }),
+        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Employee Number")]),
