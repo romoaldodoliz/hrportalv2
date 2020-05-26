@@ -22,6 +22,10 @@ class HealthDeclationFormController extends Controller
         return view('health_declartion_form.index');
     }
 
+    public function index_ic(){
+        return view('health_declartion_form.index_ic');
+    }
+
     public function fetchEmployees(Request $request){
         $keyword = $request->keyword;
         $employees = Employee::select('id','first_name','last_name','position','mobile_number')->with('companies','departments','locations')

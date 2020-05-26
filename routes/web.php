@@ -17,6 +17,8 @@ Route::get('/', function () {
 
 Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
 
+Route::get('/health_declaration_form_ic', 'HealthDeclationFormController@index_ic')->name('health_declaration_form_ic');
+
 Route::post('/fetch-filter-employee-health', 'HealthDeclationFormController@fetchEmployees');
 
 Route::post('/fetch-filter-employee-health-overide', 'HealthDeclationFormController@fetchEmployeesOveride');
@@ -52,6 +54,7 @@ Route::post('/ic-employees', 'HealthDeclationFormController@fetchICEmployees');
 
 
 Route::post('/employee-update-status', 'HealthDeclationFormController@employeeUpdateStatus');
+
 Route::post('/ic-employee-update-status', 'HealthDeclationFormController@employeeICUpdateStatus');
 
 

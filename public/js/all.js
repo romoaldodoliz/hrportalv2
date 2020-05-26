@@ -13697,6 +13697,546 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      keyword_ic: '',
+      keyword: '',
+      searchICEmployees: [],
+      ic_employees: [],
+      employees: [],
+      ic_employee: [],
+      employee: [],
+      errors: [],
+      form: [],
+      form_ic: [],
+      ic_form: [],
+      loading: false,
+      table_loading: false,
+      table_loading_ic: false
+    };
+  },
+  created: function created() {},
+  methods: {
+    forceUppercase: function forceUppercase(e, o, prop) {
+      var start = e.target.selectionStart;
+      e.target.value = e.target.value.toUpperCase();
+      this.$set(o, prop, e.target.value);
+      e.target.setSelectionRange(start, start);
+    },
+    validateTemperature: function validateTemperature() {
+      var v = this;
+
+      if (v.form.temperature) {
+        if (v.form.temperature > 37.5) {
+          this.playSound('/sound/alarm.mp3');
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          v.clearForm();
+          $('#checkModal').modal('hide');
+        }
+      } else {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Please fill up temperature.',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+      }
+    },
+    validateICTemperature: function validateICTemperature() {
+      var v = this;
+
+      if (v.form_ic.temperature) {
+        if (v.form_ic.temperature > 37.5) {
+          this.playSound('/sound/alarm.mp3');
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You have a high temperature. Please seek assistance before you proceed. Thank you.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          v.clearICForm();
+          $('#iccheckModal').modal('hide');
+        }
+      } else {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Please fill up temperature.',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+      }
+    },
+    fetchEmployees: function fetchEmployees() {
+      var _this = this;
+
+      this.errors = [];
+      this.employees = [];
+      this.table_loading = true;
+      axios.post('/fetch-filter-employee-health', {
+        keyword: this.keyword
+      }).then(function (response) {
+        _this.employees = response.data;
+        _this.table_loading = false;
+      })["catch"](function (error) {
+        _this.errors = error.response.data.errors;
+        _this.table_loading = false;
+      });
+    },
+    fetchICEmployees: function fetchICEmployees() {
+      var _this2 = this;
+
+      this.errors = [];
+      this.ic_employees = [];
+      this.table_loading_ic = true;
+      axios.post('/ic-employees', {
+        keyword_ic: this.keyword_ic
+      }).then(function (response) {
+        _this2.ic_employees = response.data;
+        _this2.table_loading_ic = false;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+        _this2.table_loading_ic = false;
+      });
+    },
+    checkEmployee: function checkEmployee(employee) {
+      if (employee.face_user_id) {
+        this.employee = employee;
+      } else {
+        this.employee = employee;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Your name is not similar to Biometric Access. Please contact the administrator for the assistance. Thank you.',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+      }
+    },
+    checkICEmployee: function checkICEmployee(ic_employee) {
+      this.ic_employee = ic_employee;
+    },
+    clearForm: function clearForm() {
+      this.employee = [];
+      this.form.temperature = "";
+      this.form.one_question = "";
+      this.form.two_question = "";
+      this.form.three_question = "";
+      this.form.four_question = "";
+      this.form.five_question = "";
+      this.form.six_question = "";
+      this.form.seven_question = "";
+      this.form.seven_yes_desc = "";
+      this.form.eight_question = "";
+      this.form = [];
+    },
+    clearICForm: function clearICForm() {
+      this.ic_employee = [];
+      this.form_ic.temperature = "";
+      this.form_ic.one_question = "";
+      this.form_ic.two_question = "";
+      this.form_ic.three_question = "";
+      this.form_ic.four_question = "";
+      this.form_ic.five_question = "";
+      this.form_ic.six_question = "";
+      this.form_ic.six_yes_desc = "";
+      this.form_ic.seven_question = "";
+      this.form_ic = [];
+    },
+    saveCheckForm: function saveCheckForm(form) {
+      var _this3 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('employee_id', this.employee.id);
+      formData.append('name', this.employee.first_name + ' ' + this.employee.last_name);
+      formData.append('user_id', this.employee.user_id);
+      formData.append('face_user_id', this.employee.face_user_id);
+      var dept = this.employee.departments ? this.employee.departments[0].name : "";
+      var company = this.employee.companies ? this.employee.companies[0].name : "";
+      formData.append('dept_bu_position', dept + '/' + company + '/' + this.employee.position);
+      formData.append('contact_number', this.employee.mobile_number);
+      formData.append('temperature', form.temperature ? form.temperature : "");
+      formData.append('one_question', form.one_question ? form.one_question : "");
+      formData.append('two_question', form.two_question ? form.two_question : "");
+      formData.append('three_question', form.three_question ? form.three_question : "");
+      formData.append('four_question', form.four_question ? form.four_question : "");
+      formData.append('five_question', form.five_question ? form.five_question : "");
+      formData.append('six_question', form.six_question ? form.six_question : "");
+      formData.append('six_yes_desc', form.six_yes_desc ? form.six_yes_desc : "");
+      formData.append('seven_question', form.seven_question ? form.seven_question : "");
+      axios.post("/save-health-declaration", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'saved') {
+          _this3.playSound('/sound/success.mp3');
+
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Successfully Checked.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+
+          _this3.clearForm();
+
+          _this3.loading = false;
+        } else if (message == 'not_allowed') {
+          _this3.playSound('/sound/alarm.mp3');
+
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You are not allowed to pass. Please seek assistance.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+
+          _this3.clearForm();
+
+          _this3.loading = false;
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Error!',
+            text: 'Unable to saved.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+
+          _this3.clearForm();
+
+          _this3.loading = false;
+        }
+      })["catch"](function (error) {
+        _this3.errors = error.response.data.errors;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Some error occured. Please try again!',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+        _this3.loading = false;
+      });
+    },
+    saveICCheckForm: function saveICCheckForm(form_ic) {
+      var _this4 = this;
+
+      this.loading = true;
+      var formData = new FormData();
+      formData.append('employee_id', this.ic_employee.usruid);
+      formData.append('name', this.ic_employee.name);
+      formData.append('dept_bu_position', this.ic_employee.agency_name);
+      formData.append('temperature', form_ic.temperature ? form_ic.temperature : "");
+      formData.append('one_question', form_ic.one_question ? form_ic.one_question : "");
+      formData.append('two_question', form_ic.two_question ? form_ic.two_question : "");
+      formData.append('three_question', form_ic.three_question ? form_ic.three_question : "");
+      formData.append('four_question', form_ic.four_question ? form_ic.four_question : "");
+      formData.append('five_question', form_ic.five_question ? form_ic.five_question : "");
+      formData.append('six_question', form_ic.six_question ? form_ic.six_question : "");
+      formData.append('six_yes_desc', form_ic.six_yes_desc ? form_ic.six_yes_desc : "");
+      formData.append('seven_question', form_ic.seven_question ? form_ic.seven_question : "");
+      axios.post("/save-health-declaration-ic", formData).then(function (response) {
+        var message = response.data;
+
+        if (message == 'saved') {
+          _this4.playSound('/sound/success.mp3');
+
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Success!',
+            text: 'Successfully Checked.',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+          $('#iccheckModal').modal('hide');
+
+          _this4.clearICForm();
+
+          _this4.loading = false;
+        } else if (message == 'not_allowed') {
+          _this4.playSound('/sound/alarm.mp3');
+
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Warning!',
+            text: 'You are not allowed to pass. Please seek assistance.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#checkModal').modal('hide');
+
+          _this4.clearForm();
+
+          _this4.loading = false;
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+            title: 'Error!',
+            text: 'Unable to saved.',
+            icon: 'warning',
+            confirmButtonText: 'Okay'
+          });
+          $('#iccheckModal').modal('hide');
+
+          _this4.clearICForm();
+
+          _this4.loading = false;
+        }
+      })["catch"](function (error) {
+        _this4.errors = error.response.data.errors;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Warning!',
+          text: 'Some error occured. Please try again!',
+          icon: 'warning',
+          confirmButtonText: 'Okay'
+        });
+        _this4.loading = false;
+      });
+    },
+    playSound: function playSound(sound) {
+      if (sound) {
+        var audio = new Audio(sound);
+        audio.play();
+      }
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loader */ "./resources/js/components/Loader.vue");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 
 
@@ -76940,13 +77480,146 @@ var render = function() {
             ]
           )
         ]
-      ),
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "header pb-8 pt-5 pt-lg-8 d-flex align-items-center",
+        staticStyle: {
+          "min-height": "300px",
+          "background-image": "url(/img/bg.jpg)",
+          "background-size": "cover",
+          "background-position": "center bottom"
+        }
+      },
+      [
+        _c("span", { staticClass: "mask bg-gradient-success opacity-7" }),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "container-fluid d-flex align-items-center" },
+          [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-lg-12 col-md-12" }, [
+                _c(
+                  "h1",
+                  { staticClass: "display-2 text-white text-uppercase" },
+                  [_vm._v("HEALTH DECLARATION FORM")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header bg-white border-0" }, [
+      _c("div", { staticClass: "row align-items-center" }, [
+        _c("div", { staticClass: "col-12" }, [
+          _c("h3", { staticClass: "mb-0 text-uppercase" }, [
+            _vm._v("Search Employee")
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Employee Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Department/BU/Position")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Contact Number")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Check")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h2",
+        {
+          staticClass: "col-12 modal-title text-center",
+          attrs: { id: "addCompanyLabel" }
+        },
+        [_vm._v("HEALTH DECLARATION FORM")]
+      )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _vm.loading ? _c("loader") : _vm._e(),
       _vm._v(" "),
-      _c("div", { staticClass: "container-fluid" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "container-fluid mt--7" }, [
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col-xl-12 order-xl-1" }, [
             _c("div", { staticClass: "card bg-secondary shadow  mb-5" }, [
-              _vm._m(5),
+              _vm._m(1),
               _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
                 _c("div", { staticClass: "row" }, [
@@ -77003,7 +77676,7 @@ var render = function() {
                         staticStyle: { "font-size": "14px" }
                       },
                       [
-                        _vm._m(6),
+                        _vm._m(2),
                         _vm._v(" "),
                         _c(
                           "tbody",
@@ -77105,9 +77778,9 @@ var render = function() {
             },
             [
               _c("div", { staticClass: "modal-content" }, [
-                _vm._m(7),
+                _vm._m(3),
                 _vm._v(" "),
-                _vm._m(8),
+                _vm._m(4),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-body" }, [
                   _c("div", { staticClass: "row" }, [
@@ -78061,70 +78734,6 @@ var staticRenderFns = [
         )
       ]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header bg-white border-0" }, [
-      _c("div", { staticClass: "row align-items-center" }, [
-        _c("div", { staticClass: "col-12" }, [
-          _c("h3", { staticClass: "mb-0 text-uppercase" }, [
-            _vm._v("Search Employee")
-          ])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("Employee Name")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Department/BU/Position")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Contact Number")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Check")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c(
-        "button",
-        {
-          staticClass: "close mt-2 mr-2",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "h2",
-        {
-          staticClass: "col-12 modal-title text-center",
-          attrs: { id: "addCompanyLabel" }
-        },
-        [_vm._v("HEALTH DECLARATION FORM")]
-      )
-    ])
   },
   function() {
     var _vm = this
@@ -109758,6 +110367,7 @@ Vue.component('employeeid', __webpack_require__(/*! ./components/EmployeeId.vue 
 Vue.component('verifiedemployees', __webpack_require__(/*! ./components/VerifiedEmployees.vue */ "./resources/js/components/VerifiedEmployees.vue")["default"]);
 Vue.component('changepassword', __webpack_require__(/*! ./components/ChangePassword.vue */ "./resources/js/components/ChangePassword.vue")["default"]);
 Vue.component('health-declaration-forms', __webpack_require__(/*! ./components/HealthDeclarationForms.vue */ "./resources/js/components/HealthDeclarationForms.vue")["default"]);
+Vue.component('health-declaration-forms-ic', __webpack_require__(/*! ./components/HealthDeclarationFormsIc.vue */ "./resources/js/components/HealthDeclarationFormsIc.vue")["default"]);
 Vue.component('health-declaration-forms-set-up', __webpack_require__(/*! ./components/HealthDeclarationFormsSetup.vue */ "./resources/js/components/HealthDeclarationFormsSetup.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -110450,6 +111060,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationForms_vue_vue_type_template_id_6ae9a8fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationForms_vue_vue_type_template_id_6ae9a8fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/HealthDeclarationFormsIc.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/components/HealthDeclarationFormsIc.vue ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _HealthDeclarationFormsIc_vue_vue_type_template_id_f7eb0794_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true& */ "./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true&");
+/* harmony import */ var _HealthDeclarationFormsIc_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./HealthDeclarationFormsIc.vue?vue&type=script&lang=js& */ "./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _HealthDeclarationFormsIc_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _HealthDeclarationFormsIc_vue_vue_type_template_id_f7eb0794_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _HealthDeclarationFormsIc_vue_vue_type_template_id_f7eb0794_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "f7eb0794",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/HealthDeclarationFormsIc.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsIc_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./HealthDeclarationFormsIc.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsIc_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true&":
+/*!*********************************************************************************************************!*\
+  !*** ./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true& ***!
+  \*********************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsIc_vue_vue_type_template_id_f7eb0794_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/HealthDeclarationFormsIc.vue?vue&type=template&id=f7eb0794&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsIc_vue_vue_type_template_id_f7eb0794_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HealthDeclarationFormsIc_vue_vue_type_template_id_f7eb0794_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
