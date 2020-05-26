@@ -573,7 +573,7 @@
                 
                 let formData = new FormData();
                 formData.append('employee_id',  this.employee.id);
-                formData.append('name',  this.employee.name);
+                formData.append('name',  this.employee.first_name + ' ' + this.employee.last_name);
                 formData.append('user_id',  this.employee.user_id);
                 formData.append('face_user_id',  this.employee.face_user_id);
                 var dept =  this.employee.departments ? this.employee.departments[0].name : "";
