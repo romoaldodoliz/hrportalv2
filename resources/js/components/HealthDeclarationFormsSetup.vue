@@ -239,7 +239,7 @@
                                 >
                                         Export to excel
                                 </download-excel>
-
+                            
                                 <button class="btn btn-md btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
                             </div> 
                         </div>
@@ -424,6 +424,7 @@
                 from : '',
                 to : '',
                 json_fields: {
+                    'Date': 'date_time',
                     'Name': 'name',
                     'Dept/BU/Position/Location': 'dept_bu_position',
                     'Contact Number' : 'contact_number',

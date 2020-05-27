@@ -14990,6 +14990,7 @@ __webpack_require__.r(__webpack_exports__);
       from: '',
       to: '',
       json_fields: {
+        'Date': 'date_time',
         'Name': 'name',
         'Dept/BU/Position/Location': 'dept_bu_position',
         'Contact Number': 'contact_number',
