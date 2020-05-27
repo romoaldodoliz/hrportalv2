@@ -106,108 +106,141 @@
         
         
 
-        <div class="container-fluid mt--7">
-        <div class="row ">
-        <div class="col-xl-6 mb-5 mb-xl-0">
-          <div class="card shadow">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h3 class="mb-0">Employee Approval Request(s)</h3>
+    <div class="container-fluid mt--7">
+        <div class="row">
+      
+            <div class="col-sm-12 mb-3 mb-xl-0 ">
+                <div class="card shadow mb-3">
+                    <h2 class="mb-3 mt-2 ml-2">Year to Date Headcount</h2>
+                    <div class="card-body">
+                        <line-chart :chart-data="datacollection" :height="70" :download="true"  ></line-chart>
+                    </div>
+                
                 </div>
-                <div class="col text-right">
-                  <a href="/employee_approval_requests" class="btn btn-sm btn-primary">See all</a>
-                </div>
-              </div>
             </div>
-            <div class="table-responsive">
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(employee_request,index) in filteredQueues" v-bind:key="index">
-                        <td>{{ employee_request.employee.first_name }} {{ employee_request.employee.last_name }}</td>
-                        <td>{{ employee_request.created_at }}</td>
-                        <td>{{ employee_request.status }}</td>
-                    </tr>
-                </tbody>
-              </table>
+         
+            <div class="col-sm-6 mb-5">
+                <div class="col-sm-12 mb-3 mb-xl-0">
+                    <div class="card shadow mb-3">
+                        <h2 class="mb-3 mt-2 ml-2">Employee Age</h2>
+                        <div class="card-body">
+                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="col-sm-12 mb-3 mb-xl-0">
+                    <div class="card shadow mb-3">
+                        <h2 class="mb-3 mt-2 ml-2">Headcount per Region</h2>
+                        <div class="card-body">
+                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="col-sm-12 mb-3 mb-xl-0">
+                    <div class="card shadow mb-3">
+                        <h2 class="mb-3 mt-2 ml-2">Gender</h2>
+                        <div class="card-body">
+                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="col-sm-12 mb-3 mb-xl-0">
+                    <div class="card shadow mb-3">
+                        <h2 class="mb-3 mt-2 ml-2">Marital Status</h2>
+                        <div class="card-body">
+                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                        </div>
+                    
+                    </div>
+                </div>
             </div>
 
-            <div class="row mb-3 mt-3 ml-1" v-if="filteredQueues.length ">
-                <div class="col-6">
-                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(requestcurrentPage - 1)"> Previous </button>
-                        <span class="text-dark">Page {{ requestcurrentPage + 1 }} of {{ totalPages }}</span>
-                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(requestcurrentPage + 1)"> Next </button>
+            <div class="col-sm-6 mb-5">
+                <div class="col-sm-12 mb-5 mb-xl-0">
+                    <div class="card shadow">
+                        <h2 class="mb-3 mt-2 ml-2">Employee Approval Request(s)</h2>
+                        <div class="table-responsive">
+                        <!-- Projects table -->
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(employee_request,index) in filteredQueues" v-bind:key="index">
+                                    <td>{{ employee_request.employee.first_name }} {{ employee_request.employee.last_name }}</td>
+                                    <td>{{ employee_request.created_at }}</td>
+                                    <td>{{ employee_request.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <div class="row mb-3 mt-3 ml-1" v-if="filteredQueues.length ">
+                            <div class="col-6">
+                                <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(requestcurrentPage - 1)"> Previous </button>
+                                    <span class="text-dark">Page {{ requestcurrentPage + 1 }} of {{ totalPages }}</span>
+                                <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(requestcurrentPage + 1)"> Next </button>
+                            </div>
+                            <div class="col-6 text-right">
+                                <span class="mr-2">Filtered employee request(s) : {{ filteredQueues.length }} </span><br>
+                                <span class="mr-2">Total employee request(s) : {{ employee_approval_requests.length }}</span>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="col-6 text-right">
-                    <span class="mr-2">Filtered employee request(s) : {{ filteredQueues.length }} </span><br>
-                    <span class="mr-2">Total employee request(s) : {{ employee_approval_requests.length }}</span>
+
+                <div class="col-sm-12 mt-3 mb-5 mb-xl-0">
+                    <div class="card shadow mb-5">
+                        <h2 class="mb-3 mt-2 ml-2">New Employees</h2>
+                        <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">ID Number</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Company</th>
+                                <th scope="col">Department</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(new_employee,index) in newfilteredQueues" v-bind:key="index">
+                                    <td>{{ new_employee.employee_number }}</td>
+                                    <td>{{ new_employee.first_name }} {{ new_employee.last_name }}</td>
+                                    <td>{{ new_employee.companies[0].name }}</td>
+                                    <td>{{ new_employee.departments[0].name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <div class="row mb-3 mt-3 ml-1" v-if="newfilteredQueues.length ">
+                            <div class="col-6">
+                                <button :disabled="!newshowPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="newsetPage(newcurrentPage - 1)"> Previous </button>
+                                    <span class="text-dark">Page {{ newcurrentPage + 1 }} of {{ newtotalPages }}</span>
+                                <button :disabled="!newshowNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="newsetPage(newcurrentPage + 1)"> Next </button>
+                            </div>
+                            <div class="col-6 text-right">
+                                <span class="mr-2">Filtered New Employee(s) : {{ newfilteredQueues.length }} </span><br>
+                                <span class="mr-2">Total New Employee(s) : {{ new_employees.length }}</span>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
-          </div>
+        
         </div>
-
-        <div class="col-xl-6">
-          <div class="card shadow">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h3 class="mb-0">New Employees</h3>
-                </div>
-                <div class="col text-right">
-                  <!-- <a href="#!" class="btn btn-sm btn-primary">See all</a> -->
-                </div>
-              </div>
-            </div>
-
-            <div class="table-responsive">
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">ID Number</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Company</th>
-                    <th scope="col">Department</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(new_employee,index) in newfilteredQueues" v-bind:key="index">
-                        <td>{{ new_employee.employee_number }}</td>
-                        <td>{{ new_employee.first_name }} {{ new_employee.last_name }}</td>
-                        <td>{{ new_employee.companies[0].name }}</td>
-                        <td>{{ new_employee.departments[0].name }}</td>
-                    </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="row mb-3 mt-3 ml-1" v-if="newfilteredQueues.length ">
-                <div class="col-6">
-                    <button :disabled="!newshowPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="newsetPage(newcurrentPage - 1)"> Previous </button>
-                        <span class="text-dark">Page {{ newcurrentPage + 1 }} of {{ newtotalPages }}</span>
-                    <button :disabled="!newshowNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="newsetPage(newcurrentPage + 1)"> Next </button>
-                </div>
-                <div class="col-6 text-right">
-                    <span class="mr-2">Filtered New Employee(s) : {{ newfilteredQueues.length }} </span><br>
-                    <span class="mr-2">Total New Employee(s) : {{ new_employees.length }}</span>
-                </div>
-            </div>
-
-          </div>
-        </div>
+      
       </div>
-      </div>
-
-
-
     </div>  
 
     
@@ -215,9 +248,16 @@
 
 
 <script>
+import BarChart from './Charts/BarChart.js'
+import LineChart from './Charts/LineChart.js'
     export default {
+        components: {
+            BarChart,
+            LineChart
+        },
         data(){
             return {
+                datacollection: null,
                 employees: 0,
                 new_employees: [],
                 total_inactives: 0,
@@ -241,7 +281,26 @@
             this.fetchEmployeeApprovalRequests();
             
         },
+        mounted () {
+            this.fillData()
+        },
         methods:{
+            fillData ()
+            {
+                this.datacollection = {
+                    labels: ['Jan','Feb','Mar','Apr','May', 'Jun' , 'Jul', 'Aug', 'Sept', 'Oct','Nov','Dec'],
+                    datasets: [
+                        {
+                            label: 'Data One',
+                            backgroundColor: '#2DCE89',
+                            pointBackgroundColor: 'white',
+                            borderWidth: 1,
+                            pointBorderColor: '#249EBF',
+                            data: [40, 20, 30, 50, 90, 10, 20, 40, 50, 70, 90, 100]
+                        },
+                    ]
+                }
+            },
            getEmployeeVerifiedPercentage(){
                 let v = this;
                 v.employee_verify_percentage = 0;
