@@ -38,6 +38,8 @@
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="fetchEmployees">Search</button>
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshDoorUsers">Refresh Door User</button>
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshFaceusers">Refresh Face User</button>
+
+                                    <button type="button" class="btn btn-success btn-md mt-4" data-toggle="modal" data-target="#reportModal">Generate Employee Report</button>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered" style="font-size:14px;">
@@ -199,6 +201,54 @@
             </div>
         </div>
 
+        <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center" id="addCompanyLabel">HEALTH DECLARATION FORM</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>From</label>
+                                    <input type="date" class="form-control"  v-model="from" placeholder="Input Search" />
+                                    <span class="text-danger" v-if="errors.from"> {{ errors.from[0] }} </span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>To</label>
+                                    <input type="date" class="form-control"  v-model="to" placeholder="Input Search" />
+                                    <span class="text-danger" v-if="errors.to"> {{ errors.to[0] }} </span>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                
+                                <download-excel
+                                    :data   = "export_employees"
+                                    :fields = "json_fields"
+                                    :disabled = "disableExport"
+                                    class   = "btn btn-md btn-success ml-3 mr-3 mt-3 float-right"
+                                    name    = "Export HDF Employee.xls"
+                                >
+                                        Export to excel
+                                </download-excel>
+
+                                <button class="btn btn-md btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
+                            </div> 
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+
         <!-- IC EMPLOYEE -->
 
         <div class="container-fluid">
@@ -348,7 +398,9 @@
 <script>
     import loader from './Loader'
     import Swal from 'sweetalert2'
+    import JsonExcel from 'vue-json-excel'
     export default {
+        components: { 'downloadExcel': JsonExcel,loader },
         data(){
             return {
                 keyword_ic : '',
@@ -366,12 +418,50 @@
 
                 remarks : [],
                 ic_remarks : [],
+
+                disableExport : true,
+                export_employees : [],
+                from : '',
+                to : '',
+                json_fields: {
+                    'Name': 'name',
+                    'Dept/BU/Position/Location': 'dept_bu_position',
+                    'Contact Number' : 'contact_number',
+                    'Temperature' : 'temperature',
+                    'One' : 'one_question',
+                    'Two' : 'two_question',
+                    'Three' : 'three_question',
+                    'Four' : 'four_question',
+                    'Five' : 'five_question',
+                    'Six' : 'six_question',
+                    'Six Yes Desc ' : 'six_yes_desc',
+                    'Seven ' : 'seven_question',
+                    'STATUS' : 'status'
+                },
             }
         },
         created(){
 
         },
         methods:{
+            fetchFilterEmployee(){
+                this.export_employees = [];
+
+                let formData = new FormData();
+                formData.append('from', this.from);
+                formData.append('to', this.to);
+
+                axios.post(`/fetch-apply-filter-hdf-employee`, 
+                    formData
+                )
+                .then(response => {
+                    this.export_employees = response.data;
+                    this.disableExport = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+            },
             refreshDoorUsers(){
                 axios.get('/user-access')
                 .then(response => { 

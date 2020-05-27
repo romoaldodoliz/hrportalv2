@@ -991,4 +991,20 @@ class HealthDeclationFormController extends Controller
 
     }
 
+
+    public function fetchApplyFilterHDFEmployee(Request $request){
+        $request->validate([
+            'from' => 'required',
+            'to' => 'required|after_or_equal:from'
+        ]);
+
+        $from = $request->from ? $request->from : ""; 
+        $to = $request->to ? $request->to : "";
+
+        return $summary = HealthDeclarationForm::where('created_at', '>=',  $from)
+                                                            ->whereDate('created_at' ,'<=', $to)
+                                                            ->orderBy('created_at','DESC')
+                                                            ->get();
+    }
+
 }

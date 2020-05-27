@@ -58,6 +58,9 @@ Route::post('/employee-update-status', 'HealthDeclationFormController@employeeUp
 Route::post('/ic-employee-update-status', 'HealthDeclationFormController@employeeICUpdateStatus');
 
 
+Route::post('/fetch-apply-filter-hdf-employee', 'HealthDeclationFormController@fetchApplyFilterHDFEmployee');
+
+
 Auth::routes();
 Route::get('logout', function(){
     return redirect('/');
