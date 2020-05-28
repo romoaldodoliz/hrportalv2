@@ -15012,6 +15012,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -15056,11 +15071,16 @@ __webpack_require__.r(__webpack_exports__);
         'Seven ': 'seven_question',
         'STATUS': 'status'
       },
-      ic_export_employees: []
+      ic_export_employees: [],
+      attachment_file: ''
     };
   },
   created: function created() {},
   methods: {
+    attachmentHandleFileUpload: function attachmentHandleFileUpload() {
+      var attachment_file = document.getElementById("attachment_file");
+      this.attachment_file = attachment_file.files[0];
+    },
     fetchFilterEmployee: function fetchFilterEmployee() {
       var _this = this;
 
@@ -15348,26 +15368,17 @@ __webpack_require__.r(__webpack_exports__);
       var formData = new FormData();
       formData.append('employee_id', v.employee.employee_id);
       formData.append('status', v.remarks.status_remarks ? v.remarks.status_remarks : "");
+      formData.append('attachment_file', v.attachment_file ? v.attachment_file : "");
       formData.append('remarks', v.remarks.remarks ? v.remarks.remarks : "");
       axios.post("/employee-update-status", formData).then(function (response) {
-        var message = response.data;
-
-        if (message == 'saved') {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-            title: 'Success!',
-            text: 'Employee has been updated successfully.',
-            icon: 'success',
-            confirmButtonText: 'Okay'
-          });
-        } else {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-            title: 'Warning!',
-            text: 'Unable to update.',
-            icon: 'warning',
-            confirmButtonText: 'Okay'
-          });
-        }
-
+        var employee = response.data;
+        _this14.employee = employee;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+          title: 'Success!',
+          text: 'Employee has been updated successfully.',
+          icon: 'success',
+          confirmButtonText: 'Okay'
+        });
         v.remarks.status_remarks = "";
         v.remarks.remarks = "";
         v.fetchEmployees();
@@ -79459,6 +79470,54 @@ var render = function() {
                         )
                       ]
                     )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-6" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "role" } }, [
+                          _vm._v("Upload Attachment")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "file",
+                          staticClass: "form-control",
+                          attrs: { type: "file", id: "attachment_file" },
+                          on: {
+                            change: function($event) {
+                              return _vm.attachmentHandleFileUpload()
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.attachment_file
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors.attachment_file[0]))
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-6" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("Attachment - ")
+                      ]),
+                      _vm._v(" "),
+                      _vm.employee.attachment_file
+                        ? _c(
+                            "a",
+                            {
+                              attrs: {
+                                target: "_blank",
+                                href:
+                                  "storage/hdf_attachments/" +
+                                  _vm.employee.attachment_file
+                              }
+                            },
+                            [_vm._v("View Attachment")]
+                          )
+                        : _vm._e()
+                    ])
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-12" }, [

@@ -13,7 +13,8 @@ class HdfEmployee extends Model
         'contact_number',
         'status',
         'remarks',
-        'date_time'
+        'date_time',
+        'attachment_file'
     ];
 
 }

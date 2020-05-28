@@ -1,4 +1,4 @@
-@extends('layouts.user-app')
+@extends('layouts.hdf-user-app')
 
 @section('content')
     <health-declaration-forms></health-declaration-forms>

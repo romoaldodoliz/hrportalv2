@@ -16,6 +16,8 @@ use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ServerException;
 
+use Illuminate\Support\Facades\Storage;
+
 class HealthDeclationFormController extends Controller
 {
     public function index(){
@@ -161,7 +163,7 @@ class HealthDeclationFormController extends Controller
                     $face_name = $user_data['name'];
                     $face_user_id = $user_data['user_id'];
                 }
-                $employees[$key]['name'] = $name;
+                $employees[$key]['name'] = $employee['name'];
                 $employees[$key]['user_id'] = $user_id;
                 $employees[$key]['face_name'] = $face_name;
                 $employees[$key]['face_user_id'] = $face_user_id;
@@ -948,24 +950,46 @@ class HealthDeclationFormController extends Controller
 
     public function employeeUpdateStatus(Request $request){
         $data = $request->all();
-       
+        
         $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
 
-            if($check_hdf_employee){
-                if($data){
-                    $hdf_employee = [];
-                    $hdf_employee['remarks'] =  $data['remarks'];
-                    $hdf_employee['status'] =$data['status'];
-
-                   $check_hdf_employee->update($hdf_employee);
-
-                   return 'saved';
-                }else{
-                    return 'not saved';
-                }
-            }else{
-                return 'warning';
+        $attachment_file = '';
+        if(isset($request->attachment_file)){
+            if($request->file('attachment_file')){
+                $attachment = $request->file('attachment_file');   
+                $filename = $check_hdf_employee['id'] . '_' . $attachment->getClientOriginalName();
+                $path = Storage::disk('public')->putFileAs('hdf_attachments', $attachment , $filename);
+                $attachment_file =  $filename;
             }
+        }
+
+        if($check_hdf_employee){
+            if($data){
+                $hdf_employee = [];
+                if($data['status']){
+                    $hdf_employee['remarks'] =  $data['remarks'];
+                }
+
+                if($data['status']){
+                    $hdf_employee['status'] =$data['status'];
+                }
+                
+                if($data['status']){
+                    $hdf_employee['attachment_file'] = $attachment_file;
+                }
+
+                if($hdf_employee){
+                    $check_hdf_employee->update($hdf_employee);
+                }
+               
+
+                return $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+            }else{
+                return $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+            }
+        }else{
+            return 'warning';
+        }
 
     }
 

@@ -37,7 +37,6 @@ Route::post('/disable-face-access-overide', 'HealthDeclationFormController@disab
 
 Route::post('/save-health-declaration-overide', 'HealthDeclationFormController@saveDeclarationOveride');
 
-Route::get('/health_declaration_form_users_disable_set_up', 'HealthDeclationFormController@health_declaration_form_users_disable_set_up');
 
 Route::post('/fetch-form-list', 'HealthDeclationFormController@fetchFormList');
 
@@ -74,6 +73,9 @@ Route::get('logout', function(){
     // Authenticated Admin Routes
     
     Route::group(['middleware' => ['auth']], function () {
+        //HDF
+        Route::get('/health_declaration_form_users_disable_set_up',['as'=>'hdf.index','uses'=>'HealthDeclationFormController@health_declaration_form_users_disable_set_up','middleware' => ['role:HDF Admin']]);
+
         //Home
         Route::get('/home', 'HomeController@index')->name('home');
 

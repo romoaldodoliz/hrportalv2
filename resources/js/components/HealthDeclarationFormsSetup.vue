@@ -182,13 +182,28 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="role">Upload Attachment</label> 
+                                        <input type="file" id="attachment_file" class="form-control" ref="file" v-on:change="attachmentHandleFileUpload()"/>
+                                        <span class="text-danger" v-if="errors.attachment_file">{{ errors.attachment_file[0] }}</span>
+                                    </div>
+                                    
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="role">Attachment - </label> 
+                                    <a target="_blank" :href="'storage/hdf_attachments/'+employee.attachment_file" v-if="employee.attachment_file">View Attachment</a>
+                                </div>
+                            </div>
+
                              <div class="col-md-12">
                                 <div class="form-group">
                                     <h4>Remarks</h4> 
                                         <textarea  class="form-control" v-model="remarks.remarks" placeholder="Remarks"></textarea>
                                     <br>
                                 </div>
-                                
                             </div>
 
                     </div>
@@ -491,12 +506,17 @@
                     'STATUS' : 'status'
                 },
                 ic_export_employees : [],
+                attachment_file : ''
             }
         },
         created(){
 
         },
         methods:{
+            attachmentHandleFileUpload(){
+                var attachment_file = document.getElementById("attachment_file");
+                this.attachment_file = attachment_file.files[0];
+            },
             fetchFilterEmployee(){
                 this.export_employees = [];
 
@@ -563,8 +583,7 @@
                     employee_id: employee.employee_id
                 })
                 .then(response => {
-                    this.forms = response.data;
-                    
+                    this.forms = response.data;                    
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -805,28 +824,23 @@
                 let formData = new FormData();
                 formData.append('employee_id', v.employee.employee_id);
                 formData.append('status', v.remarks.status_remarks ? v.remarks.status_remarks : "");
+                formData.append('attachment_file', v.attachment_file ? v.attachment_file : "");
                 formData.append('remarks', v.remarks.remarks ? v.remarks.remarks : "");
 
                 axios.post(`/employee-update-status`, 
                     formData
                 )
                 .then(response => {
-                    var message = response.data;
-                     if(message == 'saved'){
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Employee has been updated successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'Okay'
-                        });
-                    }else{
-                        Swal.fire({
-                            title: 'Warning!',
-                            text: 'Unable to update.',
-                            icon: 'warning',
-                            confirmButtonText: 'Okay'
-                        });
-                    }
+                    var employee = response.data;
+                    this.employee = employee; 
+                    
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Employee has been updated successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'Okay'
+                    });
+                
 
                     v.remarks.status_remarks = "";
                     v.remarks.remarks = "";
