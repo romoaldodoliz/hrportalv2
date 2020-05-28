@@ -14961,6 +14961,57 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -15004,7 +15055,8 @@ __webpack_require__.r(__webpack_exports__);
         'Six Yes Desc ': 'six_yes_desc',
         'Seven ': 'seven_question',
         'STATUS': 'status'
-      }
+      },
+      ic_export_employees: []
     };
   },
   created: function created() {},
@@ -15023,47 +15075,47 @@ __webpack_require__.r(__webpack_exports__);
         _this.errors = error.response.data.errors;
       });
     },
-    refreshDoorUsers: function refreshDoorUsers() {
+    fetchFilterICEmployee: function fetchFilterICEmployee() {
       var _this2 = this;
+
+      this.ic_export_employees = [];
+      var formData = new FormData();
+      formData.append('from', this.from);
+      formData.append('to', this.from);
+      axios.post("/fetch-apply-filter-hdf-ic-employee", formData).then(function (response) {
+        _this2.ic_export_employees = response.data;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+      });
+    },
+    refreshDoorUsers: function refreshDoorUsers() {
+      var _this3 = this;
 
       axios.get('/user-access').then(function (response) {
         if (response.data.length > 0) {
           alert('Door access is refreshed');
         }
       })["catch"](function (error) {
-        _this2.errors = error.response.data.error;
+        _this3.errors = error.response.data.error;
       });
     },
     refreshFaceusers: function refreshFaceusers() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.get('/face-user-access').then(function (response) {
         if (response.data.length > 0) {
           alert('Face access is refreshed');
         }
       })["catch"](function (error) {
-        _this3.errors = error.response.data.error;
+        _this4.errors = error.response.data.error;
       });
     },
     viewForms: function viewForms(employee) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.employee = employee;
       this.forms = [];
       axios.post('/fetch-form-list', {
-        employee_id: employee.employee_id
-      }).then(function (response) {
-        _this4.forms = response.data;
-      })["catch"](function (error) {
-        _this4.errors = error.response.data.errors;
-      });
-    },
-    viewICForms: function viewICForms(employee) {
-      var _this5 = this;
-
-      this.forms = [];
-      this.ic_employee = employee;
-      axios.post('/fetch-form-list-ic', {
         employee_id: employee.employee_id
       }).then(function (response) {
         _this5.forms = response.data;
@@ -15071,8 +15123,21 @@ __webpack_require__.r(__webpack_exports__);
         _this5.errors = error.response.data.errors;
       });
     },
-    fetchEmployees: function fetchEmployees() {
+    viewICForms: function viewICForms(employee) {
       var _this6 = this;
+
+      this.forms = [];
+      this.ic_employee = employee;
+      axios.post('/fetch-form-list-ic', {
+        employee_id: employee.employee_id
+      }).then(function (response) {
+        _this6.forms = response.data;
+      })["catch"](function (error) {
+        _this6.errors = error.response.data.errors;
+      });
+    },
+    fetchEmployees: function fetchEmployees() {
+      var _this7 = this;
 
       this.errors = [];
       this.employees = [];
@@ -15080,17 +15145,17 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/fetch-filter-employee-health-overide', {
         keyword: this.keyword
       }).then(function (response) {
-        _this6.employees = response.data;
-        _this6.table_loading = false;
+        _this7.employees = response.data;
+        _this7.table_loading = false;
       })["catch"](function (error) {
-        _this6.errors = error.response.data.errors;
+        _this7.errors = error.response.data.errors;
       });
     },
     checkEmployee: function checkEmployee(employee) {
       this.employee = employee;
     },
     enableDoorAccess: function enableDoorAccess(employee) {
-      var _this7 = this;
+      var _this8 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -15117,14 +15182,14 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
-        _this7.loading = false;
+        _this8.loading = false;
       })["catch"](function (error) {
-        _this7.errors = error.response.data.errors;
-        _this7.loading = false;
+        _this8.errors = error.response.data.errors;
+        _this8.loading = false;
       });
     },
     disableDoorAccess: function disableDoorAccess(employee) {
-      var _this8 = this;
+      var _this9 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -15151,14 +15216,14 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
-        _this8.loading = false;
+        _this9.loading = false;
       })["catch"](function (error) {
-        _this8.errors = error.response.data.errors;
-        _this8.loading = false;
+        _this9.errors = error.response.data.errors;
+        _this9.loading = false;
       });
     },
     enableFaceAccess: function enableFaceAccess(employee) {
-      var _this9 = this;
+      var _this10 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -15185,14 +15250,14 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
-        _this9.loading = false;
+        _this10.loading = false;
       })["catch"](function (error) {
-        _this9.errors = error.response.data.errors;
-        _this9.loading = false;
+        _this10.errors = error.response.data.errors;
+        _this10.loading = false;
       });
     },
     disableFaceAccess: function disableFaceAccess(employee) {
-      var _this10 = this;
+      var _this11 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -15219,14 +15284,14 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
-        _this10.loading = false;
+        _this11.loading = false;
       })["catch"](function (error) {
-        _this10.errors = error.response.data.errors;
-        _this10.loading = false;
+        _this11.errors = error.response.data.errors;
+        _this11.loading = false;
       });
     },
     saveCheckForm: function saveCheckForm() {
-      var _this11 = this;
+      var _this12 = this;
 
       this.loading = true;
       var formData = new FormData();
@@ -15254,14 +15319,14 @@ __webpack_require__.r(__webpack_exports__);
           $('#checkModal').modal('hide');
         }
 
-        _this11.loading = false;
+        _this12.loading = false;
       })["catch"](function (error) {
-        _this11.errors = error.response.data.errors;
-        _this11.loading = false;
+        _this12.errors = error.response.data.errors;
+        _this12.loading = false;
       });
     },
     fetchICEmployees: function fetchICEmployees() {
-      var _this12 = this;
+      var _this13 = this;
 
       this.errors = [];
       this.ic_employees = [];
@@ -15269,15 +15334,15 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/fetch-filter-ic-employee-health-overide', {
         keyword_ic: this.keyword_ic
       }).then(function (response) {
-        _this12.ic_employees = response.data;
-        _this12.table_loading_ic = false;
+        _this13.ic_employees = response.data;
+        _this13.table_loading_ic = false;
       })["catch"](function (error) {
-        _this12.errors = error.response.data.errors;
-        _this12.table_loading_ic = false;
+        _this13.errors = error.response.data.errors;
+        _this13.table_loading_ic = false;
       });
     },
     updateEmployee: function updateEmployee(remarks) {
-      var _this13 = this;
+      var _this14 = this;
 
       var v = this;
       var formData = new FormData();
@@ -15308,11 +15373,11 @@ __webpack_require__.r(__webpack_exports__);
         v.fetchEmployees();
         console.log(message);
       })["catch"](function (error) {
-        _this13.errors = error.response.data.errors;
+        _this14.errors = error.response.data.errors;
       });
     },
     updateICEmployee: function updateICEmployee(remarks) {
-      var _this14 = this;
+      var _this15 = this;
 
       var v = this;
       var formData = new FormData();
@@ -15343,7 +15408,7 @@ __webpack_require__.r(__webpack_exports__);
         v.fetchICEmployees();
         console.log(message);
       })["catch"](function (error) {
-        _this14.errors = error.response.data.errors;
+        _this15.errors = error.response.data.errors;
       });
     }
   }
@@ -79551,41 +79616,44 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "col-xl-12" },
-                      [
-                        _c(
-                          "download-excel",
-                          {
-                            staticClass:
-                              "btn btn-md btn-success ml-3 mr-3 mt-3 float-right",
-                            attrs: {
-                              data: _vm.export_employees,
-                              fields: _vm.json_fields,
-                              disabled: _vm.disableExport,
-                              name: "Export HDF Employee.xls"
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                                    Export to excel\n                            "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass:
-                              "btn btn-md btn-primary mt-3 float-right",
-                            on: { click: _vm.fetchFilterEmployee }
-                          },
-                          [_vm._v(" Apply Filter")]
-                        )
-                      ],
-                      1
-                    )
+                    _c("div", { staticClass: "col-xl-12" }, [
+                      _vm.export_employees.length > 0
+                        ? _c(
+                            "div",
+                            [
+                              _c(
+                                "download-excel",
+                                {
+                                  staticClass:
+                                    "btn btn-md btn-success ml-3 mr-3 mt-3 float-right",
+                                  attrs: {
+                                    data: _vm.export_employees,
+                                    fields: _vm.json_fields,
+                                    disabled: _vm.disableExport,
+                                    name: "Export HDF Employee.xls"
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                        Export to excel\n                                "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass:
+                            "btn btn-md btn-primary mt-3 float-right",
+                          on: { click: _vm.fetchFilterEmployee }
+                        },
+                        [_vm._v(" Apply Filter")]
+                      )
+                    ])
                   ])
                 ])
               ])
@@ -79635,7 +79703,7 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "col-lg-4" }, [
+                  _c("div", { staticClass: "col-lg-6" }, [
                     _c(
                       "button",
                       {
@@ -79644,6 +79712,19 @@ var render = function() {
                         on: { click: _vm.fetchICEmployees }
                       },
                       [_vm._v("Search")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-success btn-md mt-4",
+                        attrs: {
+                          type: "button",
+                          "data-toggle": "modal",
+                          "data-target": "#icreportModal"
+                        }
+                      },
+                      [_vm._v("Generate IC Employee Report")]
                     )
                   ]),
                   _vm._v(" "),
@@ -79967,6 +80048,149 @@ var render = function() {
             ]
           )
         ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "icreportModal",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "exampleModalLabel",
+            "aria-hidden": "true",
+            "data-backdrop": "static"
+          }
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass:
+                "modal-dialog modal-dialog-centered modal-lg modal-employee",
+              staticStyle: { width: "80%!important" },
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _vm._m(16),
+                _vm._v(" "),
+                _vm._m(17),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-6" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", [_vm._v("From")]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.from,
+                              expression: "from"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "date", placeholder: "Input Search" },
+                          domProps: { value: _vm.from },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.from = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.from
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(" " + _vm._s(_vm.errors.from[0]) + " ")
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-6" }, [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", [_vm._v("To")]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.to,
+                              expression: "to"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "date", placeholder: "Input Search" },
+                          domProps: { value: _vm.to },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.to = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.to
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(" " + _vm._s(_vm.errors.to[0]) + " ")
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-xl-12" }, [
+                      _vm.ic_export_employees.length > 0
+                        ? _c(
+                            "div",
+                            [
+                              _c(
+                                "download-excel",
+                                {
+                                  staticClass:
+                                    "btn btn-md btn-success ml-3 mr-3 mt-3 float-right",
+                                  attrs: {
+                                    data: _vm.ic_export_employees,
+                                    fields: _vm.json_fields,
+                                    name: "Export HDF Employee.xls"
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                        Export to excel\n                                "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass:
+                            "btn btn-md btn-primary mt-3 float-right",
+                          on: { click: _vm.fetchFilterICEmployee }
+                        },
+                        [_vm._v(" Apply Filter")]
+                      )
+                    ])
+                  ])
+                ])
+              ])
+            ]
+          )
+        ]
       )
     ],
     1
@@ -80283,6 +80507,40 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Status")])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c(
+        "button",
+        {
+          staticClass: "close mt-2 mr-2",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h2",
+        {
+          staticClass: "col-12 modal-title text-center",
+          attrs: { id: "addCompanyLabel" }
+        },
+        [_vm._v("HEALTH DECLARATION FORM")]
+      )
     ])
   }
 ]
