@@ -28,6 +28,10 @@
                             <li class="nav-item">
                                 <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-7-tab" data-toggle="tab" href="#tabs-icons-text-7" role="tab" aria-controls="tabs-icons-text-7" aria-selected="false"><i class="fas fa-id-card-alt mr-2"></i> <span style="font-size:12px;">MARITALS STATUS</span> </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-8-tab" data-toggle="tab" href="#tabs-icons-text-8" role="tab" aria-controls="tabs-icons-text-8" aria-selected="false"><i class="fas fa-layer-group mr-2"></i> <span style="font-size:12px;">CLUSTERS</span> </a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card shadow">
@@ -341,7 +345,7 @@
 
                                 </div>
 
-                                  <!-- MARITAL STATUS -->
+                                <!-- MARITAL STATUS -->
                                 <div class="tab-pane fade" id="tabs-icons-text-7" role="tabpanel" aria-labelledby="tabs-icons-text-7-tab">
                                     MARITAL STATUS
                                     <div class="col text-right">
@@ -393,6 +397,60 @@
                                     </div>
 
                                 </div>
+
+                                <!-- CLUSTERS -->
+                                <div class="tab-pane fade" id="tabs-icons-text-8" role="tabpanel" aria-labelledby="tabs-icons-text-8-tab">
+                                    CLUSTERS
+                                    <div class="col text-right">
+                                        <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addClusterModal" @click="clusterresetForm()">Add Cluster Status</a>
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="col-xl-4 mb-2 mt-3 float-right">
+                                            <input type="text" name="cluster" class="form-control" placeholder="Search" autocomplete="off" v-model="cluster_keywords" id="cluster_name">
+                                        </div>  
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table align-items-center table-flush">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(cluster, u) in clusterfilteredQueues" v-bind:key="u">
+                                                    <td width="5%">
+                                                        <div class="dropdown">
+                                                            <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </a>
+                                                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                                                <a class="dropdown-item" data-toggle="modal" data-target="#editClusterModal" style="cursor: pointer" @click="clustercopyObject(cluster)">Edit</a>
+                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteClusterModal" style="cursor: pointer" @click="deleteCluster(cluster)">Delete</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ cluster.name }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="row mb-3 mt-3 ml-1" v-if="clusterfilteredQueues.length ">
+                                        <div class="col-6">
+                                            <button :disabled="!clustersshowPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="clusterssetPage(clustercurrentPage - 1)"> Previous </button>
+                                                <span class="text-dark">Page {{ clustercurrentPage + 1 }} of {{ clustertotalPages }}</span>
+                                            <button :disabled="!clustersshowNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="clusterssetPage(clustercurrentPage + 1)"> Next </button>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="mr-2">Filtered Cluster Status : {{ clusterfilteredQueues.length }} </span><br>
+                                            <span class="mr-2">Total Cluster Status : {{ clusters.length }}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -947,6 +1005,72 @@
         </div>
     </div>
 
+    <!-- Edit Cluster Modal -->
+    <div class="modal fade" id="editClusterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div>
+                    <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> 
+                <div class="modal-header">
+                    <h2 class="col-12 modal-title text-center" id="addClusterLabel">Edit Cluster</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success" v-if="cluster_updated">
+                        <strong>Success!</strong> Cluster succesfully updated
+                    </div>
+                        <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="role">Name*</label> 
+                                <input type="text"  class="form-control" v-model="cluster_copied.name"  >
+                                <span class="text-danger" v-if="clustererrors.name">{{ clustererrors.name[0] }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cluster_edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCluster(cluster_copied)">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Cluster Modal -->
+    <div class="modal fade" id="addClusterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div>
+                    <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> 
+                <div class="modal-header">
+                    <h2 class="col-12 modal-title text-center" id="addClusterLabel">Add Cluster</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success" v-if="cluster_added">
+                        <strong>Success!</strong> Cluster succesfully added
+                    </div>
+                        <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="role">Name*</label> 
+                                <input type="text" class="form-control" v-model="cluster.name"  >
+                                <span class="text-danger" v-if="clustererrors.name">{{ clustererrors.name[0] }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cluster_edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="storeCluster(cluster)">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </template>
@@ -1045,6 +1169,18 @@
                 marital_added: false,
                 marital_updated: false,
                 marital_id: '',
+
+                //-------Cluster
+                clustererrors: [],
+                clusters: [],
+                cluster: [],
+                cluster_copied: [],
+                clustercurrentPage: 0,
+                clusteritemsPerPage: 50,
+                cluster_keywords: "",
+                cluster_added: false,
+                cluster_updated: false,
+                cluster_id: '',
                 
                 
             }
@@ -1057,6 +1193,7 @@
             this.fetchHeads();
             this.fetchLevels();
             this.fetchMaritals();
+            this.fetchClusters();
         },
         methods:{
             companyImageLoadError(){
@@ -2077,6 +2214,142 @@
             },
             maritalsshowNextLink() {
                 return this.maritalcurrentPage == (this.maritaltotalPages - 1) ? false : true;
+            },
+
+             //----------Clusters
+            clusterresetForm(){
+                this.clustererrors = [];
+                this.cluster = [];
+                this.cluster_added = false;
+            },
+            storeCluster(cluster){
+                this.clustererrors = [];
+               
+                this.cluster_added = false;
+                this.loading = true;
+                
+                axios.post(`/cluster`, {
+                    name: cluster.name,
+                    _method: 'POST'
+                })
+                .then(response => {
+                    this.cluster_added = true;
+                    this.clusters.unshift(response.data);
+                    this.clusterresetForm();   
+                    this.loading = false;
+                    $('#addClusterModal').modal('hide');
+
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Cluster saved successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'Okay'
+                    })
+                })
+                .catch(error => {
+                    this.cluster_added = false;
+                    this.clustererrors = error.response.data.error;
+                    this.loading = false;
+                })
+            },
+            deleteCluster(cluster){
+                
+                var index = this.clusters.findIndex(item => item.id == cluster.id);
+
+                Swal.fire({
+                    title: 'Are you sure you want to delete this cluster?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete'
+                    }).then((result) => {
+                    if (result.value) {
+
+                        axios.delete(`/cluster/${cluster.id}`)
+                        .then(response => {
+                            $('#deleteClusterModal').modal('hide');
+                            this.clusters.splice(index,1);
+
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Cluster status deleted successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            })
+                        })
+                        .catch(error => {
+                            this.clustererrors = error.response.data.errors;
+                        })   
+                    }
+                })
+
+
+            },
+            updateCluster(cluster_copied){
+                this.clustererrors = [];
+               
+                this.edit_updated = false;
+                this.loading = true;
+                document.getElementById('cluster_edit_btn').disabled = true;
+                var index = this.clusters.findIndex(item => item.id == cluster_copied.id);
+
+                axios.post(`/cluster/${cluster_copied.id}`, {
+                    name: cluster_copied.name,
+                    _method: 'PATCH'
+                })
+                .then(response => {
+                    this.cluster_updated = true;
+                    this.clusters.splice(index,1,response.data);
+                    document.getElementById('cluster_edit_btn').disabled = false;
+                    this.loading = false;
+                    $('#editClusterModal').modal('hide');
+                    
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Cluster updated successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'Okay'
+                    })
+
+                })
+                .catch(error => {
+                    this.cluster_updated = false;
+                    this.clustererrors = error.response.data.errors;
+                    document.getElementById('cluster_edit_btn').disabled = false;
+                    this.loading = false;
+                })
+            },
+            clustercopyObject(cluster){
+                this.clustererrors = [];
+                this.cluster_copied = Object.assign({}, cluster);
+                this.cluster_id = cluster.id;
+                this.cluster_updated = false;
+                this.cluster_added = false;
+            },
+           
+            fetchClusters(){
+                axios.get('/clusters-all')
+                .then(response => { 
+                    this.clusters = response.data;
+                })
+                .catch(error => { 
+                    this.clustererrors = error.response.data.error;
+                })
+            },
+            clusterssetPage(pageNumber) {
+                this.clustercurrentPage = pageNumber;
+            },
+
+            clusterresetStartRow() {
+                this.clustercurrentPage = 0;
+            },
+
+            clustersshowPreviousLink() {
+                return this.clustercurrentPage == 0 ? false : true;
+            },
+            clustersshowNextLink() {
+                return this.clustercurrentPage == (this.clustertotalPages - 1) ? false : true;
             }
         },
         computed:{
@@ -2249,6 +2522,30 @@
 
                 if(this.maritalcurrentPage == -1) {
                     this.maritalcurrentPage = 0;
+                }
+
+                return queues_array;
+            },
+            //-----------Clusters
+            filteredClusters(){
+                let self = this;
+                return Object.values(self.clusters).filter(cluster => {
+                    return cluster.name.toLowerCase().includes(this.cluster_keywords.toLowerCase())
+                });
+            },
+            clustertotalPages() {
+                return Math.ceil(Object.values(this.filteredClusters).length / this.clusteritemsPerPage)
+            },
+            clusterfilteredQueues() {
+                var index = this.clustercurrentPage * this.clusteritemsPerPage;
+                var queues_array = this.filteredClusters.slice(index, index + this.clusteritemsPerPage);
+
+                if(this.clustercurrentPage >= this.clustertotalPages) {
+                    this.clustercurrentPage = this.clustertotalPages - 1
+                }
+
+                if(this.clustercurrentPage == -1) {
+                    this.clustercurrentPage = 0;
                 }
 
                 return queues_array;

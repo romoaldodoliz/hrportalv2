@@ -208,6 +208,15 @@ Route::get('logout', function(){
 
 
         /**
+         * clusters routes
+         */
+        Route::get('clusters-all', 'SettingsController@allCluster')->name('cluster');
+        Route::get('clusters-options', 'SettingsController@allClusterOptions')->name('clusteroption');
+        Route::post('cluster',['as'=>'settings.storeCluster','uses'=>'SettingsController@storeCluster','middleware' => ['role:Administrator']]);
+        Route::delete('cluster/{cluster}',['as'=>'settings.destroyCluster','uses'=>'SettingsController@destroyCluster','middleware' => ['role:Administrator']]);
+        Route::patch('cluster/{cluster}',['as'=>'settings.updateCluster','uses'=>'SettingsController@updateCluster','middleware' => ['role:Administrator']]);
+
+        /**
          * Activities routes
          */
         Route::get('activities',['as'=>'activities.index','uses'=>'ActivityController@index','middleware' => ['role:Administrator']]);
@@ -259,5 +268,24 @@ Route::get('logout', function(){
 
         Route::post('save-rfid','HomeController@saveRFID');
         Route::get('scan-rfids','HomeController@scansRFID');
+
+
+        //Demographic Head Count
+        Route::get('year-to-date-head-count','HomeController@getYearToDateHeadcount');
+
+        //Demographic Age Count
+        Route::get('employee-age-count','HomeController@getEmployeeAgeCount');
+
+        //Demographic Region Count
+        Route::get('employee-region-count','HomeController@getEmployeeRegionCount');
+
+        //Demographic Gender Count
+        Route::get('employee-gender-count','HomeController@getEmployeeGenderCount');
+
+         //Demographic Marital Status Count
+        Route::get('employee-marital-status-count','HomeController@getEmployeeMaritaStatusCount');
+
+        //Demographic Cluster Count
+        Route::get('employee-cluster-count','HomeController@getEmployeeClusterCount');
 
     });

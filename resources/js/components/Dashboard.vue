@@ -113,7 +113,17 @@
                 <div class="card shadow mb-3">
                     <h2 class="mb-3 mt-2 ml-2">Year to Date Headcount</h2>
                     <div class="card-body">
-                        <line-chart :chart-data="datacollection" :height="70" :download="true"  ></line-chart>
+                        <line-chart :chart-data="dataYeartodateHeadcount" :height="70" :download="true"  ></line-chart>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div class="col-sm-12 mb-3 mb-xl-0 ">
+                <div class="card shadow mb-3">
+                    <h2 class="mb-3 mt-2 ml-2">Headcount per Cluster </h2>
+                    <div class="card-body">
+                        <bar-chart :chart-data="dataClusterHeadcount" :height="70" :download="true"  ></bar-chart>
                     </div>
                 
                 </div>
@@ -124,7 +134,7 @@
                     <div class="card shadow mb-3">
                         <h2 class="mb-3 mt-2 ml-2">Employee Age</h2>
                         <div class="card-body">
-                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                            <bar-chart :chart-data="dataEmployeeAgecount" :height="100"></bar-chart>
                         </div>
                     
                     </div>
@@ -133,7 +143,7 @@
                     <div class="card shadow mb-3">
                         <h2 class="mb-3 mt-2 ml-2">Headcount per Region</h2>
                         <div class="card-body">
-                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                            <bar-chart :chart-data="dataEmployeeRegioncount" :height="100"></bar-chart>
                         </div>
                     
                     </div>
@@ -142,7 +152,7 @@
                     <div class="card shadow mb-3">
                         <h2 class="mb-3 mt-2 ml-2">Gender</h2>
                         <div class="card-body">
-                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                            <bar-chart :chart-data="dataEmployeeGendercount" :height="100"></bar-chart>
                         </div>
                     
                     </div>
@@ -151,7 +161,7 @@
                     <div class="card shadow mb-3">
                         <h2 class="mb-3 mt-2 ml-2">Marital Status</h2>
                         <div class="card-body">
-                            <bar-chart :chart-data="datacollection" :height="100"></bar-chart>
+                            <bar-chart :chart-data="dataEmployeeMaritalStatuscount" :height="100"></bar-chart>
                         </div>
                     
                     </div>
@@ -257,7 +267,12 @@ import LineChart from './Charts/LineChart.js'
         },
         data(){
             return {
-                datacollection: null,
+                dataYeartodateHeadcount: null,
+                dataEmployeeAgecount: null,
+                dataEmployeeRegioncount: null,
+                dataEmployeeGendercount: null,
+                dataEmployeeMaritalStatuscount: null,
+                dataClusterHeadcount: null,
                 employees: 0,
                 new_employees: [],
                 total_inactives: 0,
@@ -270,7 +285,7 @@ import LineChart from './Charts/LineChart.js'
                 newcurrentPage: 0,
                 newitemsPerPage: 10,
                 newkeywords: "",
-                employee_verify_percentage : 0
+                employee_verify_percentage : 0,
             }
         },
         created(){
@@ -279,24 +294,208 @@ import LineChart from './Charts/LineChart.js'
             this.fetchNewEmployees();
             this.fetchUpdateEmployees();
             this.fetchEmployeeApprovalRequests();
+
+            this.fetchEmployeeYearToEndHeadcount();
+            this.fetchEmployeeAgecount();
+            this.fetchEmployeeRegioncount();
+            this.fetchEmployeeGendercount();
+            this.fetchEmployeeMaritalStatuscount();
+
+            this.fetchEmployeeClusterHeadcount();
             
         },
-        mounted () {
-            this.fillData()
-        },
         methods:{
-            fillData ()
+            fetchEmployeeYearToEndHeadcount(){
+                axios.get('/year-to-date-head-count')
+                .then(response => { 
+                    this.yearToEndHeadfillData(response.data);
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            yearToEndHeadfillData (headcount)
             {
-                this.datacollection = {
+                var count = [];
+
+                headcount.forEach(function(entry) {
+                    count.push(entry);
+                });
+                
+                this.dataYeartodateHeadcount = {
                     labels: ['Jan','Feb','Mar','Apr','May', 'Jun' , 'Jul', 'Aug', 'Sept', 'Oct','Nov','Dec'],
                     datasets: [
                         {
-                            label: 'Data One',
+                            label: 'Head Count',
                             backgroundColor: '#2DCE89',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
-                            data: [40, 20, 30, 50, 90, 10, 20, 40, 50, 70, 90, 100]
+                            data: count
+                        },
+                    ]
+                }
+            },
+            fetchEmployeeAgecount(){
+                axios.get('/employee-age-count')
+                .then(response => { 
+                    this.employeeAgefillData(response.data);
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            employeeAgefillData (agecount)
+            {
+                var count = [];
+
+                agecount.forEach(function(entry) {
+                    count.push(entry);
+                });
+                
+                this.dataEmployeeAgecount = {
+                    labels: ['20 yrs. old and Below','21 - 30 yrs. old','31-40 yrs. old','41-50 yrs. old','51-60 yrs old','None'],
+                    datasets: [
+                        {
+                            label: 'Employee Age Count',
+                            backgroundColor: '#7283E7',
+                            pointBackgroundColor: 'white',
+                            borderWidth: 1,
+                            pointBorderColor: '#249EBF',
+                            data: count
+                        },
+                    ]
+                }
+            },
+            fetchEmployeeRegioncount(){
+                axios.get('/employee-region-count')
+                .then(response => { 
+                    this.employeeRegionfillData(response.data);
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            employeeRegionfillData (regioncount)
+            {
+                var count = [];
+
+                regioncount.forEach(function(entry) {
+                    count.push(entry);
+                });
+                
+                this.dataEmployeeRegioncount = {
+                    labels: ['Luzon','Visayas','Mindanao','None'],
+                    datasets: [
+                        {
+                            label: 'Employee Region Count',
+                            backgroundColor: '#FB6340',
+                            pointBackgroundColor: 'white',
+                            borderWidth: 1,
+                            pointBorderColor: '#249EBF',
+                            data: count
+                        },
+                    ]
+                }
+            },
+            fetchEmployeeGendercount(){
+                axios.get('/employee-gender-count')
+                .then(response => { 
+                    this.employeeGenderfillData(response.data);
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            employeeGenderfillData (gendercount)
+            {
+                var count = [];
+
+                gendercount.forEach(function(entry) {
+                    count.push(entry);
+                });
+                
+                this.dataEmployeeGendercount = {
+                    labels: ['Male','Female','None'],
+                    datasets: [
+                        {
+                            label: 'Employee Gender Count',
+                            backgroundColor: '#FFD600',
+                            pointBackgroundColor: 'white',
+                            borderWidth: 1,
+                            pointBorderColor: '#249EBF',
+                            data: count
+                        },
+                    ]
+                }
+            },
+            fetchEmployeeMaritalStatuscount(){
+                axios.get('/employee-marital-status-count')
+                .then(response => { 
+                    this.employeeMaritalStatusfillData(response.data);
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            employeeMaritalStatusfillData (maritalstatuscount)
+            {
+                var count = [];
+
+                maritalstatuscount.forEach(function(entry) {
+                    count.push(entry);
+                });
+                
+                this.dataEmployeeMaritalStatuscount = {
+                    labels: ['Single','Married','Widow','None'],
+                    datasets: [
+                        {
+                            label: 'Employee Marital Status Count',
+                            backgroundColor: '#11CDEF',
+                            pointBackgroundColor: 'white',
+                            borderWidth: 1,
+                            pointBorderColor: '#249EBF',
+                            data: count
+                        },
+                    ]
+                }
+            },
+            fetchEmployeeClusterHeadcount(){
+                axios.get('/employee-cluster-count')
+                .then(response => { 
+
+                    this.employeeClusterfillData(response.data);
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            employeeClusterfillData (clustercount)
+            {
+                var count = [];
+                var names = [];
+
+                clustercount.forEach(function(entry) {
+                    count.push(entry.count);
+                    names.push(entry.name);
+                });
+                
+                this.dataClusterHeadcount = {
+                    labels: names,
+                    datasets: [
+                        {
+                            label: 'Head Count',
+                            backgroundColor: '#F5365C',
+                            pointBackgroundColor: 'white',
+                            borderWidth: 1,
+                            pointBorderColor: '#249EBF',
+                            data: count
                         },
                     ]
                 }

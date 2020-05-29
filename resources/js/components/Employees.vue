@@ -474,6 +474,18 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
+                                                    <label for="role">Cluster</label>
+                                                    <select class="form-control" v-model="employee_copied.cluster" id="cluster">
+                                                        <option value="">Choose Cluster</option>
+                                                        <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.cluster">{{ errors.cluster[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
                                                     <label for="role">Area</label>
                                                     <input type="text" class="form-control" v-model="employee_copied.area">
                                                     <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
@@ -1062,6 +1074,7 @@
                 departments : [],
                 locations : [],
                 levels : [],
+                clusters : [],
                 saveEmployee: true,
                 termsConditions: false,
                 employee_head_approvers: [],
@@ -1104,6 +1117,7 @@
             this.fetchDepartments();
             this.fetchLocations();
             this.fetchLevels();
+            this.fetchClusters();
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
             this.exportFetchEmployees();
@@ -1332,6 +1346,7 @@
                 formData.append('date_hired', employee_copied.date_hired ? employee_copied.date_hired : "");
                 formData.append('level', employee_copied.level ? employee_copied.level : "-");
                 formData.append('location_list', employee_copied.location_list);
+                formData.append('cluster', employee_copied.cluster);
                 formData.append('area', employee_copied.area ? employee_copied.area : "-");
                 formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
                 formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
@@ -1662,6 +1677,15 @@
                 axios.get('/levels-options')
                 .then(response => { 
                     this.levels = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchClusters(){
+                axios.get('/clusters-options')
+                .then(response => { 
+                    this.clusters = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;

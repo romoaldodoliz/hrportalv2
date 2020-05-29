@@ -9,6 +9,7 @@ use App\EmployeeDetailVerification;
 use App\DependentAttachment;
 use App\User;
 use App\RfidNumber;
+use App\Cluster;
 
 use DB;
 use Illuminate\Http\File;
@@ -412,5 +413,183 @@ class HomeController extends Controller
 
         return $response;
     }
+
+    public function getYearToDateHeadcount(){
+
+        $year = date('Y');
+
+        $all_employees = Employee::select('id','date_hired')->whereYear('date_hired',$year)->count();
+        $jan = Employee::select('id','date_hired')->whereMonth('date_hired','01')->whereYear('date_hired',$year)->count();
+        $feb = Employee::select('id','date_hired')->whereMonth('date_hired','02')->whereYear('date_hired',$year)->count();
+        $mar = Employee::select('id','date_hired')->whereMonth('date_hired','03')->whereYear('date_hired',$year)->count();
+        $apr = Employee::select('id','date_hired')->whereMonth('date_hired','04')->whereYear('date_hired',$year)->count();
+        $may = Employee::select('id','date_hired')->whereMonth('date_hired','05')->whereYear('date_hired',$year)->count();
+        $jun = Employee::select('id','date_hired')->whereMonth('date_hired','06')->whereYear('date_hired',$year)->count();
+        $jul = Employee::select('id','date_hired')->whereMonth('date_hired','07')->whereYear('date_hired',$year)->count();
+        $aug = Employee::select('id','date_hired')->whereMonth('date_hired','08')->whereYear('date_hired',$year)->count();
+        $sep = Employee::select('id','date_hired')->whereMonth('date_hired','09')->whereYear('date_hired',$year)->count();
+        $oct = Employee::select('id','date_hired')->whereMonth('date_hired','10')->whereYear('date_hired',$year)->count();
+        $nov = Employee::select('id','date_hired')->whereMonth('date_hired','11')->whereYear('date_hired',$year)->count();
+        $dec = Employee::select('id','date_hired')->whereMonth('date_hired','12')->whereYear('date_hired',$year)->count();
+
+        $datas = [$jan,$feb,$mar,$apr,$may,$jun,$jul,$aug,$sep,$oct,$nov,$dec];
+
+        return $datas;
+    }
+
+    public function getEmployeeAgeCount(){
+       
+        $all_employees = Employee::select('id','birthdate','status')->where('status','Active')->get();
+
+        $get_age = [
+            '21_below' => 0,
+            '21_30' => 0,
+            '31_40' => 0,
+            '41_50' => 0,
+            '51_60' => 0,
+            'none' => 0,
+        ];
+
+        $today = date("Y-m-d");
+
+        foreach($all_employees as $employee){
+            $birthdate =  $employee['birthdate'];
+
+            $data = [];
+            $data['employee_id'] =  $employee['id'];
+            if($birthdate != '0000-00-00'){
+                $diff = date_diff(date_create($birthdate), date_create($today));
+                $age = $diff->format('%y');
+                $data['age'] =  $age;
+            } else{
+                $data['age'] =  "";
+            }  
+
+            if($data['age']){   
+                if($data['age'] < 21){
+                    $get_age['21_below'] += 1;
+                }else if($data['age'] >= 21 && $data['age'] <= 30){
+                    $get_age['21_30'] += 1;
+                }else if($data['age'] >= 31 && $data['age'] <= 40){
+                    $get_age['31_40'] += 1;
+                }else if($data['age'] >= 41 && $data['age'] <= 50){
+                    $get_age['41_50'] += 1;
+                }else if($data['age'] >= 51 && $data['age'] <= 60){
+                    $get_age['51_60'] += 1;
+                }
+            }else{
+                $get_age['none'] += 1;
+            }
+        }
+
+        $datas = [$get_age['21_below'],$get_age['21_30'],$get_age['31_40'],$get_age['41_50'],$get_age['51_60'],$get_age['none']];
+
+        return $datas;
+    }
+
+    public function getEmployeeRegionCount(){
+        
+        $all_employees = Employee::select('id','area','status')->where('status','Active')->get();
+
+        $get_region = [
+            'luzon' => 0,
+            'visayas' => 0,
+            'mindanao' => 0,
+            'none' => 0,
+        ];
+
+        foreach($all_employees as $employee){
+            if($employee['area'] == 'LUZON' || $employee['area'] == 'luzon'){
+                $get_region['luzon'] += 1;
+            }else if($employee['area'] == 'VISAYAS' || $employee['area'] == 'visayas'){
+                $get_region['visayas'] += 1;
+            }else if($employee['area'] == 'MINDANAO' || $employee['area'] == 'mindanao'){
+                $get_region['mindanao'] += 1;
+            }else{
+                $get_region['none'] += 1;
+            }
+        }
+
+        $datas = [$get_region['luzon'],$get_region['visayas'],$get_region['mindanao'],$get_region['none']];
+
+        return $datas;
+    }
+
+    public function getEmployeeGenderCount(){
+        $all_employees = Employee::select('id','gender','status')->where('status','Active')->get();
+
+        $get_gender = [
+            'male' => 0,
+            'female' => 0,
+            'none' => 0,
+        ];
+
+        foreach($all_employees as $employee){
+            if($employee['gender'] == 'MALE'){
+                $get_gender['male'] += 1;
+            }else if($employee['gender'] == 'FEMALE'){
+                $get_gender['female'] += 1;
+            }else{
+                $get_gender['none'] += 1;
+            }
+        }
+
+        $datas = [$get_gender['male'],$get_gender['female'],$get_gender['none']];
+
+        return $datas;
+    }
+
+    public function getEmployeeMaritaStatusCount(){
+
+        $all_employees = Employee::select('id','marital_status','status')->where('status','Active')->get();
+
+        $get_marital_status = [
+            'single' => 0,
+            'married' => 0,
+            'widow' => 0,
+            'none' => 0
+        ];
+
+        foreach($all_employees as $employee){
+            if($employee['marital_status'] == 'SINGLE'){
+                $get_marital_status['single'] += 1;
+            }else if($employee['marital_status'] == 'MARRIED'){
+                $get_marital_status['married'] += 1;
+            }else if($employee['marital_status'] == 'WIDOW'){
+                $get_marital_status['widow'] += 1;
+            }else{
+                $get_marital_status['none'] += 1;
+            }
+        }
+
+        $datas = [$get_marital_status['single'],$get_marital_status['married'],$get_marital_status['widow'],$get_marital_status['none']];
+
+        return $datas;
+    }
     
+
+    public function getEmployeeClusterCount(){
+
+        $all_employees = Employee::select('id','cluster','status')->where('status','Active')->get();    
+        $clusters = Cluster::all();
+        
+        $datas = [];
+        $x = 0;
+        foreach($clusters as $key => $cluster){
+            $cluster_count = Employee::select('id','cluster','status')->where('cluster',$cluster['name'])->where('status','Active')->count();
+            
+            $datas[$key]['name'] = mb_strimwidth($cluster['name'], 0, 10, "...");
+            $datas[$key]['count'] = $cluster_count;
+
+            $x++;
+        }
+        
+        $cluster_non_count = Employee::select('id','cluster','status')->whereNull('cluster')->where('status','Active')->count();
+
+        $datas[$x]['name'] = 'None';
+        $datas[$x]['count'] = $cluster_non_count;
+
+        return $datas;
+
+    }
 }
