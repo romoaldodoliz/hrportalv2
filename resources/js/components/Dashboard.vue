@@ -121,7 +121,7 @@
 
             <div class="col-sm-12 mb-3 mb-xl-0 ">
                 <div class="card shadow mb-3">
-                    <h2 class="mb-3 mt-2 ml-2">Headcount per Cluster </h2>
+                    <h2 class="mb-3 mt-2 ml-2">Head Count per Cluster </h2>
                     <div class="card-body">
                         <bar-chart :chart-data="dataClusterHeadcount" :height="70" :download="true"  ></bar-chart>
                     </div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-sm-12 mb-3 mb-xl-0">
                     <div class="card shadow mb-3">
-                        <h2 class="mb-3 mt-2 ml-2">Headcount per Region</h2>
+                        <h2 class="mb-3 mt-2 ml-2">Head Count per Region</h2>
                         <div class="card-body">
                             <bar-chart :chart-data="dataEmployeeRegioncount" :height="100"></bar-chart>
                         </div>
