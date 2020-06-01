@@ -212,6 +212,8 @@ class HealthDeclationFormController extends Controller
 
     public function saveDeclaration(Request $request){
 
+        $clientIP = request()->ip();
+
         $this->validate($request, [
             'temperature' => 'required',
             'one_question' => 'required',
@@ -250,7 +252,7 @@ class HealthDeclationFormController extends Controller
 
             //Save Data
             $data['date_time'] = date('h:m:s A m/d/Y');
-            
+            $data['ip_address'] =  $clientIP;
             
             if($yes_count >= 1){
   
@@ -269,7 +271,8 @@ class HealthDeclationFormController extends Controller
                     HdfEmployee::create($hdf_employee);
 
                     $send_message = $this->send_message($data['name'],"not_allowed");
-
+                    
+                    
                     HealthDeclarationForm::create($data);
 
                     return 'not_allowed';
@@ -309,6 +312,8 @@ class HealthDeclationFormController extends Controller
 
     public function saveDeclarationIC(Request $request){
 
+        $clientIP = request()->ip();
+
         $this->validate($request, [
             'temperature' => 'required',
             'one_question' => 'required',
@@ -347,7 +352,7 @@ class HealthDeclationFormController extends Controller
 
             //Save Data
             $data['date_time'] = date('h:m:s A m/d/Y');
-            
+            $data['ip_address'] =  $clientIP;
             
             if($yes_count >= 1){
   
@@ -362,6 +367,7 @@ class HealthDeclationFormController extends Controller
                     $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
                     $hdf_employee['status'] = 'Not Allowed';
                     $hdf_employee['date_time'] = date('Y-m-d');
+                   
                     HdfIcEmployee::create($hdf_employee);
 
                     $send_message = $this->send_message($data['name'],"not_allowed");

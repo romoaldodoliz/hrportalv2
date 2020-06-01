@@ -23,6 +23,7 @@ class HealthDeclarationIcForm extends Model
         'seven_yes_desc',
         'eight_question',
         'status',
-        'date_time'
+        'date_time',
+        'ip_address'
     ];
 }

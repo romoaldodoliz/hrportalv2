@@ -24,6 +24,7 @@ class HealthDeclarationForm extends Model
         'eight_question',
         'status',
         'remarks',
-        'date_time'
+        'date_time',
+        'ip_address'
     ];
 }
