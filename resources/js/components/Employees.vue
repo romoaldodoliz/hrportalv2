@@ -17,13 +17,21 @@
 
                                             <a href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
 
+                                            
                                             <download-excel
+
+                                                v-if="export_employees.length > 0"
+
                                                 :data   = "export_employees"
                                                 :fields = "json_fields"
                                                 class   = "btn btn-sm btn-default"
                                                 name    = "All HR Portal Employees.xls">
                                                     Export to excel
                                             </download-excel>
+                                            
+                                            <button v-else class="btn btn-sm btn-default" disabled>Export to excel (Loading...)</button>
+                                            
+                                            
                                         </div> 
                                     </div>
                                     <div class="row align-items-center">
@@ -1099,13 +1107,31 @@
                     'USER ID': 'user_id',
                     'ID NUMBER': 'id_number',
                     'FIRST NAME': 'last_name',
+                    'MIDDLE NAME': 'middle_name',
                     'LAST NAME': 'first_name',
+                    'FULL NAME': 'full_name',
                     'POSITION': 'position',
+                    'LEVEL': 'level',
+                    'CLUSTER': 'cluster',
                     'COMPANY': 'company',
                     'DEPARTMENT': 'department',
-                    'LOCATION': 'location',
+                    'LOCATION/SITE': 'location',
+                    'AREA': 'area',
+                    'DATE HIRED': 'date_hired',
+                    'TENURE': 'tenure',
+                    '5th month': 'fifth_month',
+                    '6th month': 'six_month',
                     'PERSONAL PHONE NUMBER' : 'mobile_number',
                     'COMPANY ASSIGN PHONE NUMBER' : 'company_assign_phone',
+                    'EMPLOYEE STATUS' : 'employee_status',
+                    'MARITAL STATUS' : 'marital_status',
+                    'DATE OF BIRTH' : 'birthdate',
+                    'EMPLOYEE AGE' : 'age',
+                    'AGE RANGE' : 'age_range',
+                    'GENDER' : 'gender',
+                    'IMMEDIATE SUPERIOR' : 'immediate_superior',
+                    'BU HEAD' : 'bu_head',
+                    'CLUSTER HEAD' : 'cluster_head',
                     'STATUS' : 'status'
                 },
             }

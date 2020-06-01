@@ -420,18 +420,18 @@ class HomeController extends Controller
         $year = date('Y');
 
         $all_employees = Employee::select('id','date_hired')->whereYear('date_hired',$year)->count();
-        $jan = Employee::select('id','date_hired')->whereMonth('date_hired','01')->whereYear('date_hired',$year)->count();
-        $feb = Employee::select('id','date_hired')->whereMonth('date_hired','02')->whereYear('date_hired',$year)->count();
-        $mar = Employee::select('id','date_hired')->whereMonth('date_hired','03')->whereYear('date_hired',$year)->count();
-        $apr = Employee::select('id','date_hired')->whereMonth('date_hired','04')->whereYear('date_hired',$year)->count();
-        $may = Employee::select('id','date_hired')->whereMonth('date_hired','05')->whereYear('date_hired',$year)->count();
-        $jun = Employee::select('id','date_hired')->whereMonth('date_hired','06')->whereYear('date_hired',$year)->count();
-        $jul = Employee::select('id','date_hired')->whereMonth('date_hired','07')->whereYear('date_hired',$year)->count();
-        $aug = Employee::select('id','date_hired')->whereMonth('date_hired','08')->whereYear('date_hired',$year)->count();
-        $sep = Employee::select('id','date_hired')->whereMonth('date_hired','09')->whereYear('date_hired',$year)->count();
-        $oct = Employee::select('id','date_hired')->whereMonth('date_hired','10')->whereYear('date_hired',$year)->count();
-        $nov = Employee::select('id','date_hired')->whereMonth('date_hired','11')->whereYear('date_hired',$year)->count();
-        $dec = Employee::select('id','date_hired')->whereMonth('date_hired','12')->whereYear('date_hired',$year)->count();
+        $jan = Employee::select('id','date_hired')->whereMonth('date_hired','01')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $feb = Employee::select('id','date_hired')->whereMonth('date_hired','02')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $mar = Employee::select('id','date_hired')->whereMonth('date_hired','03')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $apr = Employee::select('id','date_hired')->whereMonth('date_hired','04')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $may = Employee::select('id','date_hired')->whereMonth('date_hired','05')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $jun = Employee::select('id','date_hired')->whereMonth('date_hired','06')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $jul = Employee::select('id','date_hired')->whereMonth('date_hired','07')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $aug = Employee::select('id','date_hired')->whereMonth('date_hired','08')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $sep = Employee::select('id','date_hired')->whereMonth('date_hired','09')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $oct = Employee::select('id','date_hired')->whereMonth('date_hired','10')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $nov = Employee::select('id','date_hired')->whereMonth('date_hired','11')->whereYear('date_hired',$year)->where('status','Active')->count();
+        $dec = Employee::select('id','date_hired')->whereMonth('date_hired','12')->whereYear('date_hired',$year)->where('status','Active')->count();
 
         $datas = [$jan,$feb,$mar,$apr,$may,$jun,$jul,$aug,$sep,$oct,$nov,$dec];
 
