@@ -13,6 +13,8 @@ use App\Employee;
 use App\AssignHead;
 use App\User;
 
+use App\SendEmailEmployeeRegularNotification;
+
 
 class SendRegularizationNotification extends Command
 {
@@ -57,6 +59,7 @@ class SendRegularizationNotification extends Command
 
         $all_employees = Employee::select('id','first_name','last_name','date_hired','position','classification','status')->with('companies')->where('classification','Probationary')->where('status','Active')->orderBy('date_hired','DESC')->get();
         
+        $sent_ctr = 0;
         if($all_employees){
             
             $today = date('Y-m-d');
@@ -74,7 +77,8 @@ class SendRegularizationNotification extends Command
                 $email = User::where('id',$immediate_superior_details['user_id'])->first();
         
                 if($months){
-                    if($months >= 3 && $months <= 5){
+                    //Validate 
+                    if($months == 3){
 
                         //Validate if with 3 - 5 months 
                         $data = [];
@@ -93,16 +97,64 @@ class SendRegularizationNotification extends Command
                         $data['date_of_regularization'] =  $date_of_regularization ? date('F m, Y',strtotime($date_of_regularization)) : "";
 
                         if($data['email_reciever']){
-                            Mail::to('jay.lumagdong@gmail.com')->send(new EmployeeRegularizationNotification($data));
-                        }
-                       
+                            $validate_check_email_notification = SendEmailEmployeeRegularNotification::where('employee_id',$employee['id'])->where('month_status','3')->first();
+                            if(empty($validate_check_email_notification)){
 
+                                Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com','irismay.chan@lafilgroup.com'])->send(new EmployeeRegularizationNotification($data));
+
+                                $save_notification = [];
+                                $save_notification['employee_id'] = $employee['id'];
+                                $save_notification['receiver'] = $data['reciever_name'];
+                                $save_notification['email_desc'] = 'Sent Email Notification for the 3rd month for ' . $data['employee_name'];
+                                $save_notification['month_status'] = '3';
+                                SendEmailEmployeeRegularNotification::create($save_notification);
+
+                                $sent_ctr++;
+                            }
+                        }
+
+                        
+                    }
+
+                    if($months == 5){
+                        //Validate if with 3 - 5 months 
+                        $data = [];
+                        $data['id'] =  $employee['id'];
+                        $data['employee_name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
+                        $data['company'] =  $employee['companies'] ? $employee['companies'][0]['name'] : "";
+                        $data['position'] =  $employee['position'];
+                        $data['date_hired'] =  date('F m, Y',strtotime($employee['date_hired']));
+                        $data['classification'] =  $employee['classification'];
+                        $data['status'] =  $employee['status'];
+                        $data['months'] =  $months;
+                        $data['reciever_name'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
+                        $data['email_reciever'] =  $email ? $email['email'] : "";
+
+                        $date_of_regularization = date('Y-m-d', strtotime("+6 months", strtotime($employee['date_hired'])));
+                        $data['date_of_regularization'] =  $date_of_regularization ? date('F m, Y',strtotime($date_of_regularization)) : "";
+
+                        if($data['email_reciever']){
+                            $validate_check_email_notification = SendEmailEmployeeRegularNotification::where('employee_id',$employee['id'])->where('month_status','5')->first();
+                            if(empty($validate_check_email_notification)){
+
+                                Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com','irismay.chan@lafilgroup.com'])->send(new EmployeeRegularizationNotification($data));
+
+                                $save_notification = [];
+                                $save_notification['employee_id'] = $employee['id'];
+                                $save_notification['receiver'] = $data['reciever_name'];
+                                $save_notification['email_desc'] = 'Sent Email Notification for the 5th month for ' . $data['employee_name'];
+                                $save_notification['month_status'] = '5';
+                                SendEmailEmployeeRegularNotification::create($save_notification);
+
+                                $sent_ctr++;
+                            }
+                        }
                     }
                 }   
             }
         }
 
-        return 'Email Sent';
+        return $sent_ctr .' Email Sent';
     }
 
 }
