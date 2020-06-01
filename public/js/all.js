@@ -13823,6 +13823,8 @@ __webpack_require__.r(__webpack_exports__);
       this.ic_employee = ic_employee;
     },
     clearForm: function clearForm() {
+      this.keyword = '';
+      this.employees = [];
       this.employee = [];
       this.form.temperature = "";
       this.form.one_question = "";
@@ -14379,6 +14381,8 @@ __webpack_require__.r(__webpack_exports__);
       this.form = [];
     },
     clearICForm: function clearICForm() {
+      this.keyword_ic = '';
+      this.ic_employees = [];
       this.ic_employee = [];
       this.form_ic.temperature = "";
       this.form_ic.one_question = "";

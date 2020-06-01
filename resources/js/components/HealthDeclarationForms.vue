@@ -541,6 +541,8 @@
                 this.ic_employee = ic_employee;
             },
             clearForm(){
+                this.keyword = '';
+                this.employees = [];
                 this.employee = [];
                 this.form.temperature = "";
                 this.form.one_question = "";
@@ -553,6 +555,8 @@
                 this.form.seven_yes_desc = "";
                 this.form.eight_question = "";
                 this.form = [];
+
+                
             },
             clearICForm(){
                 this.ic_employee = [];

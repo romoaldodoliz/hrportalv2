@@ -359,6 +359,8 @@
                 this.form = [];
             },
             clearICForm(){
+                this.keyword_ic = '';
+                this.ic_employees = [];
                 this.ic_employee = [];
                 this.form_ic.temperature = "";
                 this.form_ic.one_question = "";
