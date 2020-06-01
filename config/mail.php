@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'vendorportal@mail.lafilgroup.com'),
-        'name' => env('MAIL_FROM_NAME', 'Vendor Portal'),
+        'address' => 'hr.portal@lafilgroup.com',
+        'name' => 'HR Portal',
     ],
 
     /*

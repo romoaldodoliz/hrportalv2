@@ -10,6 +10,7 @@ use App\DependentAttachment;
 use App\User;
 use App\RfidNumber;
 use App\Cluster;
+use App\AssignHead;
 
 use DB;
 use Illuminate\Http\File;
@@ -570,7 +571,7 @@ class HomeController extends Controller
 
     public function getEmployeeClusterCount(){
 
-        $all_employees = Employee::select('id','cluster','status')->where('status','Active')->get();    
+        
         $clusters = Cluster::all();
         
         $datas = [];
@@ -591,5 +592,50 @@ class HomeController extends Controller
 
         return $datas;
 
+    }
+
+    public function getForRegularNotification(){
+
+        $all_employees = Employee::select('id','first_name','last_name','date_hired','position','classification','status')->with('companies')->where('classification','Probationary')->where('status','Active')->orderBy('date_hired','DESC')->get();
+        
+        if($all_employees){
+            $data = [];
+            $today = date('Y-m-d');
+            foreach($all_employees as $k => $employee){
+                $date_hired = $employee['date_hired'];
+
+                $months = "";
+                if($date_hired != '0000-00-00' && $date_hired){
+                    $diff = date_diff(date_create($date_hired), date_create($today));
+                    $months = $diff->format('%m');
+                }
+
+                $immediate_superior = AssignHead::where('employee_id' , $employee['id'])->where('head_id','3')->first();
+                $immediate_superior_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$immediate_superior['employee_head_id'])->where('status','Active')->first();
+                $email = User::where('id',$immediate_superior_details['user_id'])->first();
+        
+                if($months){
+                    if($months >= 3 && $months <= 5){
+                        //Validate if with 3 - 5 months 
+                        $data[$k]['id'] =  $employee['id'];
+                        $data[$k]['name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
+                        $data[$k]['company'] =  $employee['companies'] ? $employee['companies'][0]['name'] : "";
+                        $data[$k]['position'] =  $employee['position'];
+                        $data[$k]['date_hired'] =  $employee['date_hired'];
+                        $data[$k]['classification'] =  $employee['classification'];
+                        $data[$k]['status'] =  $employee['status'];
+                        $data[$k]['months'] =  $months;
+                        $data[$k]['email_reciever'] =  $email ? $email['email'] : "";
+                        $data[$k]['reciever_name'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
+
+                        $date_of_regularization = date('Y-m-d', strtotime("+6 months", strtotime($employee['date_hired'])));
+                        $data[$k]['date_of_regularization'] =  $date_of_regularization ? $date_of_regularization : "";
+                    }
+                }   
+            }
+        }
+
+        return $data;
+        
     }
 }

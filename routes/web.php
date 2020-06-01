@@ -288,4 +288,7 @@ Route::get('logout', function(){
         //Demographic Cluster Count
         Route::get('employee-cluster-count','HomeController@getEmployeeClusterCount');
 
+        //Demographic Cluster Count
+        Route::get('employee-for-regular-notif','HomeController@getForRegularNotification');
+
     });
