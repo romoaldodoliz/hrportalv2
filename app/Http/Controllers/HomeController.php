@@ -60,7 +60,7 @@ class HomeController extends Controller
                     session(['header_text' => 'Dashboard']);
                     return view('home');
                 }
-                elseif(auth()->user()->roles[0]->name == "Cluster Head" || auth()->user()->roles[0]->name == "BU Head"){
+                elseif(auth()->user()->roles[0]->name == "Cluster Head" || auth()->user()->roles[0]->name == "BU Head" || auth()->user()->roles[0]->name == "Immediate Superior"){
                     return view('employees.index');
                 }
                 else{

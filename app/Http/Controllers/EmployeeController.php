@@ -41,7 +41,7 @@ class EmployeeController extends Controller
     {
         $check_user = User::with('roles')->where('id',Auth::user()->id)->first();
        
-        if($check_user['roles'][0]['name'] == 'Cluster Head' || $check_user['roles'][0]['name'] == 'BU Head'){
+        if($check_user['roles'][0]['name'] == 'Cluster Head' || $check_user['roles'][0]['name'] == 'BU Head' || $check_user['roles'][0]['name'] == 'Immediate Superior' ){
             $employee_head = Employee::select('id')->where('user_id',$check_user['id'])->first();
             $assign_heads = AssignHead::select('employee_id')->where('employee_head_id',$employee_head['id'])->get();
 

@@ -38,7 +38,7 @@
                     </li>
                 @endif
 
-                @if(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "HR Staff" || auth()->user()->roles[0]->name == "Cluster Head" || auth()->user()->roles[0]->name == "BU Head")
+                @if(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "HR Staff" || auth()->user()->roles[0]->name == "Cluster Head" || auth()->user()->roles[0]->name == "BU Head" || auth()->user()->roles[0]->name == "Immediate Superior")
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employees') }}">
                             <i class="fas fa-users text-success" style="font-size: 15px;"></i> Employees
