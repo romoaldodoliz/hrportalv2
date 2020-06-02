@@ -149,7 +149,7 @@
 
                             <div class="col-md-12" style="border:1px solid;border-radius:5px;">
 
-                                <h4 class="mt-2">Access Rights for HR Staff/Administrator</h4>
+                                <h4 class="mt-2">Access Rights for HR Staff/Administrator/Cluster HEAD/BU HEAD/Immediate Superior</h4>
 
                                 <div class="col-md-6">
                                     <div class="form-group" >
@@ -214,6 +214,52 @@
                                         </div>
 
                                         <span class="text-danger" v-if="errors.download_export">{{ errors.download_export[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <h4>Employee Information Access</h4>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="personal_info" class="custom-control-input" v-model="user_copied.personal_info" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="personal_info">Personal Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.personal_info">{{ errors.personal_info[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="work_info" class="custom-control-input" v-model="user_copied.work_info" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="work_info">Work Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.work_info">{{ errors.work_info[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="contact_info" class="custom-control-input" v-model="user_copied.contact_info" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="contact_info">Contact Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.contact_info">{{ errors.contact_info[0] }}</span> 
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="identification_info" class="custom-control-input" v-model="user_copied.identification_info" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="identification_info">Identification Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.identification_info">{{ errors.identification_info[0] }}</span> 
                                     </div>
                                 </div>
 
@@ -417,6 +463,10 @@
                     read: user_copied.read,
                     search: user_copied.search,
                     download_export: user_copied.download_export,
+                    personal_info: user_copied.personal_info,
+                    work_info: user_copied.work_info,
+                    contact_info: user_copied.contact_info,
+                    identification_info: user_copied.identification_info,
                     _method: 'PATCH'
                 })
                 .then(response => {

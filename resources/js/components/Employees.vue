@@ -158,16 +158,16 @@
                         
                         <div class="nav-wrapper">
                             <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
-                                <li class="nav-item">
+                                <li class="nav-item" v-if="user_access_rights.personal_info == 'YES'">
                                     <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i class="fas fa-user-tie mr-2"></i>PERSONAL</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" v-if="user_access_rights.work_info == 'YES'">
                                     <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i class="fas fa-briefcase mr-2"></i>WORK</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" v-if="user_access_rights.contact_info == 'YES'">
                                     <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-address-book mr-2"></i>CONTACT</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" v-if="user_access_rights.identification_info == 'YES'">
                                     <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
                                 </li>
                             </ul>
@@ -176,7 +176,7 @@
                             <div class="card-body">
                                 <div class="tab-content" id="myTabContent">
                                     <!-- Personal -->
-                                    <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
+                                    <div v-if="user_access_rights.personal_info == 'YES'" class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
                                         <div class="row">
                                             
 
@@ -356,7 +356,7 @@
                                         </div>
                                     </div>
                                     <!-- Work -->
-                                    <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
+                                    <div v-if="user_access_rights.work_info == 'YES'" class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
                                                 <div v-if="employee_copied.id_number">
@@ -602,7 +602,7 @@
                                         </div>
                                     </div>
                                     <!-- Contact -->
-                                    <div class="tab-pane fade" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
+                                    <div v-if="user_access_rights.contact_info == 'YES'" class="tab-pane fade" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
@@ -753,7 +753,7 @@
                                         </div>
                                     </div>
                                     <!-- Identification -->
-                                    <div class="tab-pane fade" id="tabs-icons-text-4" role="tabpanel" aria-labelledby="tabs-icons-text-4-tab">
+                                    <div v-if="user_access_rights.identification_info == 'YES'" class="tab-pane fade" id="tabs-icons-text-4" role="tabpanel" aria-labelledby="tabs-icons-text-4-tab">
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -810,7 +810,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-12 text-center mt-3 pt-3 pb-3" style="background-color:#f4f5f7;border-radius:5px;">
+                        <div class="col-md-12 text-center mt-3 pt-3 pb-3" style="background-color:#f4f5f7;border-radius:5px;" v-if="user_access_rights.edit == 'YES'">
                             <h4>Terms and Conditions</h4>
                             <div class="custom-control custom-checkbox mb-3">
                                 <input class="custom-control-input" id="terms_conditions" v-model="termsConditions" @change="termsConditionsValidate" type="checkbox">
