@@ -33,19 +33,42 @@ class EmployeeController extends Controller
     public function index()
     {
         session(['header_text' => 'Employees']);
+       
         return view('employees.index');
     }
 
     public function indexData()
     {
-        $check_user = User::where('id',Auth::user()->id)->first();
+        $check_user = User::with('roles')->where('id',Auth::user()->id)->first();
+       
+        if($check_user['roles'][0]['name'] == 'Cluster Head' || $check_user['roles'][0]['name'] == 'BU Head'){
+            $employee_head = Employee::select('id')->where('user_id',$check_user['id'])->first();
+            $assign_heads = AssignHead::select('employee_id')->where('employee_head_id',$employee_head['id'])->get();
 
-        return Employee::with('companies','departments','locations')
-                            ->when($check_user['view_confidential'] != "YES" , function($q) {
-                                $q->where('confidential','NO');
-                            })
-                            ->orderBy('series_number','DESC')
-                            ->get();
+            $employee_ids = [];
+            if($assign_heads){
+                foreach($assign_heads as $head){
+                    array_push($employee_ids , $head['employee_id']);
+                }
+            }
+            return Employee::with('companies','departments','locations')
+                        ->when($check_user['view_confidential'] != "YES" , function($q) {
+                            $q->where('confidential','NO');
+                        })
+                        ->whereIn('id',$employee_ids)
+                        ->where('status','Active')
+                        ->orderBy('series_number','DESC')
+                        ->get();
+        }else{
+            return Employee::with('companies','departments','locations')
+                        ->when($check_user['view_confidential'] != "YES" , function($q) {
+                            $q->where('confidential','NO');
+                        })
+                        ->where('status','Active')
+                        ->orderBy('series_number','DESC')
+                        ->get();
+        }
+       
         
     }
     public function employeeindexCount()
@@ -672,6 +695,7 @@ class EmployeeController extends Controller
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
+                            ->where('status','Active')
                             ->orderBy('series_number','DESC')
                             ->get();
         return $employee;

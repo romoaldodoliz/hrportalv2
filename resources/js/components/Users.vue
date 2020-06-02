@@ -34,6 +34,7 @@
                                     <table class="table align-items-center table-flush">
                                         <thead class="thead-light">
                                             <tr>
+                                               
                                                 <th scope="col"></th>
                                                 <th scope="col">Name</th>
                                                 <th scope="col">Email</th>
@@ -51,7 +52,8 @@
                                                     </content-placeholders>
                                                 </td>
                                             </tr>
-                                             <tr v-for="(user, u) in filteredQueues" v-bind:key="u">
+                                             <tr v-for="(user, i) in filteredQueues" :key="i">
+                                            
                                                 <td class="text-center">
                                                     <div class="dropdown">
                                                         <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -67,7 +69,15 @@
                                                 </td>
                                                 <td>{{ user.name }}</td>
                                                 <td>{{ user.email }}</td>
-                                                <td>{{ user.roles[0] ? user.roles[0].name : "" }}</td>
+                                                <td>
+                                                    <div v-if="user.roles.length > 0">
+                                                         {{ user.roles[0] ? user.roles[0].name : "" }}
+                                                    </div>
+                                                    <div v-else>
+                                                        Set Role
+                                                    </div>
+                                                   
+                                                </td>
                                                 <td>{{ user.created_at }}</td>  
                                             </tr>
                                             
@@ -137,16 +147,76 @@
                             </div>
 
 
-                            <div class="col-md-12">
-                                <div class="form-group " style="border:1px solid;border-radius:5px;">
-                                
-                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
-                                        <input id="view_confidential" class="custom-control-input" v-model="user_copied.view_confidential" true-value="YES" false-value="NO" type="checkbox">
-                                        <label class="custom-control-label" for="view_confidential">View Confidential Employee</label>
-                                    </div>
+                            <div class="col-md-12" style="border:1px solid;border-radius:5px;">
 
-                                    <span class="text-danger" v-if="errors.view_confidential">{{ errors.view_confidential[0] }}</span> 
+                                <h4 class="mt-2">Access Rights for HR Staff/Administrator</h4>
+
+                                <div class="col-md-6">
+                                    <div class="form-group" >
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="view_confidential" class="custom-control-input" v-model="user_copied.view_confidential" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="view_confidential">View Confidential Employee</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.view_confidential">{{ errors.view_confidential[0] }}</span> 
+                                    </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="create" class="custom-control-input" v-model="user_copied.create" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="create">Create Employee</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.create">{{ errors.create[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="edit" class="custom-control-input" v-model="user_copied.edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="edit">Edit Employee</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.edit">{{ errors.edit[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="read" class="custom-control-input" v-model="user_copied.read" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="read">Read Employee</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.read">{{ errors.read[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="search" class="custom-control-input" v-model="user_copied.search" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="search">Search Employee</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.search">{{ errors.search[0] }}</span> 
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="download_export" class="custom-control-input" v-model="user_copied.download_export" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="download_export">Download / Export</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.download_export">{{ errors.download_export[0] }}</span> 
+                                    </div>
+                                </div>
+
                             </div>
                             
                         </div>
@@ -342,6 +412,11 @@
                     email: user_copied.email,
                     role: user_copied.role,
                     view_confidential: user_copied.view_confidential,
+                    create: user_copied.create,
+                    edit: user_copied.edit,
+                    read: user_copied.read,
+                    search: user_copied.search,
+                    download_export: user_copied.download_export,
                     _method: 'PATCH'
                 })
                 .then(response => {

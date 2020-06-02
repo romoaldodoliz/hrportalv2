@@ -89,10 +89,10 @@ Route::get('logout', function(){
         Route::get('/roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['role:Administrator']]);
 
         // Employees
-            Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff']]);
-            Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head']]);
+            Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head']]);
 
-            Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head']]);
 
             Route::get('/employees-index-count',['as'=>'employees.employeeindexCount','uses'=>'EmployeeController@employeeindexCount','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-inactive-count',['as'=>'employees.employeeInactiveCount','uses'=>'EmployeeController@employeeInactiveCount','middleware' => ['role:Administrator|HR Staff']]);
@@ -116,7 +116,7 @@ Route::get('logout', function(){
             Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');  
 
             //Employee Filter
-            Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
+            Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer|Cluster Head|BU Head']]);
             
              //Employee Filter ID
             Route::post('/filter-employee-id',['as'=>'employees.employeeFilterID','uses'=>'EmployeeController@employeeFilterID','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
@@ -135,7 +135,7 @@ Route::get('logout', function(){
             Route::get('/transfer-employee-logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
             
             //Organizational Chart
-            Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff']]);
+            Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head']]);
         
         
             // Settings
@@ -290,5 +290,9 @@ Route::get('logout', function(){
 
         //Demographic Cluster Count
         Route::get('employee-for-regular-notif','HomeController@getForRegularNotification');
+
+
+
+        Route::get('user-access-rights','UserController@getUserAccessRights');
 
     });

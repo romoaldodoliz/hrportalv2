@@ -645,8 +645,8 @@
                     <!-- Footer -->
                     <div class="card-footer bg-white border-0">
                         <div class="row">
-                            <div class="col-md-12 text-center">
-                                <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                            <div class="col-md-12 text-center"  v-if="user_access_rights.edit == 'YES'">
+                                <button type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
                                
                                 <button id="verify_btn" :disabled="saveEmployee" v-if="!employee_copied.verification && employee_requests_pending == 0" type="button" class="btn btn-info btn-round btn-fill btn-lg" @click="verifyEmployee(employee_copied)" style="width:150px;">Verify</button>
                               
@@ -985,6 +985,7 @@
         props:['useremployeeid','url'],
         data(){
             return {
+                user_access_rights: [],
                 employee: [],
                 employee_copied: [],
                 errors: [],
@@ -1032,8 +1033,19 @@
             this.fetchLocations();
             this.fetchLevels();
             this.disabledByGender();
+            this.fetchUserAccessRights();
         },
         methods:{
+            fetchUserAccessRights(){
+                this.user_access_rights = [];
+                axios.get('/user-access-rights')
+                .then(response => { 
+                    this.user_access_rights = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             disabledByGender(){
                 if(this.employee_copied.gender == 'FEMALE'){
                     if(this.employee_copied.marital_status == 'MARRIED' || this.employee_copied.marital_status == 'DIVORCED' || this.employee_copied.marital_status == 'WIDOW'){

@@ -15,13 +15,10 @@
                                   
                                         <div class="col-xl-12 float-right text-right">
 
-                                            <a href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
+                                            <a v-if="user_access_rights.create == 'YES'" href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
 
-                                            
                                             <download-excel
-
-                                                v-if="export_employees.length > 0"
-
+                                                v-if="export_employees.length > 0 && user_access_rights.download_export == 'YES'"
                                                 :data   = "export_employees"
                                                 :fields = "json_fields"
                                                 class   = "btn btn-sm btn-default"
@@ -29,51 +26,53 @@
                                                     Export to excel
                                             </download-excel>
                                             
-                                            <button v-else class="btn btn-sm btn-default" disabled>Export to excel (Loading...)</button>
-                                            
-                                            
                                         </div> 
                                     </div>
+
                                     <div class="row align-items-center">
                                         <div class="col-xl-12 mb-2 mt-3 float-right">
                                             <div class="col-xl-6 mb-2 mt-3 float-left">
-                                                <input type="text" name="employee" class="form-control" placeholder="Search by Name" autocomplete="off" v-model="keywords" id="name">
+                                                <input v-if="user_access_rights.search == 'YES'" type="text" name="employee" class="form-control" placeholder="Search by Name" autocomplete="off" v-model="keywords" id="name">
+                                                <input v-else type="text" name="employee" class="form-control" placeholder="Search by Name" disabled >
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-12 mb-2 mt-3 float-right">
-                                            <h4>Filter by: </h4>
-                                            <div class="col-xl-3 mb-2 float-left">
-                                                <select class="form-control" v-model="company" id="company">
-                                                    <option value="">Choose Company</option>
-                                                    <option v-for="(company,v) in companies" v-bind:key="v" :value="company.id"> {{ company.name }}</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-xl-3 mb-2 float-left">
-                                                <select class="form-control" v-model="department" id="department">
-                                                    <option value="">Choose Deparment</option>
-                                                    <option v-for="(department,v) in departments" v-bind:key="v" :value="department.id"> {{ department.name }}</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-xl-3 mb-2 float-left">
-                                                <select class="form-control" v-model="location" id="location">
-                                                    <option value="">Choose Location</option>
-                                                    <option v-for="(location,v) in locations" v-bind:key="v" :value="location.id"> {{ location.name }}</option>
-                                                </select>
-                                            </div> 
-                                            <div class="col-xl-3 mb-2 float-left">
-                                                <select class="form-control" v-model="employee_status" id="employee_status">
-                                                    <option value="">Choose Status</option>
-                                                    <option value="ACTIVE">Active</option>
-                                                    <option value="INACTIVE">Inactive</option>
-                                                </select>
-                                            </div> 
-                                            <div class="col-xl-12">
-                                                <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
-                                            </div> 
+                                        <div class="col-xl-12 mb-2 mt-3 float-right" v-if="user_access_rights.roles">
+                                            <div v-if="user_access_rights.roles[0].name == 'Administrator' || user_access_rights.roles[0].name == 'HR Staff'">
+                                                <h4 v-if="user_access_rights.search == 'YES'">Filter by: </h4>
+                                                <div class="col-xl-3 mb-2 float-left" v-if="user_access_rights.search == 'YES'">
+                                                    <select class="form-control" v-model="company" id="company">
+                                                        <option value="">Choose Company</option>
+                                                        <option v-for="(company,v) in companies" v-bind:key="v" :value="company.id"> {{ company.name }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xl-3 mb-2 float-left" v-if="user_access_rights.search == 'YES'">
+                                                    <select class="form-control" v-model="department" id="department">
+                                                        <option value="">Choose Deparment</option>
+                                                        <option v-for="(department,v) in departments" v-bind:key="v" :value="department.id"> {{ department.name }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xl-3 mb-2 float-left" v-if="user_access_rights.search == 'YES'">
+                                                    <select class="form-control" v-model="location" id="location">
+                                                        <option value="">Choose Location</option>
+                                                        <option v-for="(location,v) in locations" v-bind:key="v" :value="location.id"> {{ location.name }}</option>
+                                                    </select>
+                                                </div> 
+                                                <div class="col-xl-3 mb-2 float-left" v-if="user_access_rights.search == 'YES'">
+                                                    <select class="form-control" v-model="employee_status" id="employee_status">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="ACTIVE">Active</option>
+                                                        <option value="INACTIVE">Inactive</option>
+                                                    </select>
+                                                </div> 
+                                                <div class="col-xl-12" v-if="user_access_rights.search == 'YES'">
+                                                    <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
+                                                </div> 
+                                            </div>  
                                         </div>  
                                     </div>
                                 </div>
+
                                 <div class="table-responsive">
                                     <!-- employees table -->
                                     <table class="table align-items-center table-flush mb-5">
@@ -105,10 +104,10 @@
                                                             <i class="fas fa-pen" style="color:#5e72e4"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a>
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
-                                                            <a class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>
+                                                            <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
+                                                            <a v-if="user_access_rights.edit == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a>
+                                                            <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
+                                                            <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -821,7 +820,8 @@
                     </div>
                   
                     <div class="modal-footer">
-                        <button id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                        <button v-if="user_access_rights.edit == 'YES'" id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                        <button v-else id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" disabled>Unable to Update</button>
                     </div>
                 </div>
             </div>
@@ -1053,6 +1053,7 @@
         components: { 'downloadExcel': JsonExcel,loader },
         data(){
             return {
+                user_access_rights: [],
                 employees: [],
                 employee: [],
                 employee_copied: [],
@@ -1147,8 +1148,19 @@
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
             this.exportFetchEmployees();
+            this.fetchUserAccessRights();
         },
         methods:{
+            fetchUserAccessRights(){
+                this.user_access_rights = [];
+                axios.get('/user-access-rights')
+                .then(response => { 
+                    this.user_access_rights = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             exportFetchEmployees(){
                 this.export_employees = [];
                 axios.get('/export-employees')

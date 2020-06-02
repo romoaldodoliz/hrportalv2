@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\{
     User
 };
-
+use Auth;
 use DB;
 
 class UserController extends Controller
@@ -117,5 +117,10 @@ class UserController extends Controller
         $user->save();
 
         return $user;
+    }
+
+
+    public function getUserAccessRights(){
+        return $user = User::with('roles')->where('id',Auth::user()->id)->first();
     }
 }

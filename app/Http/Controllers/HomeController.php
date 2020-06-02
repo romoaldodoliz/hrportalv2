@@ -46,7 +46,7 @@ class HomeController extends Controller
             session(['employee_id' =>  $employee->id]);
         }
         
-        $user = User::with('roles')->where('id', auth()->user()->id)->first();
+      $user = User::with('roles')->where('id', auth()->user()->id)->first();
        
         if(isset($user->roles)){
             if(isset(auth()->user()->roles[0])){
@@ -59,6 +59,9 @@ class HomeController extends Controller
                 elseif(auth()->user()->roles[0]->name == "Administrator" || auth()->user()->roles[0]->name == "Admin Broadcast" || auth()->user()->roles[0]->name == "IT Broadcast" || auth()->user()->roles[0]->name == "HR Broadcast" || auth()->user()->roles[0]->name == "HR Staff"){
                     session(['header_text' => 'Dashboard']);
                     return view('home');
+                }
+                elseif(auth()->user()->roles[0]->name == "Cluster Head" || auth()->user()->roles[0]->name == "BU Head"){
+                    return view('employees.index');
                 }
                 else{
                     $user->attachRole(2);
