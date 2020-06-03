@@ -38,7 +38,7 @@
                 </a>
             @endif
 
-            @if(auth()->user()->roles[0]->name != "HDF Admin")
+            @if(auth()->user()->roles[0]->name == "HDF Admin")
                 <a href="{{ url('/health_declaration_form_users_disable_set_up') }}" class="dropdown-item">
                     <i class="fas fa-desktop"></i>
                     <span>HDF Forms</span>
