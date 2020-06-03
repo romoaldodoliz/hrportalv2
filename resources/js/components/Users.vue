@@ -202,7 +202,7 @@
                                             <label class="custom-control-label" for="search">Search Employee</label>
                                         </div>
 
-                                        <span class="text-danger" v-if="errors.search">{{ errors.search[0] }}</span> 
+                                        <span class="text-danger" v-if="errors.search">{{ errors.search[0]}}</span> 
                                     </div>
                                 </div>
 
@@ -260,6 +260,17 @@
                                         </div>
 
                                         <span class="text-danger" v-if="errors.identification_info">{{ errors.identification_info[0] }}</span> 
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="npa_request" class="custom-control-input" v-model="user_copied.npa_request" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="npa_request">NPA Request</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.npa_request">{{ errors.npa_request[0] }}</span> 
                                     </div>
                                 </div>
 
@@ -467,6 +478,7 @@
                     work_info: user_copied.work_info,
                     contact_info: user_copied.contact_info,
                     identification_info: user_copied.identification_info,
+                    npa_request: user_copied.npa_request,
                     _method: 'PATCH'
                 })
                 .then(response => {

@@ -292,7 +292,21 @@ Route::get('logout', function(){
         Route::get('employee-for-regular-notif','HomeController@getForRegularNotification');
 
 
-
+        //Access Rights
         Route::get('user-access-rights','UserController@getUserAccessRights');
+
+        //Send NPA Requests
+        Route::post('employee-npa-request','EmployeeController@employeeNpaRequest');
+        Route::get('get-npa-requests/{employee_id}','EmployeeController@getNPARequestLists');
+        Route::delete('npa_request/{npa_request}', 'EmployeeController@destroyNPARequest');
+
+
+        //HR Employees
+        Route::get('hr-employees','EmployeeController@getHREmployees');
+
+        //BU HEADS
+        Route::get('bu-heads','EmployeeController@getBUHead');
+
+        Route::get('get-npa-request/{npa_request}','EmployeeController@viewNPARequest');
 
     });

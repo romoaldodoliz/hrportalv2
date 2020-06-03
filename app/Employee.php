@@ -106,6 +106,19 @@ class Employee extends Model implements AuditableContract
         return $this->hasMany('App\AssignHead')->orderBy('id','ASC');
     }
 
+    public function immediate_superior()
+    {
+        return $this->hasMany('App\AssignHead')->orderBy('id','ASC')->where('head_id','3');
+    }
+    public function bu_head()
+    {
+        return $this->hasMany('App\AssignHead')->orderBy('id','ASC')->where('head_id','4');
+    }
+    public function cluster_head()
+    {
+        return $this->hasMany('App\AssignHead')->orderBy('id','ASC')->where('head_id','5');
+    }
+
     public function dependents()
     {
         return $this->hasMany('App\Dependent');

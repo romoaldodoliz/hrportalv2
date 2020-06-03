@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\{
     User
 };
+use App\Employee;
 use Auth;
 use DB;
 
@@ -121,6 +122,10 @@ class UserController extends Controller
 
 
     public function getUserAccessRights(){
-        return $user = User::with('roles')->where('id',Auth::user()->id)->first();
+        $user = User::with('roles')->where('id',Auth::user()->id)->first();
+        $employee = Employee::select('id')->where('user_id',Auth::user()->id)->first();
+
+        $user['employee_id'] = $employee['id'];
+        return $user;
     }
 }

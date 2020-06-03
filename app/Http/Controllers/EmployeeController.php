@@ -18,6 +18,7 @@ use App\EmployeeDetailVerification;
 use App\EmployeeTransfer;
 use App\DependentAttachment;
 use App\Api;
+use App\EmployeeNpaRequest;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -51,7 +52,7 @@ class EmployeeController extends Controller
                     array_push($employee_ids , $head['employee_id']);
                 }
             }
-            return Employee::with('companies','departments','locations')
+            return Employee::with('companies','departments','locations','immediate_superior','bu_head')
                         ->when($check_user['view_confidential'] != "YES" , function($q) {
                             $q->where('confidential','NO');
                         })
@@ -60,7 +61,7 @@ class EmployeeController extends Controller
                         ->orderBy('series_number','DESC')
                         ->get();
         }else{
-            return Employee::with('companies','departments','locations')
+            return Employee::with('companies','departments','locations','immediate_superior','bu_head')
                         ->when($check_user['view_confidential'] != "YES" , function($q) {
                             $q->where('confidential','NO');
                         })
@@ -686,6 +687,37 @@ class EmployeeController extends Controller
         return $employee;
     }
 
+    public function getHREmployees(){
+        
+        $hr_employee = Employee::with('departments')
+                    ->whereHas('departments', function ($w) {
+                            $w->where('id', '=', '20');
+                    })
+                    ->where('status','Active')
+                    ->orderBy('last_name' , 'ASC')
+                    ->get();
+
+        return $hr_employee;
+    }
+
+    public function getBUHead(){
+        
+        $bu_heads = AssignHead::select('employee_head_id')->distinct()->where('head_id','4')->get();
+
+        $bu_head_ids = [];
+        
+        foreach($bu_heads as $bu_head){
+            array_push($bu_head_ids, $bu_head['employee_head_id']);
+        }
+        
+        $bu_heads_employees = Employee::whereIn('id',$bu_head_ids)
+                    ->where('status','Active')
+                    ->orderBy('last_name' , 'ASC')
+                    ->get();
+
+        return $bu_heads_employees;
+    }
+
     public function employeeIdIndex(){
         session(['header_text' => 'Employees']);
 
@@ -1192,5 +1224,53 @@ class EmployeeController extends Controller
         return $filtered_data;
     }
 
+    public function employeeNpaRequest(Request $request){
 
+        $data = $request->all();
+
+        $this->validate($request, [
+            'subject' => 'required',
+        ]);
+        
+        $employee_data = Employee::with('companies','departments','locations','assign_heads')->where('id',$data['employee_id'])->first();
+        
+
+        if($employee_data){
+            DB::beginTransaction();
+            try {   
+                $check_user = User::with('roles')->where('id',Auth::user()->id)->first();
+                $requested_by = Employee::select('id')->where('user_id',$check_user['id'])->first();
+
+                $data['employee_name'] = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
+                $data['requested_by'] = $requested_by['id'];
+                $data['date_prepared'] = date('Y-m-d h:m:s');
+                $data['status'] = 'Pending';
+
+                if(EmployeeNpaRequest::create($data)){
+                    DB::commit();
+                    return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
+                }
+               
+                return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
+            }catch (Exception $e) {
+                DB::rollBack();
+                return $employee_data;
+            }
+        }
+        return $data;
+    }
+
+    public function getNPARequestLists($employee_id){
+        return $npa_requests_list = EmployeeNpaRequest::where('employee_id' , $employee_id)->orderBy('created_at','DESC')->get();
+    }
+
+    public function destroyNPARequest(EmployeeNpaRequest $npa_request){
+        if($npa_request->delete()){
+            return 'Deleted';
+        }
+    }
+
+    public function viewNPARequest(EmployeeNpaRequest $npa_request){
+        return $npa_request = EmployeeNpaRequest::with('from_company','from_immediate_manager','from_department','to_company','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
+    }
 }

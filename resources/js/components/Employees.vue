@@ -104,10 +104,13 @@
                                                             <i class="fas fa-pen" style="color:#5e72e4"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                            <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
-                                                            <a v-if="user_access_rights.edit == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a>
-                                                            <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
-                                                            <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
+                                                                <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
+                                                                <a v-if="user_access_rights.read == 'YES' && user_access_rights.roles[0].name == 'Administrator'" class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>    
+                                                                <!-- <a v-if="user_access_rights.edit == 'YES' && user_access_rights.roles[0].name == 'Administrator' || user_access_rights.roles[0].name == 'Immediate Superior'"  class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer</a> -->
+                                                                <a v-if="user_access_rights.npa_request == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#npaRequestModal"  style="cursor: pointer" @click="npaRequest(employee)"><i class="fas fa-user-cog"></i> NPA Request</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -1018,6 +1021,339 @@
             </div>
         </div>
 
+        <!-- NPA Request Modal -->
+        <div class="modal fade" id="npaRequestModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-left">Submit NPA Requests</h2> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <h1 class="col-12">{{ npaRequestDetails.first_name + ' ' + npaRequestDetails.last_name }}</h1>
+                               
+                                    <small class="col-6 text-left mt--2 text-default text-center">{{ npaRequestDetails.id_number ? npaRequestDetails.id_number : "" }}</small>/
+                                    <small class="col-6 text-left mt--2 text-info text-center">{{ npaRequestDetails.position ? npaRequestDetails.position : "" }}</small>/
+                                    <small class="col-6 text-left mt--2 text-danger text-center" v-if="npaRequestDetails.departments">{{ npaRequestDetails.departments[0] ? npaRequestDetails.departments[0].name : "" }}</small>/
+                                    <small class="col-6 text-left mt--2 text-success text-center" v-if="npaRequestDetails.companies">{{ npaRequestDetails.companies[0] ? npaRequestDetails.companies[0].name : "" }}</small>/
+                                    <small class="col-6 text-left mt--2 text-warning text-center" v-if="npaRequestDetails.locations">{{ npaRequestDetails.locations[0] ? npaRequestDetails.locations[0].name : "" }}</small>
+                                
+                                <hr>
+                                <h2 class="col-12 text-center">NOTICE OF PERSONNEL ACTION </h2> 
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Subject</label>
+                                            <select class="form-control" v-model="npa_request.subject" id="subject">
+                                                <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
+                                                <option value="REGULARIZATION ">REGULARIZATION </option>
+                                                <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                            </select>
+                                            <span class="text-danger" v-if="npa_request_errors.subject">{{ npa_request_errors.subject[0] }}</span>
+                                        </div>
+
+                                        
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        This is to inform you of the following changes in your employment:
+
+                                         <table class="table table-hover table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">
+                                                        
+                                                    </th>
+                                                    <th class="text-center">
+                                                        FROM
+                                                    </th>
+                                                    <th class="text-center">
+                                                        TO
+                                                    </th>
+                                                </tr>    
+                                             </thead>
+                                             <tbody>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Type of Movement</h4>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.from_type_of_movement" id="subject">
+                                                            <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
+                                                            <option value="REGULARIZATION ">REGULARIZATION </option>
+                                                            <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                            <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                            <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                            <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                            <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.from_type_of_movement">{{ npa_request_errors.from_type_of_movement[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.to_type_of_movement" id="subject">
+                                                            <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
+                                                            <option value="REGULARIZATION ">REGULARIZATION </option>
+                                                            <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                            <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                            <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                            <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                            <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.to_type_of_movement">{{ npa_request_errors.to_type_of_movement[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Company</h4>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.from_company" id="company">
+                                                            <option value="">Choose Company</option>
+                                                            <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.from_company">{{ npa_request_errors.from_company[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.to_company" id="company">
+                                                            <option value="">Choose Company</option>
+                                                            <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.to_company">{{ npa_request_errors.to_company[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Position Title </h4>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" v-model="npa_request.from_position_title">
+                                                        <span class="text-danger" v-if="npa_request_errors.from_position_title">{{ npa_request_errors.from_position_title[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" v-model="npa_request.to_position_title">
+                                                        <span class="text-danger" v-if="npa_request_errors.to_position_title">{{ npa_request_errors.to_position_title[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Date Hired</h4>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <h4>{{ npaRequestDetails.date_hired ? npaRequestDetails.date_hired : "" }}</h4>
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Immediate Manager</h4>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.from_immediate_manager" id="location">
+                                                            <option value="">Choose Immediate Manager</option>
+                                                            <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.from_immediate_manager">{{ npa_request_errors.from_immediate_manager[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.to_immediate_manager" id="location">
+                                                            <option value="">Choose Immediate Manager</option>
+                                                            <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.to_immediate_manager">{{ npa_request_errors.to_immediate_manager[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Department</h4>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.from_department" id="department">
+                                                            <option value="">Choose Department</option>
+                                                            <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.from_department">{{ npa_request_errors.from_department[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.to_department" id="department">
+                                                            <option value="">Choose Department</option>
+                                                            <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.to_department">{{ npa_request_errors.to_department[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Effecitvity Date</h4>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <input type="date" class="form-control" v-model="npa_request.effectivity_date">
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Monthly Basic Salary</h4>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" v-model="npa_request.from_monthly_basic_salary">
+                                                        <span class="text-danger" v-if="npa_request_errors.from_monthly_basic_salary">{{ npa_request_errors.from_monthly_basic_salary[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" v-model="npa_request.to_monthly_basic_salary">
+                                                        <span class="text-danger" v-if="npa_request_errors.to_monthly_basic_salary">{{ npa_request_errors.to_monthly_basic_salary[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Prepared By</h4>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <select class="form-control" v-model="npa_request.prepared_by" id="prepared_by">
+                                                            <option value="">Choose Prepared By</option>
+                                                            <option v-for="(approver,b) in hr_employees" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.prepared_by">{{ npa_request_errors.prepared_by[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Recommended By</h4>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <select class="form-control" v-model="npa_request.recommended_by" id="recommended_by">
+                                                            <option value="">Choose Recommended By</option>
+                                                            <option v-for="(approver,b) in hr_employees" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.recommended_by">{{ npa_request_errors.recommended_by[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Approved By</h4>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <select class="form-control" v-model="npa_request.approved_by" id="approved_by">
+                                                            <option value="">Choose Approved By</option>
+                                                            <option v-for="(approver,b) in hr_employees" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.approved_by">{{ npa_request_errors.approved_by[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>BU Head</h4>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <select class="form-control" v-model="npa_request.bu_head" id="approved_by">
+                                                            <option value="">Choose BU Head</option>
+                                                            <option v-for="(approver,b) in bu_heads" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.bu_head">{{ npa_request_errors.bu_head[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                             </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mt-5">
+                                        <h4>NPA Request List</h4>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">
+                                                            Date  
+                                                        </th>
+                                                        <th class="text-center">
+                                                            Subject
+                                                        </th>
+                                                        <th class="text-center">
+                                                            Status
+                                                        </th>
+                                                        <th class="text-center">
+                                                            HR Recommended Status
+                                                        </th>
+                                                        <th class="text-center">
+                                                            HR Approved Status
+                                                        </th>
+                                                        <th class="text-center">
+                                                            BU Head Status
+                                                        </th>
+                                                        <th class="text-center">
+                                                            Action
+                                                        </th>
+                                                    </tr>    
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(npa_request, u) in npaRequestLists" v-bind:key="u">
+                                                        <td>
+                                                            {{ npa_request.created_at}}
+                                                        </td>
+                                                        <td>
+                                                            {{ npa_request.subject}}
+                                                        </td>
+                                                        <td>
+                                                            {{ npa_request.status}}
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <div v-if="user_access_rights.roles[0].name == 'Administrator' || npa_request.recommended_by == user_access_rights.employee_id">
+                                                                    <button class="btn btn-sm btn-primary" v-if="npa_request.recommended_by_status == 'Approved'" disabled>Approved</button>
+                                                                    <button class="btn btn-sm btn-primary" v-else @click="approveByHRRecommend(npa_request)">Approve</button>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <div v-if="user_access_rights.roles[0].name == 'Administrator' || npa_request.approved_by == user_access_rights.employee_id">
+                                                                    <button class="btn btn-sm btn-primary" v-if="npa_request.approved_by_status == 'Approved'" disabled>Approved</button>
+                                                                    <button class="btn btn-sm btn-primary" v-else @click="approveByHRApprover(npa_request)">Approve</button>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <div v-if="user_access_rights.roles[0].name == 'Administrator' || npa_request.bu_head == user_access_rights.employee_id">
+                                                                    <button class="btn btn-sm btn-primary" v-if="npa_request.bu_head_status == 'Approved'" disabled>Approved</button>
+                                                                    <button class="btn btn-sm btn-primary" v-else @click="approveByBUHead(npa_request)">Approve</button>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-primary" @click="viewNPARequest(npa_request)">View</button>
+                                                            <button v-if="npa_request.status == 'Pending'" type="button" class="btn btn-sm btn-danger" @click="deleteNPARequest(npa_request)">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="save_npa_request_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveNPARequest(npa_request)" style="width:150px;">Send Request</button>
+                        <button id="close_npa_request_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Org Chart employee Modal -->
         <div class="modal fade" id="orgChartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
@@ -1135,6 +1471,13 @@
                     'CLUSTER HEAD' : 'cluster_head',
                     'STATUS' : 'status'
                 },
+                npaRequestDetails : [],
+                npa_request : [],
+                npa_request_errors : [],
+                npaRequestLists : [],
+                hr_employees : [],
+                bu_heads : [],
+                npa_request_detail : []
             }
         },
         created(){
@@ -1149,8 +1492,251 @@
             this.fetchPositionApprovers();
             this.exportFetchEmployees();
             this.fetchUserAccessRights();
+            this.fetchHREmployees();
+            this.fetchBUHeadEmployees();
         },
         methods:{
+            clearNPAForm(){
+                this.npa_request_errors = [];
+                this.npa_request = [];
+                this.npa_request.from_company = "";
+                this.npa_request.from_position_title = "";
+                this.npa_request.from_immediate_manager = "";
+                this.npa_request.from_department = "";
+            },
+            npaRequest(employee){
+                this.clearNPAForm();
+                this.npa_request_errors = [];
+                this.npaRequestDetails = employee;
+                this.npa_request.from_company = employee.companies[0] ? employee.companies[0].id : "";
+                this.npa_request.from_position_title = employee.position;
+                this.npa_request.from_immediate_manager = employee.immediate_superior[0] ? employee.immediate_superior[0].employee_head_id : "";
+                this.npa_request.from_department = employee.departments[0] ? employee.departments[0].id : "";
+                this.npa_request.bu_head = employee.bu_head[0] ? employee.bu_head[0].employee_head_id : "";
+
+                this.fetchNPARequestLists(employee.id);
+            },
+            fetchNPARequestLists(employee_id){
+                this.npaRequestLists = [];
+                axios.get('/get-npa-requests/' + employee_id)
+                .then(response => { 
+                    this.npaRequestLists = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            viewNPARequest(npa_request){
+                let v = this;
+                axios.get(`/get-npa-request/${npa_request.id}`)
+                .then(response => {
+                    v.npa_request_detail = response.data;
+
+                    if(v.npa_request_detail){
+                        let from_type_of_movement = v.npa_request_detail.from_type_of_movement ? v.npa_request_detail.from_type_of_movement : "";
+                        let to_type_of_movement = v.npa_request_detail.to_type_of_movement ? v.npa_request_detail.to_type_of_movement : "";
+                        let from_company = v.npa_request_detail.from_company ? v.npa_request_detail.from_company.name : "";
+                        let to_company = v.npa_request_detail.to_company ? v.npa_request_detail.to_company.name : "";
+
+                        let from_position_title = v.npa_request_detail.from_position_title ? v.npa_request_detail.from_position_title : "";
+                        let to_position_title = v.npa_request_detail.to_position_title ? v.npa_request_detail.to_position_title : "";
+
+                        let date_hired = v.npaRequestDetails.date_hired ? v.npaRequestDetails.date_hired : "";
+
+                        let from_immediate_manager = v.npa_request_detail.from_immediate_manager ? v.npa_request_detail.from_immediate_manager.first_name + ' ' + v.npa_request_detail.from_immediate_manager.last_name : "";
+                        let to_immediate_manager = v.npa_request_detail.to_immediate_manager ? v.npa_request_detail.to_immediate_manager.first_name + ' ' + v.npa_request_detail.to_immediate_manager.last_name : "";
+                        
+                        let from_department = v.npa_request_detail.from_department ? v.npa_request_detail.from_department.name : "";
+                        let to_department = v.npa_request_detail.to_department ? v.npa_request_detail.to_department.name : "";
+
+                        let effectivity_date = v.npa_request_detail.effectivity_date ? v.npa_request_detail.effectivity_date : "";
+
+                        let from_monthly_basic_salary = v.npa_request_detail.from_monthly_basic_salary ? v.npa_request_detail.from_monthly_basic_salary : "";
+
+                        let to_monthly_basic_salary = v.npa_request_detail.to_monthly_basic_salary ? v.npa_request_detail.to_monthly_basic_salary : "";
+
+
+                        let prepared_by = v.npa_request_detail.prepared_by ? v.npa_request_detail.prepared_by.first_name + ' ' + v.npa_request_detail.prepared_by.first_name + ' / ' + v.npa_request_detail.prepared_by.position : "";
+                        
+                        let recommended_by = v.npa_request_detail.recommended_by ? v.npa_request_detail.recommended_by.first_name + ' ' + v.npa_request_detail.recommended_by.first_name + ' / ' + v.npa_request_detail.recommended_by.position : "";
+                        
+                        let approved_by = v.npa_request_detail.approved_by ? v.npa_request_detail.approved_by.first_name + ' ' + v.npa_request_detail.approved_by.first_name + ' / ' + v.npa_request_detail.approved_by.position : "";
+
+                        let bu_head = v.npa_request_detail.bu_head ? v.npa_request_detail.bu_head.first_name + ' ' + v.npa_request_detail.bu_head.last_name + ' / ' + v.npa_request_detail.bu_head.position  : "";
+
+                        Swal.fire({
+                        title: '<strong>NPA Request Details</strong>',
+                        icon: false,
+                        width : '800px',
+                        html: '<div class="table-responsive">'+
+                                '<h4 class="text-left">Date: '+v.npa_request_detail.created_at+'</h4>'+
+                                '<h4 class="text-left">Subject: '+v.npa_request_detail.subject+'</h4>'+
+                                '<table class="table table-bordered text-left">'+
+                                    '<tr>'+
+                                        '<td></td>'+
+                                        '<td>From</td>'+
+                                        '<td>To</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Type of Movement</td>'+
+                                        '<td>'+from_type_of_movement+'</td>'+
+                                        '<td>'+to_type_of_movement+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Company</td>'+
+                                        '<td>'+from_company+'</td>'+
+                                        '<td>'+to_company+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Position Title</td>'+
+                                        '<td>'+from_position_title+'</td>'+
+                                        '<td>'+to_position_title+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Date Hired</td>'+
+                                        '<td colspan="2">'+date_hired+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Immediate Manager</td>'+
+                                        '<td>'+from_immediate_manager+'</td>'+
+                                        '<td>'+to_immediate_manager+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Department</td>'+
+                                        '<td>'+from_department+'</td>'+
+                                        '<td>'+to_department+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Effectivity Date</td>'+
+                                        '<td colspan="2">'+effectivity_date+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Monthly Basic Salary</td>'+
+                                        '<td>'+from_monthly_basic_salary+'</td>'+
+                                        '<td>'+to_monthly_basic_salary+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Prepared By</td>'+
+                                        '<td colspan="2">'+prepared_by+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Recommended By</td>'+
+                                        '<td colspan="2">'+recommended_by+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Approved By</td>'+
+                                        '<td colspan="2">'+approved_by+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>BU Head</td>'+
+                                        '<td colspan="2">'+bu_head+'</td>'+
+                                    '</tr>'+
+                                '</table></div>'
+                        ,
+                        showCloseButton: true,
+                        showCancelButton: false,
+                        focusConfirm: false,
+                        confirmButtonText:
+                            'Close',
+                        confirmButtonAriaLabel: 'Close',
+                        })
+                    }
+                })
+                .catch(error => {
+                    this.npa_request_errors = error.response.data.errors;
+                })   
+                   
+               
+            },
+            deleteNPARequest(npa_request){
+                let v = this;
+                Swal.fire({
+                    title: 'Are you sure you want to delete this NPA request?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete'
+                    }).then((result) => {
+                    if (result.value) {
+
+                        axios.delete(`/npa_request/${npa_request.id}`)
+                        .then(response => {
+                           this.npaRequest(v.npaRequestDetails);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'NPA reequest deleted successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            })
+                        })
+                        .catch(error => {
+                            this.npa_request_errors = error.response.data.errors;
+                        })   
+                    }
+                })
+            },
+            saveNPARequest(npa_request){
+                let v = this;
+                var index = this.employees.findIndex(item => item.id == v.npaRequestDetails.id);
+                Swal.fire({
+                        title: 'Are you sure you want to send this request?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Send'
+                        }).then((result) => {
+                        if (result.value) {
+                            let formData = new FormData();
+                            formData.append('employee_id', v.npaRequestDetails.id);
+                            formData.append('subject', npa_request.subject ? npa_request.subject : "");
+                            formData.append('employee_name', npa_request.employee_name ? npa_request.employee_name : "");
+                            formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
+                            formData.append('from_company', npa_request.from_company ? npa_request.from_company : "");
+                            formData.append('from_position_title', npa_request.from_position_title ? npa_request.from_position_title : "");
+                            formData.append('from_immediate_manager', npa_request.from_immediate_manager ? npa_request.from_immediate_manager : "");
+                            formData.append('from_department', npa_request.from_department ? npa_request.from_department : "");
+                            formData.append('effectivity_date', npa_request.effectivity_date ? npa_request.effectivity_date : "");
+                            formData.append('from_monthly_basic_salary', npa_request.from_monthly_basic_salary ? npa_request.from_monthly_basic_salary : "");
+                            formData.append('to_type_of_movement', npa_request.to_type_of_movement ? npa_request.to_type_of_movement : "");
+                            formData.append('to_company', npa_request.to_company ? npa_request.to_company : "");
+                            formData.append('to_position_title', npa_request.to_position_title ? npa_request.to_position_title : "");
+                            formData.append('to_immediate_manager', npa_request.to_immediate_manager ? npa_request.to_immediate_manager : "");
+                            formData.append('to_department', npa_request.to_department ? npa_request.to_department : "");
+                            formData.append('to_monthly_basic_salary', npa_request.to_monthly_basic_salary ? npa_request.to_monthly_basic_salary : "");
+                            formData.append('prepared_by', npa_request.prepared_by ? npa_request.prepared_by : "");
+                            formData.append('recommended_by', npa_request.recommended_by ? npa_request.recommended_by : "");
+                            formData.append('approved_by', npa_request.approved_by ? npa_request.approved_by : "");
+                            formData.append('bu_head', npa_request.bu_head ? npa_request.bu_head : "");
+                            formData.append('_method', 'POST');
+
+                            axios.post(`/employee-npa-request`, 
+                                formData
+                            )
+                            .then(response => {
+                                this.fetchEmployees();
+                                this.npaRequest(v.npaRequestDetails);
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Employee request has been successfully sent.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Okay'
+                                })
+                            })
+                            .catch(error => {
+                                this.npa_request_errors = error.response.data.errors;
+                                Swal.fire({
+                                    title: 'Warning!',
+                                    text: 'Unable to Send Employee. Refresh the page and then try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Okay'
+                                })
+                            })
+
+                        }
+                })
+            },
             fetchUserAccessRights(){
                 this.user_access_rights = [];
                 axios.get('/user-access-rights')
@@ -1540,6 +2126,24 @@
                  axios.get('/employee-head-approvers')
                 .then(response => { 
                     this.employee_head_approvers = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchHREmployees(){
+                 axios.get('/hr-employees')
+                .then(response => { 
+                    this.hr_employees = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchBUHeadEmployees(){
+                 axios.get('/bu-heads')
+                .then(response => { 
+                    this.bu_heads = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
