@@ -73,6 +73,7 @@ class Employee extends Model implements AuditableContract
         'rfid_64',
         'door_id_number',
         'cluster',
+        'original_date_hired',
     ];
     
 

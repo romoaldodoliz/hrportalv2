@@ -660,7 +660,7 @@ class EmployeeController extends Controller
         
         $check_user = User::where('id',Auth::user()->id)->first();
 
-        $employee = Employee::with('companies','departments','locations','print_id_logs','verification')
+        $employee = Employee::with('companies','departments','locations','print_id_logs','verification','immediate_superior','bu_head')
                     ->when(!empty($request->company), function($q) use($company) {
                         $q->whereHas('companies', function ($w) use($company)  {
                             $w->where('id', '=', $company);
@@ -1224,6 +1224,33 @@ class EmployeeController extends Controller
         return $filtered_data;
     }
 
+    public function updateemployeeNpaRequest(Request $request){
+
+        $data = $request->all();
+
+        $npa_request = EmployeeNpaRequest::where('id',$data['id'])->first();
+
+        $this->validate($request, [
+            'subject' => 'required',
+        ]);
+        if($npa_request){
+            DB::beginTransaction();
+            try {   
+                unset($data['id']);
+                if($npa_request->update($data)){
+                    DB::commit();
+                    return Employee::with('companies','departments','locations')->where('id',$npa_request['employee_id'])->first();
+                }
+               
+                return Employee::with('companies','departments','locations')->where('id',$npa_request['employee_id'])->first();
+            }catch (Exception $e) {
+                DB::rollBack();
+                return Employee::with('companies','departments','locations')->where('id',$npa_request['employee_id'])->first();
+            }
+        }
+        return $data;
+    }
+
     public function employeeNpaRequest(Request $request){
 
         $data = $request->all();
@@ -1272,5 +1299,91 @@ class EmployeeController extends Controller
 
     public function viewNPARequest(EmployeeNpaRequest $npa_request){
         return $npa_request = EmployeeNpaRequest::with('from_company','from_immediate_manager','from_department','to_company','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
+    }
+
+    public function approvedByHRRecommend(EmployeeNpaRequest $npa_request){
+        if($npa_request){
+            $data = [];
+            $data['recommended_by_status'] = 'Approved';
+            $data['status'] = 'Pre-approved';
+            $npa_request->update($data);
+            return 'Approved';
+        }
+    }
+
+    public function approveByHRApprover(EmployeeNpaRequest $npa_request){
+        if($npa_request){
+            $data = [];
+            $data['approved_by_status'] = 'Approved';
+            $data['status'] = 'Pre-approved';
+            if($npa_request->update($data)){
+                $check_and_update = $this->changeApprovedNPAtoEmployee($npa_request->employee_id,$npa_request->id);
+            }
+            return 'Approved';
+        }
+    }
+
+    public function approveByBUHead(EmployeeNpaRequest $npa_request){
+        if($npa_request){
+            $data = [];
+            $data['bu_head_status'] = 'Approved';
+            $data['status'] = 'Pre-approved';
+            if($npa_request->update($data)){
+                $check_and_update = $this->changeApprovedNPAtoEmployee($npa_request->employee_id,$npa_request->id);
+            }
+            return 'Approved';
+        }
+    }
+
+    public function changeApprovedNPAtoEmployee($employee_id,$npa_request_id){
+        
+        $employee = Employee::with('companies','departments','locations','assign_heads')->where('id',$employee_id)->first();
+
+        $npa_request = EmployeeNpaRequest::where('id',$npa_request_id)->first();
+
+        if($npa_request['approved_by_status'] == 'Approved' && $npa_request['bu_head_status'] == 'Approved'){
+
+            DB::beginTransaction();
+            try {
+                
+                if($npa_request['to_position_title']){
+                    $data = [];
+                    $data['position'] =  $npa_request['to_position_title'];
+                    $employee->update($data);
+                }
+
+                $immediate_manager = "";
+                if($npa_request['to_immediate_manager']){
+                    $immediate_manager =  $npa_request['to_immediate_manager'];
+                    $assign_head = AssignHead::where('employee_id',$employee['id'])->where('head_id','3')->first();
+                    $data = [];
+                    $data['employee_head_id'] =  $immediate_manager;
+                    $assign_head->update($data);
+                }
+                
+                $department = "";
+                if($npa_request['to_department']){
+                    $department =  $npa_request['to_department'];
+                    $employee->departments()->sync( (array) $department);
+                }
+
+                $monthly_basic_salary = "";
+                if($npa_request['to_monthly_basic_salary']){
+                    $monthly_basic_salary =  $npa_request['to_monthly_basic_salary'];
+                }
+
+
+                $npa_request_data = [];
+                $npa_request_data['status'] = 'Approved';
+                if($npa_request->update($npa_request_data)){
+                    DB::commit();
+                    return $employee;
+                }
+            }catch (Exception $e) {
+                DB::rollBack();
+                return $employee;
+            }
+
+        }
     }
 }

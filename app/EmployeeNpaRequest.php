@@ -13,6 +13,7 @@ class EmployeeNpaRequest extends Model
         'ctrl_no',
         'date_prepared',
         'subject',
+        'date_hired',
         'employee_name',
         'from_type_of_movement',
         'from_company',

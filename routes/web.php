@@ -296,6 +296,7 @@ Route::get('logout', function(){
         Route::get('user-access-rights','UserController@getUserAccessRights');
 
         //Send NPA Requests
+        Route::post('update-employee-npa-request','EmployeeController@updateemployeeNpaRequest');
         Route::post('employee-npa-request','EmployeeController@employeeNpaRequest');
         Route::get('get-npa-requests/{employee_id}','EmployeeController@getNPARequestLists');
         Route::delete('npa_request/{npa_request}', 'EmployeeController@destroyNPARequest');
@@ -308,5 +309,9 @@ Route::get('logout', function(){
         Route::get('bu-heads','EmployeeController@getBUHead');
 
         Route::get('get-npa-request/{npa_request}','EmployeeController@viewNPARequest');
+
+        Route::get('approved-by-hr-recommend/{npa_request}','EmployeeController@approvedByHRRecommend');
+        Route::get('approved-by-hr-approver/{npa_request}','EmployeeController@approveByHRApprover');
+        Route::get('approved-by-bu-head/{npa_request}','EmployeeController@approveByBUHead');
 
     });

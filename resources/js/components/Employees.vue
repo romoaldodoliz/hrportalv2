@@ -1153,8 +1153,8 @@
                                                         <h4>Date Hired</h4>
                                                     </td>
                                                     <td colspan="2">
-                                                        <h4>{{ npaRequestDetails.date_hired ? npaRequestDetails.date_hired : "" }}</h4>
-                                                    </td>
+                                                        <input type="date" class="form-control" v-model="npa_request.date_hired">
+                                                    </td> 
                                                  </tr>
                                                  <tr>
                                                     <td>
@@ -1313,7 +1313,7 @@
                                                             <div v-if="user_access_rights.roles">
                                                                 <div v-if="user_access_rights.roles[0].name == 'Administrator' || npa_request.recommended_by == user_access_rights.employee_id">
                                                                     <button class="btn btn-sm btn-primary" v-if="npa_request.recommended_by_status == 'Approved'" disabled>Approved</button>
-                                                                    <button class="btn btn-sm btn-primary" v-else @click="approveByHRRecommend(npa_request)">Approve</button>
+                                                                    <button class="btn btn-sm btn-success" v-else @click="approveByHRRecommend(npa_request)">Approve</button>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -1321,7 +1321,7 @@
                                                             <div v-if="user_access_rights.roles">
                                                                 <div v-if="user_access_rights.roles[0].name == 'Administrator' || npa_request.approved_by == user_access_rights.employee_id">
                                                                     <button class="btn btn-sm btn-primary" v-if="npa_request.approved_by_status == 'Approved'" disabled>Approved</button>
-                                                                    <button class="btn btn-sm btn-primary" v-else @click="approveByHRApprover(npa_request)">Approve</button>
+                                                                    <button class="btn btn-sm btn-success" v-else @click="approveByHRApprover(npa_request)">Approve</button>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -1329,13 +1329,16 @@
                                                             <div v-if="user_access_rights.roles">
                                                                 <div v-if="user_access_rights.roles[0].name == 'Administrator' || npa_request.bu_head == user_access_rights.employee_id">
                                                                     <button class="btn btn-sm btn-primary" v-if="npa_request.bu_head_status == 'Approved'" disabled>Approved</button>
-                                                                    <button class="btn btn-sm btn-primary" v-else @click="approveByBUHead(npa_request)">Approve</button>
+                                                                    <button class="btn btn-sm btn-success" v-else @click="approveByBUHead(npa_request)">Approve</button>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-sm btn-primary" @click="viewNPARequest(npa_request)">View</button>
-                                                            <button v-if="npa_request.status == 'Pending'" type="button" class="btn btn-sm btn-danger" @click="deleteNPARequest(npa_request)">Delete</button>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <button type="button" class="btn btn-sm btn-primary" @click="viewNPARequest(npa_request)">View</button>
+                                                                <button v-if="npa_request.status == 'Pending' || user_access_rights.roles[0].name == 'Administrator'" type="button" class="btn btn-sm btn-warning" @click="editNPARequest(npa_request)">Edit</button>
+                                                                <button v-if="npa_request.status == 'Pending' || user_access_rights.roles[0].name == 'Administrator'" type="button" class="btn btn-sm btn-danger" @click="deleteNPARequest(npa_request)">Delete</button>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -1347,8 +1350,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="save_npa_request_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveNPARequest(npa_request)" style="width:150px;">Send Request</button>
-                        <button id="close_npa_request_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
+                         <div v-if="user_access_rights.roles">
+                            <button v-if="npa_request_edit && user_access_rights.roles[0].name == 'Administrator'" id="save_npa_request_btn" type="button" class="btn btn-primary btn-round btn-fill btn-lg" @click="updateNPARequest(npa_request)" style="width:150px;">Update Request</button>
+                            <button v-else id="save_npa_request_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveNPARequest(npa_request)" style="width:150px;">Send Request</button>
+                            <button v-if="npa_request_edit" type="button" class="btn btn-warning btn-round btn-fill btn-lg"  style="width:150px;" @click="cancelEditNPARequest">Cancel Edit</button>
+                            <button id="close_npa_request_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1477,7 +1484,8 @@
                 npaRequestLists : [],
                 hr_employees : [],
                 bu_heads : [],
-                npa_request_detail : []
+                npa_request_detail : [],
+                npa_request_edit : false
             }
         },
         created(){
@@ -1496,6 +1504,123 @@
             this.fetchBUHeadEmployees();
         },
         methods:{
+            cancelEditNPARequest(){
+                let v = this;
+                v.npaRequest(v.npaRequestDetails);
+                v.npa_request_edit = false;
+            },
+            editNPARequest(npa_request){
+                console.log(npa_request);
+                let v = this;
+                v.npaRequest(v.npaRequestDetails);
+                v.npa_request_edit = true;
+                v.npa_request.id = npa_request.id;
+
+                v.npa_request.subject = npa_request.subject;
+                v.npa_request.from_type_of_movement = npa_request.from_type_of_movement;
+                v.npa_request.from_company = npa_request.from_company;
+                v.npa_request.from_position_title = npa_request.from_position_title;
+                v.npa_request.from_immediate_manager = npa_request.from_immediate_manager;
+                v.npa_request.from_department = npa_request.from_department;
+                v.npa_request.from_monthly_basic_salary = npa_request.from_monthly_basic_salary;
+              
+                v.npa_request.effectivity_date = npa_request.effectivity_date;
+
+                v.npa_request.to_company = npa_request.to_company;
+                v.npa_request.to_position_title = npa_request.to_position_title;
+                v.npa_request.to_immediate_manager = npa_request.to_immediate_manager;
+                v.npa_request.to_department = npa_request.to_department;
+                v.npa_request.to_monthly_basic_salary = npa_request.to_monthly_basic_salary;
+
+                v.npa_request.prepared_by = npa_request.prepared_by;
+                v.npa_request.approved_by = npa_request.approved_by;
+                v.npa_request.recommended_by = npa_request.recommended_by;
+                v.npa_request.bu_head = npa_request.bu_head;
+
+            },
+            approveByHRRecommend(npa_request){
+                let v = this;
+                Swal.fire({
+                    title: 'Are you sure you want to approve this NPA request?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Approve'
+                    }).then((result) => {
+                    if (result.value) {
+
+                        axios.get(`/approved-by-hr-recommend/${npa_request.id}`)
+                        .then(response => {
+                           this.npaRequest(v.npaRequestDetails);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'NPA request has been approved successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            })
+                        })
+                        .catch(error => {
+                            this.npa_request_errors = error.response.data.errors;
+                        })   
+                    }
+                })
+            },
+            approveByHRApprover(npa_request){
+                let v = this;
+                Swal.fire({
+                    title: 'Are you sure you want to approve this NPA request?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Approve'
+                    }).then((result) => {
+                    if (result.value) {
+
+                        axios.get(`/approved-by-hr-approver/${npa_request.id}`)
+                        .then(response => {
+                           this.npaRequest(v.npaRequestDetails);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'NPA request has been approved successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            })
+                        })
+                        .catch(error => {
+                            this.npa_request_errors = error.response.data.errors;
+                        })   
+                    }
+                })
+            },
+            approveByBUHead(npa_request){
+                let v = this;
+                Swal.fire({
+                    title: 'Are you sure you want to approve this NPA request?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Approve'
+                    }).then((result) => {
+                    if (result.value) {
+                        axios.get(`/approved-by-bu-head/${npa_request.id}`)
+                        .then(response => {
+                           this.npaRequest(v.npaRequestDetails);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'NPA request has been approved successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'Okay'
+                            })
+                        })
+                        .catch(error => {
+                            this.npa_request_errors = error.response.data.errors;
+                        })   
+                    }
+                })
+            },
             clearNPAForm(){
                 this.npa_request_errors = [];
                 this.npa_request = [];
@@ -1565,7 +1690,7 @@
                         let bu_head = v.npa_request_detail.bu_head ? v.npa_request_detail.bu_head.first_name + ' ' + v.npa_request_detail.bu_head.last_name + ' / ' + v.npa_request_detail.bu_head.position  : "";
 
                         Swal.fire({
-                        title: '<strong>NPA Request Details</strong>',
+                        title: '<strong>NOTICE OF PERSONNEL ACTION</strong>',
                         icon: false,
                         width : '800px',
                         html: '<div class="table-responsive">'+
@@ -1665,7 +1790,7 @@
                            this.npaRequest(v.npaRequestDetails);
                             Swal.fire({
                                 title: 'Success!',
-                                text: 'NPA reequest deleted successfully.',
+                                text: 'NPA request has been deleted successfully.',
                                 icon: 'success',
                                 confirmButtonText: 'Okay'
                             })
@@ -1674,6 +1799,70 @@
                             this.npa_request_errors = error.response.data.errors;
                         })   
                     }
+                })
+            },
+            updateNPARequest(npa_request){
+                let v = this;
+                var index = this.employees.findIndex(item => item.id == v.npaRequestDetails.id);
+                Swal.fire({
+                        title: 'Are you sure you want to update this request?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Update'
+                        }).then((result) => {
+                        if (result.value) {
+                            let formData = new FormData();
+                            formData.append('id', v.npa_request.id);
+                            formData.append('employee_id', v.npaRequestDetails.id);
+                            formData.append('subject', npa_request.subject ? npa_request.subject : "");
+                            formData.append('date_hired', npa_request.date_hired ? npa_request.date_hired : "");
+                            formData.append('employee_name', npa_request.employee_name ? npa_request.employee_name : "");
+                            formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
+                            formData.append('from_company', npa_request.from_company ? npa_request.from_company : "");
+                            formData.append('from_position_title', npa_request.from_position_title ? npa_request.from_position_title : "");
+                            formData.append('from_immediate_manager', npa_request.from_immediate_manager ? npa_request.from_immediate_manager : "");
+                            formData.append('from_department', npa_request.from_department ? npa_request.from_department : "");
+                            formData.append('effectivity_date', npa_request.effectivity_date ? npa_request.effectivity_date : "");
+                            formData.append('from_monthly_basic_salary', npa_request.from_monthly_basic_salary ? npa_request.from_monthly_basic_salary : "");
+                            formData.append('to_type_of_movement', npa_request.to_type_of_movement ? npa_request.to_type_of_movement : "");
+                            formData.append('to_company', npa_request.to_company ? npa_request.to_company : "");
+                            formData.append('to_position_title', npa_request.to_position_title ? npa_request.to_position_title : "");
+                            formData.append('to_immediate_manager', npa_request.to_immediate_manager ? npa_request.to_immediate_manager : "");
+                            formData.append('to_department', npa_request.to_department ? npa_request.to_department : "");
+                            formData.append('to_monthly_basic_salary', npa_request.to_monthly_basic_salary ? npa_request.to_monthly_basic_salary : "");
+                            formData.append('prepared_by', npa_request.prepared_by ? npa_request.prepared_by : "");
+                            formData.append('recommended_by', npa_request.recommended_by ? npa_request.recommended_by : "");
+                            formData.append('approved_by', npa_request.approved_by ? npa_request.approved_by : "");
+                            formData.append('bu_head', npa_request.bu_head ? npa_request.bu_head : "");
+                            formData.append('_method', 'POST');
+
+                            axios.post(`/update-employee-npa-request`, 
+                                formData
+                            )
+                            .then(response => {
+                                this.fetchEmployees();
+                                this.npaRequest(v.npaRequestDetails);
+                                v.npa_request_edit = false;
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Employee request has been updated successfully.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Okay'
+                                })
+                            })
+                            .catch(error => {
+                                this.npa_request_errors = error.response.data.errors;
+                                Swal.fire({
+                                    title: 'Warning!',
+                                    text: 'Unable to updated Employee. Refresh the page and then try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Okay'
+                                })
+                            })
+
+                        }
                 })
             },
             saveNPARequest(npa_request){
@@ -1691,6 +1880,7 @@
                             let formData = new FormData();
                             formData.append('employee_id', v.npaRequestDetails.id);
                             formData.append('subject', npa_request.subject ? npa_request.subject : "");
+                            formData.append('date_hired', npa_request.date_hired ? npa_request.date_hired : "");
                             formData.append('employee_name', npa_request.employee_name ? npa_request.employee_name : "");
                             formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
                             formData.append('from_company', npa_request.from_company ? npa_request.from_company : "");
