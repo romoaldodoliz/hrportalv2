@@ -80,7 +80,7 @@ class SendRegularizationNotification extends Command
                     //Validate 
                     if($months == 3){
 
-                        //Validate if with 3 - 5 months 
+                        //Validate if with 3
                         $data = [];
                         $data['id'] =  $employee['id'];
                         $data['employee_name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
@@ -100,6 +100,7 @@ class SendRegularizationNotification extends Command
                             $validate_check_email_notification = SendEmailEmployeeRegularNotification::where('employee_id',$employee['id'])->where('month_status','3')->first();
                             if(empty($validate_check_email_notification)){
 
+                                $email_reciever = $data['email_reciever'];
                                 Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com','irismay.chan@lafilgroup.com'])->send(new EmployeeRegularizationNotification($data));
 
                                 $save_notification = [];
@@ -117,7 +118,7 @@ class SendRegularizationNotification extends Command
                     }
 
                     if($months == 5){
-                        //Validate if with 3 - 5 months 
+                        //Validate if with 5 months 
                         $data = [];
                         $data['id'] =  $employee['id'];
                         $data['employee_name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
