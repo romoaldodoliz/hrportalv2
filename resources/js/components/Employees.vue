@@ -408,7 +408,7 @@
                                                 <div class="form-group">
                                                     <label for="role">Employee Number</label>
                                                     <input type="text" class="form-control" v-model="employee_copied.employee_number">
-                                                    <span class="text-danger" v-if="errors.employee_number">{{ errors.employee_number[0] }}</span> 
+                                                    <span class="text-danger" v-if="errors.employee_number">{{ errors.employee_number[0] }}</span>
                                                 </div>
                                             </div>
 
@@ -1053,7 +1053,7 @@
                                             <label for="role">Subject</label>
                                             <select class="form-control" v-model="npa_request.subject" id="subject">
                                                 <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                <option value="REGULARIZATION ">REGULARIZATION </option>
+                                                <option value="REGULARIZATION">REGULARIZATION</option>
                                                 <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
                                                 <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
                                                 <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
@@ -1092,7 +1092,7 @@
                                                     <td>
                                                         <select class="form-control" v-model="npa_request.from_type_of_movement" id="subject">
                                                             <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                            <option value="REGULARIZATION ">REGULARIZATION </option>
+                                                            <option value="REGULARIZATION">REGULARIZATION</option>
                                                             <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
                                                             <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
                                                             <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
@@ -1105,7 +1105,7 @@
                                                     <td>
                                                         <select class="form-control" v-model="npa_request.to_type_of_movement" id="subject">
                                                             <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                            <option value="REGULARIZATION ">REGULARIZATION </option>
+                                                            <option value="REGULARIZATION">REGULARIZATION</option>
                                                             <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
                                                             <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
                                                             <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>

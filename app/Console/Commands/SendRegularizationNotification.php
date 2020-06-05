@@ -101,7 +101,13 @@ class SendRegularizationNotification extends Command
                             if(empty($validate_check_email_notification)){
 
                                 $email_reciever = $data['email_reciever'];
-                                Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com','irismay.chan@lafilgroup.com'])->send(new EmployeeRegularizationNotification($data));
+
+                                $cc_reciever = [
+                                    'arjay.lumagdong@lafilgroup.com',
+                                    'irismay.chan@lafilgroup.com',
+                                ]
+
+                                Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
 
                                 $save_notification = [];
                                 $save_notification['employee_id'] = $employee['id'];
@@ -137,8 +143,15 @@ class SendRegularizationNotification extends Command
                         if($data['email_reciever']){
                             $validate_check_email_notification = SendEmailEmployeeRegularNotification::where('employee_id',$employee['id'])->where('month_status','5')->first();
                             if(empty($validate_check_email_notification)){
-
-                                Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com','irismay.chan@lafilgroup.com'])->send(new EmployeeRegularizationNotification($data));
+                                
+                                $email_reciever = $data['email_reciever'];
+                                $cc_reciever = [
+                                    'arjay.lumagdong@lafilgroup.com',
+                                    'irismay.chan@lafilgroup.com',
+                                ]
+                                
+                                Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
+                                // Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com',''])->send(new EmployeeRegularizationNotification($data));
 
                                 $save_notification = [];
                                 $save_notification['employee_id'] = $employee['id'];

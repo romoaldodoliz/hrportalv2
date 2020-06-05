@@ -1346,6 +1346,12 @@ class EmployeeController extends Controller
             DB::beginTransaction();
             try {
                 
+                if($npa_request['subject'] == "REGULARIZATION"){
+                    $data = [];
+                    $data['classification'] = "Regular";
+                    $employee->update($data);
+                }
+
                 if($npa_request['to_position_title']){
                     $data = [];
                     $data['position'] =  $npa_request['to_position_title'];
@@ -1371,7 +1377,6 @@ class EmployeeController extends Controller
                 if($npa_request['to_monthly_basic_salary']){
                     $monthly_basic_salary =  $npa_request['to_monthly_basic_salary'];
                 }
-
 
                 $npa_request_data = [];
                 $npa_request_data['status'] = 'Approved';
