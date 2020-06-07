@@ -1058,6 +1058,7 @@
                                                 <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
                                                 <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
                                                 <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
                                                 <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
                                                 <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
                                             </select>
@@ -1097,6 +1098,7 @@
                                                             <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
                                                             <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
                                                             <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
                                                             <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
                                                             <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
                                                         </select>
@@ -1110,6 +1112,7 @@
                                                             <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
                                                             <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
                                                             <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
                                                             <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
                                                             <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
                                                         </select>
@@ -1133,6 +1136,25 @@
                                                             <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                                         </select>
                                                         <span class="text-danger" v-if="npa_request_errors.to_company">{{ npa_request_errors.to_company[0] }}</span> 
+                                                    </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Location</h4>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.from_location" id="location">
+                                                            <option value="">Choose Location</option>
+                                                            <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.from_location">{{ npa_request_errors.from_location[0] }}</span> 
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="npa_request.to_location" id="location">
+                                                            <option value="">Choose Location</option>
+                                                            <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="npa_request_errors.to_location">{{ npa_request_errors.to_location[0] }}</span> 
                                                     </td>
                                                  </tr>
                                                  <tr>
@@ -1527,6 +1549,7 @@
                 v.npa_request.effectivity_date = npa_request.effectivity_date;
 
                 v.npa_request.to_company = npa_request.to_company;
+                v.npa_request.to_location = npa_request.to_location;
                 v.npa_request.to_position_title = npa_request.to_position_title;
                 v.npa_request.to_immediate_manager = npa_request.to_immediate_manager;
                 v.npa_request.to_department = npa_request.to_department;
@@ -1634,6 +1657,7 @@
                 this.npa_request_errors = [];
                 this.npaRequestDetails = employee;
                 this.npa_request.from_company = employee.companies[0] ? employee.companies[0].id : "";
+                this.npa_request.from_location = employee.locations[0] ? employee.locations[0].id : "";
                 this.npa_request.from_position_title = employee.position;
                 this.npa_request.from_immediate_manager = employee.immediate_superior[0] ? employee.immediate_superior[0].employee_head_id : "";
                 this.npa_request.from_department = employee.departments[0] ? employee.departments[0].id : "";
@@ -1662,6 +1686,9 @@
                         let to_type_of_movement = v.npa_request_detail.to_type_of_movement ? v.npa_request_detail.to_type_of_movement : "";
                         let from_company = v.npa_request_detail.from_company ? v.npa_request_detail.from_company.name : "";
                         let to_company = v.npa_request_detail.to_company ? v.npa_request_detail.to_company.name : "";
+
+                        let from_location = v.npa_request_detail.from_location ? v.npa_request_detail.from_location.name : "";
+                        let to_location = v.npa_request_detail.to_location ? v.npa_request_detail.to_location.name : "";
 
                         let from_position_title = v.npa_request_detail.from_position_title ? v.npa_request_detail.from_position_title : "";
                         let to_position_title = v.npa_request_detail.to_position_title ? v.npa_request_detail.to_position_title : "";
@@ -1711,6 +1738,11 @@
                                         '<td>Company</td>'+
                                         '<td>'+from_company+'</td>'+
                                         '<td>'+to_company+'</td>'+
+                                    '</tr>'+
+                                    '<tr>'+
+                                        '<td>Location</td>'+
+                                        '<td>'+from_location+'</td>'+
+                                        '<td>'+to_location+'</td>'+
                                     '</tr>'+
                                     '<tr>'+
                                         '<td>Position Title</td>'+
@@ -1821,6 +1853,7 @@
                             formData.append('employee_name', npa_request.employee_name ? npa_request.employee_name : "");
                             formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
                             formData.append('from_company', npa_request.from_company ? npa_request.from_company : "");
+                            formData.append('from_location', npa_request.from_location ? npa_request.from_location : "");
                             formData.append('from_position_title', npa_request.from_position_title ? npa_request.from_position_title : "");
                             formData.append('from_immediate_manager', npa_request.from_immediate_manager ? npa_request.from_immediate_manager : "");
                             formData.append('from_department', npa_request.from_department ? npa_request.from_department : "");
@@ -1828,6 +1861,7 @@
                             formData.append('from_monthly_basic_salary', npa_request.from_monthly_basic_salary ? npa_request.from_monthly_basic_salary : "");
                             formData.append('to_type_of_movement', npa_request.to_type_of_movement ? npa_request.to_type_of_movement : "");
                             formData.append('to_company', npa_request.to_company ? npa_request.to_company : "");
+                            formData.append('to_location', npa_request.to_location ? npa_request.to_location : "");
                             formData.append('to_position_title', npa_request.to_position_title ? npa_request.to_position_title : "");
                             formData.append('to_immediate_manager', npa_request.to_immediate_manager ? npa_request.to_immediate_manager : "");
                             formData.append('to_department', npa_request.to_department ? npa_request.to_department : "");
@@ -1884,6 +1918,7 @@
                             formData.append('employee_name', npa_request.employee_name ? npa_request.employee_name : "");
                             formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
                             formData.append('from_company', npa_request.from_company ? npa_request.from_company : "");
+                            formData.append('from_location', npa_request.from_location ? npa_request.from_location : "");
                             formData.append('from_position_title', npa_request.from_position_title ? npa_request.from_position_title : "");
                             formData.append('from_immediate_manager', npa_request.from_immediate_manager ? npa_request.from_immediate_manager : "");
                             formData.append('from_department', npa_request.from_department ? npa_request.from_department : "");
@@ -1891,6 +1926,7 @@
                             formData.append('from_monthly_basic_salary', npa_request.from_monthly_basic_salary ? npa_request.from_monthly_basic_salary : "");
                             formData.append('to_type_of_movement', npa_request.to_type_of_movement ? npa_request.to_type_of_movement : "");
                             formData.append('to_company', npa_request.to_company ? npa_request.to_company : "");
+                            formData.append('to_location', npa_request.to_location ? npa_request.to_location : "");
                             formData.append('to_position_title', npa_request.to_position_title ? npa_request.to_position_title : "");
                             formData.append('to_immediate_manager', npa_request.to_immediate_manager ? npa_request.to_immediate_manager : "");
                             formData.append('to_department', npa_request.to_department ? npa_request.to_department : "");
@@ -2220,10 +2256,16 @@
                     }  
                 )
                 .then(response => {
+                
                     this.employees.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
                     this.dependent_attachments = [];
-                    document.getElementById('dependents_attachments').value = "";
+
+                    var dependents_attachment =  document.getElementById("dependents_attachments");
+                    if(dependents_attachment){
+                        dependents_attachment.value = '';
+                    }
+                    
                     this.copyObject(response.data);
 
                     Swal.fire({
@@ -2232,6 +2274,7 @@
                         icon: 'success',
                         confirmButtonText: 'Okay'
                     })
+                    
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -2280,10 +2323,16 @@
                 var profile =  document.getElementById("profile_image_file");
                 var signature =  document.getElementById("signature_image_file");
                 var marital_status =  document.getElementById("marital_file");
-                profile.value = '';
-                signature.value = '';
-                marital_status.value = '';
-                
+
+                if(profile){
+                    profile.value = '';
+                }
+                if(signature){
+                    signature.value = '';
+                }
+                if(marital_status){
+                    marital_status.value = '';
+                }
             },
             validateMaritalStatus(){
 

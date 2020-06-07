@@ -332,7 +332,13 @@ import LineChart from './Charts/LineChart.js'
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
-                            data: count
+                            data: count,
+                            legend: {
+                                display: true,
+                                labels: {
+                                    fontColor: 'rgb(255, 99, 132)'
+                                }
+                            }
                         },
                     ]
                 }

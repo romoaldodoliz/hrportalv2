@@ -15,6 +15,10 @@ use App\User;
 
 use App\SendEmailEmployeeRegularNotification;
 
+use App\HrReceiverNotification;
+
+
+
 
 class SendRegularizationNotification extends Command
 {
@@ -102,11 +106,16 @@ class SendRegularizationNotification extends Command
 
                                 $email_reciever = $data['email_reciever'];
 
-                                $cc_reciever = [
-                                    'arjay.lumagdong@lafilgroup.com',
-                                    'irismay.chan@lafilgroup.com',
-                                ]
-
+                                
+                                $hr_receivers = HrReceiverNotification::select('email')->get();
+                                $cc_reciever = [];
+                                if($hr_receivers){
+                                    foreach($hr_receivers as $receiver){
+                                        array_push($cc_reciever , $receiver['email']);
+                                    }
+                                }
+                                
+                              
                                 Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
 
                                 $save_notification = [];
@@ -145,10 +154,14 @@ class SendRegularizationNotification extends Command
                             if(empty($validate_check_email_notification)){
                                 
                                 $email_reciever = $data['email_reciever'];
-                                $cc_reciever = [
-                                    'arjay.lumagdong@lafilgroup.com',
-                                    'irismay.chan@lafilgroup.com',
-                                ]
+                               
+                                $hr_receivers = HrReceiverNotification::select('email')->get();
+                                $cc_reciever = [];
+                                if($hr_receivers){
+                                    foreach($hr_receivers as $receiver){
+                                        array_push($cc_reciever , $receiver['email']);
+                                    }
+                                }
                                 
                                 Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
                                 // Mail::to('jay.lumagdong@gmail.com')->cc(['arjay.lumagdong@lafilgroup.com',''])->send(new EmployeeRegularizationNotification($data));

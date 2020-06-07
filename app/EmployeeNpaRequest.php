@@ -17,6 +17,7 @@ class EmployeeNpaRequest extends Model
         'employee_name',
         'from_type_of_movement',
         'from_company',
+        'from_location',
         'from_position_title',
         'from_immediate_manager',
         'from_department',
@@ -24,6 +25,7 @@ class EmployeeNpaRequest extends Model
         'from_monthly_basic_salary',
         'to_type_of_movement',
         'to_company',
+        'to_location',
         'to_position_title',
         'to_immediate_manager',
         'to_department',
@@ -44,6 +46,11 @@ class EmployeeNpaRequest extends Model
     {
         return $this->hasOne('App\Company','id','from_company')->select('id','name');
     }
+    
+    public function from_location()
+    {
+        return $this->hasOne('App\Location','id','from_location')->select('id','name');
+    }
 
     public function from_immediate_manager()
     {
@@ -58,6 +65,11 @@ class EmployeeNpaRequest extends Model
     public function to_company()
     {
         return $this->hasOne('App\Company','id','to_company')->select('id','name');
+    }
+
+    public function to_location()
+    {
+        return $this->hasOne('App\Location','id','to_location')->select('id','name');
     }
 
     public function to_immediate_manager()

@@ -679,6 +679,9 @@ class EmployeeController extends Controller
                     ->when(!empty($request->employee_status), function($q) use($employee_status) {
                        $q->where('status', '=', $employee_status);
                     })
+                    ->when(empty($request->employee_status), function($q){
+                       $q->where('status', '=', 'Active');
+                    })
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');
                     })
@@ -1298,7 +1301,7 @@ class EmployeeController extends Controller
     }
 
     public function viewNPARequest(EmployeeNpaRequest $npa_request){
-        return $npa_request = EmployeeNpaRequest::with('from_company','from_immediate_manager','from_department','to_company','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
+        return $npa_request = EmployeeNpaRequest::with('from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
     }
 
     public function approvedByHRRecommend(EmployeeNpaRequest $npa_request){
@@ -1371,6 +1374,12 @@ class EmployeeController extends Controller
                 if($npa_request['to_department']){
                     $department =  $npa_request['to_department'];
                     $employee->departments()->sync( (array) $department);
+                }
+
+                $location = "";
+                if($npa_request['to_location']){
+                    $location =  $npa_request['to_location'];
+                    $employee->locations()->sync( (array) $location);
                 }
 
                 $monthly_basic_salary = "";

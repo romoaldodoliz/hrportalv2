@@ -314,4 +314,15 @@ Route::get('logout', function(){
         Route::get('approved-by-hr-approver/{npa_request}','EmployeeController@approveByHRApprover');
         Route::get('approved-by-bu-head/{npa_request}','EmployeeController@approveByBUHead');
 
+        Route::get('hr_email',function(){
+            $hr_receivers = App\HrReceiverNotification::select('email')->get();
+
+            $emails = [];
+
+            foreach($hr_receivers as $receiver){
+                array_push($emails , $receiver['email']);
+            }
+            return $emails;
+        });
+
     });
