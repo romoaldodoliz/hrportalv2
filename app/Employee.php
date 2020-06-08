@@ -72,6 +72,8 @@ class Employee extends Model implements AuditableContract
         'rfid_26',
         'rfid_64',
         'door_id_number',
+        'cluster',
+        'original_date_hired',
     ];
     
 
@@ -103,6 +105,19 @@ class Employee extends Model implements AuditableContract
     public function assign_heads()
     {
         return $this->hasMany('App\AssignHead')->orderBy('id','ASC');
+    }
+
+    public function immediate_superior()
+    {
+        return $this->hasMany('App\AssignHead')->orderBy('id','ASC')->where('head_id','3');
+    }
+    public function bu_head()
+    {
+        return $this->hasMany('App\AssignHead')->orderBy('id','ASC')->where('head_id','4');
+    }
+    public function cluster_head()
+    {
+        return $this->hasMany('App\AssignHead')->orderBy('id','ASC')->where('head_id','5');
     }
 
     public function dependents()

@@ -18,6 +18,7 @@ use App\EmployeeDetailVerification;
 use App\EmployeeTransfer;
 use App\DependentAttachment;
 use App\Api;
+use App\EmployeeNpaRequest;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -33,19 +34,42 @@ class EmployeeController extends Controller
     public function index()
     {
         session(['header_text' => 'Employees']);
+       
         return view('employees.index');
     }
 
     public function indexData()
     {
-        $check_user = User::where('id',Auth::user()->id)->first();
+        $check_user = User::with('roles')->where('id',Auth::user()->id)->first();
+       
+        if($check_user['roles'][0]['name'] == 'Cluster Head' || $check_user['roles'][0]['name'] == 'BU Head' || $check_user['roles'][0]['name'] == 'Immediate Superior' ){
+            $employee_head = Employee::select('id')->where('user_id',$check_user['id'])->first();
+            $assign_heads = AssignHead::select('employee_id')->where('employee_head_id',$employee_head['id'])->get();
 
-        return Employee::with('companies','departments','locations')
-                            ->when($check_user['view_confidential'] != "YES" , function($q) {
-                                $q->where('confidential','NO');
-                            })
-                            ->orderBy('series_number','DESC')
-                            ->get();
+            $employee_ids = [];
+            if($assign_heads){
+                foreach($assign_heads as $head){
+                    array_push($employee_ids , $head['employee_id']);
+                }
+            }
+            return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+                        ->when($check_user['view_confidential'] != "YES" , function($q) {
+                            $q->where('confidential','NO');
+                        })
+                        ->whereIn('id',$employee_ids)
+                        ->where('status','Active')
+                        ->orderBy('series_number','DESC')
+                        ->get();
+        }else{
+            return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+                        ->when($check_user['view_confidential'] != "YES" , function($q) {
+                            $q->where('confidential','NO');
+                        })
+                        ->where('status','Active')
+                        ->orderBy('series_number','DESC')
+                        ->get();
+        }
+       
         
     }
     public function employeeindexCount()
@@ -636,7 +660,7 @@ class EmployeeController extends Controller
         
         $check_user = User::where('id',Auth::user()->id)->first();
 
-        $employee = Employee::with('companies','departments','locations','print_id_logs','verification')
+        $employee = Employee::with('companies','departments','locations','print_id_logs','verification','immediate_superior','bu_head')
                     ->when(!empty($request->company), function($q) use($company) {
                         $q->whereHas('companies', function ($w) use($company)  {
                             $w->where('id', '=', $company);
@@ -655,12 +679,46 @@ class EmployeeController extends Controller
                     ->when(!empty($request->employee_status), function($q) use($employee_status) {
                        $q->where('status', '=', $employee_status);
                     })
+                    ->when(empty($request->employee_status), function($q){
+                       $q->where('status', '=', 'Active');
+                    })
                     ->when($check_user['view_confidential'] != "YES" , function($q) {
                         $q->where('confidential','NO');
                     })
                     ->orderBy('series_number','DESC')
                     ->get();
         return $employee;
+    }
+
+    public function getHREmployees(){
+        
+        $hr_employee = Employee::with('departments')
+                    ->whereHas('departments', function ($w) {
+                            $w->where('id', '=', '20');
+                    })
+                    ->where('status','Active')
+                    ->orderBy('last_name' , 'ASC')
+                    ->get();
+
+        return $hr_employee;
+    }
+
+    public function getBUHead(){
+        
+        $bu_heads = AssignHead::select('employee_head_id')->distinct()->where('head_id','4')->get();
+
+        $bu_head_ids = [];
+        
+        foreach($bu_heads as $bu_head){
+            array_push($bu_head_ids, $bu_head['employee_head_id']);
+        }
+        
+        $bu_heads_employees = Employee::whereIn('id',$bu_head_ids)
+                    ->where('status','Active')
+                    ->orderBy('last_name' , 'ASC')
+                    ->get();
+
+        return $bu_heads_employees;
     }
 
     public function employeeIdIndex(){
@@ -672,6 +730,7 @@ class EmployeeController extends Controller
                             ->when($check_user['view_confidential'] != "YES" , function($q) {
                                 $q->where('confidential','NO');
                             })
+                            ->where('status','Active')
                             ->orderBy('series_number','DESC')
                             ->get();
         return $employee;
@@ -1026,8 +1085,14 @@ class EmployeeController extends Controller
             $filtered_data[$key]['user_id'] = $employee['user_id'];
             $filtered_data[$key]['id_number'] = $employee['id_number'];
             $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
+            $filtered_data[$key]['middle_name'] = strtoupper($employee['middle_name']);
             $filtered_data[$key]['last_name'] = strtoupper($employee['last_name']);
+            $middle_initial =  $employee['middle_initial'] ? $employee['middle_initial'] . '. ' : " ";
+            $filtered_data[$key]['full_name'] = strtoupper($employee['first_name'])  . ' '. $middle_initial . strtoupper($employee['last_name']);
             $filtered_data[$key]['position'] = $employee['position'];
+            $filtered_data[$key]['level'] = $employee['level'];
+            $filtered_data[$key]['cluster'] = $employee['cluster'];
+            
 
             if($employee['companies']){
                 if(isset($employee['departments'][0])){
@@ -1071,10 +1136,268 @@ class EmployeeController extends Controller
                 $filtered_data[$key]['company_assign_phone'] = "";
             }
             
+
+            $filtered_data[$key]['area'] = $employee['area'];
+            $filtered_data[$key]['date_hired'] = $employee['date_hired'];
+
+            $today = date("Y-m-d");
+
+            $date_hired = $employee['date_hired'];
+           
+            //Get Tenure
+            $tenure = "";
+            if($date_hired != '0000-00-00' && $date_hired){
+                $diff = date_diff(date_create($date_hired), date_create($today));
+                $year = $diff->format('%y');
+                $month = $diff->format('%m');
+
+                $tenure = $year . '.' . $month;
+            }
+
+            $filtered_data[$key]['tenure'] = $tenure;
+
+            //Get 5th month
+            $fifth_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+5 months", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['fifth_month'] = $fifth_month;
+
+            //Get 6th month
+            $six_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+6 months", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['six_month'] = $six_month;
+
+            //Personal Phone number
+            $filtered_data[$key]['mobile_number'] = str_replace("+63","",$employee['mobile_number']);
+
+            $filtered_data[$key]['employee_status'] = $employee['classification'];
+
+            $filtered_data[$key]['marital_status'] = $employee['marital_status'];
+
+            //Birthdate
+            $filtered_data[$key]['birthdate'] = $employee['birthdate'];
+
+            $birthdate = $employee['birthdate'];
+            $age = "";
+            if($birthdate != '0000-00-00' && $birthdate){
+                $diff = date_diff(date_create($birthdate), date_create($today));
+                $age = $diff->format('%y');
+            }
+            $filtered_data[$key]['age'] = $age;
+
+            $age_range = "";
+            if($age < 21){
+                $age_range = "21 Below";
+            }else if($age >= 21 && $age <= 30){
+                $age_range = "21 - 30 YEARS OLD";
+            }else if($age >= 31 && $age <= 40){
+                $age_range = "31 - 40 YEARS OLD";
+            }else if($age >= 41 && $age <= 50){
+                $age_range = "41 - 50 YEARS OLD";
+            }else if($age >= 51 && $age <= 60){
+                $age_range = "51 - 60 YEARS OLD";
+            }
+            $filtered_data[$key]['age_range'] = $age_range;
+
+            $filtered_data[$key]['gender'] = $employee['gender'];
+
+            $immediate_superior = AssignHead::where('employee_id' , $employee['id'])->where('head_id','3')->first();
+            if($immediate_superior){
+                $immediate_superior_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$immediate_superior['employee_head_id'])->where('status','Active')->first();
+                $filtered_data[$key]['immediate_superior'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
+            }else{
+                $filtered_data[$key]['immediate_superior'] = "";
+            }
+
+            $bu_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','4')->first();
+            if($bu_head){
+                $bu_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$bu_head['employee_head_id'])->where('status','Active')->first();
+                $filtered_data[$key]['bu_head'] =  $bu_head_details ? $bu_head_details['first_name'] . ' ' . $bu_head_details['last_name']  : "";
+            }else{
+                $filtered_data[$key]['bu_head'] = "";
+            }
+
+            $cluster_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','5')->first();
+            if($cluster_head){
+                $cluster_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$cluster_head['employee_head_id'])->where('status','Active')->first();
+                $filtered_data[$key]['cluster_head'] =  $cluster_head_details ? $cluster_head_details['first_name'] . ' ' . $cluster_head_details['last_name']  : "";
+            }else{
+                $filtered_data[$key]['cluster_head'] = "";
+            }
+            
             $filtered_data[$key]['status'] = $employee['status'];
         }
-
         return $filtered_data;
     }
 
+    public function updateemployeeNpaRequest(Request $request){
+
+        $data = $request->all();
+
+        $npa_request = EmployeeNpaRequest::where('id',$data['id'])->first();
+
+        $this->validate($request, [
+            'subject' => 'required',
+        ]);
+        if($npa_request){
+            DB::beginTransaction();
+            try {   
+                unset($data['id']);
+                if($npa_request->update($data)){
+                    DB::commit();
+                    return Employee::with('companies','departments','locations')->where('id',$npa_request['employee_id'])->first();
+                }
+               
+                return Employee::with('companies','departments','locations')->where('id',$npa_request['employee_id'])->first();
+            }catch (Exception $e) {
+                DB::rollBack();
+                return Employee::with('companies','departments','locations')->where('id',$npa_request['employee_id'])->first();
+            }
+        }
+        return $data;
+    }
+
+    public function employeeNpaRequest(Request $request){
+
+        $data = $request->all();
+
+        $this->validate($request, [
+            'subject' => 'required',
+        ]);
+        
+        $employee_data = Employee::with('companies','departments','locations','assign_heads')->where('id',$data['employee_id'])->first();
+        
+
+        if($employee_data){
+            DB::beginTransaction();
+            try {   
+                $check_user = User::with('roles')->where('id',Auth::user()->id)->first();
+                $requested_by = Employee::select('id')->where('user_id',$check_user['id'])->first();
+
+                $data['employee_name'] = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
+                $data['requested_by'] = $requested_by['id'];
+                $data['date_prepared'] = date('Y-m-d h:m:s');
+                $data['status'] = 'Pending';
+
+                if(EmployeeNpaRequest::create($data)){
+                    DB::commit();
+                    return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
+                }
+               
+                return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
+            }catch (Exception $e) {
+                DB::rollBack();
+                return $employee_data;
+            }
+        }
+        return $data;
+    }
+
+    public function getNPARequestLists($employee_id){
+        return $npa_requests_list = EmployeeNpaRequest::where('employee_id' , $employee_id)->orderBy('created_at','DESC')->get();
+    }
+
+    public function destroyNPARequest(EmployeeNpaRequest $npa_request){
+        if($npa_request->delete()){
+            return 'Deleted';
+        }
+    }
+
+    public function viewNPARequest(EmployeeNpaRequest $npa_request){
+        return $npa_request = EmployeeNpaRequest::with('from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
+    }
+
+    public function approvedByHRRecommend(EmployeeNpaRequest $npa_request){
+        if($npa_request){
+            $data = [];
+            $data['recommended_by_status'] = 'Approved';
+            $data['status'] = 'Pre-approved';
+            $npa_request->update($data);
+            return 'Approved';
+        }
+    }
+
+    public function approveByHRApprover(EmployeeNpaRequest $npa_request){
+        if($npa_request){
+            $data = [];
+            $data['approved_by_status'] = 'Approved';
+            $data['status'] = 'Pre-approved';
+            if($npa_request->update($data)){
+                $check_and_update = $this->changeApprovedNPAtoEmployee($npa_request->employee_id,$npa_request->id);
+            }
+            return 'Approved';
+        }
+    }
+
+    public function approveByBUHead(EmployeeNpaRequest $npa_request){
+        if($npa_request){
+            $data = [];
+            $data['bu_head_status'] = 'Approved';
+            $data['status'] = 'Pre-approved';
+            if($npa_request->update($data)){
+                $check_and_update = $this->changeApprovedNPAtoEmployee($npa_request->employee_id,$npa_request->id);
+            }
+            return 'Approved';
+        }
+    }
+
+    public function changeApprovedNPAtoEmployee($employee_id,$npa_request_id){
+        
+        $employee = Employee::with('companies','departments','locations','assign_heads')->where('id',$employee_id)->first();
+
+        $npa_request = EmployeeNpaRequest::where('id',$npa_request_id)->first();
+
+        if($npa_request['approved_by_status'] == 'Approved' && $npa_request['bu_head_status'] == 'Approved'){
+
+            DB::beginTransaction();
+            try {
+                
+                if($npa_request['subject'] == "REGULARIZATION"){
+                    $data = [];
+                    $data['classification'] = "Regular";
+                    $employee->update($data);
+                }
+
+                if($npa_request['to_position_title']){
+                    $data = [];
+                    $data['position'] =  $npa_request['to_position_title'];
+                    $employee->update($data);
+                }
+
+                $immediate_manager = "";
+                if($npa_request['to_immediate_manager']){
+                    $immediate_manager =  $npa_request['to_immediate_manager'];
+                    $assign_head = AssignHead::where('employee_id',$employee['id'])->where('head_id','3')->first();
+                    $data = [];
+                    $data['employee_head_id'] =  $immediate_manager;
+                    $assign_head->update($data);
+                }
+                
+                $department = "";
+                if($npa_request['to_department']){
+                    $department =  $npa_request['to_department'];
+                    $employee->departments()->sync( (array) $department);
+                }
+
+                $location = "";
+                if($npa_request['to_location']){
+                    $location =  $npa_request['to_location'];
+                    $employee->locations()->sync( (array) $location);
+                }
+
+                $monthly_basic_salary = "";
+                if($npa_request['to_monthly_basic_salary']){
+                    $monthly_basic_salary =  $npa_request['to_monthly_basic_salary'];
+                }
+
+                $npa_request_data = [];
+                $npa_request_data['status'] = 'Approved';
+                if($npa_request->update($npa_request_data)){
+                    DB::commit();
+                    return $employee;
+                }
+            }catch (Exception $e) {
+                DB::rollBack();
+                return $employee;
+            }
+
+        }
+    }
 }

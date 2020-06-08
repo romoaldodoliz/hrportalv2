@@ -33,6 +33,10 @@
                             <span>{{ __('My Profile') }}</span>
                         </a>
                     @endif
+                    <a href="{{ url('/home') }}" class="dropdown-item">
+                        <i class="fas fa-desktop"></i>
+                        <span>Dashboard</span>
+                    </a>
                     <a href="{{ url('/change_password') }}" class="dropdown-item">
                         <i class="fas fa-lock"></i>
                         <span>Change Password</span>

@@ -12,6 +12,7 @@ use App\Address;
 use App\Head;
 use App\Level;
 use App\MaritalStatus;
+use App\Cluster;
 use App\Division;
 
 use DB;
@@ -477,6 +478,66 @@ class SettingsController extends Controller
     {
         if($marital->delete()){
             return $marital;
+        }
+    }
+
+
+    //--------------Cluster
+
+    public function allCluster()
+    {
+        $clusters = Cluster::orderBy('id','DESC')->get();
+        return $clusters;
+    }
+    public function allClusterOptions()
+    {
+        $clusters = Cluster::orderBy('id','DESC')->pluck('name', 'name');
+        return $clusters;
+    }
+
+    public function storeCluster(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            if($cluster = Cluster::create($request->all())){
+                DB::commit();
+                return Cluster::where('id',$cluster->id)->first();
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
+
+    /**
+     * Update Cluster database
+     */
+    public function updateCluster(Request $request,Cluster $cluster)
+    {
+
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+
+       DB::beginTransaction();
+        try {
+            if($cluster->update(['name'=>$request->get('name')])){
+                DB::commit();
+                return Cluster::where('id',$cluster->id)->first();
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return $cluster;
+        }
+    }
+
+    public function destroyCluster(Cluster $cluster)
+    {
+        if($cluster->delete()){
+            return $cluster;
         }
     }
 }

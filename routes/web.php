@@ -94,10 +94,10 @@ Route::get('logout', function(){
         Route::get('/roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['role:Administrator']]);
 
         // Employees
-            Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff']]);
-            Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
-            Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             Route::get('/employees-index-count',['as'=>'employees.employeeindexCount','uses'=>'EmployeeController@employeeindexCount','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-inactive-count',['as'=>'employees.employeeInactiveCount','uses'=>'EmployeeController@employeeInactiveCount','middleware' => ['role:Administrator|HR Staff']]);
@@ -121,7 +121,7 @@ Route::get('logout', function(){
             Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');  
 
             //Employee Filter
-            Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
+            Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer|Cluster Head|BU Head|Immediate Superior']]);
             
              //Employee Filter ID
             Route::post('/filter-employee-id',['as'=>'employees.employeeFilterID','uses'=>'EmployeeController@employeeFilterID','middleware' => ['role:Administrator|HR Staff|Administrator Printer']]);
@@ -140,7 +140,7 @@ Route::get('logout', function(){
             Route::get('/transfer-employee-logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
             
             //Organizational Chart
-            Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff']]);
+            Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
         
         
             // Settings
@@ -213,6 +213,15 @@ Route::get('logout', function(){
 
 
         /**
+         * clusters routes
+         */
+        Route::get('clusters-all', 'SettingsController@allCluster')->name('cluster');
+        Route::get('clusters-options', 'SettingsController@allClusterOptions')->name('clusteroption');
+        Route::post('cluster',['as'=>'settings.storeCluster','uses'=>'SettingsController@storeCluster','middleware' => ['role:Administrator']]);
+        Route::delete('cluster/{cluster}',['as'=>'settings.destroyCluster','uses'=>'SettingsController@destroyCluster','middleware' => ['role:Administrator']]);
+        Route::patch('cluster/{cluster}',['as'=>'settings.updateCluster','uses'=>'SettingsController@updateCluster','middleware' => ['role:Administrator']]);
+
+        /**
          * Activities routes
          */
         Route::get('activities',['as'=>'activities.index','uses'=>'ActivityController@index','middleware' => ['role:Administrator']]);
@@ -264,5 +273,61 @@ Route::get('logout', function(){
 
         Route::post('save-rfid','HomeController@saveRFID');
         Route::get('scan-rfids','HomeController@scansRFID');
+
+
+        //Demographic Head Count
+        Route::get('year-to-date-head-count','HomeController@getYearToDateHeadcount');
+
+        //Demographic Age Count
+        Route::get('employee-age-count','HomeController@getEmployeeAgeCount');
+
+        //Demographic Region Count
+        Route::get('employee-region-count','HomeController@getEmployeeRegionCount');
+
+        //Demographic Gender Count
+        Route::get('employee-gender-count','HomeController@getEmployeeGenderCount');
+
+         //Demographic Marital Status Count
+        Route::get('employee-marital-status-count','HomeController@getEmployeeMaritaStatusCount');
+
+        //Demographic Cluster Count
+        Route::get('employee-cluster-count','HomeController@getEmployeeClusterCount');
+
+        //Demographic Cluster Count
+        Route::get('employee-for-regular-notif','HomeController@getForRegularNotification');
+
+
+        //Access Rights
+        Route::get('user-access-rights','UserController@getUserAccessRights');
+
+        //Send NPA Requests
+        Route::post('update-employee-npa-request','EmployeeController@updateemployeeNpaRequest');
+        Route::post('employee-npa-request','EmployeeController@employeeNpaRequest');
+        Route::get('get-npa-requests/{employee_id}','EmployeeController@getNPARequestLists');
+        Route::delete('npa_request/{npa_request}', 'EmployeeController@destroyNPARequest');
+
+
+        //HR Employees
+        Route::get('hr-employees','EmployeeController@getHREmployees');
+
+        //BU HEADS
+        Route::get('bu-heads','EmployeeController@getBUHead');
+
+        Route::get('get-npa-request/{npa_request}','EmployeeController@viewNPARequest');
+
+        Route::get('approved-by-hr-recommend/{npa_request}','EmployeeController@approvedByHRRecommend');
+        Route::get('approved-by-hr-approver/{npa_request}','EmployeeController@approveByHRApprover');
+        Route::get('approved-by-bu-head/{npa_request}','EmployeeController@approveByBUHead');
+
+        Route::get('hr_email',function(){
+            $hr_receivers = App\HrReceiverNotification::select('email')->get();
+
+            $emails = [];
+
+            foreach($hr_receivers as $receiver){
+                array_push($emails , $receiver['email']);
+            }
+            return $emails;
+        });
 
     });
