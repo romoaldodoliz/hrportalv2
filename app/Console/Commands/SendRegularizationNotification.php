@@ -119,7 +119,7 @@ class SendRegularizationNotification extends Command
                                     }
                                     
                                     
-                                    // Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationThirdMonthNotification($data));
+                                    Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationThirdMonthNotification($data));
 
                                     $save_notification = [];
                                     $save_notification['employee_id'] = $employee['id'];
@@ -167,7 +167,7 @@ class SendRegularizationNotification extends Command
                                         }
                                     }
                                     
-                                    // Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
+                                    Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
                                    
 
                                     $save_notification = [];
