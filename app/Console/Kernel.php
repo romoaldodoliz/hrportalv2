@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-        $schedule->command('send_email:regularization_notification')->dailyAt('08:00');
+        $schedule->command('send_email:regularization_notification')->dailyAt('14:10');
     }
 
     /**
