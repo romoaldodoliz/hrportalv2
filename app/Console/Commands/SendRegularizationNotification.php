@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
 use App\Mail\EmployeeRegularizationNotification;
+use App\Mail\EmployeeRegularizationThirdMonthNotification;
 
 use App\Employee;
 use App\AssignHead;
@@ -116,7 +117,7 @@ class SendRegularizationNotification extends Command
                                 }
                                 
                               
-                                Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationNotification($data));
+                                Mail::to('jay.lumagdong@gmail.com')->cc($cc_reciever)->send(new EmployeeRegularizationThirdMonthNotification($data));
 
                                 $save_notification = [];
                                 $save_notification['employee_id'] = $employee['id'];
