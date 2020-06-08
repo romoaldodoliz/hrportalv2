@@ -74,6 +74,7 @@ class Employee extends Model implements AuditableContract
         'door_id_number',
         'cluster',
         'original_date_hired',
+        'monthly_basic_salary',
     ];
     
 

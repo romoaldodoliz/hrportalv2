@@ -34,7 +34,7 @@ class User extends Model implements Auditable, Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'view_confidential','create','edit','read','search','download_export','personal_info','work_info','contact_info','identification_info','npa_request'
+        'name', 'email', 'password', 'view_confidential','create','edit','read','search','download_export','personal_info','work_info','contact_info','identification_info','npa_request','monthly_basic_salary'
     ];
 
     /**

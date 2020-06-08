@@ -581,8 +581,8 @@ class HomeController extends Controller
         $x = 0;
         foreach($clusters as $key => $cluster){
             $cluster_count = Employee::select('id','cluster','status')->where('cluster',$cluster['name'])->where('status','Active')->count();
-            
-            $datas[$key]['name'] = mb_strimwidth($cluster['name'], 0, 10, "...");
+            $name = mb_strimwidth($cluster['name'], 0, 10, "...");
+            $datas[$key]['name'] = $name . ' ('. $cluster_count . ')';
             $datas[$key]['count'] = $cluster_count;
 
             $x++;
@@ -590,7 +590,7 @@ class HomeController extends Controller
         
         $cluster_non_count = Employee::select('id','cluster','status')->whereNull('cluster')->where('status','Active')->count();
 
-        $datas[$x]['name'] = 'None';
+        $datas[$x]['name'] = 'None (' . $cluster_non_count . ')';
         $datas[$x]['count'] = $cluster_non_count;
 
         return $datas;

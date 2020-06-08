@@ -121,7 +121,7 @@
 
             <div class="col-sm-12 mb-3 mb-xl-0 ">
                 <div class="card shadow mb-3">
-                    <h2 class="mb-3 mt-2 ml-2">Head Count per Cluster </h2>
+                    <h2 class="mb-3 mt-2 ml-2">Headcount per Cluster </h2>
                     <div class="card-body">
                         <bar-chart :chart-data="dataClusterHeadcount" :height="70" :download="true"  ></bar-chart>
                     </div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-sm-12 mb-3 mb-xl-0">
                     <div class="card shadow mb-3">
-                        <h2 class="mb-3 mt-2 ml-2">Head Count per Region</h2>
+                        <h2 class="mb-3 mt-2 ml-2">Headcount per Region</h2>
                         <div class="card-body">
                             <bar-chart :chart-data="dataEmployeeRegioncount" :height="100"></bar-chart>
                         </div>
@@ -327,18 +327,12 @@ import LineChart from './Charts/LineChart.js'
                     labels: ['Jan','Feb','Mar','Apr','May', 'Jun' , 'Jul', 'Aug', 'Sept', 'Oct','Nov','Dec'],
                     datasets: [
                         {
-                            label: 'Head Count',
+                            label: "",
                             backgroundColor: '#2DCE89',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
                             data: count,
-                            legend: {
-                                display: true,
-                                labels: {
-                                    fontColor: 'rgb(255, 99, 132)'
-                                }
-                            }
                         },
                     ]
                 }
@@ -356,16 +350,18 @@ import LineChart from './Charts/LineChart.js'
             employeeAgefillData (agecount)
             {
                 var count = [];
+                var label = [];
 
                 agecount.forEach(function(entry) {
                     count.push(entry);
+                    label.push()
                 });
                 
                 this.dataEmployeeAgecount = {
-                    labels: ['20 yrs. old and Below','21 - 30 yrs. old','31-40 yrs. old','41-50 yrs. old','51-60 yrs old','None'],
+                    labels: ['20 yrs. old and Below (' + count[0] + ')','21 - 30 yrs. old (' + count[1] + ')','31-40 yrs. old (' + count[2] + ')','41-50 yrs. old ('  + count[3] + ')','51-60 yrs old (' + count[4] + ')', 'None (' + count[5] + ')'],
                     datasets: [
                         {
-                            label: 'Employee Age Count',
+                            label: 'Employee Age',
                             backgroundColor: '#7283E7',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
@@ -394,10 +390,10 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeRegioncount = {
-                    labels: ['Luzon','Visayas','Mindanao','None'],
+                    labels: ['Luzon (' + count[0] + ')' ,'Visayas (' + count[1] + ')', 'Mindanao (' + count[2] + ')','None (' + count[3] + ')'],
                     datasets: [
                         {
-                            label: 'Employee Region Count',
+                            label: 'Headcount per Region',
                             backgroundColor: '#FB6340',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
@@ -426,10 +422,10 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeGendercount = {
-                    labels: ['Male','Female','None'],
+                    labels: ['Male (' + count[0] + ')','Female (' + count[1] + ')','None (' + count[2] + ')'],
                     datasets: [
                         {
-                            label: 'Employee Gender Count',
+                            label: 'Gender',
                             backgroundColor: '#FFD600',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
@@ -458,10 +454,10 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeMaritalStatuscount = {
-                    labels: ['Single','Married','Widow','None'],
+                    labels: ['Single (' + count[0] + ')','Married (' + count[1] + ')','Widow (' + count[2] + ')','None (' + count[3] + ')'],
                     datasets: [
                         {
-                            label: 'Employee Marital Status Count',
+                            label: 'Marital Status',
                             backgroundColor: '#11CDEF',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
@@ -496,7 +492,7 @@ import LineChart from './Charts/LineChart.js'
                     labels: names,
                     datasets: [
                         {
-                            label: 'Head Count',
+                            label: 'Headcount per Cluster',
                             backgroundColor: '#F5365C',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,

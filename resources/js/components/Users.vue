@@ -274,6 +274,17 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="monthly_basic_salary" class="custom-control-input" v-model="user_copied.monthly_basic_salary" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="monthly_basic_salary">Monthly Basic Salary</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span> 
+                                    </div>
+                                </div>
+
                             </div>
                             
                         </div>
@@ -479,6 +490,7 @@
                     contact_info: user_copied.contact_info,
                     identification_info: user_copied.identification_info,
                     npa_request: user_copied.npa_request,
+                    monthly_basic_salary: user_copied.monthly_basic_salary,
                     _method: 'PATCH'
                 })
                 .then(response => {

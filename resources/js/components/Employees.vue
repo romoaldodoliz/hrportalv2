@@ -518,6 +518,14 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
+                                                <div class="form-group">
+                                                    <label for="role">Monthly Basic Salary</label>
+                                                    <input type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span> 
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Status</label>
@@ -2198,6 +2206,7 @@
                 formData.append('location_list', employee_copied.location_list);
                 formData.append('cluster', employee_copied.cluster);
                 formData.append('area', employee_copied.area ? employee_copied.area : "-");
+                formData.append('monthly_basic_salary', employee_copied.monthly_basic_salary ? employee_copied.monthly_basic_salary : "");
                 formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
                 formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
                 formData.append('status', employee_copied.status ? employee_copied.status : "-");
@@ -2316,6 +2325,9 @@
                 //Validate Marital Status
                 this.validateMaritalStatus();
 
+                //Employee basic salary
+                this.fetchMonthlyBasicSalary();
+
                 //Attachment
                 var num = Math.random();
                 this.profile_image = 'storage/id_image/employee_image/' + employee.id + '.png?v='+num;
@@ -2349,6 +2361,20 @@
                     this.marital_attachment_validate = true;
                     this.marital_attachment_view = false;
                 }
+            },
+            fetchMonthlyBasicSalary(){
+                this.employee_copied.monthly_basic_salary = "";
+                axios.get('/decrypt-monthly-basic-salary/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data){
+                        this.employee_copied.monthly_basic_salary = response.data;
+                    }else{
+                        this.employee_copied.monthly_basic_salary = "";
+                    }
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
             },
             fetchEmployees(){
                 this.table_loading = true;

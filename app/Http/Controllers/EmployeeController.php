@@ -29,6 +29,8 @@ use Auth;
 use Hash;
 use DB;
 
+use Illuminate\Support\Facades\Crypt;
+
 class EmployeeController extends Controller
 {
     public function index()
@@ -308,6 +310,11 @@ class EmployeeController extends Controller
                 $data['marital_status_attachment'] =  $filename;
             }
         }
+
+        if(isset($request->monthly_basic_salary)){
+            $data['monthly_basic_salary'] = Crypt::encryptString($request->monthly_basic_salary);
+        }
+        
 
         if($data['generate_id_number'] == 'YES'){
             //Generate New Employee Number
@@ -1400,4 +1407,9 @@ class EmployeeController extends Controller
 
         }
     }
+
+    public function decryptMonthlyBasicSalary(Employee $employee){
+        return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+    }
+
 }
