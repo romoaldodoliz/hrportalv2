@@ -62,7 +62,7 @@ class SendRegularizationNotification extends Command
         $data = [];
         
 
-        $all_employees = Employee::select('id','first_name','last_name','date_hired','position','classification','status')->with('companies')->where('classification','Probationary')->where('id','2776')->where('status','Active')->orderBy('date_hired','DESC')->get();
+        $all_employees = Employee::select('id','first_name','last_name','date_hired','position','classification','status')->with('companies')->where('classification','Probationary')->where('status','Active')->orderBy('date_hired','DESC')->get();
         
         $sent_ctr = 0;
         if($all_employees){
