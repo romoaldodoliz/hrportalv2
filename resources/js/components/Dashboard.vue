@@ -171,7 +171,13 @@
             <div class="col-sm-6 mb-5">
                 <div class="col-sm-12 mb-5 mb-xl-0">
                     <div class="card shadow">
+                        
                         <h2 class="mb-3 mt-2 ml-2">Employee Approval Request(s)</h2>
+                        <span class="mt-2 mr-2 mb-2 text-right">
+                            <a href="/employee_approval_requests" class="btn btn-sm btn-primary">See all</a>
+                        </span>
+                        
+
                         <div class="table-responsive">
                         <!-- Projects table -->
                         <table class="table align-items-center table-flush">
