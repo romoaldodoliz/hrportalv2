@@ -1275,9 +1275,20 @@ class EmployeeController extends Controller
         if($employee_data){
             DB::beginTransaction();
             try {   
+
+                $select_last_request = EmployeeNpaRequest::select('ctrl_no')->orderBy('ctrl_no','DESC')->orderBy('created_at','DESC')->first();
+
+                $ctrl_no = "";
+                if($select_last_request){
+                    $ctrl_no = $select_last_request['ctrl_no'] + 1;
+                }else{
+                    $ctrl_no = 2020656;
+                }
+
                 $check_user = User::with('roles')->where('id',Auth::user()->id)->first();
                 $requested_by = Employee::select('id')->where('user_id',$check_user['id'])->first();
 
+                $data['ctrl_no'] = $ctrl_no;
                 $data['employee_name'] = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
                 $data['requested_by'] = $requested_by['id'];
                 $data['date_prepared'] = date('Y-m-d h:m:s');
