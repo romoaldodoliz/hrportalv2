@@ -15,7 +15,7 @@
     Thank you,
 </p>
 <p>
-    HR
+    Group Human Resources
 </p>
 <p>
     ************ This is a system generated email. Please do not reply. ************
