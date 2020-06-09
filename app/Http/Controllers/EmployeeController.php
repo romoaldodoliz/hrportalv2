@@ -912,7 +912,7 @@ class EmployeeController extends Controller
 
         Fpdf::SetFont('Avenir-Regular','',8);
         Fpdf::SetXY(2.5,68);
-        Fpdf::MultiCell(51,2.5, $address ,0,'C');
+        Fpdf::MultiCell(51,3, $address ,0,'C');
 
 
         Fpdf::Output(utf8_decode($employee->last_name) .'_' . utf8_decode($employee->first_name) . '_' . $employee->employee_number  . ".pdf", 'I');
