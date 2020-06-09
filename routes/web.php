@@ -333,4 +333,25 @@ Route::get('logout', function(){
             return $emails;
         });
 
+        Route::get('year_to_end',function(){
+            $jan = App\Employee::select('date_hired','status')->where('status','Active')->where('date_hired','<=','2020-01-30')->count();
+            $feb = App\Employee::select('date_hired','status')->where('status','Active')->where('date_hired','<=','2020-02-29')->count();
+            $mar = App\Employee::select('date_hired','status')->where('status','Active')->where('date_hired','<=','2020-03-31')->count();
+            $apr = App\Employee::select('date_hired','status')->where('status','Active')->where('date_hired','<=','2020-04-30')->count();
+            $may = App\Employee::select('date_hired','status')->where('status','Active')->where('date_hired','<=','2020-05-31')->count();
+            $jun = App\Employee::select('date_hired','status')->where('status','Active')->where('date_hired','<=','2020-06-30')->count();
+            
+            $months = [
+                'jan'=> $jan,
+                'feb'=> $feb,
+                'mar'=> $mar,
+                'apr'=> $apr,
+                'may'=> $may,
+                'jun'=> $jun,
+            ];
+            
+            return $months;
+        });
+
+
     });
