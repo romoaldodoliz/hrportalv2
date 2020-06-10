@@ -28,7 +28,7 @@ class EmployeeRegularizationThirdMonthNotification extends Mailable
      */
     public function build()
     {
-        return $this->subject('HR Portal - Employee Regularization')
+        return $this->subject('HR Reminder - 3rd Month Performance Review')
         ->view('email.employee_third_notification_regularization')
         ->with([
             'reciever_name'  =>  $this->employee_data['reciever_name'],

@@ -57,7 +57,7 @@ return [
 
     'from' => [
         'address' => 'hr.portal@lafilgroup.com',
-        'name' => 'HR Portal',
+        'name' => 'Group Human Resources',
     ],
 
     /*
