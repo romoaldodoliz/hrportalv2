@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="header-body">
                <div class="row">
-                <div class="col-xl-3 col-lg-6">
+                <div class="col-xl-4 col-lg-6">
                 <div class="card card-stats mb-4 mb-xl-0">
                     <div class="card-body">
                     <div class="row">
@@ -29,12 +29,12 @@
                     </div>
                 </div>
                 </div>
-                <div class="col-xl-3 col-lg-6">
+                <div class="col-xl-4 col-lg-6">
                 <div class="card card-stats mb-4 mb-xl-0">
                     <div class="card-body">
                     <div class="row">
                         <div class="col">
-                        <h5 class="card-title text-uppercase text-muted mb-0">New users</h5>
+                        <h5 class="card-title text-uppercase text-muted mb-0">New Hire</h5>
                         <span class="h2 font-weight-bold mb-0">{{ new_employees.length }}</span>
                         </div>
                         <div class="col-auto">
@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 </div>
-                <div class="col-xl-3 col-lg-6">
+                <!-- <div class="col-xl-3 col-lg-6">
                 <div class="card card-stats mb-4 mb-xl-0">
                     <div class="card-body">
                     <div class="row">
@@ -70,8 +70,8 @@
                     </p>
                     </div>
                 </div>
-                </div>
-                <div class="col-xl-3 col-lg-6">
+                </div> -->
+                <div class="col-xl-4 col-lg-6">
                 <div class="card card-stats mb-4 mb-xl-0">
                     <div class="card-body">
                     <div class="row">
@@ -88,7 +88,7 @@
                     <p class="mt-2 mb-0 text-muted text-sm">
                         <span class="text-success mr-2"> {{employee_verify_percentage}}%</span>
                         <span class="text-nowrap">Last updated: Today</span>
-                        <span class="ml-4">
+                        <span class="ml-2">
                             <a href="/verified-employees" class="btn btn-sm btn-primary">See all</a>
                         </span>
                         

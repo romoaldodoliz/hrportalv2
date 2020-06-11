@@ -84,7 +84,7 @@ class EmployeeController extends Controller
     }
     public function employeeNewCount()
     {
-        return Employee::with('companies','departments')->whereMonth('created_at', Carbon::now()->month)->get();
+        return Employee::with('companies','departments')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->get();
     }
     public function employeeUpdateCount()
     {
