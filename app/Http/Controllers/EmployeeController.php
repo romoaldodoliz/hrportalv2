@@ -84,7 +84,7 @@ class EmployeeController extends Controller
     }
     public function employeeNewCount()
     {
-        return Employee::with('companies','departments')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->get();
+        return Employee::with('companies','departments')->whereMonth('date_hired', Carbon::now()->month)->whereYear('date_hired', Carbon::now()->year)->get();
     }
     public function employeeUpdateCount()
     {
@@ -908,7 +908,7 @@ class EmployeeController extends Controller
         $full_name_back = strtoupper($first_name) . ' ' . $last_middle_initial_back . ' ' . strtoupper($last_name_back) . ' ' . $last_name_suffix_back;
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,37);
-        Fpdf::MultiCell(54,6, strtoupper($full_name_back) ,0,'C');
+        Fpdf::MultiCell(54,3, strtoupper($full_name_back) ,0,'C');
 
         Fpdf::SetFont('Avenir-Regular','',8);
         Fpdf::SetXY(2.5,68);
