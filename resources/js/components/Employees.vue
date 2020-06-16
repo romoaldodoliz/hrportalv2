@@ -363,12 +363,12 @@
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
                                                 <div v-if="employee_copied.id_number">
-                                                    <h4>Employee ID Number: 
+                                                    <h4>Employee Number: 
                                                         {{ employee_copied.id_number }}
                                                     </h4>
                                                 </div>
                                                 <div v-else>
-                                                    <h4>Employee ID Number: </h4>
+                                                    <h4>Employee Number: </h4>
                                                     <div class="custom-control custom-checkbox mb-3" v-if="employee_copied.status == 'Active'">
                                                         <input id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
                                                         <label class="custom-control-label" for="confidential">Please check to generate ID Number.</label>
@@ -386,13 +386,19 @@
                                                     <span class="text-danger" v-if="errors.company_list">{{ errors.company_list[0] }}</span> 
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Division</label>  
-                                                    <input type="text" class="form-control" v-model="employee_copied.division">
-                                                    <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
+                                                    <label for="role">Cluster</label>
+                                                    <select class="form-control" v-model="employee_copied.cluster" id="cluster">
+                                                        <option value="">Choose Cluster</option>
+                                                        <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.cluster">{{ errors.cluster[0] }}</span> 
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Department*</label>
@@ -406,11 +412,19 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
+                                                    <label for="role">Section</label>  
+                                                    <input type="text" class="form-control" v-model="employee_copied.division">
+                                                    <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- <div class="col-md-4">
+                                                <div class="form-group">
                                                     <label for="role">Employee Number</label>
                                                     <input type="text" class="form-control" v-model="employee_copied.employee_number">
                                                     <span class="text-danger" v-if="errors.employee_number">{{ errors.employee_number[0] }}</span>
                                                 </div>
-                                            </div>
+                                            </div> -->
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -472,7 +486,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Location / Site*</label>
+                                                    <label for="role">Location*</label>
                                                     <select class="form-control" v-model="employee_copied.location_list" id="location">
                                                         <option value="">Choose Location</option>
                                                         <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
@@ -484,31 +498,19 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Cluster</label>
-                                                    <select class="form-control" v-model="employee_copied.cluster" id="cluster">
-                                                        <option value="">Choose Cluster</option>
-                                                        <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
-                                                    </select>
-
-                                                    <span class="text-danger" v-if="errors.cluster">{{ errors.cluster[0] }}</span> 
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <div class="form-group">
                                                     <label for="role">Area</label>
                                                     <input type="text" class="form-control" v-model="employee_copied.area">
                                                     <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <!-- <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Bank Account Number</label>
                                                     <input type="text" class="form-control" v-model="employee_copied.bank_account_number">
                                                     <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
                                                 </div>
-                                            </div>
+                                            </div> -->
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -557,15 +559,17 @@
                                             </div>
 
 
-                                            <div class="col-md-4" style="border:1px solid;border-radius:5px;">
-                                                <div class="form-group mt-2">
-                                                    <label for="confidential">Set as Confidential Employee</label>
-                                                    <div class="custom-control custom-checkbox mb-3">
-                                                        <input id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
-                                                        <label class="custom-control-label" for="confidential">Confidential Employee (Ex. President CEO, Executives, etc.)</label>
-                                                    </div>
+                                            <div class="col-md-12">
+                                                <div class="col-md-6 mb-2"  style="border:1px solid;border-radius:5px;">
+                                                    <div class="form-group mt-2">
+                                                        <label for="confidential">Set as Confidential Employee</label>
+                                                        <div class="custom-control custom-checkbox mb-3">
+                                                            <input id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
+                                                            <label class="custom-control-label" for="confidential">Confidential Employee (Ex. President CEO, Executives, etc.)</label>
+                                                        </div>
 
-                                                    <span class="text-danger" v-if="errors.confidential">{{ errors.confidential[0] }}</span> 
+                                                        <span class="text-danger" v-if="errors.confidential">{{ errors.confidential[0] }}</span> 
+                                                    </div>
                                                 </div>
                                             </div>
 

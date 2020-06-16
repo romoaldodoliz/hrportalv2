@@ -334,7 +334,7 @@ import LineChart from './Charts/LineChart.js'
                     datasets: [
                         {
                             label: "",
-                            backgroundColor: '#2DCE89',
+                            backgroundColor: 'rgba(45, 206 , 137, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
@@ -368,7 +368,7 @@ import LineChart from './Charts/LineChart.js'
                     datasets: [
                         {
                             label: 'Employee Age',
-                            backgroundColor: '#7283E7',
+                            backgroundColor: 'rgba(114,131,231, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
@@ -400,7 +400,7 @@ import LineChart from './Charts/LineChart.js'
                     datasets: [
                         {
                             label: 'Headcount per Region',
-                            backgroundColor: '#FB6340',
+                            backgroundColor: 'rgba(251,99,64, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
@@ -432,7 +432,7 @@ import LineChart from './Charts/LineChart.js'
                     datasets: [
                         {
                             label: 'Gender',
-                            backgroundColor: '#FFD600',
+                            backgroundColor: 'rgba(255,214,0, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
@@ -464,7 +464,7 @@ import LineChart from './Charts/LineChart.js'
                     datasets: [
                         {
                             label: 'Marital Status',
-                            backgroundColor: '#11CDEF',
+                            backgroundColor: 'rgba(17,205,239, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
@@ -499,7 +499,7 @@ import LineChart from './Charts/LineChart.js'
                     datasets: [
                         {
                             label: 'Headcount per Cluster',
-                            backgroundColor: '#F5365C',
+                            backgroundColor: 'rgba(252,25,70, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
                             pointBorderColor: '#249EBF',
