@@ -111,6 +111,7 @@ Route::get('logout', function(){
 
 
             Route::get('/decrypt-monthly-basic-salary/{employee}',['as'=>'employees.decryptMonthlyBasicSalary','uses'=>'EmployeeController@decryptMonthlyBasicSalary','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/decrypt-monthly-basic-salary-record/{employee}',['as'=>'employees.decryptMonthlyBasicSalaryRecord','uses'=>'EmployeeController@decryptMonthlyBasicSalaryRecord','middleware' => ['role:Administrator|HR Staff']]);
 
             //All Approvers
             Route::get('/employee-head-approvers', 'EmployeeController@employeeHeadApprovers');

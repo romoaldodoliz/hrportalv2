@@ -573,12 +573,51 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-12 mt-4 mb-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
+                                                <h4>Salary Record</h4>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover table-bordered" id="tab_assign_head">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Date
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Old Salary
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    New Salary
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Reason
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(record,index) in salary_records" v-bind:key="index">
+                                                                <td>
+                                                                    {{ record.salary_date }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ record.old_salary }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ record.new_salary }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ record.reason }}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                             <div class="col-md-12">
                                                 <h4>System Approvers</h4>
                                                 <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;" @click="fetchApprovers()"><i class="fas fa-redo" title="Refresh Approver"></i></button>
                                                 <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addApprover()">Add Row</button>
                                                  <div class="table-responsive">
-                                                    <table class="table table-hover" id="tab_assign_head">
+                                                    <table class="table table-hover table-bordered" id="tab_assign_head">
                                                         <thead>
                                                             <tr>
                                                                 <th class="text-center">
@@ -1519,7 +1558,8 @@
                 hr_employees : [],
                 bu_heads : [],
                 npa_request_detail : [],
-                npa_request_edit : false
+                npa_request_edit : false,
+                salary_records : []
             }
         },
         created(){
@@ -1668,18 +1708,35 @@
                 this.clearNPAForm();
                 this.npa_request_errors = [];
                 this.npaRequestDetails = employee;
+                this.npaMonthlyBasicSalary();
                 this.npa_request.from_company = employee.companies[0] ? employee.companies[0].id : "";
                 this.npa_request.from_location = employee.locations[0] ? employee.locations[0].id : "";
                 this.npa_request.from_position_title = employee.position;
                 this.npa_request.from_immediate_manager = employee.immediate_superior[0] ? employee.immediate_superior[0].employee_head_id : "";
                 this.npa_request.from_department = employee.departments[0] ? employee.departments[0].id : "";
                 this.npa_request.bu_head = employee.bu_head[0] ? employee.bu_head[0].employee_head_id : "";
-
-                this.fetchNPARequestLists(employee.id);
+                this.fetchNPARequestLists();
             },
-            fetchNPARequestLists(employee_id){
+            npaMonthlyBasicSalary(){
+                axios.get('/decrypt-monthly-basic-salary/'+this.npaRequestDetails.id)
+                .then(response => { 
+                    if(response.data){
+                        console.log(response.data);
+                        this.npa_request.from_monthly_basic_salary = response.data;
+                    }else{
+                        this.npa_request.from_monthly_basic_salary = "";
+                    }
+                })
+                .catch(error => { 
+                    this.npa_request.from_monthly_basic_salary =  "";
+                })
+                
+                
+            },
+            
+            fetchNPARequestLists(){
                 this.npaRequestLists = [];
-                axios.get('/get-npa-requests/' + employee_id)
+                axios.get('/get-npa-requests/' + this.npaRequestDetails.id)
                 .then(response => { 
                     this.npaRequestLists = response.data;
                 })
@@ -2332,6 +2389,9 @@
                 //Employee basic salary
                 this.fetchMonthlyBasicSalary();
 
+                //Salary record
+                this.fetchSalaryRecords();
+
                 //Attachment
                 var num = Math.random();
                 this.profile_image = 'storage/id_image/employee_image/' + employee.id + '.png?v='+num;
@@ -2349,6 +2409,16 @@
                 if(marital_status){
                     marital_status.value = '';
                 }
+            },
+            fetchSalaryRecords(){
+                this.salary_records = [];
+                axios.get('/decrypt-monthly-basic-salary-record/'+this.employee_copied.id)
+                .then(response => { 
+                   this.salary_records = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
             },
             validateMaritalStatus(){
 

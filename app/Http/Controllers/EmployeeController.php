@@ -19,6 +19,7 @@ use App\EmployeeTransfer;
 use App\DependentAttachment;
 use App\Api;
 use App\EmployeeNpaRequest;
+use App\EmployeeSalaryRecord;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -1406,7 +1407,17 @@ class EmployeeController extends Controller
 
                 $monthly_basic_salary = "";
                 if($npa_request['to_monthly_basic_salary']){
-                    $monthly_basic_salary =  $npa_request['to_monthly_basic_salary'];
+                    $data = [];
+                    $data['monthly_basic_salary'] = Crypt::encryptString($npa_request['to_monthly_basic_salary']);
+                    $employee->update($data);
+
+                    $salary_data = [];
+                    $salary_data['employee_id'] = $employee['id'];
+                    $salary_data['old_salary'] = Crypt::encryptString($npa_request['from_monthly_basic_salary']);
+                    $salary_data['new_salary'] = Crypt::encryptString($npa_request['to_monthly_basic_salary']);
+                    $salary_data['reason'] = ucwords($npa_request['subject']);
+                    $salary_data['salary_date'] = date('Y-m-d');
+                    EmployeeSalaryRecord::create($salary_data);
                 }
 
                 $npa_request_data = [];
@@ -1426,5 +1437,22 @@ class EmployeeController extends Controller
     public function decryptMonthlyBasicSalary(Employee $employee){
         return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
     }
+
+    public function decryptMonthlyBasicSalaryRecord(Employee $employee){
+        $salary_records = EmployeeSalaryRecord::where('employee_id',$employee->id)->get();
+
+        if($salary_records){
+            $salary_record_data = [];
+            foreach($salary_records as $k => $salary_record){
+                $salary_record_data[$k] = $salary_record;
+                $salary_record_data[$k]['old_salary'] = $salary_record['old_salary'] ? Crypt::decryptString($salary_record['old_salary']) : "";
+                $salary_record_data[$k]['new_salary'] = $salary_record['new_salary'] ? Crypt::decryptString($salary_record['new_salary']) : "";
+            }
+            return $salary_record_data;
+        }else{
+            return [];
+        }
+    }
+
 
 }
