@@ -422,23 +422,120 @@ class HomeController extends Controller
 
         $year = date('Y');
 
-        $all_employees = Employee::select('id','date_hired')->whereYear('date_hired',$year)->count();
-        $jan = Employee::select('id','date_hired')->whereMonth('date_hired','01')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $feb = Employee::select('id','date_hired')->whereMonth('date_hired','02')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $mar = Employee::select('id','date_hired')->whereMonth('date_hired','03')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $apr = Employee::select('id','date_hired')->whereMonth('date_hired','04')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $may = Employee::select('id','date_hired')->whereMonth('date_hired','05')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $jun = Employee::select('id','date_hired')->whereMonth('date_hired','06')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $jul = Employee::select('id','date_hired')->whereMonth('date_hired','07')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $aug = Employee::select('id','date_hired')->whereMonth('date_hired','08')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $sep = Employee::select('id','date_hired')->whereMonth('date_hired','09')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $oct = Employee::select('id','date_hired')->whereMonth('date_hired','10')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $nov = Employee::select('id','date_hired')->whereMonth('date_hired','11')->whereYear('date_hired',$year)->where('status','Active')->count();
-        $dec = Employee::select('id','date_hired')->whereMonth('date_hired','12')->whereYear('date_hired',$year)->where('status','Active')->count();
+        
 
-        $datas = [$jan,$feb,$mar,$apr,$may,$jun,$jul,$aug,$sep,$oct,$nov,$dec];
+        $jan_total = 0;
+        $feb_total = 0;
+        $mar_total = 0;
+        $apr_total = 0;
+        $may_total = 0;
+        $jun_total = 0;
+        $jul_total = 0;
+        $aug_total = 0;
+        $sep_total = 0;
+        $oct_total = 0;
+        $nov_total = 0;
+        $dec_total = 0;
 
-        return $datas;
+        $m = date('m');
+        if( 1 <= $m){
+            $jan_from_date = date('Y-01-01');
+            $jan_to_date = date('Y-01-t');
+            $jan_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $jan_to_date)->where('status','Active')->count();
+            $jan_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $jan_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $jan_to_date)->count();
+            $jan_total = $jan_total_active + $jan_total_resigned;
+        }
+
+        if( 2 <= $m){
+            $feb_from_date = date('Y-02-01');
+            $feb_to_date = date('Y-02-t');
+            $feb_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $feb_to_date)->where('status','Active')->count();
+            $feb_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $feb_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $feb_to_date)->count();
+            $feb_total = $feb_total_active + $feb_total_resigned;
+        }
+
+        if( 3 <= $m){
+            $mar_from_date = date('Y-03-01');
+            $mar_to_date = date('Y-03-t');
+            $mar_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $mar_to_date)->where('status','Active')->count();
+            $mar_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $mar_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $mar_to_date)->count();
+            $mar_total = $mar_total_active + $mar_total_resigned;
+        }
+
+        if( 4 <= $m){
+            $apr_from_date = date('Y-04-01');
+            $apr_to_date = date('Y-04-t');
+            $apr_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $apr_to_date)->where('status','Active')->count();
+            $apr_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $apr_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $apr_to_date)->count();
+            $apr_total = $apr_total_active + $apr_total_resigned;
+        }
+
+        if( 5 <= $m){
+            $may_from_date = date('Y-05-01');
+            $may_to_date = date('Y-05-t');
+            $may_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $may_to_date)->where('status','Active')->count();
+            $may_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $may_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $may_to_date)->count();
+            $may_total = $may_total_active + $may_total_resigned;
+        }
+
+        if( 6 <= $m){
+            $jun_from_date = date('Y-06-01');
+            $jun_to_date = date('Y-06-t');
+            $jun_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $jun_to_date)->where('status','Active')->count();
+            $jun_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $jun_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $jun_to_date)->count();
+            $jun_total = $jun_total_active + $jun_total_resigned;
+        }
+
+        if( 7 <= $m){
+            $jul_from_date = date('Y-07-01');
+            $jul_to_date = date('Y-07-t');
+            $jul_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $jul_to_date)->where('status','Active')->count();
+            $jul_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $jul_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $jul_to_date)->count();
+            $jul_total = $jul_total_active + $jul_total_resigned;
+        }
+
+        if( 8 <= $m){
+            $aug_from_date = date('Y-08-01');
+            $aug_to_date = date('Y-08-t');
+            $aug_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $aug_to_date)->where('status','Active')->count();
+            $aug_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $aug_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $aug_to_date)->count();
+            $aug_total = $aug_total_active + $aug_total_resigned;
+        }
+
+        if( 9 <= date('m')){
+            $sep_from_date = date('Y-09-01');
+            $sep_to_date = date('Y-09-t');
+            $sep_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $sep_to_date)->where('status','Active')->count();
+            $sep_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $sep_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $sep_to_date)->count();
+            $sep_total = $sep_total_active + $sep_total_resigned;
+        }
+
+        if( 10 <= date('m')){
+            $oct_from_date = date('Y-10-01');
+            $oct_to_date = date('Y-10-t');
+            $oct_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $oct_to_date)->where('status','Active')->count();
+            $oct_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $oct_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $oct_to_date)->count();
+            $oct_total = $oct_total_active + $oct_total_resigned;
+        }
+
+        if( 11 <= date('m')){
+            $nov_from_date = date('Y-11-01');
+            $nov_to_date = date('Y-11-t');
+            $nov_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $nov_to_date)->where('status','Active')->count();
+            $nov_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $nov_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $nov_to_date)->count();
+            $nov_total = $nov_total_active + $nov_total_resigned;
+        }
+
+        if( 12 <= date('m')){
+            $dec_from_date = date('Y-12-01');
+            $dec_to_date = date('Y-12-t');
+            $dec_total_active = Employee::select('id','date_hired')->where('date_hired','<=', $dec_to_date)->where('status','Active')->count();
+            $dec_total_resigned = Employee::select('id','date_hired')->where('date_hired','<=', $dec_to_date)->whereNotNull('date_resigned')->where('date_resigned','>=', $dec_to_date)->count();
+            $dec_total = $dec_total_active + $dec_total_resigned;
+        }
+
+        return $datas = [$jan_total,$feb_total,$mar_total,$apr_total,$may_total,$jun_total,$jul_total,$aug_total,$sep_total,$oct_total,$nov_total,$dec_total];
+
     }
 
     public function getEmployeeAgeCount(){

@@ -113,7 +113,7 @@
                 <div class="card shadow mb-3">
                     <h2 class="mb-3 mt-2 ml-2">Year to Date Headcount</h2>
                     <div class="card-body">
-                        <line-chart :chart-data="dataYeartodateHeadcount" :height="70" :download="true"  ></line-chart>
+                        <bar-chart :chart-data="dataYeartodateHeadcount" :height="70" :download="true"  ></bar-chart>
                     </div>
                 
                 </div>
@@ -330,7 +330,7 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataYeartodateHeadcount = {
-                    labels: ['Jan','Feb','Mar','Apr','May', 'Jun' , 'Jul', 'Aug', 'Sept', 'Oct','Nov','Dec'],
+                    labels: ['Jan (' + count[0] + ')','Feb (' + count[1] + ')','Mar (' + count[2] + ')','Apr (' + count[3] + ')','May (' + count[4] + ')', 'Jun (' + count[5] + ')' , 'Jul (' + count[6] + ')', 'Aug (' + count[7] + ')', 'Sept (' + count[8] + ')', 'Oct (' + count[9] + ')','Nov (' + count[10] + ')','Dec (' + count[11] + ')'],
                     datasets: [
                         {
                             label: "",
