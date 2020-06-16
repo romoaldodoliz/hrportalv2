@@ -1094,6 +1094,8 @@ class EmployeeController extends Controller
         $filtered_data = [];
 
         foreach( $all_employee as $key => $employee ){
+
+            $filtered_data[$key] = $employee;
             $filtered_data[$key]['user_id'] = $employee['user_id'];
             $filtered_data[$key]['id_number'] = $employee['id_number'];
             $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
