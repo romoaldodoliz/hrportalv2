@@ -243,6 +243,23 @@
                                     <span class="text-danger" v-if="errors.to"> {{ errors.to[0] }} </span>
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>Select Location</label>
+                                    <select class="form-control" v-model="location" id="company">
+                                        <option value="All">All</option>
+                                        <option value="BGC Taguig">BGC Taguig</option>
+                                        <option value="Manila">Manila</option>
+                                        <option value="Bulacan">Bulacan</option>
+                                        <option value="Bataan">Bataan</option>
+                                        <option value="Iloilo">Iloilo</option>
+                                        <option value="Davao">Davao</option>
+                                        <option value="Capiz">Capiz</option>
+                                        <option value="Bacolod">Bacolod</option>
+                                        
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-xl-12">
                                 <div v-if="export_employees.length > 0">
                                     <download-excel
@@ -489,6 +506,7 @@
                 export_employees : [],
                 from : '',
                 to : '',
+                location : '',
                 json_fields: {
                     'Date': 'date_time',
                     'Name': 'name',
@@ -523,6 +541,7 @@
                 let formData = new FormData();
                 formData.append('from', this.from);
                 formData.append('to', this.to);
+                formData.append('location', this.location);
 
                 axios.post(`/fetch-apply-filter-hdf-employee`, 
                     formData
