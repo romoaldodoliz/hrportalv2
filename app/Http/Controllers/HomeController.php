@@ -687,7 +687,7 @@ class HomeController extends Controller
         
         $cluster_non_count = Employee::select('id','cluster','status')->whereNull('cluster')->where('status','Active')->count();
 
-        $datas[$x]['name'] = 'None (' . $cluster_non_count . ')';
+        $datas[$x]['name'] = 'Others (' . $cluster_non_count . ')';
         $datas[$x]['count'] = $cluster_non_count;
 
         return $datas;
