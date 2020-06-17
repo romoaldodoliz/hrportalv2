@@ -333,7 +333,7 @@ import LineChart from './Charts/LineChart.js'
                     labels: ['Jan (' + count[0] + ')','Feb (' + count[1] + ')','Mar (' + count[2] + ')','Apr (' + count[3] + ')','May (' + count[4] + ')', 'Jun (' + count[5] + ')' , 'Jul (' + count[6] + ')', 'Aug (' + count[7] + ')', 'Sept (' + count[8] + ')', 'Oct (' + count[9] + ')','Nov (' + count[10] + ')','Dec (' + count[11] + ')'],
                     datasets: [
                         {
-                            label: "",
+                            label: "Year to Date Headcount",
                             backgroundColor: 'rgba(45, 206 , 137, 0.5)',
                             pointBackgroundColor: 'white',
                             borderWidth: 1,
@@ -364,7 +364,7 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeAgecount = {
-                    labels: ['20 yrs. old and Below (' + count[0] + ')','21 - 30 yrs. old (' + count[1] + ')','31-40 yrs. old (' + count[2] + ')','41-50 yrs. old ('  + count[3] + ')','51-60 yrs old (' + count[4] + ')', 'None (' + count[5] + ')'],
+                    labels: ['20 yrs. old and Below (' + count[0] + ')','21 - 30 yrs. old (' + count[1] + ')','31-40 yrs. old (' + count[2] + ')','41-50 yrs. old ('  + count[3] + ')','51-60 yrs old (' + count[4] + ')', 'Others (' + count[5] + ')'],
                     datasets: [
                         {
                             label: 'Employee Age',
@@ -396,7 +396,7 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeRegioncount = {
-                    labels: ['Luzon (' + count[0] + ')' ,'Visayas (' + count[1] + ')', 'Mindanao (' + count[2] + ')','None (' + count[3] + ')'],
+                    labels: ['Luzon (' + count[0] + ')' ,'Visayas (' + count[1] + ')', 'Mindanao (' + count[2] + ')','Others (' + count[3] + ')'],
                     datasets: [
                         {
                             label: 'Headcount per Region',
@@ -428,7 +428,7 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeGendercount = {
-                    labels: ['Male (' + count[0] + ')','Female (' + count[1] + ')','None (' + count[2] + ')'],
+                    labels: ['Male (' + count[0] + ')','Female (' + count[1] + ')','Others (' + count[2] + ')'],
                     datasets: [
                         {
                             label: 'Gender',
@@ -460,7 +460,7 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeMaritalStatuscount = {
-                    labels: ['Single (' + count[0] + ')','Married (' + count[1] + ')','Widow (' + count[2] + ')','None (' + count[3] + ')'],
+                    labels: ['Single (' + count[0] + ')','Married (' + count[1] + ')','Widow (' + count[2] + ')','Others (' + count[3] + ')'],
                     datasets: [
                         {
                             label: 'Marital Status',
