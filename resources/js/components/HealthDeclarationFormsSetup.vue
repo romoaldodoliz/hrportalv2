@@ -508,7 +508,7 @@
                 to : '',
                 location : '',
                 json_fields: {
-                    'Date': 'date_time',
+                    'Date': 'created_at',
                     'Name': 'name',
                     'Dept/BU/Position/Location': 'dept_bu_position',
                     'Contact Number' : 'contact_number',
