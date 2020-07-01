@@ -354,5 +354,8 @@ Route::get('logout', function(){
             return $months;
         });
 
+        Route::get('overideBiometricsID/{employee}','EmployeeController@overideBiometricsID');
+
+        Route::get('addCardBiometricsID/{employee}','EmployeeController@addCardBiometricsID');
 
     });

@@ -885,12 +885,12 @@ class EmployeeController extends Controller
         $classification = $employee->classification;
         if($classification = 'Project'){
             Fpdf::SetTextColor(255,255,255);
-            Fpdf::SetFillColor(0,130,60);
+            Fpdf::SetFillColor(0,130,55);
             Fpdf::SetXY(0,78);
             Fpdf::SetFont('Arial', 'B', 10);
             Fpdf::MultiCell(54,8, "PROJECT EMPLOYEE" ,0,'C',TRUE);
         }
-        
+        Fpdf::SetTextColor(0,0,0);
         //Back
         Fpdf::AddPage("P", [85.60, 53.98]);
         Fpdf::SetMargins(0,0,0,0);
