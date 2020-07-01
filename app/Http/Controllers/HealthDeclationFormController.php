@@ -1050,6 +1050,7 @@ class HealthDeclationFormController extends Controller
             ];
         }else if($location == "Bataan"){
             $ip_address = [
+                '10.96.132',
                 '10.96.133',
                 '10.96.134',
                 '10.96.135'

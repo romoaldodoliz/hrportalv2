@@ -21,6 +21,8 @@ use App\Api;
 use App\EmployeeNpaRequest;
 use App\EmployeeSalaryRecord;
 
+use App\RfidUser;
+
 use Carbon\Carbon;
 use Fpdf;
 use File;
@@ -31,6 +33,11 @@ use Hash;
 use DB;
 
 use Illuminate\Support\Facades\Crypt;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ServerException;
 
 class EmployeeController extends Controller
 {
@@ -782,7 +789,7 @@ class EmployeeController extends Controller
     }
 
     public function print_id(Employee $employee){
-
+        
         $employee =  Employee::select('id','id_number','middle_initial','name_suffix','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
 
         if($employee['nick_name'] == '' || $employee['nick_name'] == '-'){
@@ -875,6 +882,15 @@ class EmployeeController extends Controller
         Fpdf::SetFont('Arial', 'B', 7);
         Fpdf::MultiCell(54,2.5, ucwords($department) ,0,'C');
 
+        $classification = $employee->classification;
+        if($classification = 'Project'){
+            Fpdf::SetTextColor(255,255,255);
+            Fpdf::SetFillColor(0,130,60);
+            Fpdf::SetXY(0,78);
+            Fpdf::SetFont('Arial', 'B', 10);
+            Fpdf::MultiCell(54,8, "PROJECT EMPLOYEE" ,0,'C',TRUE);
+        }
+        
         //Back
         Fpdf::AddPage("P", [85.60, 53.98]);
         Fpdf::SetMargins(0,0,0,0);
@@ -1455,6 +1471,233 @@ class EmployeeController extends Controller
             return [];
         }
     }
+    
+    public function addCardBiometricsID(Employee $employee){
 
+        $full_name = $employee->first_name . ' ' . $employee->last_name;
+            
+        $get_rfid_users = RfidUser::first();
+        $get_users = json_decode($get_rfid_users['door_users'],true);
+        $get_face_users = json_decode($get_rfid_users['face_users'],true);
 
+        //Get User
+        $face_user =  $this->get_user($get_face_users, $full_name);
+
+        if($face_user){
+            $face_name = '';
+            $face_user_id = '';
+
+            foreach($face_user as $user_data){
+                $face_name = $user_data['name'];
+                $face_user_id = $user_data['user_id'];
+            }
+
+            $client = new Client();
+
+            $client = new Client([
+                'base_uri' => 'http://10.96.4.61:8795/v2/',
+                'cookies' => true,
+            ]);
+
+            $client->request('POST', 'login', [
+                'json' => [
+                    'name' => 'fcovid19',
+                    'password' => '$upr3m@!',
+                    'user_id' => 'admin'
+                ]
+            ]);
+
+            try{
+
+                $new_id_card = ltrim($employee->door_id_number, "0");  
+
+                //Saved Card 
+                $save_card = $client->request('POST', 'cards/wiegand_card', [
+                    'json' => [
+                        'wiegand_card_id_list' => [[
+                            'card_id'=> "$new_id_card"
+                        ]],
+                        'wiegand_format_id' => 5,
+                    ]
+                ]);
+
+                $save_card_response = json_decode($save_card->getBody(), true);
+
+                if($save_card_response['status_code'] == "CREATED"){
+                    $id_data = [];
+                    $id_data['add_card_id'] = $save_card_response['id'];
+                    $employee->update($id_data);
+
+                    return 'saved';
+                }else{
+                    return 'not_saved';
+                }
+            }
+            catch (BadResponseException $e) {
+                return 'not_saved';
+            }       
+            catch (ServerException $e) {
+                return 'not_saved';
+            }       
+            catch (ClientException $e) {
+                return 'not_saved';
+            }       
+        }
+    }
+
+    public function overideBiometricsID(Employee $employee){
+
+        $full_name = $employee->first_name . ' ' . $employee->last_name;
+            
+        $get_rfid_users = RfidUser::first();
+        $get_users = json_decode($get_rfid_users['door_users'],true);
+        $get_face_users = json_decode($get_rfid_users['face_users'],true);
+
+        //Get User
+        $face_user =  $this->get_user($get_face_users, $full_name);
+
+        if($face_user){
+            $face_name = '';
+            $face_user_id = '';
+
+            foreach($face_user as $user_data){
+                $face_name = $user_data['name'];
+                $face_user_id = $user_data['user_id'];
+            }
+
+            // return $this->getUserCards($face_user_id);
+
+            if($employee->door_id_number){
+                
+                $new_id_card = ltrim($employee->door_id_number, "0");  
+
+                $unassigned_card = $this->getUnassignedCard("$new_id_card");
+
+                $client = new Client();
+
+                $client = new Client([
+                    'base_uri' => 'http://10.96.4.61:8795/v2/',
+                    'cookies' => true,
+                ]);
+
+                $client->request('POST', 'login', [
+                    'json' => [
+                        'name' => 'fcovid19',
+                        'password' => '$upr3m@!',
+                        'user_id' => 'admin'
+                    ]
+                ]);
+
+                
+                
+                try{
+                    if($unassigned_card){
+                        $card_id = $unassigned_card['card_id'];
+                        $id = $unassigned_card['id'];
+
+                        if($card_id){
+                            //Assign card for user 
+                            $put_card = $client->request('PUT', 'users/' . $face_user_id . '/cards',[
+                                'json' => [
+                                    'card_list' => [[
+                                        'card_id'=>'3631098',
+                                        'id'=>'1038'
+                                    ]]
+                                ]
+                            ]);
+                            return $put_cardresponse = json_decode($put_card->getBody(), true);
+                        }
+                    }else{
+                        return 'card_existing';
+                    }  
+                }
+                catch (BadResponseException $e) {
+                    return $e;
+                }       
+                catch (ServerException $e) {
+                    return $e;
+                }       
+                catch (ClientException $e) {
+                    return $e;
+                }        
+            }
+        }else{
+            return 'no_access';
+        }
+        
+        
+    }
+    
+    public function getUserCards($user_id){
+        $client = new Client();
+
+        $client = new Client([
+            'base_uri' => 'http://10.96.4.61:8795/v2/',
+            'cookies' => true,
+        ]);
+
+        $client->request('POST', 'login', [
+            'json' => [
+                'name' => 'fcovid19',
+                'password' => '$upr3m@!',
+                'user_id' => 'admin'
+            ]
+        ]);
+
+        //Get User cards
+        $get_user_cards = $client->request('GET', 'users/' . $user_id . '/cards');
+        return $get_user_cards = json_decode($get_user_cards->getBody(), true);
+    }
+
+    public function getUnassignedCard($card_id){
+
+        $client = new Client();
+
+        $client = new Client([
+            'base_uri' => 'http://10.96.4.61:8795/v2/',
+            'cookies' => true,
+        ]);
+
+        $client->request('POST', 'login', [
+            'json' => [
+                'name' => 'fcovid19',
+                'password' => '$upr3m@!',
+                'user_id' => 'admin'
+            ]
+        ]);
+
+        //Get Unassigned Cards
+        $get_unassigned_cards = $client->request('GET', 'cards/unassigned?limit=10000&offset=0');
+        $get_unassigned_cards = json_decode($get_unassigned_cards->getBody(), true);
+        
+        $selected_card = [];
+        if($get_unassigned_cards){
+            foreach($get_unassigned_cards['records'] as $card){
+                if($card['card_id'] == $card_id){
+                    $selected_card['id'] = $card['id'];
+                    $selected_card['card_id'] = $card['card_id'];
+                }
+            }
+        }
+
+        return $selected_card;
+    }
+
+    public function get_user($get_users, $user){
+        $get_users_arr = [];
+
+        $result = array_filter($get_users, function ($item) use ($user) {
+            if (stripos($item['name'], $user) !== false) {
+                $get_users_arr['name'] = $item['name'];
+                $get_users_arr['user_id'] = $item['user_id'];
+
+                return $get_users_arr;
+            }else{
+                return $get_users_arr = [];
+            }
+        });
+
+        return $result;
+    }
+     
 }
