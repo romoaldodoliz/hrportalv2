@@ -790,7 +790,7 @@ class EmployeeController extends Controller
 
     public function print_id(Employee $employee){
         
-        $employee =  Employee::select('id','id_number','middle_initial','name_suffix','last_name','first_name','nick_name')->with('departments','locations')->where('id',$employee->id)->first();
+        $employee =  Employee::select('id','id_number','middle_initial','name_suffix','last_name','first_name','nick_name','classification')->with('departments','locations')->where('id',$employee->id)->first();
 
         if($employee['nick_name'] == '' || $employee['nick_name'] == '-'){
             $nick_name = strtolower($employee['first_name']);
@@ -882,8 +882,7 @@ class EmployeeController extends Controller
         Fpdf::SetFont('Arial', 'B', 7);
         Fpdf::MultiCell(54,2.5, ucwords($department) ,0,'C');
 
-        $classification = $employee->classification;
-        if($classification = 'Project'){
+        if($employee['classification'] == "Project"){
             Fpdf::SetTextColor(255,255,255);
             Fpdf::SetFillColor(0,130,55);
             Fpdf::SetXY(0,78);
