@@ -100,7 +100,7 @@ class SendRegularizationNotification extends Command
                             $data['reciever_name'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
                             $data['email_reciever'] =  $email ? $email['email'] : "";
 
-                            $date_of_regularization = date('Y-m-d', strtotime("+6 months", strtotime($employee['date_hired'])));
+                            $date_of_regularization = date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired'])));
                             $data['date_of_regularization'] =  $date_of_regularization ? date('F m, Y',strtotime($date_of_regularization)) : "";
 
                             if($data['email_reciever']){
@@ -150,7 +150,7 @@ class SendRegularizationNotification extends Command
                             $data['reciever_name'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
                             $data['email_reciever'] =  $email ? $email['email'] : "";
 
-                            $date_of_regularization = date('Y-m-d', strtotime("+6 months", strtotime($employee['date_hired'])));
+                            $date_of_regularization = date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired'])));
                             $data['date_of_regularization'] =  $date_of_regularization ? date('F m, Y',strtotime($date_of_regularization)) : "";
 
                             if($data['email_reciever']){

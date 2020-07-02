@@ -1524,11 +1524,11 @@
                     //Personal Info
                     'USER ID': 'user_id',
                     'ID NUMBER': 'id_number',
-                    'FIRST NAME': 'last_name',
+                    'FIRST NAME': 'first_name',
                     'MIDDLE NAME': 'middle_name',
                     'MIDDLE INITIAL': 'middle_initial',
                     'NICK NAME': 'nick_name',
-                    'LAST NAME': 'first_name',
+                    'LAST NAME': 'last_name',
                     'FULL NAME': 'full_name',
                     'NAME SUFFIX': 'name_suffix',
                     'MARITAL STATUS' : 'marital_status',
@@ -1539,9 +1539,9 @@
                     'BIRTHPLACE' : 'birthplace',
 
                     //Educational Background
-                    'TIRTIARY (NAME OF SCHOOL)' : 'school_graduated',
-                    'TIRTIARY (COURSE)' : 'school_course',
-                    'TIRTIARY (YEAR GRADUATED)' : 'school_year',
+                    'TERTIARY (NAME OF SCHOOL)' : 'school_graduated',
+                    'TERTIARY (COURSE)' : 'school_course',
+                    'TERTIARY (YEAR GRADUATED)' : 'school_year',
 
                     'VOCATIONAL COURSE (NAME OF SCHOOL)' : 'vocational_graduated',
                     'VOCATIONAL COURSE (COURSE)' : 'vocational_course',

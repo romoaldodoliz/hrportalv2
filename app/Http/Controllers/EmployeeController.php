@@ -1186,11 +1186,11 @@ class EmployeeController extends Controller
             $filtered_data[$key]['tenure'] = $tenure;
 
             //Get 5th month
-            $fifth_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+5 months", strtotime($employee['date_hired']))) : "";
+            $fifth_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+150 days", strtotime($employee['date_hired']))) : "";
             $filtered_data[$key]['fifth_month'] = $fifth_month;
 
             //Get 6th month
-            $six_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+6 months", strtotime($employee['date_hired']))) : "";
+            $six_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired']))) : "";
             $filtered_data[$key]['six_month'] = $six_month;
 
             //Personal Phone number
