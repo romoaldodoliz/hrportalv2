@@ -67,7 +67,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editCompanyModal" style="cursor: pointer" @click="companycopyObject(company)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteCompanyModal" style="cursor: pointer" @click="deleteCompany(company)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteCompanyModal" style="cursor: pointer" @click="deleteCompany(company)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -118,7 +118,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editDepartmentModal" style="cursor: pointer" @click="departmentcopyObject(department)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteDepartmentModal" style="cursor: pointer" @click="deleteDepartment(department)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteDepartmentModal" style="cursor: pointer" @click="deleteDepartment(department)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -168,7 +168,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editLocationModal" style="cursor: pointer" @click="locationcopyObject(location)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteLocationModal" style="cursor: pointer" @click="deleteLocation(location)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteLocationModal" style="cursor: pointer" @click="deleteLocation(location)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -218,7 +218,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editAddressModal" style="cursor: pointer" @click="addresscopyObject(address)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteAddressModal" style="cursor: pointer" @click="deleteAddress(address)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteAddressModal" style="cursor: pointer" @click="deleteAddress(address)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -270,7 +270,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editHeadModal" style="cursor: pointer" @click="headcopyObject(head)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteHeadModal" style="cursor: pointer" @click="deleteHead(head)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteHeadModal" style="cursor: pointer" @click="deleteHead(head)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -322,7 +322,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editLevelModal" style="cursor: pointer" @click="levelcopyObject(level)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteLevelModal" style="cursor: pointer" @click="deleteLevel(level)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteLevelModal" style="cursor: pointer" @click="deleteLevel(level)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -375,7 +375,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editMaritalModal" style="cursor: pointer" @click="maritalcopyObject(marital)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteMaritalModal" style="cursor: pointer" @click="deleteMarital(marital)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteMaritalModal" style="cursor: pointer" @click="deleteMarital(marital)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
@@ -428,7 +428,7 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                                 <a class="dropdown-item" data-toggle="modal" data-target="#editClusterModal" style="cursor: pointer" @click="clustercopyObject(cluster)">Edit</a>
-                                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteClusterModal" style="cursor: pointer" @click="deleteCluster(cluster)">Delete</a>
+                                                                <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteClusterModal" style="cursor: pointer" @click="deleteCluster(cluster)">Delete</a> -->
                                                             </div>
                                                         </div>
                                                     </td>
