@@ -2401,6 +2401,8 @@
                 this.termsConditions = false;
                 this.saveEmployee = true;
 
+                this.profile_image_file = '';
+
                 //Config Employee Fields
                 this.employee_copied = Object.assign({}, employee);
                 this.employee_copied.age = this.getAge(this.employee_copied.birthdate); 
