@@ -11,6 +11,7 @@ use App\Dependent;
 use App\Department;
 use App\Company;
 use App\Location;
+use App\Address;
 use App\User;
 use App\PrintIdLog;
 use App\EmployeeApprovalRequest;
@@ -821,8 +822,10 @@ class EmployeeController extends Controller
         
         $address = "";            
         if($employee->locations->first()->id){
-            $location = Location::with('addresses')->where('id',$employee->locations->first()->id)->first();
-            $address = isset($location->addresses->first()->name) ? $location->addresses->first()->name : '';
+            $location = Location::with('addresses')->where('id',$employee->locations->first()->id);
+            $get_address = Address::where('id',$employee->locations->first()->address_id)->first();
+            // $address = isset($location->addresses->first()->name) ? $location->addresses->first()->name : '';
+            $address = $get_address ? $get_address['name'] : '';
         }
 
         Fpdf::AddPage("P", [53.98,85.60]);
