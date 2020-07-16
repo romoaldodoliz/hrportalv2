@@ -1058,7 +1058,11 @@ class HealthDeclationFormController extends Controller
         }else if($location == "Iloilo"){
             $ip_address = [
                 '10.128.16',
-                '10.128.17'
+                '10.128.17',
+                '10.128.36',
+                '10.128.37',
+                '10.128.38',
+                '10.128.39',
             ];
         }else if($location == "Davao"){
             $ip_address = [
