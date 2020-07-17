@@ -1259,6 +1259,161 @@ class EmployeeController extends Controller
         return $filtered_data;
     }
 
+    public function exportInactiveEmployees(){
+        $all_employee = Employee::with('companies','departments','locations','employee_accountabilities')
+                                    ->where('status','Inactive')
+                                    ->orderBy('id','ASC')
+                                    ->get();
+        $filtered_data = [];
+
+        foreach( $all_employee as $key => $employee ){
+
+            $filtered_data[$key] = $employee;
+            $filtered_data[$key]['user_id'] = $employee['user_id'];
+            $filtered_data[$key]['id_number'] = $employee['id_number'];
+            $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
+            $filtered_data[$key]['middle_name'] = strtoupper($employee['middle_name']);
+            $filtered_data[$key]['last_name'] = strtoupper($employee['last_name']);
+            $middle_initial =  $employee['middle_initial'] ? $employee['middle_initial'] . '. ' : " ";
+            $filtered_data[$key]['full_name'] = strtoupper($employee['first_name'])  . ' '. $middle_initial . strtoupper($employee['last_name']);
+            $filtered_data[$key]['position'] = $employee['position'];
+            $filtered_data[$key]['level'] = $employee['level'];
+            $filtered_data[$key]['cluster'] = $employee['cluster'];
+            
+
+            if($employee['companies']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['company'] = $employee['companies'][0] ? $employee['companies'][0]['name'] : "";
+                }else{
+                    $filtered_data[$key]['company'] = "";
+                }
+            }else{
+                $filtered_data[$key]['company'] = "";
+            }
+           
+            $filtered_data[$key]['position'] = $employee['position'];
+
+            if($employee['departments']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['department'] = $employee['departments'][0]['name'];
+                }else{
+                    $filtered_data[$key]['department'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['department'] = "";
+            }
+
+            if($employee['locations']){
+                if(isset($employee['locations'][0])){
+                    $filtered_data[$key]['location'] = $employee['locations'][0]['name'];
+                }else{
+                    $filtered_data[$key]['location'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['location'] = "";
+            }
+
+            $filtered_data[$key]['mobile_number'] = $employee['mobile_number'];
+
+            if(count($employee['employee_accountabilities']) > 0){
+                $filtered_data[$key]['company_assign_phone'] = $employee['employee_accountabilities'][0]['inventories']['service_number'];
+            }else{
+                $filtered_data[$key]['company_assign_phone'] = "";
+            }
+            
+
+            $filtered_data[$key]['area'] = $employee['area'];
+            $filtered_data[$key]['date_hired'] = $employee['date_hired'];
+
+            $today = date("Y-m-d");
+
+            $date_hired = $employee['date_hired'];
+           
+            //Get Tenure
+            $tenure = "";
+            if($date_hired != '0000-00-00' && $date_hired){
+                $diff = date_diff(date_create($date_hired), date_create($today));
+                $year = $diff->format('%y');
+                $month = $diff->format('%m');
+
+                $tenure = $year . '.' . $month;
+            }
+
+            $filtered_data[$key]['tenure'] = $tenure;
+
+            //Get 5th month
+            $fifth_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+150 days", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['fifth_month'] = $fifth_month;
+
+            //Get 6th month
+            $six_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['six_month'] = $six_month;
+
+            //Personal Phone number
+            $filtered_data[$key]['mobile_number'] = str_replace("+63","",$employee['mobile_number']);
+
+            $filtered_data[$key]['employee_status'] = $employee['classification'];
+
+            $filtered_data[$key]['marital_status'] = $employee['marital_status'];
+
+            //Birthdate
+            $filtered_data[$key]['birthdate'] = $employee['birthdate'];
+
+            $birthdate = $employee['birthdate'];
+            $age = "";
+            if($birthdate != '0000-00-00' && $birthdate){
+                $diff = date_diff(date_create($birthdate), date_create($today));
+                $age = $diff->format('%y');
+            }
+            $filtered_data[$key]['age'] = $age;
+
+            $age_range = "";
+            if($age < 21){
+                $age_range = "21 Below";
+            }else if($age >= 21 && $age <= 30){
+                $age_range = "21 - 30 YEARS OLD";
+            }else if($age >= 31 && $age <= 40){
+                $age_range = "31 - 40 YEARS OLD";
+            }else if($age >= 41 && $age <= 50){
+                $age_range = "41 - 50 YEARS OLD";
+            }else if($age >= 51 && $age <= 60){
+                $age_range = "51 - 60 YEARS OLD";
+            }
+            $filtered_data[$key]['age_range'] = $age_range;
+
+            $filtered_data[$key]['gender'] = $employee['gender'];
+
+            $immediate_superior = AssignHead::where('employee_id' , $employee['id'])->where('head_id','3')->first();
+            if($immediate_superior){
+                $immediate_superior_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$immediate_superior['employee_head_id'])->where('status','Active')->first();
+                $filtered_data[$key]['immediate_superior'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
+            }else{
+                $filtered_data[$key]['immediate_superior'] = "";
+            }
+
+            $bu_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','4')->first();
+            if($bu_head){
+                $bu_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$bu_head['employee_head_id'])->where('status','Active')->first();
+                $filtered_data[$key]['bu_head'] =  $bu_head_details ? $bu_head_details['first_name'] . ' ' . $bu_head_details['last_name']  : "";
+            }else{
+                $filtered_data[$key]['bu_head'] = "";
+            }
+
+            $cluster_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','5')->first();
+            if($cluster_head){
+                $cluster_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$cluster_head['employee_head_id'])->where('status','Active')->first();
+                $filtered_data[$key]['cluster_head'] =  $cluster_head_details ? $cluster_head_details['first_name'] . ' ' . $cluster_head_details['last_name']  : "";
+            }else{
+                $filtered_data[$key]['cluster_head'] = "";
+            }
+            
+            $filtered_data[$key]['status'] = $employee['status'];
+        }
+        return $filtered_data;
+    }
+
     public function updateemployeeNpaRequest(Request $request){
 
         $data = $request->all();

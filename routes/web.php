@@ -98,6 +98,8 @@ Route::get('logout', function(){
             Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            
+            Route::get('/export-inactive-employees',['as'=>'employees.exportInactiveEmployees','uses'=>'EmployeeController@exportInactiveEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             Route::get('/employees-index-count',['as'=>'employees.employeeindexCount','uses'=>'EmployeeController@employeeindexCount','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-inactive-count',['as'=>'employees.employeeInactiveCount','uses'=>'EmployeeController@employeeInactiveCount','middleware' => ['role:Administrator|HR Staff']]);

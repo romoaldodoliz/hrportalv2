@@ -23,7 +23,16 @@
                                                 :fields = "json_fields"
                                                 class   = "btn btn-sm btn-default"
                                                 name    = "All HR Portal Employees.xls">
-                                                    Export to excel
+                                                    Export to excel (Active)
+                                            </download-excel>
+
+                                            <download-excel
+                                                v-if="export_inactive_employees.length > 0 && user_access_rights.download_export == 'YES'"
+                                                :data   = "export_inactive_employees"
+                                                :fields = "json_fields"
+                                                class   = "btn btn-sm btn-default"
+                                                name    = "All HR Portal Inactive Employees.xls">
+                                                    Export to excel (Inactive)
                                             </download-excel>
                                             
                                         </div> 
@@ -1520,6 +1529,7 @@
                 dependent_attachments: [],
                 fileSize: 0,
                 export_employees : [],
+                export_inactive_employees : [],
                 json_fields: {
                     //Personal Info
                     'USER ID': 'user_id',
@@ -1611,6 +1621,7 @@
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
             this.exportFetchEmployees();
+            this.exportFetchInactiveEmployees();
             this.fetchUserAccessRights();
             this.fetchHREmployees();
             this.fetchBUHeadEmployees();
@@ -2086,6 +2097,19 @@
                 .then(response => { 
                     if(response.data.length > 0){
                         this.export_employees = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            exportFetchInactiveEmployees(){
+                this.export_employees = [];
+                axios.get('/export-inactive-employees')
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.export_inactive_employees = response.data;
                     }
                     
                 })
