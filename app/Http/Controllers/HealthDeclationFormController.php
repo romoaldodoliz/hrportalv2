@@ -972,24 +972,25 @@ class HealthDeclationFormController extends Controller
 
         if($check_hdf_employee){
             if($data){
-                $hdf_employee = [];
-                if($data['status']){
-                    $hdf_employee['remarks'] =  $data['remarks'];
-                }
 
-                if($data['status']){
-                    $hdf_employee['status'] =$data['status'];
-                }
+                $hdf_employee = [];
+
+                $hdf_employee['remarks'] =  $data['remarks'];
+                $hdf_employee['status'] =$data['status'];
+                $hdf_employee['attachment_file'] = $attachment_file;
                 
-                if($data['status']){
-                    $hdf_employee['attachment_file'] = $attachment_file;
-                }
 
                 if($hdf_employee){
+                    $check_hdf = HealthDeclarationForm::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+                    if($check_hdf){
+                        $hdf = [];
+                        $hdf['remarks'] =  $data['remarks'];
+                        $hdf['status'] =$data['status'];
+                        $check_hdf->update($hdf);
+                    }
                     $check_hdf_employee->update($hdf_employee);
                 }
                
-
                 return $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
             }else{
                 return $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
