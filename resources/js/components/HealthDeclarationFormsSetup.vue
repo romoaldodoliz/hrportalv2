@@ -559,7 +559,7 @@
 
                 let formData = new FormData();
                 formData.append('from', this.from);
-                formData.append('to', this.from);
+                formData.append('to', this.to);
 
                 axios.post(`/fetch-apply-filter-hdf-ic-employee`, 
                     formData
