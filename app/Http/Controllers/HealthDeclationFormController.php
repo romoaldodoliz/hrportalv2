@@ -1105,9 +1105,67 @@ class HealthDeclationFormController extends Controller
 
         $from = $request->from ? $request->from : ""; 
         $to = $request->to ? $request->to : "";
+        $location = $request->to ? $request->location : "";
+        
+        $ip_address = [];
+        if($location == "BGC Taguig"){
+            $ip_address = [
+                '10.97'
+            ];
+        }else if($location == "Manila"){
+            $ip_address = [
+                '10.96.16',
+                '10.96.17'
+            ];
+        }else if($location == "Bulacan"){
+            $ip_address = [
+                '10.96.224',
+                '10.96.225'
+            ];
+        }else if($location == "Bataan"){
+            $ip_address = [
+                '10.96.132',
+                '10.96.133',
+                '10.96.134',
+                '10.96.135'
+            ];
+        }else if($location == "Iloilo"){
+            $ip_address = [
+                '10.128.16',
+                '10.128.17',
+                '10.128.36',
+                '10.128.37',
+                '10.128.38',
+                '10.128.39',
+            ];
+        }else if($location == "Davao"){
+            $ip_address = [
+                '10.160.1',
+                '10.160.2'
+            ];
+        }else if($location == "Capiz"){
+            $ip_address = [
+                '10.128.97',
+                '10.128.98',
+                '10.128.99'
+            ];
+        }else if($location == "Bacolod"){
+            $ip_address = [
+                '10.128.129',
+                '10.128.130',
+                '10.128.131'
+            ];
+        }
 
         return $summary = HealthDeclarationIcForm::where('created_at', '>=',  $from)
                                                             ->whereDate('created_at' ,'<=', $to)
+                                                            ->where(function ($query) use($ip_address) {
+                                                                if($ip_address){
+                                                                    for ($i = 0; $i < count($ip_address); $i++){
+                                                                        $query->orwhere('ip_address', 'like',  '%' . $ip_address[$i] .'%');
+                                                                     } 
+                                                                }   
+                                                            })
                                                             ->orderBy('created_at','DESC')
                                                             ->get();
     }
