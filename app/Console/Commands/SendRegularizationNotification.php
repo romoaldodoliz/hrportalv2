@@ -93,7 +93,7 @@ class SendRegularizationNotification extends Command
                             $data['employee_name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
                             $data['company'] =  $employee['companies'] ? $employee['companies'][0]['name'] : "";
                             $data['position'] =  $employee['position'];
-                            $data['date_hired'] =  date('F m, Y',strtotime($employee['date_hired']));
+                            $data['date_hired'] =  date('F d, Y',strtotime($employee['date_hired']));
                             $data['classification'] =  $employee['classification'];
                             $data['status'] =  $employee['status'];
                             $data['months'] =  $months;
@@ -143,7 +143,7 @@ class SendRegularizationNotification extends Command
                             $data['employee_name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
                             $data['company'] =  $employee['companies'] ? $employee['companies'][0]['name'] : "";
                             $data['position'] =  $employee['position'];
-                            $data['date_hired'] =  date('F m, Y',strtotime($employee['date_hired']));
+                            $data['date_hired'] =  date('F d, Y',strtotime($employee['date_hired']));
                             $data['classification'] =  $employee['classification'];
                             $data['status'] =  $employee['status'];
                             $data['months'] =  $months;
