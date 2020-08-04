@@ -101,7 +101,7 @@ class SendRegularizationNotification extends Command
                             $data['email_reciever'] =  $email ? $email['email'] : "";
 
                             $date_of_regularization = date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired'])));
-                            $data['date_of_regularization'] =  $date_of_regularization ? date('F m, Y',strtotime($date_of_regularization)) : "";
+                            $data['date_of_regularization'] =  $date_of_regularization ? date('F d, Y',strtotime($date_of_regularization)) : "";
 
                             if($data['email_reciever']){
                                 $validate_check_email_notification = SendEmailEmployeeRegularNotification::where('employee_id',$employee['id'])->where('month_status','3')->first();
@@ -151,7 +151,7 @@ class SendRegularizationNotification extends Command
                             $data['email_reciever'] =  $email ? $email['email'] : "";
 
                             $date_of_regularization = date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired'])));
-                            $data['date_of_regularization'] =  $date_of_regularization ? date('F m, Y',strtotime($date_of_regularization)) : "";
+                            $data['date_of_regularization'] =  $date_of_regularization ? date('F d, Y',strtotime($date_of_regularization)) : "";
 
                             if($data['email_reciever']){
                                 $validate_check_email_notification = SendEmailEmployeeRegularNotification::where('employee_id',$employee['id'])->where('month_status','5')->first();
