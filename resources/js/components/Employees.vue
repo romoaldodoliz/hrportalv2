@@ -1543,7 +1543,15 @@
                     'NAME SUFFIX': 'name_suffix',
                     'MARITAL STATUS' : 'marital_status',
                     'DATE OF BIRTH' : 'birthdate',
-                    'EMPLOYEE AGE' : 'age',
+                    'EMPLOYEE AGE' : {
+                        callback: (value) => {
+                            if(value.age){
+                                return value.age.toString();
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
                     'AGE RANGE' : 'age_range',
                     'GENDER' : 'gender',
                     'BIRTHPLACE' : 'birthplace',
@@ -1567,6 +1575,7 @@
                     'POSITION': 'position',
                     'CLASSIFICATION': 'classification',
                     'DATE HIRED': 'date_hired',
+                    'DATE RESIGNED': 'date_resigned',
                     'TENURE': 'tenure',
                     '5th month': 'fifth_month',
                     '6th month': 'six_month',
