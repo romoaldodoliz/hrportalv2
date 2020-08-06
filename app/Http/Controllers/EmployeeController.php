@@ -1171,6 +1171,7 @@ class EmployeeController extends Controller
 
             $filtered_data[$key]['area'] = $employee['area'];
             $filtered_data[$key]['date_hired'] = $employee['date_hired'];
+            $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
 
             $today = date("Y-m-d");
 
@@ -1330,6 +1331,7 @@ class EmployeeController extends Controller
             $today = date("Y-m-d");
 
             $date_hired = $employee['date_hired'];
+            $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
            
             //Get Tenure
             $tenure = "";

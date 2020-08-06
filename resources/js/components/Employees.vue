@@ -1574,6 +1574,7 @@
                     'ESS Employee No.': 'ess_ee_number',
                     'POSITION': 'position',
                     'CLASSIFICATION': 'classification',
+                    'BASIC SALARY': 'basic_salary',
                     'DATE HIRED': 'date_hired',
                     'DATE RESIGNED': 'date_resigned',
                     'TENURE': 'tenure',
