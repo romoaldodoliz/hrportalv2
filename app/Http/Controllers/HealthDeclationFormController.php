@@ -297,6 +297,8 @@ class HealthDeclationFormController extends Controller
                     $hdf_employee['date_time'] = date('Y-m-d');
                     HdfEmployee::create($hdf_employee);
 
+                    HealthDeclarationForm::create($data);
+
                     $message = $data['name'];
                     // if($location){
                     //     $message = $data['name'] . ' - Location: ' + $location;
@@ -305,7 +307,7 @@ class HealthDeclationFormController extends Controller
                     // }
                     $send_message = $this->send_message($message,"not_allowed");
                     
-                    HealthDeclarationForm::create($data);
+                    
 
                     return 'not_allowed';
                 }else{
@@ -427,6 +429,8 @@ class HealthDeclationFormController extends Controller
                     $hdf_employee['date_time'] = date('Y-m-d');
                    
                     HdfIcEmployee::create($hdf_employee);
+                    
+                    HealthDeclarationIcForm::create($data);
 
                     $message = $data['name'];
                     // if($location){
@@ -436,7 +440,7 @@ class HealthDeclationFormController extends Controller
                     // }
                     $send_message = $this->send_message($message,"not_allowed");
 
-                    HealthDeclarationIcForm::create($data);
+                    
 
                     return 'not_allowed';
                 }else{
