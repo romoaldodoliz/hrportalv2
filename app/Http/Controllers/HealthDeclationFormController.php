@@ -255,31 +255,30 @@ class HealthDeclationFormController extends Controller
             $data['date_time'] = date('h:m:s A m/d/Y');
             $data['ip_address'] =  $clientIP;
 
-            // $location = '';
-            // //BGC Taguig
-            // if(stristr($clientIP, '10.97')){
-            //     $location = "BGC";
-            // }
-            // else if(stristr($clientIP, '10.96.16') || stristr($clientIP, '10.96.17')){
-            //     $location = "Manila";
-            // }
-            // else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
-            //     $location = "Bulacan";
-            // }
-            // else if(stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
-            //     $location = "Bataan";
-            // }
-            // else if(stristr($clientIP, '10.160.1') || stristr($clientIP, '10.160.2')){
-            //     $location = "Davao";
-            // }
-            // else if(stristr($clientIP, '10.128.97') || stristr($clientIP, '10.128.98') || stristr($clientIP, '10.128.99')){
-            //     $location = "Capiz";
-            // }
-            // else if(stristr($clientIP, '10.128.129') || stristr($clientIP, '10.128.130') || stristr($clientIP, '10.128.131')){
-            //     $location = "Bacolod";
-            // }else{
-            //     $location = "";
-            // }
+            $location = '';
+            if(stristr($clientIP, '10.97')){
+                $location = "BGC";
+            }
+            else if(stristr($clientIP, '10.96.16') || stristr($clientIP, '10.96.17')){
+                $location = "Manila";
+            }
+            else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
+                $location = "Bulacan";
+            }
+            else if(stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
+                $location = "Bataan";
+            }
+            else if(stristr($clientIP, '10.160.1') || stristr($clientIP, '10.160.2')){
+                $location = "Davao";
+            }
+            else if(stristr($clientIP, '10.128.97') || stristr($clientIP, '10.128.98') || stristr($clientIP, '10.128.99')){
+                $location = "Capiz";
+            }
+            else if(stristr($clientIP, '10.128.129') || stristr($clientIP, '10.128.130') || stristr($clientIP, '10.128.131')){
+                $location = "Bacolod";
+            }else{
+                $location = "";
+            }
             
             if($yes_count >= 1){
   
@@ -300,11 +299,11 @@ class HealthDeclationFormController extends Controller
                     HealthDeclarationForm::create($data);
 
                     $message = $data['name'];
-                    // if($location){
-                    //     $message = $data['name'] . ' - Location: ' + $location;
-                    // }else{
-                    //     $message = $data['name'];
-                    // }
+                    if($location){
+                        $message = $data['name'] . ' - Location: ' . $location;
+                    }else{
+                        $message = $data['name'];
+                    }
                     $send_message = $this->send_message($message,"not_allowed");
                     
                     
@@ -388,31 +387,30 @@ class HealthDeclationFormController extends Controller
             $data['date_time'] = date('h:m:s A m/d/Y');
             $data['ip_address'] =  $clientIP;
 
-            // $location = '';
-            // //BGC Taguig
-            // if(stristr($clientIP, '10.97')){
-            //     $location = "BGC";
-            // }
-            // else if(stristr($clientIP, '10.96.16') || stristr($clientIP, '10.96.17')){
-            //     $location = "Manila";
-            // }
-            // else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
-            //     $location = "Bulacan";
-            // }
-            // else if(stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
-            //     $location = "Bataan";
-            // }
-            // else if(stristr($clientIP, '10.160.1') || stristr($clientIP, '10.160.2')){
-            //     $location = "Davao";
-            // }
-            // else if(stristr($clientIP, '10.128.97') || stristr($clientIP, '10.128.98') || stristr($clientIP, '10.128.99')){
-            //     $location = "Capiz";
-            // }
-            // else if(stristr($clientIP, '10.128.129') || stristr($clientIP, '10.128.130') || stristr($clientIP, '10.128.131')){
-            //     $location = "Bacolod";
-            // }else{
-            //     $location = "";
-            // }
+            $location = '';
+            if(stristr($clientIP, '10.97')){
+                $location = "BGC";
+            }
+            else if(stristr($clientIP, '10.96.16') || stristr($clientIP, '10.96.17')){
+                $location = "Manila";
+            }
+            else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
+                $location = "Bulacan";
+            }
+            else if(stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
+                $location = "Bataan";
+            }
+            else if(stristr($clientIP, '10.160.1') || stristr($clientIP, '10.160.2')){
+                $location = "Davao";
+            }
+            else if(stristr($clientIP, '10.128.97') || stristr($clientIP, '10.128.98') || stristr($clientIP, '10.128.99')){
+                $location = "Capiz";
+            }
+            else if(stristr($clientIP, '10.128.129') || stristr($clientIP, '10.128.130') || stristr($clientIP, '10.128.131')){
+                $location = "Bacolod";
+            }else{
+                $location = "";
+            }
             
             if($yes_count >= 1){
   
@@ -433,11 +431,11 @@ class HealthDeclationFormController extends Controller
                     HealthDeclarationIcForm::create($data);
 
                     $message = $data['name'];
-                    // if($location){
-                    //     $message = $data['name'] . ' - Location: ' + $location;
-                    // }else{
-                    //     $message = $data['name'];
-                    // }
+                    if($location){
+                        $message = $data['name'] . ' - Location: ' . $location;
+                    }else{
+                        $message = $data['name'];
+                    }
                     $send_message = $this->send_message($message,"not_allowed");
 
                     
