@@ -256,6 +256,7 @@
                                         <option value="Davao">Davao</option>
                                         <option value="Capiz">Capiz</option>
                                         <option value="Bacolod">Bacolod</option>
+                                        <option value="Isabela">Isabela</option>
                                         
                                     </select>
                                 </div>

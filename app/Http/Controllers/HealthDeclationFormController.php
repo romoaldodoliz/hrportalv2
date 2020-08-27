@@ -1224,6 +1224,13 @@ class HealthDeclationFormController extends Controller
                 '10.128.130',
                 '10.128.131'
             ];
+        }else if($location == "Isabela"){
+            $ip_address = [
+                '10.96.33',
+                '10.96.34',
+                '10.96.35',
+                '10.96.36'
+            ];
         }
 
         return $summary = HealthDeclarationIcForm::where('created_at', '>=',  $from)
