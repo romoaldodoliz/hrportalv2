@@ -360,4 +360,8 @@ Route::get('logout', function(){
 
         Route::get('addCardBiometricsID/{employee}','EmployeeController@addCardBiometricsID');
 
+        //Print QR
+        Route::post('print_qr','EmployeeController@printEmployeeQR');
+        Route::get('preview_qr/{qrlog}','EmployeeController@printPreviewEmployeeQR');
+
     });

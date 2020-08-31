@@ -177,6 +177,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        LaravelQRCode\Providers\QRCodeServiceProvider::class,  
 
     ],
 
@@ -231,7 +232,7 @@ return [
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Fpdf' => Codedge\Fpdf\Facades\Fpdf::class,
         'Image' => Intervention\Image\Facades\Image::class,
-
+        'QRCode' => LaravelQRCode\Facades\QRCode::class     
     ],
 
 ];

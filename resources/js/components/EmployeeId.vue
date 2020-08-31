@@ -52,6 +52,7 @@
                                             </div> 
                                         <div class="col-xl-12">
                                             
+                                            <button class="btn btn-sm btn-info mt-3 float-right" @click="printQRCodes"> Print QR ({{checkedIDs.length}})</button>
 
                                              <download-excel
                                                 :data   = "employee_ids"
@@ -62,6 +63,8 @@
                                             </download-excel>
 
                                             <button class="btn btn-sm btn-primary mt-3 float-right" @click="fetchFilterEmployee"> Apply Filter</button>
+
+                                            
                                         </div> 
                                     </div> 
                                 </div>
@@ -80,6 +83,7 @@
                                             <th scope="col">Department</th>
                                             <th scope="col">Location</th>
                                             <th scope="col">ID Status</th>
+                                            <th scope="col">QR Print</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -117,6 +121,15 @@
                                             <td>{{ employee_id.locations[0] ? employee_id.locations[0].name : '' }}</td>
                                             <td v-if="employee_id.print_id_logs.length > 0">{{ employee_id.print_id_logs.length }} No. of Print(s)</td>
                                             <td v-else>Not yet</td>
+
+                                            <td class="text-center">
+                                                <label class="container">
+                                                    <input type="checkbox" :id="employee_id.id" :value="employee_id.id" v-model="checkedIDs">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </td>
+
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -257,7 +270,7 @@ export default {
          return {
             errors: [],
             currentPage: 0,
-            itemsPerPage: 25,
+            itemsPerPage: 9,
             keywords: "",
             employee_ids: [],
             employee_id: [],
@@ -310,7 +323,8 @@ export default {
                         }
                     }
                 },
-             }
+            },
+            checkedIDs : []
          }
     },
     created(){
@@ -321,6 +335,19 @@ export default {
         this.fetchRFIDScans();
     },
     methods:{
+        printQRCodes(){
+            axios.post(`/print_qr`, {
+                ids: this.checkedIDs,
+                _method: 'POST'
+            })
+            .then(response => {
+                // this.checkedIDs = [];
+                window.open('/preview_qr/' + response.data, '_blank');
+            })
+            .catch(error => {
+             
+            })
+        },
         fetchRFIDScans(){
             axios.get('/scan-rfids')
             .then(response => { 
@@ -516,3 +543,74 @@ export default {
     }
 }
 </script>
+
+
+<style>
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+</style>

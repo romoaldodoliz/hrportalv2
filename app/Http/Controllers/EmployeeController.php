@@ -22,6 +22,8 @@ use App\Api;
 use App\EmployeeNpaRequest;
 use App\EmployeeSalaryRecord;
 
+use App\QrCodeLog;
+
 use App\RfidUser;
 
 use Carbon\Carbon;
@@ -32,6 +34,8 @@ use Image;
 use Auth;
 use Hash;
 use DB;
+
+use QRCode;
 
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -1865,6 +1869,63 @@ class EmployeeController extends Controller
         });
 
         return $result;
+    }
+
+    public function printEmployeeQR(Request $request){
+        $data = $request->all();
+
+        $data = [
+            'ids'=> json_encode($request->ids)
+        ];
+        $qrlog = QrCodeLog::create($data);
+        return $qrlog->id;
+    }
+
+    public function printPreviewEmployeeQR(QrCodeLog $qrlog){
+        $qrlog_ids = json_decode($qrlog->ids);
+        
+
+        
+
+        if($qrlog_ids){
+            foreach($qrlog_ids as $log_id){
+
+                Fpdf::AddPage("P", [24,20]);
+                Fpdf::SetMargins(0,0,0,0);
+                Fpdf::SetAutoPageBreak(false);
+
+                $employee = Employee::select('id','id_number')->where('id',$log_id)->first();
+                $id_number = $employee['id_number'];
+                $qr_text = "https://myvisitors.lafilgroup.com:8671/calling_card/" . $id_number;
+
+                if(file_exists(base_path().'/public/qr_employees/'.$employee['id'].'.png')){
+                    Fpdf::Image(base_path().'/public/qr_employees/'.$employee['id'].'.png', 2, 2, 15, 15,'PNG');
+                    Fpdf::SetXY(2,17);
+                    Fpdf::SetFont('Arial', '', 5);
+                    Fpdf::MultiCell(15,2, $employee['id_number'] ,0,'C');
+                }else{
+                    QRCode::text($qr_text)->setSize(40)->setMargin(2)->setOutfile(base_path().'/public/qr_employees/'.$employee['id'].'.png')->png();
+                    Fpdf::Image(base_path().'/public/qr_employees/'.$employee['id'].'.png', 2, 2, 15, 15,'PNG');
+                    Fpdf::SetXY(2,17);
+                    Fpdf::SetFont('Arial', '', 5);
+                    Fpdf::MultiCell(15,2, $employee['id_number'] ,0,'C');
+                }
+
+            }
+        }
+
+       
+
+       
+
+        
+        
+        
+
+        
+
+        Fpdf::Output($qrlog->id . ".pdf", 'I');
+        exit();
     }
      
 }
