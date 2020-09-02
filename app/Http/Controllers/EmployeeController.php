@@ -929,6 +929,17 @@ class EmployeeController extends Controller
             }
             
         }
+
+        //QR Code
+        $id_number = $employee['id_number'];
+        $qr_text = "https://myvisitors.lafilgroup.com:8671/calling_card/" . $id_number;
+        if(file_exists(base_path().'/public/qr_employees/'.$employee['id'].'.png')){
+            Fpdf::Image(base_path().'/public/qr_employees/'.$employee['id'].'.png', 2, 2, 15, 15,'PNG');
+        }else{
+            QRCode::text($qr_text)->setSize(40)->setMargin(2)->setOutfile(base_path().'/public/qr_employees/'.$employee['id'].'.png')->png();
+            Fpdf::Image(base_path().'/public/qr_employees/'.$employee['id'].'.png', 2, 2, 15, 15,'PNG');
+        }
+
         $full_name_back = strtoupper($first_name) . ' ' . $last_middle_initial_back . ' ' . strtoupper($last_name_back) . ' ' . $last_name_suffix_back;
         Fpdf::SetFont('Arial','B', 8);
         Fpdf::SetXY(0,37);
