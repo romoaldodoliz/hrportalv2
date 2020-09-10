@@ -266,7 +266,7 @@ class HealthDeclationFormController extends Controller
             else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
                 $location = "Bulacan";
             }
-            else if(stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
+            else if(stristr($clientIP, '10.96.131') || stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
                 $location = "Bataan";
             }
             else if(stristr($clientIP, '10.160.1') || stristr($clientIP, '10.160.2')){
