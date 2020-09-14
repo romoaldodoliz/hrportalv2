@@ -17,6 +17,9 @@ Route::get('/', function () {
 
 Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
 
+Route::get('/get-session-autolock-screen', 'HealthDeclationFormController@autolockScreen');
+Route::post('/unlock-screen', 'HealthDeclationFormController@unlockScreen');
+
 Route::get('/health_declaration_form_ic', 'HealthDeclationFormController@index_ic')->name('health_declaration_form_ic');
 
 Route::post('/fetch-filter-employee-health', 'HealthDeclationFormController@fetchEmployees');

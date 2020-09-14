@@ -314,7 +314,13 @@ class HealthDeclationFormController extends Controller
                     }
                     $send_message = $this->send_message($message,"not_allowed");
                     
-                    
+                    session([
+                        'lockscreen' => [
+                            'status'=> 'lock',
+                            'lock_data' => $hdf_employee
+                        ],
+                       
+                    ]);
 
                     return 'not_allowed';
                 }else{
@@ -999,7 +1005,10 @@ class HealthDeclationFormController extends Controller
         
         if($message_data && $name){
             $body = [
+                //prod
                 'roomId' => "Y2lzY29zcGFyazovL3VzL1JPT00vMzIzMDY1OTAtOWE1ZC0xMWVhLThiNjktYzFjN2Q4MDQxODBm",
+                //test server
+                // 'roomId' => 'Y2lzY29zcGFyazovL3VzL1JPT00vOTZmZGE1ZTAtZTFlNC0xMWVhLWE1MTAtYWZjYmY3NjM2ZDI4',
                 'text' => $message_data
             ];
 
@@ -1010,7 +1019,10 @@ class HealthDeclationFormController extends Controller
                         RequestOptions::BODY => json_encode($body),
                         RequestOptions::HEADERS => [
                             'Content-Type' => 'application/json',
+                            //prod
                             'Authorization' => 'Bearer NWNiZjI4YTgtOGViZS00NGMxLWFhMTUtOGU3YTdjOWZjMWQ4ODc0Mjg0YmUtNjUy_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
+                            //test server
+                            // 'Authorization' => 'Bearer YjViNGU3YTgtNTk1Ni00OGI3LWE4M2YtYmQxMTJhM2Q5YmEwOWNhMGExNzQtYjA1_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
                         ],
                     ]
                 );
@@ -1248,6 +1260,26 @@ class HealthDeclationFormController extends Controller
                                                             })
                                                             ->orderBy('created_at','DESC')
                                                             ->get();
+    }
+
+    public function autolockScreen(){
+        return session('lockscreen');
+    }
+
+    public function unlockScreen(Request $request){
+        $request->validate([
+            'lock_password' => 'required'
+        ]);
+        $lock_password = $request->lock_password;
+
+        if($lock_password == 'lfuggoc1'){
+            session([
+                'lockscreen'=>[]
+            ]);
+            return 'unlock';
+        }else{
+            return 'not';
+        }
     }
 
 }

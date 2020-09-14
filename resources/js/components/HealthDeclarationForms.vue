@@ -406,7 +406,46 @@
                 </div>
             </div>
         </div> -->
-        
+
+
+        <div class="modal fade" id="lockScreenModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h2 class="col-12 modal-title text-center" id="addCompanyLabel">Unlock Screen</h2>
+                        <small class="col-12 text-center mb-2">Automatically lock screen if employee is not allowed to pass.</small> 
+                        <div class="row" style="border:2px solid;border-radius:10px;">
+                            
+                            <div class="col-md-12 mt-3" >
+                                <i class="fas fa-lock mt-2 mb-2 text-danger" style="font-size:5em;"></i>
+                                <br>
+                                <h4>Warning Message</h4>
+                              
+                                <div v-if="lockScreen.lock_data">
+                                    <strong >{{ lockScreen.lock_data.name}}</strong>
+                                    <br>
+                                    <span style="font-size:0.7em;">{{ lockScreen.lock_data.dept_bu_position}}</span>
+                                    <br>
+                                        <span style="font-size:0.7em;">{{ lockScreen.lock_data.contact_number}}</span>
+                                    <br>
+                                    <span class="text-danger">{{ lockScreen.lock_data.status}} to Pass</span>
+                                </div>    
+                            </div>
+                            <div class="col-md-12 mt-3 mb-3 text-center">
+                                <h4 class="mb-2">Please ask the guard to assist you at the holding area.</h4>
+                                <div class="form-group">
+                                    <input v-model="lock_password" id="passwordHDF" type="password" class="form-control text-center" placeholder="Password" autocomplete="off" style="font-size:1.5em;">
+                                    <span class="text-danger" v-if="errors.lock_password">{{ errors.lock_password[0] }}</span>
+                                </div>
+                                
+                                <button class="btn btn-md btn-outline-primary mt-3" @click="unlockScreen"><i class="fas fa-key"></i> Unlock</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </template>
@@ -431,12 +470,57 @@
                 loading : false,
                 table_loading : false,
                 table_loading_ic : false,
+                lockScreen : [],
+                lock_password : ""
             }
         },
         created(){
-
+            this.getLockScreen();
         },
         methods:{
+            unlockScreen(){
+                axios.post('/unlock-screen', {
+                    lock_password: this.lock_password ? this.lock_password : ""
+                })
+                .then(response => {
+                    if(response.data == 'unlock'){
+                        location.reload();
+                    }else{
+                         Swal.fire({
+                            title: 'Invalid Password!',
+                            text: '',
+                            icon: 'warning',
+                            confirmButtonText: 'Okay'
+                        }).then(okay => {
+                            if (okay) {
+                                location.reload();
+                            }
+                        });
+                    }
+                    
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+            },
+            getLockScreen(){
+                axios.get('/get-session-autolock-screen')
+                .then(response => { 
+                    this.lockScreen = response.data;
+                    if(this.lockScreen){
+                        if(this.lockScreen.status == 'lock'){
+                            $('#lockScreenModal').modal('show');
+                        }else{
+                            $('#lockScreenModal').modal('hide');
+                        }
+                    }else{
+                        $('#lockScreenModal').modal('hide');
+                    }
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             forceUppercase(e, o, prop) {
                 const start = e.target.selectionStart;
                 e.target.value = e.target.value.toUpperCase();
@@ -528,12 +612,12 @@
                     this.employee = employee;
                 }else{
                     this.employee = employee;
-                    Swal.fire({
-                        title: 'Warning!',
-                        text: 'Your name is not similar to Biometric Access. Please contact the administrator for the assistance. Thank you.',
-                        icon: 'warning',
-                        confirmButtonText: 'Okay'
-                    });
+                    // Swal.fire({
+                    //     title: 'Warning!',
+                    //     text: 'Your name is not similar to Biometric Access. Please contact the administrator for the assistance. Thank you.',
+                    //     icon: 'warning',
+                    //     confirmButtonText: 'Okay'
+                    // });
                 }
 
             },
@@ -615,6 +699,7 @@
                         this.loading = false;
                     }
                     else if(message == 'not_allowed'){
+                        $('#checkModal').modal('hide');
                         this.playSound('/sound/alarm.mp3');
                         Swal.fire({
                             title: 'Warning!',
@@ -622,14 +707,14 @@
                             icon: 'warning',
                             confirmButtonText: 'Okay'
                         });
-                        $('#checkModal').modal('hide');
-
+                        
+                        this.getLockScreen();
 
                         this.clearForm();
                         this.loading = false;
                     
                     }else{
-                            Swal.fire({
+                        Swal.fire({
                             title: 'Error!',
                             text: 'Unable to saved.',
                             icon: 'warning',
