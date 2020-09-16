@@ -475,7 +475,7 @@
             }
         },
         created(){
-            // this.getLockScreen();
+            this.getLockScreen();
         },
         methods:{
             unlockScreen(){
@@ -708,7 +708,7 @@
                             confirmButtonText: 'Okay'
                         });
                         
-                        // this.getLockScreen();
+                        this.getLockScreen();
 
                         this.clearForm();
                         this.loading = false;
