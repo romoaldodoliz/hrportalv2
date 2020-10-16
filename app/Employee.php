@@ -152,4 +152,8 @@ class Employee extends Model implements AuditableContract
         return $this->hasMany('App\EmployeeAccountabilities','user_id','user_id')->with('inventories');
     }
 
+    public function rfid_biometric_log(){
+        return $this->hasOne('App\RfidCardLog','card_id_number','door_id_number');
+    }
+
 }

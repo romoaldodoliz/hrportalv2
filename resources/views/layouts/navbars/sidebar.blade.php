@@ -73,7 +73,12 @@
                 @if(auth()->user()->roles[0]->name == "Administrator Printer" || auth()->user()->roles[0]->name == "Administrator")
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee_ids') }}">
-                            <i class="fas fa-id-card text-yellow" style="font-size: 15px;"></i> Employee IDs
+                            <i class="fas fa-id-card text-yellow" style="font-size: 15px;"></i> Employee ID's
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/employee_rfids') }}">
+                            <i class="fas fa-id-card text-green" style="font-size: 15px;"></i> Employee RFID's
                         </a>
                     </li>
                 @endif

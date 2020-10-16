@@ -91,7 +91,7 @@ Route::get('logout', function(){
         
         Route::post('/change-password','UserController@changePassword');
         
-        Route::get('/change_password',['as'=>'users.change_password','uses'=>'UserController@change_password','middleware' => ['role:Administrator|HR Staff|User']]);
+        Route::get('/change_password','UserController@change_password');
 
         // Roles
         Route::get('/roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['role:Administrator']]);
@@ -368,3 +368,21 @@ Route::get('logout', function(){
         Route::get('preview_qr/{qrlog}','EmployeeController@printPreviewEmployeeQR');
 
     });
+
+
+    //RFID FACE BIOMETRICS
+    Route::get('/employee_rfids', 'EmployeeRfidController@index');
+    Route::get('/get-rfid-users', 'EmployeeRfidController@getUsers');
+    Route::get('/get-rfid-user-card', 'EmployeeRfidController@getUserCard');
+    Route::get('/get-rfid-unassigned', 'EmployeeRfidController@getUnassigned');
+    Route::get('/get-rfid-devices', 'EmployeeRfidController@getBiometricDevices');
+    Route::get('/get-rfid-device-users', 'EmployeeRfidController@getBiometricDeviceUsers');
+    Route::get('/employee-rfid-results', 'EmployeeRfidController@searchEmployee');
+    Route::get('/biometric-user-results', 'EmployeeRfidController@biometricUser');
+    Route::post('/save-biometric-user', 'EmployeeRfidController@saveBiometricID');
+
+    //RFID DOOR BIOMETRICS
+    Route::get('/get-rfid-door-devices', 'EmployeeRfidController@getDoorBiometricDevices');
+    Route::get('/get-rfid-door-device-users', 'EmployeeRfidController@getBiometricDoorDeviceUsers');
+    Route::get('/get-rfid-door-unassigned', 'EmployeeRfidController@getDoorUnassigned');
+    Route::get('/get-rfid-door-user-card', 'EmployeeRfidController@getDoorUserCard');

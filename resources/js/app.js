@@ -32,6 +32,7 @@ Vue.component('userprofileview', require('./components/UserProfileView.vue').def
 Vue.component('userprofileverification', require('./components/UserProfileVerification.vue').default);
 Vue.component('employeeapprovalrequest', require('./components/EmployeeApprovalRequest.vue').default);
 Vue.component('employeeid', require('./components/EmployeeId.vue').default);
+Vue.component('employee-rfid', require('./components/EmployeeRfid.vue').default);
 
 Vue.component('verifiedemployees', require('./components/VerifiedEmployees.vue').default);
 
