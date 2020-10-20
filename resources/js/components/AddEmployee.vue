@@ -731,7 +731,7 @@
                 formData.append('area', employee.area ? employee.area : "-");
                 formData.append('bank_account_number', employee.bank_account_number ? employee.bank_account_number : "-");
                 formData.append('bank_name', employee.bank_name ? employee.bank_name : "-");
-                formData.append('status', employee.status ? employee.status : "-");
+                formData.append('status', employee.status ? employee.status : "Active");
 
                 //Contact
                 formData.append('current_address', employee.current_address ? employee.current_address : "-");
