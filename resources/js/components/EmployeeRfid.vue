@@ -194,7 +194,7 @@
                             <h4>Biometric Devices</h4>
                             <div v-for="(device,index) in biometricDevices" v-bind:key="index">
                             
-                                <label class="container mt-2" style="font-size:14px;">
+                                <label class="container mt-2" style="font-size:14px;" >
                                     <small>{{device.name}}</small>
                                     <input type="checkbox" :id="device.id" :value="device.id" v-model="selectedDevices">
                                     <span class="checkmark"></span>
@@ -203,11 +203,11 @@
                             </div>
                         </div>
 
-                        <div v-if="biometricDoorDevices.length > 0" style="width: 100%; height: 200px; overflow-y: scroll;" class="mt-3">
-                            <h4>Doors</h4>
+                        <div v-if="biometricDoorDevices.length > 0">
+                            <h4>Door</h4>
                             <div v-for="(door,index) in biometricDoorDevices" v-bind:key="index">
                             
-                                <label class="container mt-2" style="font-size:14px;">
+                                <label class="container mt-2" style="font-size:14px;" v-if="door.name =='Main Door'">
                                     <small>{{door.name}}</small>
                                     <input type="checkbox" :id="door.id" :value="door.id" v-model="selectedDoorDevices">
                                     <span class="checkmark"></span>
