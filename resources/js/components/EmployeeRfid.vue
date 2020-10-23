@@ -207,7 +207,22 @@
                             <h4>Door</h4>
                             <div v-for="(door,index) in biometricDoorDevices" v-bind:key="index">
                             
-                                <label class="container mt-2" style="font-size:14px;" v-if="door.name =='Main Door'">
+                                <label class="container mt-2" style="font-size:14px;" v-if="door.id =='544674920'">
+                                    <small>{{door.name}}</small>
+                                    <input type="checkbox" :id="door.id" :value="door.id" v-model="selectedDoorDevices">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container mt-2" style="font-size:14px;" v-if="door.id =='544676036'">
+                                    <small>{{door.name}}</small>
+                                    <input type="checkbox" :id="door.id" :value="door.id" v-model="selectedDoorDevices">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container mt-2" style="font-size:14px;" v-if="door.id =='544678443'">
+                                    <small>{{door.name}}</small>
+                                    <input type="checkbox" :id="door.id" :value="door.id" v-model="selectedDoorDevices">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container mt-2" style="font-size:14px;" v-if="door.id =='544678430'">
                                     <small>{{door.name}}</small>
                                     <input type="checkbox" :id="door.id" :value="door.id" v-model="selectedDoorDevices">
                                     <span class="checkmark"></span>
