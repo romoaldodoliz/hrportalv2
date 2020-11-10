@@ -18,7 +18,7 @@ class SurveyController extends Controller
             return redirect('http://10.96.4.70/login');
         }else{
             session(['survey_user_id' =>  $request->user_id]);
-            return redirect('/survey_verified_user');
+            return redirect('/survey-verified-user');
         }
         
     }
