@@ -128,7 +128,7 @@
                                 <div class="col-md-12">
                                     <hr>
                                     <h3 class="text-primary">Cross-Functional Competency</h3>
-                                    <small>This knowledge & skills are common job requirements across other function & departments. Some benefits of these programs are increase employee proficiency, promotion of teamwork & reduction of time & costs, etc.</small>
+                                    <small>This knowledge and skills are common job requirements across other functions & departments. Some benefits of these programs are increase employee proficiency, promotion of teamwork & reduction of time & cost, etc.</small>
                                 </div>
 
                                 <div class="col-md-12">
