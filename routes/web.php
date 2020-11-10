@@ -65,6 +65,15 @@ Route::post('/fetch-apply-filter-hdf-employee', 'HealthDeclationFormController@f
 
 Route::post('/fetch-apply-filter-hdf-ic-employee', 'HealthDeclationFormController@fetchApplyFilterHDFICEmployee');
 
+//Surveys
+Route::get('/survey', 'SurveyController@index');
+Route::get('/survey_verified_user', 'SurveyController@surveyVerfiedUser');
+Route::get('/get-survey', 'SurveyController@getSurvey');
+Route::get('/get-survey-user', 'SurveyController@getSurveyUser');
+Route::post('/save-user-survey', 'SurveyController@saveUserSurvey');
+
+
+
 
 Auth::routes();
 Route::get('logout', function(){

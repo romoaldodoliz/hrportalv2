@@ -46,6 +46,13 @@ Vue.component('health-declaration-forms-ic', require('./components/HealthDeclara
 
 Vue.component('health-declaration-forms-set-up', require('./components/HealthDeclarationFormsSetup.vue').default);
 
+
+//Survey
+Vue.component('survey', require('./components/Surveys/Survey.vue').default);
+
+
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

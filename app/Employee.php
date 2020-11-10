@@ -156,4 +156,8 @@ class Employee extends Model implements AuditableContract
         return $this->hasOne('App\RfidCardLog','card_id_number','door_id_number');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }
