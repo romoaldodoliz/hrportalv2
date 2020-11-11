@@ -67,9 +67,7 @@ Route::post('/fetch-apply-filter-hdf-ic-employee', 'HealthDeclationFormControlle
 
 //Surveys
 Route::get('/survey', 'SurveyController@index');
-Route::get('/survey-verified-user', 'SurveyController@surveyVerfiedUser');
 Route::get('/get-survey', 'SurveyController@getSurvey');
-Route::get('/get-survey-user', 'SurveyController@getSurveyUser');
 Route::post('/save-user-survey', 'SurveyController@saveUserSurvey');
 
 

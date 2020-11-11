@@ -35,22 +35,24 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Name*</label> 
-                                        <input type="text"  class="form-control" v-model="user.name" readonly>
-                                        <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                        <input type="text"  class="form-control" v-model="user_name" @input="user_name=$event.target.value.toUpperCase()">
+                                        <span class="text-danger" v-if="errors.user_name">{{ errors.user_name[0] }}</span>
                                     </div>
                                 </div>
+                                
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Company*</label> 
-                                        <input type="text"  class="form-control" v-model="user.company" readonly>
-                                        <span class="text-danger" v-if="errors.company">{{ errors.company[0] }}</span>
+                                        <input type="text"  class="form-control" v-model="user_company" @input="user_company=$event.target.value.toUpperCase()">
+                                        <span class="text-danger" v-if="errors.user_company">{{ errors.user_company[0] }}</span>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Department*</label> 
-                                        <input type="text"  class="form-control" v-model="user.department" readonly>
-                                        <span class="text-danger" v-if="errors.department">{{ errors.department[0] }}</span>
+                                        <input type="text"  class="form-control" v-model="user_department" @input="user_department=$event.target.value.toUpperCase()">
+                                        <span class="text-danger" v-if="errors.user_department">{{ errors.user_department[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -173,6 +175,10 @@
                                             <span class="text-muted">Developing Emotional Maturity</span>
                                         </label>
                                         </div>
+                                    </div>
+
+                                    <div class="col-12 mt-2">
+                                        <span class="text-danger" v-if="errors.cc_trainings">{{errors.cc_trainings[0]}}</span>
                                     </div>
 
                                     <h5 class="mt-3">COMMUNICATION SKILLS TRAINING</h5>
@@ -478,7 +484,9 @@
 export default {
     data() {
         return {
-            user: [],
+            user_name : '',
+            user_company : '',
+            user_department : '',
             survey:[],
             core_skills : [],
             cc_trainings : [],
@@ -498,19 +506,9 @@ export default {
         }
     },
     created () {
-        this.getUser();
         this.getSurvey();
     },
     methods: {
-        getUser() {
-            axios.get('/get-survey-user')
-            .then(response => { 
-                this.user = response.data;
-            })
-            .catch(error => { 
-                this.errors = error.response.data.error;
-            });
-        },
         getSurvey() {
             axios.get('/get-survey')
             .then(response => { 
@@ -523,18 +521,19 @@ export default {
         saveSurvey(){
             let v = this;
             axios.post(`/save-user-survey`, {
-                user_id: v.user.user_id,
                 survey_id: v.survey.id,
-                user_name: v.user.name,
-                core_skills: v.core_skills ? JSON.stringify(v.core_skills) : "",
-                cc_trainings: v.cc_trainings ? JSON.stringify(v.cc_trainings) : "",
-                cc_communication_skills: v.cc_communication_skills ? JSON.stringify(v.cc_communication_skills) : "",
+                user_name: v.user_name,
+                user_company: v.user_company,
+                user_department: v.user_department,
+                core_skills: v.core_skills.length > 0 ? JSON.stringify(v.core_skills) : "",
+                cc_trainings: v.cc_trainings.length > 0 ? JSON.stringify(v.cc_trainings) : "",
+                cc_communication_skills: v.cc_communication_skills.length > 0 ? JSON.stringify(v.cc_communication_skills) : "",
                 cc_communication_skills_other: v.cc_communication_skills_other ? v.cc_communication_skills_other : "",
-                cc_customer_service: v.cc_customer_service ? JSON.stringify(v.cc_customer_service) : "",
+                cc_customer_service: v.cc_customer_service.length > 0 ? JSON.stringify(v.cc_customer_service) : "",
                 cc_customer_service_other: v.cc_customer_service_other ? v.cc_customer_service_other : "",
-                cc_it_software_skills: v.cc_it_software_skills ? JSON.stringify(v.cc_it_software_skills) : "",
+                cc_it_software_skills: v.cc_it_software_skills.length > 0 ? JSON.stringify(v.cc_it_software_skills) : "",
                 cc_it_software_skills_other: v.cc_it_software_skills_other ? v.cc_it_software_skills_other : "",
-                leadership_trainings: v.leadership_trainings ? JSON.stringify(v.leadership_trainings) : "",
+                leadership_trainings: v.leadership_trainings.length > 0 ? JSON.stringify(v.leadership_trainings) : "",
                 fc_answer_1: v.fc_answer_1 ? v.fc_answer_1 : "",
                 fc_answer_2: v.fc_answer_2 ? v.fc_answer_2 : "",
                 fc_answer_3: v.fc_answer_3 ? v.fc_answer_3 : "",

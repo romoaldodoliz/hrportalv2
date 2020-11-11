@@ -9,9 +9,10 @@ class SurveyLearningAndDevelopment extends Model
     protected $connection = "mysql";
 
     protected $fillable = [
-        'user_id',
         'survey_id',
         'user_name',
+        'user_company',
+        'user_department',
         'core_skills',
         'cc_trainings',
         'cc_communication_skills',
