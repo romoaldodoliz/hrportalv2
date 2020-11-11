@@ -35,7 +35,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Name*</label> 
-                                        <input type="text"  class="form-control" v-model="user_name" @input="user_name=$event.target.value.toUpperCase()">
+                                        <input type="text"  class="form-control" v-model="user_name" @input="user_name=$event.target.value.toUpperCase()" placeholder="Ex. Firstname Lastname">
                                         <span class="text-danger" v-if="errors.user_name">{{ errors.user_name[0] }}</span>
                                     </div>
                                 </div>
@@ -43,7 +43,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Company*</label> 
-                                        <input type="text"  class="form-control" v-model="user_company" @input="user_company=$event.target.value.toUpperCase()">
+                                        <input type="text"  class="form-control" v-model="user_company" @input="user_company=$event.target.value.toUpperCase()" placeholder="Ex. LA FILIPINA UY GONGCO CORPORATION">
                                         <span class="text-danger" v-if="errors.user_company">{{ errors.user_company[0] }}</span>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="role">Department*</label> 
-                                        <input type="text"  class="form-control" v-model="user_department" @input="user_department=$event.target.value.toUpperCase()">
+                                        <input type="text"  class="form-control" v-model="user_department" @input="user_department=$event.target.value.toUpperCase()" placeholder="Ex. HUMAN RESOURCES">
                                         <span class="text-danger" v-if="errors.user_department">{{ errors.user_department[0] }}</span>
                                     </div>
                                 </div>
