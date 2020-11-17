@@ -290,66 +290,54 @@ class HealthDeclationFormController extends Controller
             
             if($yes_count >= 1){
   
-                $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+                $data['status'] = 'Not Allowed';
 
-                if(empty($check_hdf_employee)){
-                    $data['status'] = 'Not Allowed';
+                $hdf_employee = [];
+                $hdf_employee['employee_id'] = $data['employee_id'];
+                $hdf_employee['name'] = $data['name'];
+                $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
+                $hdf_employee['contact_number'] = $data['contact_number'];
+                $hdf_employee['status'] = 'Not Allowed';
+                $hdf_employee['date_time'] = date('Y-m-d');
+                HdfEmployee::create($hdf_employee);
 
-                    $hdf_employee = [];
-                    $hdf_employee['employee_id'] = $data['employee_id'];
-                    $hdf_employee['name'] = $data['name'];
-                    $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
-                    $hdf_employee['contact_number'] = $data['contact_number'];
-                    $hdf_employee['status'] = 'Not Allowed';
-                    $hdf_employee['date_time'] = date('Y-m-d');
-                    HdfEmployee::create($hdf_employee);
+                HealthDeclarationForm::create($data);
 
-                    HealthDeclarationForm::create($data);
-
-                    $message = $data['name'];
-                    if($location){
-                        $message = $data['name'] . ' - Location: ' . $location;
-                    }else{
-                        $message = $data['name'];
-                    }
-                    $send_message = $this->send_message($message,"not_allowed");
-                    
-                    session([
-                        'lockscreen' => [
-                            'status'=> 'lock',
-                            'lock_data' => $hdf_employee
-                        ],
-                       
-                    ]);
-
-                    return 'not_allowed';
+                $message = $data['name'];
+                if($location){
+                    $message = $data['name'] . ' - Location: ' . $location;
                 }else{
-                    return 'warning';
+                    $message = $data['name'];
                 }
+                $send_message = $this->send_message($message,"not_allowed");
+                
+                session([
+                    'lockscreen' => [
+                        'status'=> 'lock',
+                        'lock_data' => $hdf_employee
+                    ],
+                    
+                ]);
 
-               
+                return 'not_allowed';
+
             }else{
+
                 $data['status'] = 'Allowed';
 
-                $check_hdf_employee = HdfEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+                $hdf_employee = [];
+                $hdf_employee['employee_id'] = $data['employee_id'];
+                $hdf_employee['name'] = $data['name'];
+                $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
+                $hdf_employee['contact_number'] = $data['contact_number'];
+                $hdf_employee['status'] = 'Allowed';
+                $hdf_employee['date_time'] = date('Y-m-d');
+                HdfEmployee::create($hdf_employee);
 
-                if(empty($check_hdf_employee)){
-                    $hdf_employee = [];
-                    $hdf_employee['employee_id'] = $data['employee_id'];
-                    $hdf_employee['name'] = $data['name'];
-                    $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
-                    $hdf_employee['contact_number'] = $data['contact_number'];
-                    $hdf_employee['status'] = 'Allowed';
-                    $hdf_employee['date_time'] = date('Y-m-d');
-                    HdfEmployee::create($hdf_employee);
+                HealthDeclarationForm::create($data);
 
-                    HealthDeclarationForm::create($data);
-
-                    return 'saved';
-                }else{
-                    return 'warning';
-                }
-                
+                return 'saved';
+             
             }
             
         }else{
@@ -427,59 +415,45 @@ class HealthDeclationFormController extends Controller
             }
             
             if($yes_count >= 1){
-  
-                $check_hdf_employee = HdfIcEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+                
+                $data['status'] = 'Not Allowed';
 
-                if(empty($check_hdf_employee)){
-                    $data['status'] = 'Not Allowed';
+                $hdf_employee = [];
+                $hdf_employee['employee_id'] = $data['employee_id'];
+                $hdf_employee['name'] = $data['name'];
+                $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
+                $hdf_employee['status'] = 'Not Allowed';
+                $hdf_employee['date_time'] = date('Y-m-d');
+                
+                HdfIcEmployee::create($hdf_employee);
+                
+                HealthDeclarationIcForm::create($data);
 
-                    $hdf_employee = [];
-                    $hdf_employee['employee_id'] = $data['employee_id'];
-                    $hdf_employee['name'] = $data['name'];
-                    $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
-                    $hdf_employee['status'] = 'Not Allowed';
-                    $hdf_employee['date_time'] = date('Y-m-d');
-                   
-                    HdfIcEmployee::create($hdf_employee);
-                    
-                    HealthDeclarationIcForm::create($data);
-
-                    $message = $data['name'];
-                    if($location){
-                        $message = $data['name'] . ' - Location: ' . $location;
-                    }else{
-                        $message = $data['name'];
-                    }
-                    $send_message = $this->send_message($message,"not_allowed");
-
-                    
-
-                    return 'not_allowed';
+                $message = $data['name'];
+                if($location){
+                    $message = $data['name'] . ' - Location: ' . $location;
                 }else{
-                    return 'warning';
+                    $message = $data['name'];
                 }
+                $send_message = $this->send_message($message,"not_allowed");
 
-               
+                
+
+                return 'not_allowed';
             }else{
                 $data['status'] = 'Allowed';
 
-                $check_hdf_employee = HdfIcEmployee::where('employee_id',$data['employee_id'])->whereDate('created_at',date('Y-m-d'))->first();
+                $hdf_employee = [];
+                $hdf_employee['employee_id'] = $data['employee_id'];
+                $hdf_employee['name'] = $data['name'];
+                $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
+                $hdf_employee['status'] = 'Allowed';
+                $hdf_employee['date_time'] = date('Y-m-d');
+                HdfIcEmployee::create($hdf_employee);
 
-                if(empty($check_hdf_employee)){
-                    $hdf_employee = [];
-                    $hdf_employee['employee_id'] = $data['employee_id'];
-                    $hdf_employee['name'] = $data['name'];
-                    $hdf_employee['dept_bu_position'] = $data['dept_bu_position'];
-                    $hdf_employee['status'] = 'Allowed';
-                    $hdf_employee['date_time'] = date('Y-m-d');
-                    HdfIcEmployee::create($hdf_employee);
+                HealthDeclarationIcForm::create($data);
 
-                    HealthDeclarationIcForm::create($data);
-
-                    return 'saved';
-                }else{
-                    return 'warning';
-                }
+                return 'saved';
                 
             }
             

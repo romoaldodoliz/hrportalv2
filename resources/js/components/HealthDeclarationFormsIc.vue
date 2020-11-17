@@ -60,7 +60,7 @@
                                             <tr v-for="(ic_employee, u) in ic_employees" v-bind:key="u">
                                                 <td>{{ ic_employee.name  }}</td>
                                                 <td>{{ ic_employee.agency_name }}</td>
-                                                <td><button type="button" :disabled="ic_employee.already_check" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkICEmployee(ic_employee)" data-toggle="modal" data-target="#iccheckModal" >Check</button></td>
+                                                <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkICEmployee(ic_employee)" data-toggle="modal" data-target="#iccheckModal" >Check</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
