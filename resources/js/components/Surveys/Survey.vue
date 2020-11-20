@@ -72,7 +72,7 @@
 
                                 <div class="col-md-12">
                                     <hr>
-                                    <h4>What type(s) of CORE SKILLS would benefit you and/or your BU/Dept?</h4>
+                                    <h4>What type(s) of CORE SKILLS would benefit you and/or your BU/Dept? (Choose Top 3)</h4>
                                     <div class="col-12 mt-2">
                                         <div class="custom-control custom-control-alternative custom-checkbox">
                                         <input class="custom-control-input" type="checkbox" id="1" value="Value Session (Understanding LFUG GOC Core Values)" v-model="core_skills">
@@ -135,7 +135,7 @@
 
                                 <div class="col-md-12">
                                     <hr>
-                                    <h4>What type(s) of CROSS-FUNCTIONAL training would benefit you and/or your BU/Dept?</h4>
+                                    <h4>What type(s) of CROSS-FUNCTIONAL training would benefit you and/or your BU/Dept? (Choose Top 3)</h4>
                                     <div class="col-12 mt-2">
                                         <div class="custom-control custom-control-alternative custom-checkbox">
                                         <input class="custom-control-input" type="checkbox" id="2_1" value="Problem Solving / Decision Making" v-model="cc_trainings">
@@ -181,7 +181,7 @@
                                         <span class="text-danger" v-if="errors.cc_trainings">{{errors.cc_trainings[0]}}</span>
                                     </div>
 
-                                    <h5 class="mt-3">COMMUNICATION SKILLS TRAINING</h5>
+                                    <h5 class="mt-3">COMMUNICATION SKILLS TRAINING (Choose Top 3)</h5>
 
                                     <div class="col-12 mt-2">
                                         <div class="custom-control custom-control-alternative custom-checkbox">
@@ -241,7 +241,7 @@
                                         <span class="text-danger" v-if="errors.cc_communication_skills">{{errors.cc_communication_skills[0]}}</span>
                                     </div>
 
-                                    <h5 class="mt-3">CUSTOMER SERVICE TRAINING</h5>
+                                    <h5 class="mt-3">CUSTOMER SERVICE TRAINING (Choose Top 3)</h5>
 
                                     <div class="col-12 mt-2">
                                         <div class="custom-control custom-control-alternative custom-checkbox">
@@ -285,7 +285,7 @@
                                         <span class="text-danger" v-if="errors.cc_customer_service">{{errors.cc_customer_service[0]}}</span>
                                     </div>
 
-                                    <h5 class="mt-3">INFORMATION TECHNOLOGY SOFTWARE SKILLS</h5>
+                                    <h5 class="mt-3">INFORMATION TECHNOLOGY SOFTWARE SKILLS (Choose Top 3)</h5>
 
                                      <div class="col-12 mt-2">
                                         <div class="custom-control custom-control-alternative custom-checkbox">
