@@ -67,4 +67,27 @@ class SurveyController extends Controller
 
     }
 
+    public function userSurvey(){
+        return view('surveys.survey_1_user');
+    }
+
+    public function allUserSurvey(Request $request){
+        $all_user = SurveyLearningAndDevelopment::where('survey_id',$request->survey_id)->get();
+
+        $extracted_data = [];
+        if($all_user){
+            foreach($all_user as $k => $item){
+                $extracted_data[$k] = $item;
+                $extracted_data[$k]['core_skills'] = json_decode($item['core_skills']);
+                $extracted_data[$k]['cc_trainings'] = json_decode($item['cc_trainings']);
+                $extracted_data[$k]['cc_communication_skills'] = json_decode($item['cc_communication_skills']);
+                $extracted_data[$k]['cc_customer_service'] = json_decode($item['cc_customer_service']);
+                $extracted_data[$k]['cc_it_software_skills'] = json_decode($item['cc_it_software_skills']);
+                $extracted_data[$k]['leadership_trainings'] = json_decode($item['leadership_trainings']);
+            }
+        }
+
+        return $extracted_data;
+    }
+
 }
