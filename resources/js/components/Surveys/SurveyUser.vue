@@ -246,7 +246,7 @@ export default {
                             });
                         }
                         if(value.cc_it_software_skills_other){
-                             cc_customer_service = cc_it_software_skills + ',' + value.cc_it_software_skills_other;
+                             cc_it_software_skills = cc_it_software_skills + ',' + value.cc_it_software_skills_other;
                         }
 
                         return cc_it_software_skills;
