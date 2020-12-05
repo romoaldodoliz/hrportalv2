@@ -72,6 +72,11 @@ Route::get('/user-survey', 'SurveyController@userSurvey');
 Route::get('/all-user-survey', 'SurveyController@allUserSurvey');
 Route::post('/save-user-survey', 'SurveyController@saveUserSurvey');
 
+//Survey Culture
+Route::get('/survey-culture', 'SurveyController@surveyCulture');
+Route::get('/get-user-survey-culture', 'SurveyController@getUserSurveyCulture');
+Route::post('/save-survey-culture', 'SurveyController@saveSurveyCulture');
+
 
 
 

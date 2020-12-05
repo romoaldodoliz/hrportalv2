@@ -7,11 +7,13 @@ use App\Employee;
 use App\User;
 use App\SettingsSurvey;
 use App\SurveyLearningAndDevelopment;
+use App\SurveyCulture;
 
 use DB;
 class SurveyController extends Controller
 {
 
+    //---------------------------------------------------------------------------
     public function index(){ 
         return view('surveys.survey_1');
     }
@@ -23,7 +25,7 @@ class SurveyController extends Controller
     }
 
     public function saveUserSurvey(Request $request){
-        
+
         $this->validate($request, [
             'user_name' => 'required|unique:survey_learning_and_developments',
             'user_company' => 'required',
@@ -89,5 +91,67 @@ class SurveyController extends Controller
 
         return $extracted_data;
     }
+
+
+    //----------------------------------------------------------------------------
+    //DECEMBER 2020 VALUES QUESTIONNAIRE
+
+    public function surveyCulture(Request $request){
+        $user_id = $request->user_id;
+        session([
+            'survey_culture_user_id' => $user_id
+        ]);
+        $check  = SurveyCulture::where('user_id',$user_id)->first();
+        if($check){
+            return redirect('http://10.96.4.70/login');
+        }else{
+            return view('surveys.survey_culture');
+        }
+       
+    }
+
+    public function getUserSurveyCulture(){
+        $user_session_id = session('survey_culture_user_id');
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+    
+    public function saveSurveyCulture(Request $request){
+
+        $this->validate($request, [
+            'q1' => 'required',
+            'q2' => 'required',
+            'q3' => 'required',
+            'q4' => 'required',
+            'q5' => 'required',
+            'q6' => 'required'
+        ],[
+            'q1.required' => 'This field is required.',
+            'q2.required' => 'This field is required.',
+            'q3.required' => 'This field is required.',
+            'q4.required' => 'This field is required.',
+            'q5.required' => 'This field is required.',
+            'q6.required' => 'This field is required.'
+        ]);
+
+       DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $q1 = json_decode($data['q1']);
+            $data['q1'] = implode(",",$q1);
+            $q6 = json_decode($data['q6']);
+            $data['q6'] = implode(",",$q6);
+            if($survey = SurveyCulture::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+
 
 }

@@ -49,6 +49,8 @@ Vue.component('health-declaration-forms-set-up', require('./components/HealthDec
 
 //Survey
 Vue.component('survey', require('./components/Surveys/Survey.vue').default);
+Vue.component('survey-culture', require('./components/Surveys/SurveyCulture.vue').default);
+
 Vue.component('survey-user', require('./components/Surveys/SurveyUser.vue').default);
 
 
