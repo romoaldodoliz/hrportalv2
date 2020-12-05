@@ -7,7 +7,7 @@
         <div class="container-fluid d-flex align-items-center">
             <div class="row">
                 <div class="col-lg-12 col-md-12">
-                    <h1 class="display-2 text-white text-uppercase"><i class="fas fa-holly-berry text-green"></i> DECEMBER 2020 VALUES QUESTIONNAIRE</h1>
+                    <h1 class="display-2 text-white text-uppercase"><i class="fas fa-holly-berry text-green"></i> SURVEY : DECEMBER 2020 VALUES QUESTIONNAIRE</h1>
                 </div>
             </div>
         </div>
