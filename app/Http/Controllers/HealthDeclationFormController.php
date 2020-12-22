@@ -33,6 +33,7 @@ class HealthDeclationFormController extends Controller
         $employees = Employee::select('id','first_name','last_name','position','mobile_number')->with('companies','departments','locations')
                             ->where(function ($query) use ($keyword) {
                                 $query->where('first_name', 'like' , '%' .  $keyword . '%')->orWhere('last_name', 'like' , '%' .  $keyword . '%');
+                                $query->orWhereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ["%{$keyword}%"]);
                             })
                             ->where('status','=','Active')
                             ->orderBy('last_name','DESC')
