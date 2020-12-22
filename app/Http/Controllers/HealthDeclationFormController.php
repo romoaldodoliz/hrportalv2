@@ -36,7 +36,7 @@ class HealthDeclationFormController extends Controller
                             })
                             ->where('status','=','Active')
                             ->orderBy('last_name','DESC')
-                            ->take(10)
+                            ->take(20)
                             ->get();
 
         if($employees){
