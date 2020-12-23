@@ -183,11 +183,11 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="scanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal fade" id="scanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-sm modal-employee" role="document">
                 <div class="modal-content">
                     <div>
-                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close" @click="stopTimer()">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div> 
@@ -395,6 +395,7 @@ export default {
                 this.scan_rfid.decimal_number = response.data.door_id_number;
                 this.fetchEmployees();
                 alert(this.scan_rfid.first_name + ' ' + this.scan_rfid.last_name  + ' Rfid Number Successfully saved.');
+                location.reload();
             })
             .catch(error => {
                 this.errors = error.response.data.errors;
@@ -409,6 +410,9 @@ export default {
             .catch(error => { 
                 this.errors = error.response.data.error;
             })
+        },
+        stopTimer(){
+            clearInterval(this.timer);
         },
         scanRFID(employee_id){
             this.timer = setInterval(this.fetchRFIDScans, 3000)

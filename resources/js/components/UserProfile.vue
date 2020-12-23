@@ -194,7 +194,7 @@
                                             <option value="">Choose Gender</option>
                                             <option value="MALE"> MALE</option>
                                             <option value="FEMALE"> FEMALE</option>
-                                            <option value="UNKNOWN"> UNKNOWN</option>
+                                            <!-- <option value="UNKNOWN"> UNKNOWN</option> -->
                                         </select>
                                         <span class="text-danger" v-if="errors.gender">{{ errors.gender[0] }}</span>
                                     </div>
