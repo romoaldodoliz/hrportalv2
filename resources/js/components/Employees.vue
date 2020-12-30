@@ -1632,7 +1632,7 @@
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
             this.exportFetchEmployees();
-            // this.exportFetchInactiveEmployees();
+            this.exportFetchInactiveEmployees();
             this.fetchUserAccessRights();
             this.fetchHREmployees();
             this.fetchBUHeadEmployees();
