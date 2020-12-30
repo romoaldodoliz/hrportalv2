@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
 
-                                <div class="table-responsive">
+                                <div class="table-responsive" style="min-height: 300px!important;">
                                     <!-- employees table -->
                                     <table class="table align-items-center table-flush mb-5">
                                         <thead class="thead-light">
@@ -180,7 +180,10 @@
                                     <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-address-book mr-2"></i>CONTACT</a>
                                 </li>
                                 <li class="nav-item" v-if="user_access_rights.identification_info == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-4" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
+                                </li>
+                                <li class="nav-item" v-if="user_access_rights.employee_201_file == 'YES'">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-5-tab" data-toggle="tab" href="#tabs-icons-text-5" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-folder mr-2"></i>201 FILES</a>
                                 </li>
                             </ul>
                         </div>
@@ -513,22 +516,6 @@
                                                 </div>
                                             </div>
 
-                                            <!-- <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="role">Bank Account Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.bank_account_number">
-                                                    <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
-                                                </div>
-                                            </div> -->
-
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="role">Bank Name</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.bank_name">
-                                                    <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
-                                                </div>
-                                            </div>
-
                                             <div class="col-md-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Monthly Basic Salary</label>
@@ -568,7 +555,23 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-4" v-if="user_access_rights.bank_account_details == 'YES'">
+                                                <div class="form-group">
+                                                    <label for="role">Bank Name</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.bank_name">
+                                                    <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
+                                                </div>
+                                            </div>
 
+                                            <div class="col-md-4" v-if="user_access_rights.bank_account_details == 'YES'">
+                                                <div class="form-group">
+                                                    <label for="role">Bank Account Number</label>
+                                                    <input type="text" class="form-control" v-model="employee_copied.bank_account_number">
+                                                    <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            
                                             <div class="col-md-12">
                                                 <div class="col-md-6 mb-2"  style="border:1px solid;border-radius:5px;">
                                                     <div class="form-group mt-2">
@@ -661,7 +664,24 @@
                                                         </tbody>
                                                     </table>    
                                                 </div>    
-                                            </div>                
+                                            </div>
+
+                                            <!-- First Level Under            -->
+                                            <div class="col-md-12" v-if="employee_unders.length > 0">
+                                                <hr>
+                                                <h4 class="mt-3">TRANSFER ({{employee_unders.length}}) FIRST LEVEL EMPLOYEES UNDER - {{employee_copied.first_name + ' ' + employee_copied.last_name}}</h4>
+                                        
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="role" class="text-warning">Select New Approver</label>
+                                                        <select class="form-control" v-model="new_approver_under" id="new_approver_under">
+                                                            <option value="">Choose Approver</option>
+                                                            <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="errors.new_approver_under">{{ errors.new_approver_under[0] }}</span> 
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
@@ -740,6 +760,9 @@
                                                                 <th class="text-center">
                                                                     Relationship
                                                                 </th>
+                                                                <th class="text-center">
+                                                                    Status
+                                                                </th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -769,6 +792,13 @@
                                                                         <option value="SPOUSE">SPOUSE</option>
                                                                         <option value="CHILD">CHILD</option>
                                                                     </select>
+                                                                </td>
+                                                                <td>
+                                                                  <select class="form-control" v-model="row.dependent_status" id="dependent_status">
+                                                                        <option value="">Choose Status</option>
+                                                                        <option value="NEW">NEW</option>
+                                                                        <option value="RENEW">RENEW</option>
+                                                                    </select>  
                                                                 </td>
                                                                 <td with="5%">
                                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">Remove</button>
@@ -868,6 +898,38 @@
                                                     <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                                 </div>
                                             </div>    
+                                        </div>
+                                    </div>
+                                    <!-- 201 Files -->
+                                    <div v-if="user_access_rights.employee_201_file == 'YES'" class="tab-pane fade" id="tabs-icons-text-5" role="tabpanel" aria-labelledby="tabs-icons-text-5-tab">
+                                        <div class="row">
+                                           <div class="col-md-12">
+                                               <h5>201 Files</h5>
+                                                <div class="form-group">
+                                                    <input type="file" multiple="multiple" id="documents_201_files_attachments" class="form-control 201-files-attachments-edit" @change="upload201FilesAttachments" placeholder="Attach file"><br>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="table-responsive mt-3">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>File</th>
+                                                                <th class="text-center"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(attachment, index) in employee_201_files_attachments" v-bind:key="index">
+                                                                <td>{{ index + 1 }}</td>
+                                                                <td> <a :href="'storage/employee_201_files/'+employee_copied.id +'/'+attachment.file" target="_blank"><u>{{ attachment.file }}</u></a></td>
+                                                                <!-- <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td> -->
+                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="remove201FilesAttachment(index,attachment)">Remove</button></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>     
+                                            </div>     
                                         </div>
                                     </div>
                                 </div>
@@ -1004,7 +1066,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="role">Division</label>
+                                            <label for="role">Cluster</label>
                                             <input type="text" class="form-control" v-model="transfer_employee.division">
                                         </div>
 
@@ -1618,7 +1680,16 @@
                 bu_heads : [],
                 npa_request_detail : [],
                 npa_request_edit : false,
-                salary_records : []
+                salary_records : [],
+
+                //201 Files
+                documents_201_files_attachments : [],
+                deleted_documents_201_files_attachments : [],
+                employee_201_files_attachments: [],
+
+                //First Level Under
+                employee_unders : [],
+                new_approver_under : ''
             }
         },
         created(){
@@ -1756,6 +1827,8 @@
                     }
                 })
             },
+
+            //Employee NPA
             clearNPAForm(){
                 this.npa_request_errors = [];
                 this.npa_request = [];
@@ -2092,6 +2165,9 @@
                         }
                 })
             },
+
+            //Employee Access Rights / All Employees / Inactive Employees Export
+
             fetchUserAccessRights(){
                 this.user_access_rights = [];
                 axios.get('/user-access-rights')
@@ -2128,6 +2204,9 @@
                     this.errors = error.response.data.error;
                 })
             },
+
+            //Employee Dependent Attachments
+
             removeDependentAttachment: function(index,attachment) {
                 if(attachment){
                     Swal.fire({
@@ -2150,7 +2229,7 @@
                     })
                 }
             },
-             uploadDependentAttachments(e){
+            uploadDependentAttachments(e){
 
                 var files = e.target.files || e.dataTransfer.files;
 
@@ -2184,10 +2263,81 @@
                     this.errors = error.response.data.error;
                 })
             },
+
+            //Employee 201 Files
+            upload201FilesAttachments(e){
+                this.documents_201_files_attachments = [];
+                var files = e.target.files || e.dataTransfer.files;
+                if(!files.length)
+                    return;
+                for (var i = files.length - 1; i >= 0; i--){
+                    this.documents_201_files_attachments.push(files[i]);
+                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                }
+                if(this.fileSize > 5){
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('documents_201_files_attachments').value = "";
+                    this.documents_201_files_attachments = [];
+                    this.fileSize = 0;
+                }
+            },
+            remove201FilesAttachment: function(index,attachment) {
+                if(attachment){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this 201 File attachment?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+                            this.deleted_documents_201_files_attachments.push({
+                                id: attachment.id,
+                                file: attachment.file,
+                            });
+                            this.employee_201_files_attachments.splice(index, 1);    
+                        }
+                    })
+                }
+            },
+            fetchEmployee201FilesAttachments(){
+                let v = this;
+                this.employee_201_files_attachments = [];
+                this.deleted_documents_201_files_attachments = [];
+                axios.get('/employee-201-file-attachments/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.employee_201_files_attachments = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             
+            //Org Chart
             orgChartEmployee(employee){
                 this.org_chart_src = '/org-chart/' + employee.id;
             },
+
+            orgChartUnderEmployee(){
+                let v = this;
+                this.employee_unders = [];
+                axios.get('/org-chart-under-employee/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.employee_unders = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+
+            //Employee Transfer
             clearTransferForm(){
                 this.transfer_employee.company_list = "";
                 this.transfer_employee.department_list = "";
@@ -2268,6 +2418,8 @@
             closeTransferEmployeeLogs(){
                 this.viewTransferLogsList = false;
             },
+
+            //Employee Information
             profileImageLoadError(){
                 this.profile_image = 'storage/default.png';
             },
@@ -2327,6 +2479,7 @@
                 formData.append('vocational_graduated', employee_copied.vocational_graduated ? employee_copied.vocational_graduated : "-");
                 formData.append('vocational_course', employee_copied.vocational_course ? employee_copied.vocational_course : "-");
                 formData.append('vocational_year', employee_copied.vocational_year ? employee_copied.vocational_year : "-");
+
                 //Work
                 formData.append('company_list', employee_copied.company_list);
                 formData.append('division', employee_copied.division ? employee_copied.division : "");
@@ -2353,6 +2506,9 @@
                 
                
                 formData.append('date_resigned', employee_copied.date_resigned ? employee_copied.date_resigned : "");
+
+                //Transfer to new approvers
+                formData.append('new_approver_under', this.new_approver_under ? this.new_approver_under : "");
 
                 //Contact
                 formData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
@@ -2388,6 +2544,15 @@
 
                 formData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
 
+                //201 Files
+                if(this.documents_201_files_attachments.length > 0){
+                    for(var i = 0; i < this.documents_201_files_attachments.length; i++){
+                        let documents_201_files_attachments = this.documents_201_files_attachments[i];
+                        formData.append('documents_201_files_attachments[]', documents_201_files_attachments);
+                    }
+                }
+                formData.append('deleted_documents_201_files_attachments', this.deleted_documents_201_files_attachments ? JSON.stringify(this.deleted_documents_201_files_attachments) : "");
+
                 formData.append('_method', 'PATCH');
 
                 axios.post(`/employee/${employee_copied.id}`, 
@@ -2402,11 +2567,17 @@
                 
                     this.employees.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    this.dependent_attachments = [];
 
+                    this.dependent_attachments = [];
                     var dependents_attachment =  document.getElementById("dependents_attachments");
                     if(dependents_attachment){
                         dependents_attachment.value = '';
+                    }
+
+                    this.documents_201_files_attachments = [];
+                    var documents_201_files_attachments =  document.getElementById("documents_201_files_attachments");
+                    if(documents_201_files_attachments){
+                        documents_201_files_attachments.value = '';
                     }
                     
                     this.copyObject(response.data);
@@ -2436,6 +2607,7 @@
                 this.termsConditions = false;
                 this.saveEmployee = true;
 
+                this.new_approver_under = '';
                 this.profile_image_file = '';
 
                 //Config Employee Fields
@@ -2458,6 +2630,9 @@
                 this.fetchDependents();
                 this.fetchDependentAttachments();
 
+                //Get 201 Files Attachments
+                this.fetchEmployee201FilesAttachments();
+
                 //Validate Marital Status
                 this.validateMaritalStatus();
 
@@ -2474,6 +2649,9 @@
                 var profile =  document.getElementById("profile_image_file");
                 var signature =  document.getElementById("signature_image_file");
                 var marital_status =  document.getElementById("marital_file");
+
+                //First Level Under
+                this.orgChartUnderEmployee();
 
                 if(profile){
                     profile.value = '';
@@ -2597,7 +2775,8 @@
                                 dependent_name: element.dependent_name,
                                 dependent_gender: element.dependent_gender,
                                 bdate: v.getDateFormat(element.bdate),
-                                relation: element.relation
+                                relation: element.relation,
+                                dependent_status: element.dependent_status
                             });
                         });
                     }
@@ -2654,6 +2833,7 @@
                     dependent_gender: "",
                     bdate: "",
                     relation: "",
+                    dependent_status: "",
                 });
             },
             removeDependent: function(index,id) {

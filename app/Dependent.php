@@ -13,6 +13,7 @@ class Dependent extends Model
     	'dependent_name',
         'dependent_gender',
     	'bdate',
-        'relation'
+        'relation',
+        'dependent_status'
     ];
 }

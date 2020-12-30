@@ -90,11 +90,12 @@ Route::get('logout', function(){
     // Authenticated Admin Routes
     
     Route::group(['middleware' => ['auth']], function () {
-        //HDF
-        Route::get('/health_declaration_form_users_disable_set_up',['as'=>'hdf.index','uses'=>'HealthDeclationFormController@health_declaration_form_users_disable_set_up','middleware' => ['role:HDF Admin']]);
-
+        
         //Home
         Route::get('/home', 'HomeController@index')->name('home');
+
+        //HDF
+        Route::get('/health_declaration_form_users_disable_set_up',['as'=>'hdf.index','uses'=>'HealthDeclationFormController@health_declaration_form_users_disable_set_up','middleware' => ['role:HDF Admin']]);
 
         // Users
         Route::get('/users',['as'=>'users.index','uses'=>'UserController@index','middleware' => ['role:Administrator']]);
@@ -141,7 +142,10 @@ Route::get('logout', function(){
             //Employee Dependents
             Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents'); 
 
-            Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');  
+            Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');
+            
+            //Employee 201 Files
+            Route::get('/employee-201-file-attachments/{employee}', 'EmployeeController@employee201FileAttachments');
 
             //Employee Filter
             Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer|Cluster Head|BU Head|Immediate Superior']]);
@@ -164,6 +168,8 @@ Route::get('logout', function(){
             
             //Organizational Chart
             Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            
+            Route::get('/org-chart-under-employee/{employee}',['as'=>'employees.org_chart_under_employee','uses'=>'EmployeeController@orgChartUnderEmployee','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
         
         
             // Settings

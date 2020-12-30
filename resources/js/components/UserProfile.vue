@@ -441,7 +441,7 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="role">Contact Person</label>
+                                        <label for="role">Emergency Contact Person</label>
                                         <input type="text" class="form-control" v-model="employee_copied.contact_person">
                                         <span class="text-danger" v-if="errors.contact_person">{{ errors.contact_person[0] }}</span> 
                                     </div>
@@ -449,7 +449,7 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="role">Contact Relation</label>
+                                        <label for="role">Contact Relationship</label>
                                         <input type="text" class="form-control" v-model="employee_copied.contact_relation">
                                         <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
                                     </div>
@@ -468,7 +468,7 @@
                                         <button type="button" class="btn btn-success btn-sm mb-2 ml-2" style="float: right;" @click="fetchDependents()"><i class="fas fa-redo" title="Refresh HMO Dependents"></i></button>
                                         <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addDependent()">Add Row</button>
                                     </div>    
-                                        <div class="table-responsive">
+                                    <div class="table-responsive">
                                         <table class="table table-hover" id="tab_hmo_dependent">
                                             <thead>
                                                 <tr>
@@ -497,7 +497,7 @@
                                                             <option value="">Choose Gender</option>
                                                             <option value="MALE">MALE</option>
                                                             <option value="FEMALE">FEMALE</option>
-                                                            <option value="UNKNOWN">UNKNOWN</option>
+                                                            <!-- <option value="UNKNOWN">UNKNOWN</option> -->
                                                         </select> 
                                                     </td>
                                                     <td>
@@ -505,7 +505,7 @@
                                                     </td>
                                                     <td>
                                                         <select class="form-control" v-model="row.relation" id="relation">
-                                                            <option value="">Choose Relation</option>
+                                                            <option value="">Choose Relationship</option>
                                                             <option value="MOTHER">MOTHER</option>
                                                             <option value="FATHER">FATHER</option>
                                                             <option value="BROTHER">BROTHER</option>
@@ -829,7 +829,7 @@
                                 <td align="left"> <i v-if="employee_request_original.contact_person != employee_request_approval.contact_person" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_person }}</td>
                             </tr>
                             <tr>
-                                <td align="left"> CONTACT RELATION</td>
+                                <td align="left"> CONTACT RELATIONSHIP</td>
                                 <td align="left"> {{ employee_request_original.contact_relation }}</td>
                                 <td align="left"> <i v-if="employee_request_original.contact_relation != employee_request_approval.contact_relation" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_relation }}</td>
                             </tr>
