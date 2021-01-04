@@ -32,7 +32,7 @@ class SettingsController extends Controller
 
     public function allCompany()
     {
-        $companies = Company::with('divisions')->orderBy('name','ASC')->get();
+        $companies = Company::with('divisions')->orderBy('name','ASC')->where('status','Active')->get();
         return $companies;
     }
 
