@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,11 +25,14 @@ use App\EmployeeSalaryRecord;
 
 use App\Employee201File;
 
-
+use App\EmployeeTransferAttachment;
 
 use App\QrCodeLog;
 
 use App\RfidUser;
+
+use App\HrRecieverHmoDependent;
+use App\Mail\EmployeeHMODependentUpdate;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -670,6 +674,49 @@ class EmployeeController extends Controller
         $employee_data['dependent_attachments'] = $new_dependent_attachments;
         $employee_data['deleted_dependent_attachments'] = $request->deleted_dependent_attachments;
 
+        //Send Email to HR of Dependents Update -----------------------------------------------------------------------------------
+        $send_email_dependent_update = 0;
+        if($request->dependents){
+            $dependents_requests = json_decode($request->dependents);
+           
+            foreach($dependents_requests as $item){
+                $dependent_exist = Dependent::where('employee_id',$employee->id)
+                                                ->where('dependent_name',$item->dependent_name)
+                                                ->where('relation',$item->relation)
+                                                ->where('bdate',$item->bdate)
+                                                ->where('dependent_gender',$item->dependent_gender)
+                                                ->where('dependent_status',$item->dependent_status)
+                                                ->first();
+                if(empty($dependent_exist)){
+                    $send_email_dependent_update = 1;
+                }
+            }
+
+            if($send_email_dependent_update == 1){
+                $email_reciever = HrRecieverHmoDependent::first();
+                $data = [
+                    'employee_name'=>$employee->first_name . ' ' . $employee->last_name,
+                    'position'=>$employee->position,
+                    'dependents'=>$dependents_requests,
+                    'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
+                ];
+                $send_update = Mail::to($email_reciever->email)->send(new EmployeeHMODependentUpdate($data));
+            }
+        }
+        if($request->deleted_dependents){
+            if($send_email_dependent_update == 0){
+                $email_reciever = HrRecieverHmoDependent::first();
+                $data = [
+                    'employee_name'=>$employee->first_name . ' ' . $employee->last_name,
+                    'position'=>$employee->position,
+                    'dependents'=>$dependents_requests,
+                    'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
+                ];
+                $send_update = Mail::to($email_reciever->email)->send(new EmployeeHMODependentUpdate($data));
+            }   
+        }
+        //---------------------------------------------------------------------------------------------------------------------------
+
         $employee_data['gender'] = $request->gender;
         $employee_data['sss_number'] = $request->sss_number;
         $employee_data['phil_number'] = $request->phil_number;
@@ -1131,7 +1178,25 @@ class EmployeeController extends Controller
 
                 $transfer_logs_data['transferred_by'] =  Auth::user()->id;
 
-                EmployeeTransfer::create($transfer_logs_data);
+                if($employee_transfer = EmployeeTransfer::create($transfer_logs_data)){
+
+                    //Supporting Documents
+                    $transfer_supporting_documents = $request->file('transfer_supporting_documents');
+                    if(!empty($transfer_supporting_documents)){
+                        foreach($transfer_supporting_documents as $attachment){
+                            $filename = $attachment->getClientOriginalName();
+                            $path = Storage::disk('public')->putFileAs('employee_transfer_attachments/'.$employee->id, $attachment,$filename);
+
+                            $supporting_document_data =  [];
+                            $supporting_document_data['employee_transfer_id'] = $employee_transfer->id;
+                            $supporting_document_data['employee_id'] = $employee->id;
+                            $supporting_document_data['filename'] = $filename;
+                            $supporting_document_data['path'] = $path;
+
+                            EmployeeTransferAttachment::create($supporting_document_data);
+                        }    
+                    }
+                }
 
                 DB::commit();
                 
@@ -1148,7 +1213,7 @@ class EmployeeController extends Controller
 
     public function transferEmployeeLogs(Employee $employee){
 
-        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
+        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
         
         if($transfer_employee_logs){
             foreach($transfer_employee_logs as $key => $transfer_employee_log){
@@ -1157,8 +1222,134 @@ class EmployeeController extends Controller
                 $transfer_employee_logs[$key]['new_system_approvers'] = json_decode($transfer_employee_log['new_system_approvers']);
             }
         }
-        return $transfer_employee_logs;
+        return $transfer_employee_logs[0]->previous_department;
 
+    }
+
+    public function pdfTransferEmployeeLogs(Employee $employee){
+        
+        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
+        if($transfer_employee_logs){
+            foreach($transfer_employee_logs as $key => $transfer_employee_log){
+                $transfer_employee_logs[$key] = $transfer_employee_log;
+                $transfer_employee_logs[$key]['new_company'] = $transfer_employee_log['new_company'];
+                $transfer_employee_logs[$key]['previous_system_approvers'] = json_decode($transfer_employee_log['previous_system_approvers']);
+                $transfer_employee_logs[$key]['new_system_approvers'] = json_decode($transfer_employee_log['new_system_approvers']);
+            }
+        }
+
+        Fpdf::AddPage("L", 'A4');
+        Fpdf::SetMargins(0,0,0,0);
+        Fpdf::SetAutoPageBreak(false);
+
+        Fpdf::SetXY(10,10);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(100,5, "EMPLOYEE NAME: " . $employee->last_name . ', ' . $employee->first_name,0,'L');
+
+        Fpdf::SetXY(10,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(20,5, "#" ,1,'C');
+
+        Fpdf::SetXY(30,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(100,5, "FROM" ,1,'C');
+
+        Fpdf::SetXY(130,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(100,5, "TO" ,1,'C');
+
+        Fpdf::SetXY(230,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(55,5, "SUPPORTING DOCUMENTS" ,1,'C');
+
+        $item_no = 1;
+        $y=22;
+        foreach($transfer_employee_logs as $item){
+            $item_data = json_encode($item,true);
+            $new_item_data = json_decode($item_data,true);
+            Fpdf::SetXY(10,$y);
+            Fpdf::SetFont('Arial', '', 8);
+            Fpdf::MultiCell(20,30, $item_no ,1,'C');
+
+            Fpdf::SetXY(30,$y);
+            Fpdf::SetFont('Arial', '', 8);
+            Fpdf::MultiCell(100,30, "" ,1,'L');
+
+                //Company
+                Fpdf::SetXY(30,$y);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_company']['name'],1,'L');
+
+                //ID Number
+                Fpdf::SetXY(30,$y+5);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_id_number'],1,'L');
+
+                //Date Hired
+                Fpdf::SetXY(30,$y+10);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_date_hired'],1,'L');
+
+                //Position
+                Fpdf::SetXY(30,$y+15);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_position'],1,'L');
+
+                //Department
+                Fpdf::SetXY(30,$y+20);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_department']['name'],1,'L');
+
+                //Location
+                Fpdf::SetXY(30,$y+25);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5,$new_item_data['previous_location']['name'],1,'L');
+
+            Fpdf::SetXY(130,$y);
+            Fpdf::SetFont('Arial', '', 10);
+            Fpdf::MultiCell(100,30, "" ,1,'L');
+
+                //Company
+                Fpdf::SetXY(130,$y);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_company']['name'] ,1,'L');
+
+                //ID Number
+                Fpdf::SetXY(130,$y+5);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_id_number'],1,'L');
+
+                //Date Hired
+                Fpdf::SetXY(130,$y+10);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_date_hired'] ,1,'L');
+
+                //Position
+                Fpdf::SetXY(130,$y+15);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_position'],1,'L');
+
+                //Department
+                Fpdf::SetXY(130,$y+20);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_department']['name'],1,'L');
+
+                //Location
+                Fpdf::SetXY(130,$y+25);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_location']['name'],1,'L');
+
+            Fpdf::SetXY(230,$y);
+            Fpdf::SetFont('Arial', '', 10);
+            Fpdf::MultiCell(55,30, count($item->employee_transfer_attachments)  . ' Attachments',1,'C');
+
+            $y+=30;
+            $item_no++;
+        }
+        
+
+        Fpdf::Output($employee->id . ".pdf", 'I');
+        exit();
     }
 
     public function orgChartUnderEmployee(Employee $employee){
@@ -2244,10 +2435,7 @@ class EmployeeController extends Controller
 
     public function printPreviewEmployeeQR(QrCodeLog $qrlog){
         $qrlog_ids = json_decode($qrlog->ids);
-        
-
-        
-
+    
         if($qrlog_ids){
             foreach($qrlog_ids as $log_id){
 
@@ -2274,17 +2462,6 @@ class EmployeeController extends Controller
 
             }
         }
-
-       
-
-       
-
-        
-        
-        
-
-        
-
         Fpdf::Output($qrlog->id . ".pdf", 'I');
         exit();
     }

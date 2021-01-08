@@ -231,6 +231,18 @@
 
                                     <span class="text-danger" v-if="errors.personal_info">{{ errors.personal_info[0] }}</span> 
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="personal_info_edit" class="custom-control-input" v-model="user_copied.personal_info_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="personal_info_edit">Allow Edit Personal Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.personal_info_edit">{{ errors.personal_info_edit[0] }}</span> 
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div class="col-md-6">
@@ -241,6 +253,17 @@
                                     </div>
 
                                     <span class="text-danger" v-if="errors.work_info">{{ errors.work_info[0] }}</span> 
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="work_info_edit" class="custom-control-input" v-model="user_copied.work_info_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="work_info_edit">Allow Edit Work Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.work_info_edit">{{ errors.work_info_edit[0] }}</span> 
+                                    </div>
                                 </div>
                             </div>
 
@@ -253,6 +276,18 @@
 
                                     <span class="text-danger" v-if="errors.contact_info">{{ errors.contact_info[0] }}</span> 
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="contact_info_edit" class="custom-control-input" v-model="user_copied.contact_info_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="contact_info_edit">Allow Edit Contact Information</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.contact_info_edit">{{ errors.contact_info_edit[0] }}</span> 
+                                    </div>
+                                </div>
+
                             </div>
                             
                             <div class="col-md-6">
@@ -263,6 +298,17 @@
                                     </div>
 
                                     <span class="text-danger" v-if="errors.identification_info">{{ errors.identification_info[0] }}</span> 
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="identification_info_edit" class="custom-control-input" v-model="user_copied.identification_info_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="identification_info_edit">Allow Edit Identification</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.identification_info_edit">{{ errors.identification_info_edit[0] }}</span> 
+                                    </div>
                                 </div>
                             </div>
 
@@ -275,8 +321,22 @@
 
                                     <span class="text-danger" v-if="errors.employee_201_file">{{ errors.employee_201_file[0] }}</span> 
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="employee_201_file_edit" class="custom-control-input" v-model="user_copied.employee_201_file_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="employee_201_file_edit">Allow Edit 201 File</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.employee_201_file_edit">{{ errors.employee_201_file_edit[0] }}</span> 
+                                    </div>
+                                </div>
                             </div>
-                            
+
+                            <div class="col-md-12">
+                                <h4>Allow Hidden Fields</h4>
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
@@ -309,11 +369,7 @@
                                     <span class="text-danger" v-if="errors.bank_account_details">{{ errors.bank_account_details[0] }}</span> 
                                 </div>
                             </div>
-
-                        </div>
-                            
-                        
-                        
+                        </div>     
                     </div>
                     <div class="modal-footer">
                         <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateUser(user_copied)">Save</button>
@@ -518,6 +574,11 @@
                     npa_request: user_copied.npa_request,
                     monthly_basic_salary: user_copied.monthly_basic_salary,
                     bank_account_details: user_copied.bank_account_details,
+                    personal_info_edit: user_copied.personal_info_edit,
+                    work_info_edit: user_copied.work_info_edit,
+                    contact_info_edit: user_copied.contact_info_edit,
+                    identification_info_edit: user_copied.identification_info_edit,
+                    employee_201_file_edit: user_copied.employee_201_file_edit,
                     _method: 'PATCH'
                 })
                 .then(response => {

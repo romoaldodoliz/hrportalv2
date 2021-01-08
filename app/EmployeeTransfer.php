@@ -29,6 +29,11 @@ class EmployeeTransfer extends Model
         'transferred_by',
     ];
 
+    public function employee()
+    {
+        return $this->belongsTo('App\Employee')->select('id','first_name','last_name','middle_name');
+    }
+
     public function new_company()
     {
         return $this->hasOne('App\Company','id','new_company');
@@ -57,6 +62,12 @@ class EmployeeTransfer extends Model
     public function previous_location()
     {
         return $this->hasOne('App\Location','id','previous_location');
+    }
+
+
+    public function employee_transfer_attachments()
+    {
+        return $this->hasMany('App\EmployeeTransferAttachment');
     }
 
 }

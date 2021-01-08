@@ -946,14 +946,12 @@
                     </div>
                   
                     <div class="modal-footer">
-                        <button v-if="user_access_rights.edit == 'YES'" id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                        <button v-if="user_access_rights.edit == 'YES' || user_access_rights.personal_info_edit == 'YES' || user_access_rights.work_info_edit == 'YES' || user_access_rights.contact_info_edit == 'YES' || user_access_rights.identification_info_edit == 'YES'" id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
                         <button v-else id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" disabled>Unable to Update</button>
                     </div>
                 </div>
             </div>
         </div>
-
-
 
         <!-- Transfer employee Modal -->
         <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
@@ -981,9 +979,19 @@
                                
                                <div class="row mt--10 mb-3">
                                     <div class="col-md-12">
+                                        <download-excel
+                                            v-if="transferLogsList.length"
+                                            :data   = "transferLogsList"
+                                            :fields = "transfer_log_fields"
+                                            style="float: right;"
+                                            class   = "btn btn-sm btn-success"
+                                            name    = "Transfer Logs.xls">
+                                                EXCEL
+                                        </download-excel>
+                                        <a v-if="transferLogsList.length" :href="'pdf_employee_transfer_logs/' + transferEmployeeDetails.id" target="_blank" type="button" class="btn btn-warning btn-sm mb-2 ml-2 mt--10 " style="float: right;">PDF</a>
                                         <button v-if="viewTransferLogsList" type="button" class="btn btn-danger btn-sm mb-2 ml-2 mt--10" style="float: right;" @click="closeTransferEmployeeLogs()">Close</button>
                                         <button type="button" class="btn btn-primary btn-sm mb-2 ml-2 mt--10 " style="float: right;" @click="viewTransferEmployeeLogs()">View Transfer History/Logs</button>
-                                        
+                                   
                                     </div>
                                     <div class="col-md-12">
                                         <div class="table-responsive" v-if="viewTransferLogsList">
@@ -999,6 +1007,10 @@
                                                         <th class="text-center">
                                                             TO
                                                         </th>
+                                                        <th class="text-center">
+                                                            Supporting Documents
+                                                        </th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -1020,6 +1032,18 @@
                                                             <span>Position: {{log.new_position}}</span><br>
                                                             <span>Department: {{log.new_department ? log.new_department.name : ""}}</span><br>
                                                             <span>Location: {{log.new_location ? log.new_location.name : ""}}</span><br>
+                                                            
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="log.employee_transfer_attachments.length > 0">
+                                                                <span>{{log.employee_transfer_attachments.length}} Attachments Found</span><br>
+                                                                <span v-for="(attachment,index) in log.employee_transfer_attachments" v-bind:key="index">
+                                                                    <a :href="'storage/' + attachment.path" target="_blank"> {{attachment.filename}} </a><br>
+                                                                </span>
+                                                            </div>
+                                                            <div v-else>
+                                                                <span>0 Attachments</span>
+                                                            </div>
                                                             
                                                         </td>
                                                     </tr>
@@ -1129,6 +1153,12 @@
                                         </div>    
                                     </div>
 
+                                    <div class="col-md-12">
+                                        <h4 class="mt-3">Supporting Documents*</h4>
+                                        <div class="form-group">
+                                            <input type="file" multiple="multiple" id="transfer_supporting_documents" class="form-control transfer-supporting-documents-edit" @change="uploadTransferSupportingDocuments" placeholder="Attach file"><br>
+                                        </div>
+                                    </div>
                                    
                                 </div>
 
@@ -1137,7 +1167,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Tranfer</button>
+                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Transfer</button>
                         <button id="close_transfer_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
                     </div>
                 </div>
@@ -1545,11 +1575,15 @@
                 employees: [],
                 employee: [],
                 employee_copied: [],
+
+                //Transfer
                 transfer_employee: [],
                 transferEmployeeDetails: [],
                 transfer_approvers : [],
                 viewTransferLogsList : false,
                 transferLogsList : [],
+                transfer_supporting_documents : [],
+
                 copied_role: [],
                 roles: [],
                 transfer_errors: [],
@@ -1686,6 +1720,88 @@
                 documents_201_files_attachments : [],
                 deleted_documents_201_files_attachments : [],
                 employee_201_files_attachments: [],
+
+                //Transfer Logs
+                transfer_log_fields : {
+                    'employee_name':{
+                        callback: (value) => {
+                            if(value.employee){
+                                return value.employee.first_name + ' ' + value.employee.last_name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'previous_company' : {
+                        callback: (value) => {
+                            if(value.previous_company){
+                                return value.previous_company.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'previous_id_number' : 'previous_id_number',
+                    'previous_date_hired' : 'previous_date_hired',
+                    'previous_position' : 'previous_position',
+                    'previous_department' : {
+                        callback: (value) => {
+                            if(value.previous_department){
+                                return value.previous_department.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'previous_location' : {
+                        callback: (value) => {
+                            if(value.previous_location){
+                                return value.previous_location.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'new_company' : {
+                        callback: (value) => {
+                            if(value.new_company){
+                                return value.new_company.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'new_id_number' : 'new_id_number',
+                    'new_date_hired' : 'new_date_hired',
+                    'new_position' : 'new_position',
+                    'new_department' : {
+                        callback: (value) => {
+                            if(value.new_department){
+                                return value.new_department.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'new_location' : {
+                        callback: (value) => {
+                            if(value.new_location){
+                                return value.new_location.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'supporting_documents' : {
+                        callback: (value) => {
+                            if(value.employee_transfer_attachments){
+                                return value.employee_transfer_attachments.length + ' Attachments';
+                            }else{
+                                return '';
+                            }
+                        }
+                    }
+                },
 
                 //First Level Under
                 employee_unders : [],
@@ -2374,12 +2490,23 @@
                             formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
                             formData.append('head_approvers', this.transfer_approvers ? JSON.stringify(this.transfer_approvers) : "");
 
+
+                            //Supporting Documents
+                            if(this.transfer_supporting_documents.length > 0){
+                                for(var i = 0; i < this.transfer_supporting_documents.length; i++){
+                                    let transfer_supporting_documents = this.transfer_supporting_documents[i];
+                                    formData.append('transfer_supporting_documents[]', transfer_supporting_documents);
+                                }
+                            }
+
                             formData.append('_method', 'PATCH');
 
                             axios.post(`/transfer-employee/${v.transferEmployeeDetails.id}`, 
                                 formData
                             )
                             .then(response => {
+                                return false;
+                                
                                 this.fetchEmployees();
                                 this.clearTransferForm();
                                 this.transferEmployeeDetails = response.data;
@@ -2417,6 +2544,23 @@
             },
             closeTransferEmployeeLogs(){
                 this.viewTransferLogsList = false;
+            },
+
+            uploadTransferSupportingDocuments(e){
+                this.transfer_supporting_documents = [];
+                var files = e.target.files || e.dataTransfer.files;
+                if(!files.length)
+                    return;
+                for (var i = files.length - 1; i >= 0; i--){
+                    this.transfer_supporting_documents.push(files[i]);
+                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                }
+                if(this.fileSize > 5){
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('transfer_supporting_documents').value = "";
+                    this.transfer_supporting_documents = [];
+                    this.fileSize = 0;
+                }
             },
 
             //Employee Information

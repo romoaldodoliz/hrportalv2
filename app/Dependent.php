@@ -16,4 +16,9 @@ class Dependent extends Model
         'relation',
         'dependent_status'
     ];
+
+    public function employee()
+    {
+    	return $this->belongsToOne('App\Employee');
+    }
 }

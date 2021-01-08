@@ -143,6 +143,10 @@ Route::get('logout', function(){
             Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents'); 
 
             Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');
+
+            Route::get('/employee-dependents-reports', 'ReportController@employeeDependentReports'); 
+
+            Route::get('/employee-dependents-reports-data', 'ReportController@employeeDependentReportsData'); 
             
             //Employee 201 Files
             Route::get('/employee-201-file-attachments/{employee}', 'EmployeeController@employee201FileAttachments');
@@ -166,6 +170,9 @@ Route::get('logout', function(){
             //Transfer Employee Logs
             Route::get('/transfer-employee-logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
             
+            
+            Route::get('/pdf_employee_transfer_logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@pdfTransferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
+
             //Organizational Chart
             Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
             

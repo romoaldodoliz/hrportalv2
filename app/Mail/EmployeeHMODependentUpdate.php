@@ -33,7 +33,8 @@ class EmployeeHMODependentUpdate extends Mailable
         ->with([
             'employee_name'  =>  $this->employee_data['employee_name'],
             'position'  =>  $this->employee_data['position'],
-            'company'  =>  $this->employee_data['company']
+            'dependents'  =>  $this->employee_data['dependents'],
+            'deleted_dependents'  =>  $this->employee_data['deleted_dependents']
         ]);
     }
 }

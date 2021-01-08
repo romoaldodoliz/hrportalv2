@@ -484,6 +484,9 @@
                                                     <th class="text-center">
                                                         Relationship
                                                     </th>
+                                                    <th class="text-center">
+                                                        Status
+                                                    </th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -513,7 +516,13 @@
                                                             <option value="SPOUSE">SPOUSE</option>
                                                             <option value="CHILD">CHILD</option>
                                                         </select> 
-
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" v-model="row.dependent_status" id="dependent_status">
+                                                            <option value="">Choose Status</option>
+                                                            <option value="NEW">NEW</option>
+                                                            <option value="RENEW">RENEW</option>
+                                                        </select>  
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">Remove</button>
@@ -874,6 +883,7 @@
                                 <th width="20%;">Gender</th>
                                 <th width="20%;">Date of Birth</th>
                                 <th width="20%;">Relationship</th>
+                                <th width="20%;">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -883,6 +893,7 @@
                                 <td>{{ request_approval_dependent.dependent_gender }}</td>
                                 <td>{{ request_approval_dependent.bdate }}</td>
                                 <td>{{ request_approval_dependent.relation }}</td>
+                                <td>{{ request_approval_dependent.dependent_status }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -900,6 +911,7 @@
                                     <th width="20%;">Gender</th>
                                     <th width="20%;">Date of Birth</th>
                                     <th width="20%;">Relationship</th>
+                                    <th width="20%;">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -909,6 +921,7 @@
                                     <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
                                     <td>{{ request_approval_deleted_dependent.bdate }}</td>
                                     <td>{{ request_approval_deleted_dependent.relation }}</td>
+                                    <td>{{ request_approval_deleted_dependent.dependent_status }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1315,7 +1328,8 @@
                                 dependent_name: element.dependent_name,
                                 dependent_gender: element.dependent_gender,
                                 bdate: v.getDateFormat(element.bdate),
-                                relation: element.relation
+                                relation: element.relation,
+                                dependent_status: element.dependent_status,
                             });
                         });
                     }
@@ -1348,6 +1362,7 @@
                     dependent_gender: "",
                     bdate: "",
                     relation: "",
+                    dependent_status: "",
                 });
             },
             removeDependent: function(index,dependent) {
@@ -1367,7 +1382,8 @@
                                 dependent_name: dependent.dependent_name,
                                 dependent_gender: dependent.dependent_gender,
                                 bdate: dependent.bdate,
-                                relation: dependent.relation
+                                relation: dependent.relation,
+                                dependent_status: dependent.dependent_status
                             });
                             this.dependents.splice(index, 1);    
                         }

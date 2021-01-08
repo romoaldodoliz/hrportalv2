@@ -51,6 +51,11 @@ Vue.component('survey-user', require('./components/Surveys/SurveyUser.vue').defa
 
 
 
+//Reports
+Vue.component('employee-dependent-reports', require('./components/Reports/EmployeeDependentReports.vue').default);
+
+
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
