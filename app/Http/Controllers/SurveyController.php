@@ -152,6 +152,13 @@ class SurveyController extends Controller
         }
     }
 
+    public function allSurveyCulture(){
+        return SurveyCulture::orderBy('department','ASC')->get();
+    }
 
+    public function exportSurveyCulture(){
+        
+        return view('surveys.export_survey_culture');
+    }
 
 }

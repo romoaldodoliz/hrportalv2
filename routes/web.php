@@ -76,8 +76,8 @@ Route::post('/save-user-survey', 'SurveyController@saveUserSurvey');
 Route::get('/survey-culture', 'SurveyController@surveyCulture');
 Route::get('/get-user-survey-culture', 'SurveyController@getUserSurveyCulture');
 Route::post('/save-survey-culture', 'SurveyController@saveSurveyCulture');
-
-
+Route::get('/export-survey-culture', 'SurveyController@exportSurveyCulture');
+Route::get('/all-survey-culture', 'SurveyController@allSurveyCulture');
 
 
 Auth::routes();
