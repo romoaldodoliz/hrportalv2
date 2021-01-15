@@ -1895,7 +1895,12 @@ class EmployeeController extends Controller
             $today = date("Y-m-d");
 
             $date_hired = $employee['date_hired'];
-            $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            
+            try {
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            } catch (DecryptException $e) {
+                $filtered_data[$key]['basic_salary'] = "";
+            }
            
             //Get Tenure
             $tenure = "";
@@ -2116,6 +2121,7 @@ class EmployeeController extends Controller
                 if($npa_request['subject'] == "REGULARIZATION"){
                     $data = [];
                     $data['classification'] = "Regular";
+                    $data['date_regularized'] = date('Y-m-d');
                     $employee->update($data);
                 }
 

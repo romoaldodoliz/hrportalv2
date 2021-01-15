@@ -342,6 +342,7 @@ Route::get('logout', function(){
         Route::get('get-npa-requests/{employee_id}','EmployeeController@getNPARequestLists');
         Route::delete('npa_request/{npa_request}', 'EmployeeController@destroyNPARequest');
 
+        Route::get('print-employee-npa-requests/{employee}','NpaRequestController@printEmployeeNPARequest');
 
         //HR Employees
         Route::get('hr-employees','EmployeeController@getHREmployees');

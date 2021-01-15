@@ -1277,7 +1277,7 @@
                                                         <h4>Company</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_company" id="company">
+                                                        <select class="form-control" v-model="npa_request.from_company" id="company" disabled="disabled">
                                                             <option value="">Choose Company</option>
                                                             <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                                         </select>
@@ -1296,7 +1296,7 @@
                                                         <h4>Location</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_location" id="location">
+                                                        <select class="form-control" v-model="npa_request.from_location" id="location" disabled="disabled">
                                                             <option value="">Choose Location</option>
                                                             <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
                                                         </select>
@@ -1315,7 +1315,7 @@
                                                         <h4>Position Title </h4>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" v-model="npa_request.from_position_title">
+                                                        <input type="text" class="form-control" v-model="npa_request.from_position_title" disabled="disabled">
                                                         <span class="text-danger" v-if="npa_request_errors.from_position_title">{{ npa_request_errors.from_position_title[0] }}</span> 
                                                     </td>
                                                     <td>
@@ -1336,7 +1336,7 @@
                                                         <h4>Immediate Manager</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_immediate_manager" id="location">
+                                                        <select class="form-control" v-model="npa_request.from_immediate_manager" id="location" disabled="disabled">
                                                             <option value="">Choose Immediate Manager</option>
                                                             <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
                                                         </select>
@@ -1355,7 +1355,7 @@
                                                         <h4>Department</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_department" id="department">
+                                                        <select class="form-control" v-model="npa_request.from_department" id="department" disabled="disabled">
                                                             <option value="">Choose Department</option>
                                                             <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
                                                         </select>
@@ -1471,6 +1471,9 @@
                                                         <th class="text-center">
                                                             Action
                                                         </th>
+                                                        <th class="text-center">
+                                                            Print
+                                                        </th>
                                                     </tr>    
                                                 </thead>
                                                 <tbody>
@@ -1513,6 +1516,11 @@
                                                                 <button type="button" class="btn btn-sm btn-primary" @click="viewNPARequest(npa_request)">View</button>
                                                                 <button v-if="npa_request.status == 'Pending' || user_access_rights.roles[0].name == 'Administrator'" type="button" class="btn btn-sm btn-warning" @click="editNPARequest(npa_request)">Edit</button>
                                                                 <button v-if="npa_request.status == 'Pending' || user_access_rights.roles[0].name == 'Administrator'" type="button" class="btn btn-sm btn-danger" @click="deleteNPARequest(npa_request)">Delete</button>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <a :href="'print-employee-npa-requests/' + npa_request.id" target="_blank" type="button" class="btn btn-sm btn-info">Print</a>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -1566,6 +1574,7 @@
     import loader from './Loader'
     import Swal from 'sweetalert2'
     import JsonExcel from 'vue-json-excel'
+    import moment from 'moment';
 
     export default {
         components: { 'downloadExcel': JsonExcel,loader },
@@ -1674,7 +1683,15 @@
                     'BASIC SALARY': 'basic_salary',
                     'DATE HIRED': 'date_hired',
                     'DATE RESIGNED': 'date_resigned',
-                    'TENURE': 'tenure',
+                    'TENURE': {
+                        callback: (value) => {
+                            if(value.date_hired){
+                                return this.getTenureNumeric(value.date_hired);
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
                     '5th month': 'fifth_month',
                     '6th month': 'six_month',
                     'LEVEL': 'level',
@@ -1818,8 +1835,6 @@
             this.fetchClusters();
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
-            this.exportFetchEmployees();
-            // this.exportFetchInactiveEmployees();
             this.fetchUserAccessRights();
             this.fetchHREmployees();
             this.fetchBUHeadEmployees();
@@ -1844,9 +1859,13 @@
                 v.npa_request.from_immediate_manager = npa_request.from_immediate_manager;
                 v.npa_request.from_department = npa_request.from_department;
                 v.npa_request.from_monthly_basic_salary = npa_request.from_monthly_basic_salary;
-              
-                v.npa_request.effectivity_date = npa_request.effectivity_date;
 
+
+                v.npa_request.date_hired = npa_request.date_hired;
+
+                v.npa_request.effectivity_date = npa_request.effectivity_date;
+                
+                v.npa_request.to_type_of_movement = npa_request.to_type_of_movement;
                 v.npa_request.to_company = npa_request.to_company;
                 v.npa_request.to_location = npa_request.to_location;
                 v.npa_request.to_position_title = npa_request.to_position_title;
@@ -2853,6 +2872,8 @@
                 .then(response => { 
                     this.employees = response.data;
                     this.table_loading = false;
+                    this.exportFetchEmployees();
+                    this.exportFetchInactiveEmployees();
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
@@ -3212,6 +3233,119 @@
                     return years + ' year(s) ' + months + ' month(s)';
                 }else{
                     return "";
+                }
+            },
+            getTenureNumeric(dateString) 
+            {
+                if(dateString){
+                    var to = new Date();
+                    var from = new Date(dateString);
+                    var tenure = this.YEARFRAC(to,from);
+                    return tenure.toFixed(2);
+                }else{
+                    return "";
+                }
+            },
+            YEARFRAC(start_date, end_date, basis) {
+            // Initialize parameters
+            var basis = (typeof basis === 'undefined') ? 0 : basis;
+            var sdate = moment(new Date(start_date));
+            var edate = moment(new Date(end_date));
+
+            // Return error if either date is invalid
+            if (!sdate.isValid() || !edate.isValid()) return '#VALUE!';
+
+            // Return error if basis is neither 0, 1, 2, 3, or 4
+            if ([0,1,2,3,4].indexOf(basis) === -1) return '#NUM!';
+            
+            // Return zero if start_date and end_date are the same
+            if (sdate === edate) return 0;
+            
+            // Swap dates if start_date is later than end_date
+            if (sdate.diff(edate) > 0) {
+                var edate = moment(new Date(start_date));
+                var sdate = moment(new Date(end_date)); 
+            }
+
+            // Lookup years, months, and days
+            var syear = sdate.year();
+            var smonth = sdate.month();
+            var sday = sdate.date();
+            var eyear = edate.year();
+            var emonth = edate.month();
+            var eday = edate.date();
+
+            switch (basis) {
+                    case 0:
+                    // US (NASD) 30/360
+                    // Note: if eday == 31, it stays 31 if sday < 30
+                    if (sday === 31 && eday === 31) {
+                        sday = 30;
+                        eday = 30;
+                    } else if (sday === 31) {
+                        sday = 30;
+                    } else if (sday === 30 && eday === 31) {
+                        eday = 30;
+                    } else if (smonth === 1 && emonth === 1 && sdate.daysInMonth() === sday && edate.daysInMonth() === eday) {
+                        sday = 30;
+                        eday = 30;
+                    } else if (smonth === 1 && sdate.daysInMonth() === sday) {
+                        sday = 30;
+                    }
+                    return ((eday + emonth * 30 + eyear * 360) - (sday + smonth * 30 + syear * 360)) / 360;
+                    break;
+
+                    case 1:
+                    // Actual/actual
+                    var feb29Between = function(date1, date2) {
+                        // Requires year2 == (year1 + 1) or year2 == year1
+                        // Returns TRUE if February 29 is between the two dates (date1 may be February 29), with two possibilities:
+                        // year1 is a leap year and date1 <= Februay 29 of year1
+                        // year2 is a leap year and date2 > Februay 29 of year2
+                
+                        var mar1year1 = moment(new Date(date1.year(), 2, 1));
+                        if (moment([date1.year()]).isLeapYear() && date1.diff(mar1year1) < 0 && date2.diff(mar1year1) >= 0) {
+                        return true;
+                        } 
+                        var mar1year2 = moment(new Date(date2.year(), 2, 1));
+                        if (moment([date2.year()]).isLeapYear() && date2.diff(mar1year2) >= 0 && date1.diff(mar1year2) < 0) {
+                        return true;
+                        }
+                        return false;
+                    };
+                    var ylength = 365;
+                    if (syear === eyear || ((syear + 1) === eyear) && ((smonth > emonth) || ((smonth === emonth) && (sday >= eday)))) {
+                        if (syear === eyear && moment([syear]).isLeapYear()) {
+                        ylength = 366;
+                        } else if (feb29Between(sdate, edate) || (emonth === 1 && eday === 29)) {
+                        ylength = 366;
+                        }
+                        return edate.diff(sdate, 'days') / ylength;
+                    } else {
+                        var years = (eyear - syear) + 1;
+                        var days = moment(new Date(eyear + 1, 0, 1)).diff(moment(new Date(syear, 0, 1)), 'days');
+                        var average = days / years;
+                        return edate.diff(sdate, 'days') / average;
+                    }
+                    break;
+
+                    case 2:
+                    // Actual/360
+                    return edate.diff(sdate, 'days') / 360;
+                    break;
+
+                    case 3:
+                    // Actual/365
+                    return edate.diff(sdate, 'days') / 365;
+                    break;
+
+                    case 4:
+                    // European 30/360
+                    if (sday === 31) sday = 30;
+                    if (eday === 31) eday = 30;
+                    // Remarkably, do NOT change February 28 or February 29 at ALL
+                    return ((eday + emonth * 30 + eyear * 360) - (sday + smonth * 30 + syear * 360)) / 360;
+                    break;
                 }
             },
             setPage(pageNumber) {
