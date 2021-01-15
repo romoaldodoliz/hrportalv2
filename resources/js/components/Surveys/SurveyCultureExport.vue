@@ -54,7 +54,7 @@ import JsonExcel from 'vue-json-excel'
             return {
                 allSurveyCulture: [],
                 json_fields: {
-                    'Name' : 'Name',
+                    'Name' : 'name',
                     'Position' : 'position',
                     'Department' : 'department',
                     'Company' : 'company',
