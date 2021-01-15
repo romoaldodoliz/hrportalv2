@@ -153,7 +153,7 @@ class SurveyController extends Controller
     }
 
     public function allSurveyCulture(){
-        return SurveyCulture::orderBy('department','ASC')->get();
+        return SurveyCulture::with('employee')->orderBy('department','ASC')->get();
     }
 
     public function exportSurveyCulture(){

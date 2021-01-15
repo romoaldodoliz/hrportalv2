@@ -54,11 +54,29 @@ import JsonExcel from 'vue-json-excel'
             return {
                 allSurveyCulture: [],
                 json_fields: {
+                    'ID Number' : {
+                        callback: (value) => {
+                            if(value.employee){
+                                return value.employee.id_number;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
                     'Name' : 'name',
                     'Position' : 'position',
                     'Department' : 'department',
                     'Company' : 'company',
                     'Location' : 'location',
+                    'Cluster' : {
+                        callback: (value) => {
+                            if(value.employee){
+                                return value.employee.cluster;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
                     'q1' : 'q1',
                     'q2' : 'q2',
                     'q3' : 'q3',
