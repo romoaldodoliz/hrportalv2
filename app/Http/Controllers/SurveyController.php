@@ -153,7 +153,21 @@ class SurveyController extends Controller
     }
 
     public function allSurveyCulture(){
-        return SurveyCulture::with('employee')->orderBy('department','ASC')->get();
+        $survey = SurveyCulture::with('employee')->orderBy('department','ASC')->get();
+
+        $itemArr = [];
+        foreach($survey as $k => $item){
+            $itemArr[$k] = $item;
+            //Sort
+            $q1 = explode(',',$item['q1']);
+            sort($q1);
+            $itemArr[$k]['q1'] = implode(',',$q1);
+
+            $q6 = explode(',',$item['q6']);
+            sort($q6);
+            $itemArr[$k]['q6'] = implode(',',$q6);
+        }
+        return $itemArr;
     }
 
     public function exportSurveyCulture(){
