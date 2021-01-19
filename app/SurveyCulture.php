@@ -14,7 +14,7 @@ class SurveyCulture extends Model
 
     public function employee()
     {
-        return $this->hasOne('App\Employee','user_id','user_id')->select('id','user_id','id_number','cluster');
+        return $this->hasOne('App\Employee','user_id','user_id')->select('id','user_id','id_number','cluster')->where('status','Active');
     }
 
 }
