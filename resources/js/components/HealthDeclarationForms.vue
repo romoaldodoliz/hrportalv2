@@ -30,7 +30,7 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="role">Search Employee</label> 
-                                        <input type="text"  class="form-control" v-model="keyword" placeholder="Search Last Name / First Name">
+                                        <input type="text"  class="form-control" ref="keyword" v-model="keyword" placeholder="Search Last Name / First Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -59,7 +59,7 @@
                                                 <td>{{ employee.last_name + ', ' + employee.first_name  }}</td>
                                                 <td>{{ employee.departments[0] ? employee.departments[0].name : "" }} / {{ employee.position }}</td>
                                                 <td>{{ employee.mobile_number}}</td>
-                                                <td class="text-center"><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Check</button></td>
+                                                <td class="text-center"><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)">Check</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -93,7 +93,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h4>Temperature</h4> 
-                                    <input type="number" class="form-control" v-model="form.temperature">
+                                    <input type="number" class="form-control" id="temperature" v-model="form.temperature">
                                     <br>
                                     <span class="text-danger" v-if="errors.temperature">{{ errors.temperature[0] }}</span>
                                 </div>
@@ -280,6 +280,9 @@
             this.getLockScreen();
         },
         methods:{
+            formKeyword() {
+               this.$refs.keyword.focus()
+            }, 
             unlockScreen(){
                 axios.post('/unlock-screen', {
                     lock_password: this.lock_password ? this.lock_password : ""
@@ -410,12 +413,12 @@
                 })
             },
             checkEmployee(employee){
-                if(employee.face_user_id){
-                    this.employee = employee;
-                }else{
-                    this.employee = employee;
-                }
+                $('#checkModal').modal('show');
+                this.employee = employee;
 
+                $('#checkModal').on('shown.bs.modal', function () {
+                    $('#temperature').focus();
+                })
             },
             checkICEmployee(ic_employee){
                 this.ic_employee = ic_employee;
@@ -486,7 +489,12 @@
                             title: 'Success!',
                             text: 'Successfully Checked.',
                             icon: 'success',
-                            confirmButtonText: 'Okay'
+                            confirmButtonText: 'Okay',
+                            timer : 5000
+                        }).then(okay => {
+                            if (okay) {
+                                this.refresh();
+                            }
                         });
 
                         $('#checkModal').modal('hide');
@@ -534,6 +542,9 @@
 
                     this.loading = false;
                 })
+            },
+            refresh(){
+                location.reload();
             },
             saveICCheckForm(form_ic){
                 this.loading = true;
@@ -618,6 +629,9 @@
                     audio.play();
                 }
             }
+        },
+        mounted(){
+            this.formKeyword();
         }
     }
 </script>
