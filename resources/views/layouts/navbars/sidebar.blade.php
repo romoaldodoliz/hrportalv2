@@ -95,7 +95,12 @@
                             <ul class="nav" style="list-style-type: none;">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url('/employee-dependents-reports') }}">
-                                        <i class="fas fa-circle text-blue"></i> Dependents
+                                        <i class="fas fa-circle text-blue"></i>HMO Dependents
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/employee-transfer-reports') }}">
+                                        <i class="fas fa-circle text-green"></i> Employee Transfer
                                     </a>
                                 </li>
                             </ul>

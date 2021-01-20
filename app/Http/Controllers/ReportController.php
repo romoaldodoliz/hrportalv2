@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 
 use App\Employee;
 use App\Dependent;
+use App\EmployeeTransfer;
 
 class ReportController extends Controller
 {
     public function employeeDependentReports(){
+        session(['header_text' => 'Reports']);
         return view('reports.employee_dependent_reports');
     }
 
@@ -57,4 +59,20 @@ class ReportController extends Controller
             'total_count' => $employees->count()
         ];
     }
+
+    public function employeeTransferReports(){
+        session(['header_text' => 'Reports']);
+        return view('reports.employee_transfer_reports');
+    }
+
+    public function employeeTransferReportsData(){
+        $employee_transfer = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->get();
+    
+        return $data = [
+            'employee_transfers' => $employee_transfer,
+            'total_count' => $employee_transfer->count()
+        ];
+    }
+
+
 }

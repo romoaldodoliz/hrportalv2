@@ -146,7 +146,11 @@ Route::get('logout', function(){
 
             Route::get('/employee-dependents-reports', 'ReportController@employeeDependentReports'); 
 
-            Route::get('/employee-dependents-reports-data', 'ReportController@employeeDependentReportsData'); 
+            Route::get('/employee-dependents-reports-data', 'ReportController@employeeDependentReportsData');
+            
+            Route::get('/employee-transfer-reports', 'ReportController@employeeTransferReports'); 
+
+            Route::get('/employee-transfer-reports-data', 'ReportController@employeeTransferReportsData'); 
             
             //Employee 201 Files
             Route::get('/employee-201-file-attachments/{employee}', 'EmployeeController@employee201FileAttachments');

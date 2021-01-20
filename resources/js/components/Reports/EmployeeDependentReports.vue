@@ -27,7 +27,7 @@
                                             :fields = "json_fields"
                                             class   = "btn btn-sm btn-default float-right mb-2"
                                             name    = "Employee Dependents.xls">
-                                                Export to excel
+                                                Export to excel ({{employee_dependents.length}})
                                         </download-excel>
                                     </div>
                                 </div>
