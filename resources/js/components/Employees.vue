@@ -1838,8 +1838,33 @@
             this.fetchUserAccessRights();
             this.fetchHREmployees();
             this.fetchBUHeadEmployees();
+
+            //Show Npa Approval Form
+            this.showNpaApprovalForm();
         },
         methods:{
+            showNpaApprovalForm(){
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const employee_id = urlParams.get('employee_id');
+                const type = urlParams.get('type');
+
+                if(employee_id && type=='npa'){
+                    axios.get('/get-employee?employee_id='+employee_id)
+                    .then(response => { 
+                        if(response.data){
+                            $('#npaRequestModal').modal('show');
+                            this.npaRequest(response.data);
+                        }else{
+                            alert('No Results Found');
+                        }
+                    })
+                    .catch(error => { 
+                       
+                    })
+                }
+                
+            },
             cancelEditNPARequest(){
                 let v = this;
                 v.npaRequest(v.npaRequestDetails);

@@ -103,6 +103,11 @@
                                         <i class="fas fa-circle text-green"></i> Employee Transfer
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/employee-npa-reports') }}">
+                                        <i class="fas fa-circle text-red"></i> Employee NPA
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </li>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Employee;
 use App\Dependent;
 use App\EmployeeTransfer;
+use App\EmployeeNpaRequest;
 
 class ReportController extends Controller
 {
@@ -66,7 +67,7 @@ class ReportController extends Controller
     }
 
     public function employeeTransferReportsData(){
-        $employee_transfer = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->get();
+        $employee_transfer = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->orderBy('created_at','DESC')->get();
     
         return $data = [
             'employee_transfers' => $employee_transfer,
@@ -74,5 +75,19 @@ class ReportController extends Controller
         ];
     }
 
+
+    public function employeeNpaReports(){
+        session(['header_text' => 'Reports']);
+        return view('reports.employee_npa_reports');
+    }
+
+    public function employeeNpaDataReportsData(){
+        $employee_npa_requests = EmployeeNpaRequest::with('employee','from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->orderBy('created_at','DESC')->get();
+    
+        return $data = [
+            'employee_npa_requests' => $employee_npa_requests,
+            'total_count' => $employee_npa_requests->count()
+        ];
+    }
 
 }

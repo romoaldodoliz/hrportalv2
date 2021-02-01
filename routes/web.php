@@ -114,6 +114,7 @@ Route::get('logout', function(){
         // Employees
             Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
             Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            Route::get('/get-employee',['as'=>'employees.getEmployee','uses'=>'EmployeeController@getEmployee','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
             
@@ -144,13 +145,20 @@ Route::get('logout', function(){
 
             Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');
 
+            //Employee Dependents Reports
             Route::get('/employee-dependents-reports', 'ReportController@employeeDependentReports'); 
 
             Route::get('/employee-dependents-reports-data', 'ReportController@employeeDependentReportsData');
             
+            //Employee Transfer Reports
             Route::get('/employee-transfer-reports', 'ReportController@employeeTransferReports'); 
 
-            Route::get('/employee-transfer-reports-data', 'ReportController@employeeTransferReportsData'); 
+            Route::get('/employee-transfer-reports-data', 'ReportController@employeeTransferReportsData');
+            
+            //Employee NPA Reports
+            Route::get('/employee-npa-reports', 'ReportController@employeeNpaReports'); 
+
+            Route::get('/employee-npa-reports-data', 'ReportController@employeeNpaDataReportsData'); 
             
             //Employee 201 Files
             Route::get('/employee-201-file-attachments/{employee}', 'EmployeeController@employee201FileAttachments');

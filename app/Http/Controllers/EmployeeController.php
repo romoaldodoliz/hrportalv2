@@ -96,6 +96,14 @@ class EmployeeController extends Controller
        
         
     }
+
+    public function getEmployee(Request $request){
+        return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+                        ->where('id',$request->employee_id)
+                        ->orderBy('series_number','DESC')
+                        ->first();
+    }
+
     public function employeeindexCount()
     {
         return Employee::where('status','Active')->count();

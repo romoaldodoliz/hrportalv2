@@ -54,6 +54,7 @@ Vue.component('survey-user', require('./components/Surveys/SurveyUser.vue').defa
 //Reports
 Vue.component('employee-dependent-reports', require('./components/Reports/EmployeeDependentReports.vue').default);
 Vue.component('employee-transfer-reports', require('./components/Reports/EmployeeTransferReports.vue').default);
+Vue.component('employee-npa-reports', require('./components/Reports/EmployeeNpaReports.vue').default);
 
 
 

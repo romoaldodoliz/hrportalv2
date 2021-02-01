@@ -61,7 +61,7 @@ class HomeController extends Controller
                     return view('home');
                 }
                 elseif(auth()->user()->roles[0]->name == "Cluster Head" || auth()->user()->roles[0]->name == "BU Head" || auth()->user()->roles[0]->name == "Immediate Superior"){
-                    return view('employees.index');
+                    return redirect('/employees');
                 }
                 else{
                     $user->attachRole(2);
