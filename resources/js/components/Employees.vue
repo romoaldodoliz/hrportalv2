@@ -2070,11 +2070,11 @@
                         let to_monthly_basic_salary = v.npa_request_detail.to_monthly_basic_salary ? v.npa_request_detail.to_monthly_basic_salary : "";
 
 
-                        let prepared_by = v.npa_request_detail.prepared_by ? v.npa_request_detail.prepared_by.first_name + ' ' + v.npa_request_detail.prepared_by.first_name + ' / ' + v.npa_request_detail.prepared_by.position : "";
+                        let prepared_by = v.npa_request_detail.prepared_by ? v.npa_request_detail.prepared_by.first_name + ' ' + v.npa_request_detail.prepared_by.last_name + ' / ' + v.npa_request_detail.prepared_by.position : "";
                         
-                        let recommended_by = v.npa_request_detail.recommended_by ? v.npa_request_detail.recommended_by.first_name + ' ' + v.npa_request_detail.recommended_by.first_name + ' / ' + v.npa_request_detail.recommended_by.position : "";
+                        let recommended_by = v.npa_request_detail.recommended_by ? v.npa_request_detail.recommended_by.first_name + ' ' + v.npa_request_detail.recommended_by.last_name + ' / ' + v.npa_request_detail.recommended_by.position : "";
                         
-                        let approved_by = v.npa_request_detail.approved_by ? v.npa_request_detail.approved_by.first_name + ' ' + v.npa_request_detail.approved_by.first_name + ' / ' + v.npa_request_detail.approved_by.position : "";
+                        let approved_by = v.npa_request_detail.approved_by ? v.npa_request_detail.approved_by.first_name + ' ' + v.npa_request_detail.approved_by.last_name + ' / ' + v.npa_request_detail.approved_by.position : "";
 
                         let bu_head = v.npa_request_detail.bu_head ? v.npa_request_detail.bu_head.first_name + ' ' + v.npa_request_detail.bu_head.last_name + ' / ' + v.npa_request_detail.bu_head.position  : "";
 
