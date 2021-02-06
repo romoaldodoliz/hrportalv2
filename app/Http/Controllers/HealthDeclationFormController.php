@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ConnectException;
 
 use Illuminate\Support\Facades\Storage;
 
@@ -1009,12 +1010,15 @@ class HealthDeclationFormController extends Controller
                     ]
                 );
 
-            return 'sent';
+                return 'sent';
 
             }catch(ServerException $e){
                 return 'not';
             }
             catch(RequestException $e){
+                return 'not';
+            }
+            catch(ConnectException $e){
                 return 'not';
             }
         }
