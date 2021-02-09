@@ -33,6 +33,7 @@ use App\RfidUser;
 
 use App\HrRecieverHmoDependent;
 use App\Mail\EmployeeHMODependentUpdate;
+use App\Mail\EmployeeNpaNotification;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -2030,11 +2031,9 @@ class EmployeeController extends Controller
         
         $employee_data = Employee::with('companies','departments','locations','assign_heads')->where('id',$data['employee_id'])->first();
         
-
         if($employee_data){
             DB::beginTransaction();
-            try {   
-
+            try { 
                 $select_last_request = EmployeeNpaRequest::select('ctrl_no')->orderBy('ctrl_no','DESC')->orderBy('created_at','DESC')->first();
 
                 $ctrl_no = "";
@@ -2055,6 +2054,56 @@ class EmployeeController extends Controller
 
                 if(EmployeeNpaRequest::create($data)){
                     DB::commit();
+
+                    //Recommended By
+                    if($data['recommended_by']){
+                        $email_prepared_by = 'arjay.lumagdong@lafilgroup.com';
+                        $reciever_name_prepared_by = 'Arjay Lumagdong';
+    
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_prepared_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_prepared_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
+
+                    //Approved By
+                    if($data['approved_by']){
+                        $email_prepared_by = 'arjay.lumagdong@lafilgroup.com';
+                        $reciever_name_prepared_by = 'Arjay Lumagdong';
+    
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_prepared_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_prepared_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
+
+
+                    //BU Head
+                    if($data['bu_head']){
+                        $email_prepared_by = 'arjay.lumagdong@lafilgroup.com';
+                        $reciever_name_prepared_by = 'Arjay Lumagdong';
+    
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_prepared_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_prepared_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
+
                     return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
                 }
                
