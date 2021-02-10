@@ -193,13 +193,12 @@
                                     <!-- Personal -->
                                     <div v-if="user_access_rights.personal_info == 'YES'" class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
                                         <div class="row">
-                                            
-
                                             <div class="col-md-12 mb-5" style="border:1px solid;border-radius:6px;border-color:#cad1d7;">
                                                 <div class="col-md-12 mt-3 justify-content-center">
                                                     <div class="form-group">
                                                         <label for="role">Profile Image</label> 
-                                                        <input type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
+                                                        <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
+                                                        <input v-else disabled type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
                                                         <span class="text-danger" v-if="errors.employee_image">{{ errors.employee_image[0] }}</span>
                                                     </div>
                                                 </div>
@@ -209,7 +208,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">Signature</label> 
-                                                        <input type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
+                                                        <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
+                                                        <input v-else disabled type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
                                                         <span class="text-danger" v-if="errors.employee_signature">{{ errors.employee_signature[0] }}</span>
                                                     </div>
                                                 </div>
@@ -218,28 +218,32 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">First Name*</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.first_name"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.first_name"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.first_name"   >
                                                     <span class="text-danger" v-if="errors.first_name">{{ errors.first_name[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="role">Middle Name</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.middle_name"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.middle_name"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.middle_name"   >
                                                     <span class="text-danger" v-if="errors.middle_name">{{ errors.middle_name[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="role">Middle Initial</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
                                                     <span class="text-danger" v-if="errors.middle_initial">{{ errors.middle_initial[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Last Name*</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.last_name"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.last_name"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.last_name"   >
                                                     <span class="text-danger" v-if="errors.last_name">{{ errors.last_name[0] }}</span>
                                                 </div>
                                             </div>
@@ -247,7 +251,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Nickname</label> 
-                                                    <input type="text" class="form-control" v-model="employee_copied.nick_name">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.nick_name">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.nick_name">
                                                     <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
                                                 </div>
                                             </div>
@@ -255,7 +260,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Suffix</label> 
-                                                    <input type="text" class="form-control" v-model="employee_copied.name_suffix">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.name_suffix">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.name_suffix">
                                                     <span class="text-danger" v-if="errors.name_suffix">{{ errors.name_suffix[0] }}</span>
                                                 </div>
                                             </div>
@@ -263,7 +269,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Status*</label> 
-                                                    <select class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
+                                                    <select v-if="user_access_rights.personal_info_edit == 'YES'" class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
+                                                        <option value="">Choose Marital Status</option>
+                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
                                                         <option value="">Choose Marital Status</option>
                                                         <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
                                                     </select>
@@ -273,7 +283,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
-                                                    <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
+                                                    <input v-else disabled type="file" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
                                                     <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
                                                 </div>
                                             </div>
@@ -281,20 +292,28 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date of Birth*</label> 
-                                                    <input type="date" class="form-control" v-model="employee_copied.birthdate">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.birthdate">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.birthdate">
                                                     <span class="text-danger" v-if="errors.birthdate">{{ errors.birthdate[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Age <span class="text-danger" v-if="employee_copied.age">{{ employee_copied.ageRange }}</span></label> 
-                                                    <input type="text" disabled class="form-control" v-model="employee_copied.age">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" disabled class="form-control" v-model="employee_copied.age">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.age">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Gender*</label> 
-                                                    <select class="form-control" v-model="employee_copied.gender" id="marital_status">
+                                                    <select v-if="user_access_rights.personal_info_edit == 'YES'" class="form-control" v-model="employee_copied.gender" id="marital_status">
+                                                        <option value="">Choose Gender</option>
+                                                        <option value="MALE"> MALE</option>
+                                                        <option value="FEMALE"> FEMALE</option>
+                                                        <!-- <option value="UNKNOWN"> UNKNOWN</option> -->
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.gender" id="marital_status">
                                                         <option value="">Choose Gender</option>
                                                         <option value="MALE"> MALE</option>
                                                         <option value="FEMALE"> FEMALE</option>
@@ -307,7 +326,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="role">Birthplace</label> 
-                                                    <textarea  class="form-control" v-model="employee_copied.birthplace"></textarea>
+                                                    <textarea v-if="user_access_rights.personal_info_edit == 'YES'" class="form-control" v-model="employee_copied.birthplace"></textarea>
+                                                    <textarea v-else disabled class="form-control" v-model="employee_copied.birthplace"></textarea>
                                                     <span class="text-danger" v-if="errors.birthplace">{{ errors.birthplace[0] }}</span>
                                                 </div>
                                             </div>
@@ -323,21 +343,24 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Name of School</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.school_graduated">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.school_graduated">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.school_graduated">
                                                     <span class="text-danger" v-if="errors.school_graduated">{{ errors.school_graduated[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Course</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.school_course">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.school_course">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.school_course">
                                                     <span class="text-danger" v-if="errors.school_course">{{ errors.school_course[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Year Graduated</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.school_year">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.school_year">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.school_year">
                                                     <span class="text-danger" v-if="errors.school_year">{{ errors.school_year[0] }}</span> 
                                                 </div>
                                             </div>
@@ -349,21 +372,24 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Name of School</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_graduated">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.vocational_graduated">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.vocational_graduated">
                                                     <span class="text-danger" v-if="errors.vocational_graduated">{{ errors.vocational_graduated[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Course</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_course">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.vocational_course">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.vocational_course">
                                                     <span class="text-danger" v-if="errors.vocational_course">{{ errors.vocational_course[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Year Graduated</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_year">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.vocational_year">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.vocational_year">
                                                     <span class="text-danger" v-if="errors.vocational_year">{{ errors.vocational_year[0] }}</span> 
                                                 </div>
                                             </div>
@@ -382,7 +408,8 @@
                                                 <div v-else>
                                                     <h4>Employee Number: </h4>
                                                     <div class="custom-control custom-checkbox mb-3" v-if="employee_copied.status == 'Active'">
-                                                        <input id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
+                                                        <input v-if="user_access_rights.work_info_edit == 'YES'" id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
+                                                        <input v-else disabled id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
                                                         <label class="custom-control-label" for="confidential">Please check to generate ID Number.</label>
                                                     </div>   
                                                 </div>
@@ -390,7 +417,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Company*</label>
-                                                    <select class="form-control" v-model="employee_copied.company_list" id="company">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.company_list" id="company">
+                                                        <option value="">Choose Company</option>
+                                                        <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.company_list" id="company">
                                                         <option value="">Choose Company</option>
                                                         <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                                     </select>
@@ -402,7 +433,12 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Cluster</label>
-                                                    <select class="form-control" v-model="employee_copied.cluster" id="cluster">
+                                                    <select  v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.cluster" id="cluster">
+                                                        <option value="">Choose Cluster</option>
+                                                        <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                                    </select>
+
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.cluster" id="cluster">
                                                         <option value="">Choose Cluster</option>
                                                         <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
                                                     </select>
@@ -414,7 +450,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Department*</label>
-                                                    <select class="form-control" v-model="employee_copied.department_list" id="department">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.department_list" id="department">
+                                                        <option value="">Choose Department</option>
+                                                        <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.department_list" id="department">
                                                         <option value="">Choose Department</option>
                                                         <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
                                                     </select>
@@ -425,7 +465,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Section</label>  
-                                                    <input type="text" class="form-control" v-model="employee_copied.division">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.division">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.division">
                                                     <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
                                                 </div>
                                             </div>
@@ -441,7 +482,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">ESS Employee No.</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.ess_ee_number">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.ess_ee_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.ess_ee_number">
                                                     <span class="text-danger" v-if="errors.ess_ee_number">{{ errors.ess_ee_number[0] }}</span> 
                                                 </div>
                                             </div>
@@ -449,7 +491,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Position</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.position">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.position">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.position">
                                                     <span class="text-danger" v-if="errors.position">{{ errors.position[0] }}</span> 
                                                 </div>
                                             </div>
@@ -457,7 +500,14 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Classification</label>
-                                                    <select class="form-control" v-model="employee_copied.classification" id="department">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.classification" id="department">
+                                                        <option value="">Choose Classification</option>
+                                                        <option value="Probationary">Probationary</option>
+                                                        <option value="Regular">Regular</option>
+                                                        <option value="Consultant">Consultant</option>
+                                                        <option value="Project">Project Based</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.classification" id="department">
                                                         <option value="">Choose Classification</option>
                                                         <option value="Probationary">Probationary</option>
                                                         <option value="Regular">Regular</option>
@@ -471,7 +521,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date Hired</label>
-                                                    <input type="date" class="form-control" v-model="employee_copied.date_hired">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_hired">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_hired">
                                                     <span class="text-danger" v-if="errors.date_hired">{{ errors.date_hired[0] }}</span> 
                                                 </div>
                                             </div>
@@ -487,7 +538,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Level</label>
-                                                    <select class="form-control" v-model="employee_copied.level" id="level">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.level" id="level">
+                                                        <option value="">Choose Level</option>
+                                                        <option v-for="(level) in levels" v-bind:key="level" :value="level"> {{ level }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.level" id="level">
                                                         <option value="">Choose Level</option>
                                                         <option v-for="(level) in levels" v-bind:key="level" :value="level"> {{ level }}</option>
                                                     </select>
@@ -499,7 +554,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Location*</label>
-                                                    <select class="form-control" v-model="employee_copied.location_list" id="location">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.location_list" id="location">
+                                                        <option value="">Choose Location</option>
+                                                        <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.location_list" id="location">
                                                         <option value="">Choose Location</option>
                                                         <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
                                                     </select>
@@ -511,7 +570,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Area</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.area">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.area">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.area">
                                                     <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
                                                 </div>
                                             </div>
@@ -519,7 +579,8 @@
                                             <div class="col-md-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Monthly Basic Salary</label>
-                                                    <input type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <input v-else disabled type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
                                                     <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span> 
                                                 </div>
                                             </div>
@@ -527,7 +588,15 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Status</label>
-                                                    <select class="form-control" v-model="employee_copied.status" id="status">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.status" id="status">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="Active">Active</option> 
+                                                        <option value="Inactive">Inactive</option> 
+                                                        <option value="On-hold">On-hold</option> 
+                                                        <option value="Notification">Notification</option> 
+                                                        <option value="Deleted">Deleted</option> 
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.status" id="status">
                                                         <option value="">Choose Status</option>
                                                         <option value="Active">Active</option> 
                                                         <option value="Inactive">Inactive</option> 
@@ -542,7 +611,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date Regularized</label>
-                                                    <input type="date" class="form-control" v-model="employee_copied.date_regularized">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_regularized">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_regularized">
                                                     <span class="text-danger" v-if="errors.date_regularized">{{ errors.date_regularized[0] }}</span> 
                                                 </div>
                                             </div>
@@ -550,7 +620,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date Resigned</label>
-                                                    <input type="date" class="form-control" v-model="employee_copied.date_resigned">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_resigned">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_resigned">
                                                     <span class="text-danger" v-if="errors.date_resigned">{{ errors.date_resigned[0] }}</span> 
                                                 </div>
                                             </div>
@@ -558,7 +629,8 @@
                                             <div class="col-md-4" v-if="user_access_rights.bank_account_details == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Bank Name</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.bank_name">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.bank_name">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.bank_name">
                                                     <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
                                                 </div>
                                             </div>
@@ -566,7 +638,8 @@
                                             <div class="col-md-4" v-if="user_access_rights.bank_account_details == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Bank Account Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.bank_account_number">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.bank_account_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.bank_account_number">
                                                     <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
                                                 </div>
                                             </div>
@@ -577,7 +650,8 @@
                                                     <div class="form-group mt-2">
                                                         <label for="confidential">Set as Confidential Employee</label>
                                                         <div class="custom-control custom-checkbox mb-3">
-                                                            <input id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
+                                                            <input v-if="user_access_rights.work_info_edit == 'YES'" id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
+                                                            <input v-else disabled id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
                                                             <label class="custom-control-label" for="confidential">Confidential Employee (Ex. President CEO, Executives, etc.)</label>
                                                         </div>
 
@@ -645,20 +719,31 @@
                                                         <tbody>
                                                             <tr v-for="(row,index) in approvers" v-bind:key="index">
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.employee_head_id" id="location">
+                                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="row.employee_head_id" id="location">
+                                                                        <option value="">Choose Approver</option>
+                                                                        <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                                    </select>
+                                                                    <select v-else disabled class="form-control" v-model="row.employee_head_id" id="location">
                                                                         <option value="">Choose Approver</option>
                                                                         <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.head_id" id="location">
+                                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="row.head_id" id="location">
+                                                                        <option value="">Choose Position</option>
+                                                                        <option v-for="(position,b) in employee_position_approvers" v-bind:key="b" :value="position.id"> {{ position.name }}</option>
+                                                                    </select> 
+                                                                    <select v-else disabled class="form-control" v-model="row.head_id" id="location">
                                                                         <option value="">Choose Position</option>
                                                                         <option v-for="(position,b) in employee_position_approvers" v-bind:key="b" :value="position.id"> {{ position.name }}</option>
                                                                     </select> 
                                                                 </td>
-                                                                <td width="5%">
+                                                                <td width="5%" v-if="user_access_rights.work_info_edit == 'YES'">
                                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeApprover(index,row.id)">Remove</button>
                                                                     <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeApprover(index)">Remove</button>  
+                                                                </td>
+                                                                <td width="5%" v-else>
+                                                                   
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -674,7 +759,11 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label for="role" class="text-warning">Select New Approver</label>
-                                                        <select class="form-control" v-model="new_approver_under" id="new_approver_under">
+                                                        <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="new_approver_under" id="new_approver_under">
+                                                            <option value="">Choose Approver</option>
+                                                            <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <select v-else disabled class="form-control" v-model="new_approver_under" id="new_approver_under">
                                                             <option value="">Choose Approver</option>
                                                             <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
                                                         </select>
@@ -691,28 +780,32 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Current Address</label>
-                                                    <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
+                                                    <textarea v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="employee_copied.current_address"></textarea>
+                                                    <textarea v-else disabled class="form-control" v-model="employee_copied.current_address"></textarea>
                                                     <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Permanent Address</label>
-                                                    <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
+                                                    <textarea v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="employee_copied.permanent_address"></textarea>
+                                                    <textarea v-else disabled class="form-control" v-model="employee_copied.permanent_address"></textarea>
                                                     <span class="text-danger" v-if="errors.permanent_address">{{ errors.permanent_address[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Landline</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.phone_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phone_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phone_number">
                                                     <span class="text-danger" v-if="errors.phone_number">{{ errors.phone_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Mobile Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.mobile_number">
                                                     <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
                                                 </div>
                                             </div>   
@@ -720,7 +813,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Person</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.contact_person">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_person">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_person">
                                                     <span class="text-danger" v-if="errors.contact_person">{{ errors.contact_person[0] }}</span> 
                                                 </div>
                                             </div>    
@@ -728,7 +822,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Relation</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.contact_relation">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_relation">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_relation">
                                                     <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
                                                 </div>
                                             </div>  
@@ -736,7 +831,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.contact_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_number">
                                                     <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                                 </div>
                                             </div>    
@@ -769,10 +865,17 @@
                                                         <tbody>
                                                             <tr v-for="(row,index) in dependents" v-bind:key="index">
                                                                 <td>
-                                                                   <input type="text" class="form-control" v-model="row.dependent_name">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.dependent_name">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.dependent_name">     
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.dependent_gender" id="dependent_gender">
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_gender" id="dependent_gender">
+                                                                        <option value="">Choose Gender</option>
+                                                                        <option value="MALE">MALE</option>
+                                                                        <option value="FEMALE">FEMALE</option>
+                                                                         <!-- <option value="UNKNOWN"> UNKNOWN</option> -->
+                                                                    </select> 
+                                                                    <select v-else disabled class="form-control" v-model="row.dependent_gender" id="dependent_gender">
                                                                         <option value="">Choose Gender</option>
                                                                         <option value="MALE">MALE</option>
                                                                         <option value="FEMALE">FEMALE</option>
@@ -780,10 +883,20 @@
                                                                     </select> 
                                                                 </td>
                                                                 <td>
-                                                                    <input type="date" class="form-control" v-model="row.bdate">
+                                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="date" class="form-control" v-model="row.bdate">
+                                                                    <input v-else disabled type="date" class="form-control" v-model="row.bdate">
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.relation" id="relation">
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.relation" id="relation">
+                                                                        <option value="">Choose Relation</option>
+                                                                        <option value="MOTHER">MOTHER</option>
+                                                                        <option value="FATHER">FATHER</option>
+                                                                        <option value="BROTHER">BROTHER</option>
+                                                                        <option value="SISTER">SISTER</option>
+                                                                        <option value="SPOUSE">SPOUSE</option>
+                                                                        <option value="CHILD">CHILD</option>
+                                                                    </select>
+                                                                    <select v-else disabled class="form-control" v-model="row.relation" id="relation">
                                                                         <option value="">Choose Relation</option>
                                                                         <option value="MOTHER">MOTHER</option>
                                                                         <option value="FATHER">FATHER</option>
@@ -794,15 +907,23 @@
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                  <select class="form-control" v-model="row.dependent_status" id="dependent_status">
+                                                                  <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_status" id="dependent_status">
+                                                                        <option value="">Choose Status</option>
+                                                                        <option value="NEW">NEW</option>
+                                                                        <option value="RENEW">RENEW</option>
+                                                                    </select>  
+                                                                  <select v-else disabled class="form-control" v-model="row.dependent_status" id="dependent_status">
                                                                         <option value="">Choose Status</option>
                                                                         <option value="NEW">NEW</option>
                                                                         <option value="RENEW">RENEW</option>
                                                                     </select>  
                                                                 </td>
-                                                                <td with="5%">
+                                                                <td with="5%" v-if="user_access_rights.contact_info_edit == 'YES'">
                                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">Remove</button>
                                                                     <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">Remove</button>  
+                                                                </td>
+                                                                <td with="5%" v-else>
+                                                                    
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -815,7 +936,7 @@
                                             </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <input type="file" multiple="multiple" id="dependents_attachments" class="form-control dependents-attachments-edit" @change="uploadDependentAttachments" placeholder="Attach file"><br>
+                                                        <input v-if="user_access_rights.contact_info_edit == 'YES'" type="file" multiple="multiple" id="dependents_attachments" class="form-control dependents-attachments-edit" @change="uploadDependentAttachments" placeholder="Attach file"><br>
                                                     </div>
                                                 </div>
 
@@ -852,35 +973,53 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">SSS</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.sss_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.sss_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.sss_number">
                                                     <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">HDMF</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.hdmf">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.hdmf">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.hdmf">
                                                     <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Philhealth</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.phil_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phil_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phil_number">
                                                     <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">TIN</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.tax_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.tax_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.tax_number">
                                                     <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Tax Status*</label>
-                                                    <select class="form-control" v-model="employee_copied.tax_status" id="tax_status">
+                                                    <select v-if="user_access_rights.identification_info_edit == 'YES'" class="form-control" v-model="employee_copied.tax_status" id="tax_status">
+                                                        <option value="">Choose Tax Status</option>
+                                                        <option value="S">S</option> 
+                                                        <option value="S1">S1</option> 
+                                                        <option value="S2">S2</option> 
+                                                        <option value="S3">S3</option> 
+                                                        <option value="S4">S4</option> 
+                                                        <option value="M">M4</option> 
+                                                        <option value="M1">M1</option> 
+                                                        <option value="M2">M3</option> 
+                                                        <option value="M3">M4</option> 
+                                                        <option value="M4">M4</option> 
+                                                        
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.tax_status" id="tax_status">
                                                         <option value="">Choose Tax Status</option>
                                                         <option value="S">S</option> 
                                                         <option value="S1">S1</option> 
@@ -906,7 +1045,7 @@
                                            <div class="col-md-12">
                                                <h5>201 Files</h5>
                                                 <div class="form-group">
-                                                    <input type="file" multiple="multiple" id="documents_201_files_attachments" class="form-control 201-files-attachments-edit" @change="upload201FilesAttachments" placeholder="Attach file"><br>
+                                                    <input v-if="user_access_rights.employee_201_file_edit == 'YES'" type="file" multiple="multiple" id="documents_201_files_attachments" class="form-control 201-files-attachments-edit" @change="upload201FilesAttachments" placeholder="Attach file"><br>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -932,6 +1071,7 @@
                                             </div>     
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -946,7 +1086,7 @@
                     </div>
                   
                     <div class="modal-footer">
-                        <button v-if="user_access_rights.edit == 'YES' || user_access_rights.personal_info_edit == 'YES' || user_access_rights.work_info_edit == 'YES' || user_access_rights.contact_info_edit == 'YES' || user_access_rights.identification_info_edit == 'YES'" id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
+                        <button v-if="user_access_rights.edit == 'YES'" id="edit_btn" :disabled="saveEmployee" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="updateEmployee(employee_copied)" style="width:150px;">Update</button>
                         <button v-else id="edit_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" disabled>Unable to Update</button>
                     </div>
                 </div>

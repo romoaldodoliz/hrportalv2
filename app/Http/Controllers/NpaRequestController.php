@@ -12,7 +12,7 @@ class NpaRequestController extends Controller
 {
     public function printEmployeeNPARequest(EmployeeNpaRequest $employee){
 
-        $npa_request = EmployeeNpaRequest::with('from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$employee->id)->first();
+        $npa_request = EmployeeNpaRequest::with('employee','from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$employee->id)->first();
         $npa_request_data = json_encode($npa_request,true); 
         $npa_request_data = json_decode($npa_request_data,true); 
 
@@ -41,7 +41,7 @@ class NpaRequestController extends Controller
         $pdf->SetFont('Helvetica','','9');
         $pdf->SetTextColor(0, 0, 0);
         $pdf->SetXY(60, 83);
-        $pdf->Write(0, $npa_request_data['employee_name']);
+        $pdf->Write(0, $npa_request_data['employee']['first_name'] . ' ' . $npa_request_data['employee']['last_name']);
 
 
         $line_height = 3.2;
@@ -251,7 +251,7 @@ class NpaRequestController extends Controller
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
         $pdf->SetXY(27, 216);
-        $pdf->Multicell(58,3.2, $npa_request_data['employee_name'],0,'L');
+        $pdf->Multicell(58,3.2, $npa_request_data['employee']['first_name'] . ' ' . $npa_request_data['employee']['last_name'],0,'L');
 
         //Date
         $pdf->SetFont('Helvetica','','7');

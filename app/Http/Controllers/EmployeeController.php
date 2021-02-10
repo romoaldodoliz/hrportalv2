@@ -1221,18 +1221,7 @@ class EmployeeController extends Controller
     }
 
     public function transferEmployeeLogs(Employee $employee){
-
-        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
-        
-        if($transfer_employee_logs){
-            foreach($transfer_employee_logs as $key => $transfer_employee_log){
-                $transfer_employee_logs[$key] = $transfer_employee_log;
-                $transfer_employee_logs[$key]['previous_system_approvers'] = json_decode($transfer_employee_log['previous_system_approvers']);
-                $transfer_employee_logs[$key]['new_system_approvers'] = json_decode($transfer_employee_log['new_system_approvers']);
-            }
-        }
-        return $transfer_employee_logs[0]->previous_department;
-
+        return $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
     }
 
     public function pdfTransferEmployeeLogs(Employee $employee){
@@ -2030,7 +2019,7 @@ class EmployeeController extends Controller
         ]);
         
         $employee_data = Employee::with('companies','departments','locations','assign_heads')->where('id',$data['employee_id'])->first();
-        
+         
         if($employee_data){
             DB::beginTransaction();
             try { 
@@ -2055,53 +2044,60 @@ class EmployeeController extends Controller
                 if(EmployeeNpaRequest::create($data)){
                     DB::commit();
 
-                    //Recommended By
+                     //Recommended By
                     if($data['recommended_by']){
-                        $email_prepared_by = 'arjay.lumagdong@lafilgroup.com';
-                        $reciever_name_prepared_by = 'Arjay Lumagdong';
-    
+
+                        $recommended_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
+
+                        $email_recommended_by = $recommended_by['user']['email'];
+                        $reciever_name_recommended_by = $recommended_by['user']['name'];
+
                         $npa_data = [
-                            'reciever_name' => $reciever_name_prepared_by,
+                            'reciever_name' => $reciever_name_recommended_by,
                             'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
                             'company' => $employee_data['companies'][0]['name'],
                             'position' => $employee_data['position'],
                             'npa_title' => $data['subject'],
                             'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
                         ];
-                        $send_update = Mail::to($email_prepared_by)->send(new EmployeeNpaNotification($npa_data));
+                        $send_update = Mail::to($email_recommended_by)->send(new EmployeeNpaNotification($npa_data));
                     }
 
                     //Approved By
                     if($data['approved_by']){
-                        $email_prepared_by = 'arjay.lumagdong@lafilgroup.com';
-                        $reciever_name_prepared_by = 'Arjay Lumagdong';
+
+                        $approved_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
+
+                        $email_approved_by = $approved_by['user']['email'];
+                        $reciever_name_approved_by = $approved_by['user']['name'];
     
                         $npa_data = [
-                            'reciever_name' => $reciever_name_prepared_by,
+                            'reciever_name' => $reciever_name_approved_by,
                             'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
                             'company' => $employee_data['companies'][0]['name'],
                             'position' => $employee_data['position'],
                             'npa_title' => $data['subject'],
                             'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
                         ];
-                        $send_update = Mail::to($email_prepared_by)->send(new EmployeeNpaNotification($npa_data));
+                        $send_update = Mail::to($email_approved_by)->send(new EmployeeNpaNotification($npa_data));
                     }
 
 
                     //BU Head
                     if($data['bu_head']){
-                        $email_prepared_by = 'arjay.lumagdong@lafilgroup.com';
-                        $reciever_name_prepared_by = 'Arjay Lumagdong';
+
+                        $email_bu_head = 'arjay.lumagdong@lafilgroup.com';
+                        $reciever_name_bu_head = 'Arjay Lumagdong';
     
                         $npa_data = [
-                            'reciever_name' => $reciever_name_prepared_by,
+                            'reciever_name' => $reciever_name_bu_head,
                             'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
                             'company' => $employee_data['companies'][0]['name'],
                             'position' => $employee_data['position'],
                             'npa_title' => $data['subject'],
                             'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
                         ];
-                        $send_update = Mail::to($email_prepared_by)->send(new EmployeeNpaNotification($npa_data));
+                        $send_update = Mail::to($email_bu_head)->send(new EmployeeNpaNotification($npa_data));
                     }
 
                     return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();

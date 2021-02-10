@@ -28,7 +28,7 @@ class EmployeeNpaNotification extends Mailable
      */
     public function build()
     {
-        return $this->subject('HR Portal - Notice of Personnel Action')
+        return $this->subject('HR Portal - Notice of Personnel Action (' . $this->npa_data['npa_title'] . ')')
         ->view('email.employee_npa_notification')
         ->with([
             'reciever_name'  =>  $this->npa_data['reciever_name'],
