@@ -1163,6 +1163,7 @@
                                                             <span>Position: {{log.previous_position}}</span><br>
                                                             <span>Department: {{ log.previous_department ? log.previous_department.name : ""}}</span><br>
                                                             <span>Location: {{log.previous_location ? log.previous_location.name : ""}}</span><br>
+                                                            <span>Cluster: {{log.previous_cluster ? log.previous_cluster : ""}}</span><br>
                                                             
                                                         </td>
                                                         <td>
@@ -1172,6 +1173,7 @@
                                                             <span>Position: {{log.new_position}}</span><br>
                                                             <span>Department: {{log.new_department ? log.new_department.name : ""}}</span><br>
                                                             <span>Location: {{log.new_location ? log.new_location.name : ""}}</span><br>
+                                                            <span>Cluster: {{log.new_cluster ? log.new_cluster : ""}}</span><br>
                                                             
                                                         </td>
                                                         <td>
@@ -1228,15 +1230,26 @@
                                             <span class="text-danger" v-if="transfer_errors.location_list">{{ transfer_errors.location_list[0] }}</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <!-- <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="role">Cluster</label>
                                             <input type="text" class="form-control" v-model="transfer_employee.division">
                                         </div>
 
                                         <span class="text-danger" v-if="transfer_errors.division">{{ transfer_errors.division[0] }}</span>
+                                    </div> -->
 
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Cluster</label>
+                                            <select class="form-control" v-model="transfer_employee.cluster" id="transfer_employee_cluster">
+                                                <option value="">Choose Cluster</option>
+                                                <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="transfer_errors.cluster">{{ errors.cluster[0] }}</span> 
+                                        </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="role">Position*</label>
@@ -2643,6 +2656,7 @@
                 this.transfer_employee.department_list = "";
                 this.transfer_employee.location_list = "";
                 this.transfer_employee.division = "";
+                this.transfer_employee.cluster = "";
                 this.transfer_employee.position = "";
                 this.transfer_employee.date_hired = "";
                 this.transfer_approvers = [];
@@ -2669,7 +2683,7 @@
                             formData.append('company_list', transfer_employee.company_list ? transfer_employee.company_list : "");
                             formData.append('department_list', transfer_employee.department_list ? transfer_employee.department_list : "");
                             formData.append('location_list', transfer_employee.location_list ? transfer_employee.location_list : "");
-                            formData.append('division', transfer_employee.division ? transfer_employee.division : "");
+                            formData.append('cluster', transfer_employee.cluster ? transfer_employee.cluster : "");
                             formData.append('position', transfer_employee.position ? transfer_employee.position : "");
                             formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
                             formData.append('head_approvers', this.transfer_approvers ? JSON.stringify(this.transfer_approvers) : "");
@@ -2689,11 +2703,9 @@
                                 formData
                             )
                             .then(response => {
-                                return false;
-                                
                                 this.fetchEmployees();
                                 this.clearTransferForm();
-                                this.transferEmployeeDetails = response.data;
+                                this.transferEmployeeDetails = [];
                                
                                 Swal.fire({
                                     title: 'Success!',

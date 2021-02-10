@@ -1169,7 +1169,7 @@ class EmployeeController extends Controller
                 $transfer_logs_data['previous_id_number'] = $employee_data['id_number'];
                 $transfer_logs_data['previous_position'] = $employee_data['position'];
                 $transfer_logs_data['previous_date_hired'] = $employee_data['date_hired'];
-                $transfer_logs_data['previous_division'] = $employee_data['division'];
+                $transfer_logs_data['previous_cluster'] = $employee_data['cluster'];
                 $transfer_logs_data['previous_department'] = $employee_data['departments'] ? $employee_data['departments'][0]['id'] : "";
                 $transfer_logs_data['previous_company'] = $employee_data['companies'] ? $employee_data['companies'][0]['id'] : "";
                 $transfer_logs_data['previous_location'] = $employee_data['locations'] ? $employee_data['locations'][0]['id'] : "";
@@ -1179,7 +1179,7 @@ class EmployeeController extends Controller
                 $transfer_logs_data['new_id_number'] = $new_id_number;
                 $transfer_logs_data['new_position'] = $data['position'];
                 $transfer_logs_data['new_date_hired'] = $data['date_hired'];
-                $transfer_logs_data['new_division'] = $data['division'];
+                $transfer_logs_data['new_cluster'] = $data['cluster'];
                 $transfer_logs_data['new_department'] =  $data['department_list'] ? $data['department_list'] : "";
                 $transfer_logs_data['new_company'] = $data['company_list'] ? $data['company_list'] : "";
                 $transfer_logs_data['new_location'] = $data['location_list'] ? $data['location_list'] : "";
