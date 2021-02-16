@@ -49,8 +49,8 @@
                                                 <th>Employee Name</th>
                                                 <th>Status</th>
                                                 <th>Remarks</th>
-                                                <th>Door Access</th>
-                                                <th>Biometric Access</th>
+                                                <!-- <th>Door Access</th>
+                                                <th>Biometric Access</th> -->
                                                 <th>Forms</th>
                                             </tr>
                                         </thead>
@@ -68,19 +68,19 @@
                                                 <td>{{ employee.name }}</td>
                                                 <td>{{ employee.status }}</td>
                                                 <td>{{ employee.remarks }}</td>
-                                                <td>
+                                                <!-- <td>
                                                     
                                                     <button v-if="employee.user_id" class="btn btn-success btn-sm" @click="enableDoorAccess(employee)">Enable Door Access</button>
-                                                    <button v-if="employee.user_id" class="btn btn-danger btn-sm" @click="disableDoorAccess(employee)">Disable Door Access</button>
+                                                    <button v-if="employee.user_id" class="btn btn-danger btn-sm" @click="disableDoorAccess(employee)">Disable Door Access</button> -->
 
                                                     <!-- <button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkEmployee(employee)" data-toggle="modal" data-target="#checkModal" >Overide Access</button> -->
                                                 
-                                                </td>
-                                                <td>
+                                                <!-- </td> -->
+                                                <!-- <td>
                                                     <button class="btn btn-success btn-sm" @click="enableFaceAccess(employee)">Enable Biometric Access</button>
                                                     <button class="btn btn-danger btn-sm" @click="disableFaceAccess(employee)">Disable Biometric Access</button>
                 
-                                                </td>
+                                                </td> -->
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="viewForms(employee)" data-toggle="modal" data-target="#viewFormsModal" >View Forms</button>
                                                 </td>
