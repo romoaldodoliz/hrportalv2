@@ -36,8 +36,8 @@
                                 </div>
                                 <div class="col-lg-8">
                                     <button type="button" class="btn btn-primary btn-md mt-4" @click="fetchEmployees">Search</button>
-                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshDoorUsers">Refresh Door User</button>
-                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshFaceusers">Refresh Face User</button>
+                                    <!-- <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshDoorUsers">Refresh Door User</button>
+                                    <button type="button" class="btn btn-primary btn-md mt-4" @click="refreshFaceusers">Refresh Face User</button> -->
 
                                     <button type="button" class="btn btn-success btn-md mt-4" data-toggle="modal" data-target="#reportModal">Generate Employee Report</button>
                                 </div>
