@@ -117,8 +117,8 @@
                                                                 <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
                                                                 <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
                                                                 <a v-if="user_access_rights.read == 'YES' && user_access_rights.roles[0].name == 'Administrator'" class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>    
-                                                                <a v-if="user_access_rights.npa_request == 'YES'"  class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer Company</a>
-                                                                <a v-if="user_access_rights.npa_request == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#npaRequestModal"  style="cursor: pointer" @click="npaRequest(employee)"><i class="fas fa-user-cog"></i> NPA Request</a>
+                                                                <a v-if="user_access_rights.npa_request == 'YES' && user_access_rights.roles[0].name == 'Administrator'"  class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer Company</a>
+                                                                <a v-if="user_access_rights.npa_request == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#npaRequestModal"  style="cursor: pointer" @click="npaRequest(employee,user_access_rights.roles[0].name)"><i class="fas fa-user-cog"></i> NPA Request</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -810,6 +810,10 @@
                                                 </div>
                                             </div>   
 
+                                            <div class="col-md-12">
+                                                <h4>In case of Emergency</h4>
+                                            </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Person</label>
@@ -848,6 +852,15 @@
                                                                     Name
                                                                 </th>
                                                                 <th class="text-center">
+                                                                    First Name
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Last Name
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Middle Name
+                                                                </th>
+                                                                <th class="text-center">
                                                                     Gender
                                                                 </th>
                                                                 <th class="text-center">
@@ -857,7 +870,13 @@
                                                                     Relationship
                                                                 </th>
                                                                 <th class="text-center">
-                                                                    Status
+                                                                    Action
+                                                                </th>
+                                                                 <th class="text-center">
+                                                                    Civil Status
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    HMO Enrollment
                                                                 </th>
                                                                 <th></th>
                                                             </tr>
@@ -865,17 +884,29 @@
                                                         <tbody>
                                                             <tr v-for="(row,index) in dependents" v-bind:key="index">
                                                                 <td>
-                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.dependent_name">     
-                                                                   <input v-else disabled type="text" class="form-control" v-model="row.dependent_name">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
                                                                 </td>
                                                                 <td>
-                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_gender" id="dependent_gender">
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                                </td>
+                                                                <td>
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                                </td>
+                                                                <td>
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                                </td>
+                                                                <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
                                                                         <option value="">Choose Gender</option>
                                                                         <option value="MALE">MALE</option>
                                                                         <option value="FEMALE">FEMALE</option>
                                                                          <!-- <option value="UNKNOWN"> UNKNOWN</option> -->
                                                                     </select> 
-                                                                    <select v-else disabled class="form-control" v-model="row.dependent_gender" id="dependent_gender">
+                                                                    <select v-else disabled class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
                                                                         <option value="">Choose Gender</option>
                                                                         <option value="MALE">MALE</option>
                                                                         <option value="FEMALE">FEMALE</option>
@@ -883,11 +914,11 @@
                                                                     </select> 
                                                                 </td>
                                                                 <td>
-                                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="date" class="form-control" v-model="row.bdate">
-                                                                    <input v-else disabled type="date" class="form-control" v-model="row.bdate">
+                                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="date" class="form-control" v-model="row.bdate" style="width:150px;">
+                                                                    <input v-else disabled type="date" class="form-control" v-model="row.bdate" style="width:150px;">
                                                                 </td>
                                                                 <td>
-                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.relation" id="relation">
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.relation" id="relation" style="width:150px;">
                                                                         <option value="">Choose Relation</option>
                                                                         <option value="MOTHER">MOTHER</option>
                                                                         <option value="FATHER">FATHER</option>
@@ -896,7 +927,7 @@
                                                                         <option value="SPOUSE">SPOUSE</option>
                                                                         <option value="CHILD">CHILD</option>
                                                                     </select>
-                                                                    <select v-else disabled class="form-control" v-model="row.relation" id="relation">
+                                                                    <select v-else disabled class="form-control" v-model="row.relation" id="relation" style="width:150px;">
                                                                         <option value="">Choose Relation</option>
                                                                         <option value="MOTHER">MOTHER</option>
                                                                         <option value="FATHER">FATHER</option>
@@ -907,20 +938,46 @@
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                  <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_status" id="dependent_status">
+                                                                  <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_status" id="dependent_status" style="width:150px;">
                                                                         <option value="">Choose Status</option>
                                                                         <option value="NEW">NEW</option>
                                                                         <option value="RENEW">RENEW</option>
                                                                     </select>  
-                                                                  <select v-else disabled class="form-control" v-model="row.dependent_status" id="dependent_status">
+                                                                  <select v-else disabled class="form-control" v-model="row.dependent_status" id="dependent_status" style="width:150px;">
                                                                         <option value="">Choose Status</option>
                                                                         <option value="NEW">NEW</option>
                                                                         <option value="RENEW">RENEW</option>
                                                                     </select>  
                                                                 </td>
+
+
+                                                                <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.civil_status" id="hmo_marital_status" style="width:150px;">
+                                                                        <option value="">Choose Marital Status</option>
+                                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                                    </select>
+                                                                    <select v-else disabled class="form-control" v-model="row.civil_status" id="hmo_marital_status" style="width:150px;">
+                                                                        <option value="">Choose Marital Status</option>
+                                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                                    </select>
+                                                                </td>
+
+                                                                 <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.hmo_enrollment" id="hmo_enrollment" style="width:150px;">
+                                                                        <option value="">For HMO Enrollment</option>
+                                                                        <option value="YES">YES</option>
+                                                                        <option value="NO">NO</option>
+                                                                    </select>  
+                                                                    <select v-else disabled class="form-control" v-model="row.hmo_enrollment" id="hmo_enrollment" style="width:150px;">
+                                                                        <option value="">For HMO Enrollment</option>
+                                                                        <option value="YES">YES</option>
+                                                                        <option value="NO">NO</option>
+                                                                    </select>  
+                                                                </td>
+
                                                                 <td with="5%" v-if="user_access_rights.contact_info_edit == 'YES'">
-                                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">Remove</button>
-                                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">Remove</button>  
+                                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">x</button>
+                                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">x</button>  
                                                                 </td>
                                                                 <td with="5%" v-else>
                                                                     
@@ -932,7 +989,7 @@
                                             </div>
 
                                             <div class="col-md-12 mt-5">
-                                                <h4>Attachment(s)  - Birth Certificates</h4>
+                                                <h4>Attachment(s)  - Marriage / Birth Certificates</h4>
                                             </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -956,7 +1013,7 @@
                                                                 <td>{{ index + 1 }}</td>
                                                                 <td> {{ attachment.file }}</td>
                                                                 <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
-                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">Remove</button></td>
+                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">x</button></td>
                                                                 
                                                             </tr>
                                                         </tbody>
@@ -1359,14 +1416,15 @@
                                             <label for="role">Subject</label>
                                             <select class="form-control" v-model="npa_request.subject" id="subject">
                                                 <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                <option value="REGULARIZATION">REGULARIZATION</option>
-                                                <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
-                                                <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
-                                                <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
-                                                <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
-                                                <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
-                                                <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
-                                                <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                <option v-if="npa_request_role == 'Administrator'" value="REGULARIZATION">REGULARIZATION</option>
+                                                <option v-if="npa_request_role == 'Administrator'" value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                <option v-if="npa_request_role == 'Administrator' " value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                <option v-if="npa_request_role == 'Administrator'" value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                            
                                             </select>
                                             <span class="text-danger" v-if="npa_request_errors.subject">{{ npa_request_errors.subject[0] }}</span>
                                         </div>
@@ -1399,28 +1457,30 @@
                                                     <td>
                                                         <select class="form-control" v-model="npa_request.from_type_of_movement" id="subject">
                                                             <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                            <option value="REGULARIZATION">REGULARIZATION</option>
-                                                            <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
-                                                            <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
-                                                            <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
-                                                            <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
-                                                            <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
-                                                            <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
-                                                            <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="REGULARIZATION">REGULARIZATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                            <option v-if="npa_request_role == 'Administrator' " value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                        
                                                         </select>
                                                         <span class="text-danger" v-if="npa_request_errors.from_type_of_movement">{{ npa_request_errors.from_type_of_movement[0] }}</span> 
                                                     </td>
                                                     <td>
                                                         <select class="form-control" v-model="npa_request.to_type_of_movement" id="subject">
                                                             <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                            <option value="REGULARIZATION">REGULARIZATION</option>
-                                                            <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
-                                                            <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
-                                                            <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
-                                                            <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
-                                                            <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
-                                                            <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
-                                                            <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="REGULARIZATION">REGULARIZATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                            <option v-if="npa_request_role == 'Administrator' " value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                        
                                                         </select>
                                                         <span class="text-danger" v-if="npa_request_errors.to_type_of_movement">{{ npa_request_errors.to_type_of_movement[0] }}</span> 
                                                     </td>
@@ -1481,7 +1541,7 @@
                                                         <h4>Date Hired</h4>
                                                     </td>
                                                     <td colspan="2">
-                                                        <input type="date" class="form-control" v-model="npa_request.date_hired">
+                                                        <input type="date" disabled class="form-control" v-model="npa_request.date_hired">
                                                     </td> 
                                                  </tr>
                                                  <tr>
@@ -1535,7 +1595,7 @@
                                                         <h4>Monthly Basic Salary</h4>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" v-model="npa_request.from_monthly_basic_salary">
+                                                        <input type="text" disabled class="form-control" v-model="npa_request.from_monthly_basic_salary">
                                                         <span class="text-danger" v-if="npa_request_errors.from_monthly_basic_salary">{{ npa_request_errors.from_monthly_basic_salary[0] }}</span> 
                                                     </td>
                                                     <td>
@@ -1711,6 +1771,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-md-12 text-center">
+                            <a class="btn btn-sm btn-default" :href="org_chart_src" target="_blank">View Fullscreen</a>
                             <iframe id="id-frame" :src="org_chart_src" frameborder="0" height="700px" width="100%"></iframe>
                         </div>
                     </div>
@@ -1851,7 +1912,7 @@
                     'LOCATION': 'location',
                     'AREA': 'area',
                     'BANK NAME': 'bank_name',
-                    'BANK ACCOUNT NUMBER': 'bank_name',
+                    'BANK ACCOUNT NUMBER': 'bank_account_number',
                     'EMPLOYEE STATUS' : 'employee_status',
                     'IMMEDIATE SUPERIOR' : 'immediate_superior',
                     'BU HEAD' : 'bu_head',
@@ -1878,6 +1939,7 @@
                 },
                 npaRequestDetails : [],
                 npa_request : [],
+                npa_request_role : '',
                 npa_request_errors : [],
                 npaRequestLists : [],
                 hr_employees : [],
@@ -2150,7 +2212,8 @@
                 this.npa_request.from_immediate_manager = "";
                 this.npa_request.from_department = "";
             },
-            npaRequest(employee){
+            npaRequest(employee,roles){
+                this.npa_request_role = roles;
                 this.clearNPAForm();
                 this.npa_request_errors = [];
                 this.npaRequestDetails = employee;
@@ -2158,10 +2221,10 @@
                 this.npa_request.from_company = employee.companies[0] ? employee.companies[0].id : "";
                 this.npa_request.from_location = employee.locations[0] ? employee.locations[0].id : "";
                 this.npa_request.from_position_title = employee.position;
+                this.npa_request.date_hired = employee.date_hired;
                 this.npa_request.from_immediate_manager = employee.immediate_superior[0] ? employee.immediate_superior[0].employee_head_id : "";
                 this.npa_request.from_department = employee.departments[0] ? employee.departments[0].id : "";
                 this.npa_request.bu_head = employee.bu_head[0] ? employee.bu_head[0].employee_head_id : "";
-                this.fetchNPARequestLists();
             },
             npaMonthlyBasicSalary(){
                 axios.get('/decrypt-monthly-basic-salary/'+this.npaRequestDetails.id)
@@ -3110,15 +3173,20 @@
                 axios.get('/employee-dependents/'+this.employee_copied.id)
                 .then(response => { 
                     if(response.data.length > 0){
-                        var dependents_arr = [];
+                        // var dependents_arr = [];
                         response.data.forEach(element => {
                             v.dependents.push({
                                 id: element.id,
                                 dependent_name: element.dependent_name,
+                                first_name: element.first_name,
+                                last_name: element.last_name,
+                                middle_name: element.middle_name,
                                 dependent_gender: element.dependent_gender,
                                 bdate: v.getDateFormat(element.bdate),
                                 relation: element.relation,
-                                dependent_status: element.dependent_status
+                                dependent_status: element.dependent_status,
+                                civil_status: element.civil_status,
+                                hmo_enrollment: element.hmo_enrollment,
                             });
                         });
                     }

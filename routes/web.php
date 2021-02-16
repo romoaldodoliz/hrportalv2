@@ -78,8 +78,6 @@ Route::get('/get-user-survey-culture', 'SurveyController@getUserSurveyCulture');
 Route::post('/save-survey-culture', 'SurveyController@saveSurveyCulture');
 
 
-
-
 Auth::routes();
 Route::get('logout', function(){
     return redirect('/');
@@ -131,8 +129,8 @@ Route::get('logout', function(){
             Route::delete('/employee/{employee}',['as'=>'employees.destroy','uses'=>'EmployeeController@destroy','middleware' => ['role:Administrator|HR Staff']]);
 
 
-            Route::get('/decrypt-monthly-basic-salary/{employee}',['as'=>'employees.decryptMonthlyBasicSalary','uses'=>'EmployeeController@decryptMonthlyBasicSalary','middleware' => ['role:Administrator|HR Staff']]);
-            Route::get('/decrypt-monthly-basic-salary-record/{employee}',['as'=>'employees.decryptMonthlyBasicSalaryRecord','uses'=>'EmployeeController@decryptMonthlyBasicSalaryRecord','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/decrypt-monthly-basic-salary/{employee}',['as'=>'employees.decryptMonthlyBasicSalary','uses'=>'EmployeeController@decryptMonthlyBasicSalary','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            Route::get('/decrypt-monthly-basic-salary-record/{employee}',['as'=>'employees.decryptMonthlyBasicSalaryRecord','uses'=>'EmployeeController@decryptMonthlyBasicSalaryRecord','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             //All Approvers
             Route::get('/employee-head-approvers', 'EmployeeController@employeeHeadApprovers');

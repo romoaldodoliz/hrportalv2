@@ -157,6 +157,8 @@ class EmployeeController extends Controller
 
     public function store(Request $request){
         
+        $data = $request->all();
+
         $this->validate($request, [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -174,7 +176,7 @@ class EmployeeController extends Controller
             'tax_status.required' => 'This field is required',
         ]);
 
-        $data = $request->all();
+        
 
         if(empty($request->division) && $request->division == 'null'){
             $data['division'] = null;
@@ -198,7 +200,22 @@ class EmployeeController extends Controller
             $user = new User;
             $user->password = Hash::make(strtolower($request->input('first_name')).".".strtolower($request->input('last_name')));
             $user->name =  $request->input('first_name') . " " . $request->input('last_name');
-            $email = strtolower($request->input('first_name')) .".". strtolower($request->input('last_name')) . "@lafilgroup.com";
+
+            //Get Company
+            $get_company_details = Company::where('id',$data['company_list'])->first();
+            $first_name = str_replace(' ', '', $request->input('first_name'));
+            $last_name = str_replace(' ', '', $request->input('last_name'));
+            if($get_company_details){
+                if($get_company_details['domain']){
+                    $email = strtolower($first_name) .".". strtolower($last_name) . "@" . $get_company_details['domain'];
+                }else{
+                    $email = strtolower($first_name) .".". strtolower($first_name) . "@lafilgroup.com";
+                }
+            }else{
+                $email = strtolower($first_name) .".". strtolower($first_name) . "@lafilgroup.com";
+            }
+            
+            
             $user->email = str_replace(' ', '', $email);
             $user->save();
             $user->attachRole('2');
@@ -409,18 +426,28 @@ class EmployeeController extends Controller
                    foreach($dependents as $dependent){
 
                         $dependent_name = $dependent->dependent_name ? $dependent->dependent_name : null;
+                        $first_name = $dependent->first_name ? $dependent->first_name : null;
+                        $last_name = $dependent->last_name ? $dependent->last_name : null;
+                        $middle_name = $dependent->middle_name ? $dependent->middle_name : null;
                         $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
                         $bdate = $dependent->bdate ? $dependent->bdate : null;
                         $relation = $dependent->relation ? $dependent->relation : null;
                         $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
+                        $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
+                        $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
                             'dependent_name'=>$dependent_name,
+                            'first_name'=>$first_name,
+                            'last_name'=>$last_name,
+                            'middle_name'=>$middle_name,
                             'dependent_gender'=>$dependent_gender,
                             'bdate'=>$bdate,
                             'relation'=>$relation,
                             'dependent_status'=>$dependent_status,
+                            'civil_status'=>$civil_status,
+                            'hmo_enrollment'=>$hmo_enrollment,
                         ];
 
                         if(!empty($dependent->id)){
@@ -2235,7 +2262,11 @@ class EmployeeController extends Controller
     }
 
     public function decryptMonthlyBasicSalary(Employee $employee){
-        return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+        try {
+            return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+        } catch (DecryptException $e) {
+            return "";
+        }
     }
 
     public function decryptMonthlyBasicSalaryRecord(Employee $employee){

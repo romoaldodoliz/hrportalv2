@@ -18,7 +18,7 @@ class NpaRequestController extends Controller
 
         $pdf = new Fpdi();
         $pdf->AddPage('P','A4');
-        $pdf->setSourceFile("npa/npa_template_2.pdf");
+        $pdf->setSourceFile("npa/npa_template_3.pdf");
         $tplIdx = $pdf->importPage(1);
         $pdf->useTemplate($tplIdx, 0, 0, 220);
 
@@ -171,10 +171,37 @@ class NpaRequestController extends Controller
         }
         $pdf->Multicell($width,$height,$to_department,0,'L');
 
+        //From Location
+        $pdf->SetFont('Helvetica','','7');
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(78.6, 130.6);
+        $from_location = $npa_request_data['from_location'] ? $npa_request_data['from_location']['name']: "";    
+        $height = (ceil(($pdf->GetStringWidth($from_location) / $width)) * $line_height);
+        if($height == $line_height){
+            $height  = $height * 2;
+        }else{
+            $height = $line_height;
+        }
+        $pdf->Multicell($width,$height,$from_location,0,'L');
+
+        //To Location
+        $pdf->SetFont('Helvetica','','7');
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(78.6 + 52.6, 130.6);
+        $to_location = $npa_request_data['to_location'] ? $npa_request_data['to_location']['name']: "";    
+        $height = (ceil(($pdf->GetStringWidth($to_location) / $width)) * $line_height);
+        if($height == $line_height){
+            $height  = $height * 2;
+        }else{
+            $height = $line_height;
+        }
+        $pdf->Multicell($width,$height,$to_location,0,'L');
+
+
         //Effectivity
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(78.6, 130.5);
+        $pdf->SetXY(78.6, 136.8);
         $effectivity_date = $npa_request_data['effectivity_date'];    
         $height = (ceil(($pdf->GetStringWidth($effectivity_date) / $width)) * $line_height);
         if($height == $line_height){
@@ -214,7 +241,7 @@ class NpaRequestController extends Controller
         //Prepare By
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(27, 157);
+        $pdf->SetXY(27, 157 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['prepared_by'] ? $npa_request_data['prepared_by']['first_name'] . ' ' . $npa_request_data['prepared_by']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
         $pdf->SetXY(27,  $getY);
@@ -223,7 +250,7 @@ class NpaRequestController extends Controller
         //Recommended By
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(112, 157);
+        $pdf->SetXY(112, 157 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['recommended_by'] ? $npa_request_data['recommended_by']['first_name'] . ' ' . $npa_request_data['recommended_by']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
         $pdf->SetXY(112,  $getY);
@@ -232,7 +259,7 @@ class NpaRequestController extends Controller
         //Recommended for approval
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(27, 178);
+        $pdf->SetXY(27, 178 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['approved_by'] ? $npa_request_data['approved_by']['first_name'] . ' ' . $npa_request_data['approved_by']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
         $pdf->SetXY(27,  $getY);
@@ -241,7 +268,7 @@ class NpaRequestController extends Controller
         //BU Head
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(112, 178);
+        $pdf->SetXY(112, 178 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['bu_head'] ? $npa_request_data['bu_head']['first_name'] . ' ' . $npa_request_data['bu_head']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
         $pdf->SetXY(112,  $getY);
@@ -250,13 +277,13 @@ class NpaRequestController extends Controller
         //Employee Name
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(27, 216);
+        $pdf->SetXY(27, 216 + 7);
         $pdf->Multicell(58,3.2, $npa_request_data['employee']['first_name'] . ' ' . $npa_request_data['employee']['last_name'],0,'L');
 
         //Date
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(37, 221);
+        $pdf->SetXY(37, 221 + 6);
         $pdf->Multicell(40,3.2, date("Y-m-d"),0,'C');
 
         $pdf->Output('I', 'NPA_Requests.pdf');

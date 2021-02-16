@@ -206,19 +206,31 @@
                                     </tr>
                                     <tr>
                                         <th width="20%;">#</th>
-                                        <th width="20%;">Name</th>
+                                        <th width="20%;">Full Name</th>
+                                        <th width="20%;">First Name</th>
+                                        <th width="20%;">Last Name</th>
+                                        <th width="20%;">Middle Name</th>
                                         <th width="20%;">Gender</th>
                                         <th width="20%;">Date of Birth</th>
                                         <th width="20%;">Relationship</th>
+                                        <th width="20%;">Action</th>
+                                        <th width="20%;">Civil Status</th>
+                                        <th width="20%;">HMO Enrollment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(request_approval_dependent, index) in employee_request_approval.dependents" v-bind:key="index">
                                         <td>{{ index + 1 }}</td>
                                         <td>{{ request_approval_dependent.dependent_name }}</td>
+                                        <td>{{ request_approval_dependent.first_name }}</td>
+                                        <td>{{ request_approval_dependent.last_name }}</td>
+                                        <td>{{ request_approval_dependent.middle_name }}</td>
                                         <td>{{ request_approval_dependent.dependent_gender }}</td>
                                         <td>{{ request_approval_dependent.bdate }}</td>
                                         <td>{{ request_approval_dependent.relation }}</td>
+                                        <td>{{ request_approval_dependent.dependent_status }}</td>
+                                        <td>{{ request_approval_dependent.civil_status }}</td>
+                                        <td>{{ request_approval_dependent.hmo_enrollment }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -232,19 +244,30 @@
                                         </tr>
                                         <tr>
                                             <th width="20%;">#</th>
-                                            <th width="20%;">Name</th>
+                                            <th width="20%;">Full Name</th>
+                                            <th width="20%;">First Name</th>
+                                            <th width="20%;">Last Name</th>
+                                            <th width="20%;">Middle Name</th>
                                             <th width="20%;">Gender</th>
                                             <th width="20%;">Date of Birth</th>
                                             <th width="20%;">Relationship</th>
+                                            <th width="20%;">Action</th>
+                                            <th width="20%;">Civil Status</th>
+                                            <th width="20%;">HMO Enrollment</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(request_approval_deleted_dependent, index) in employee_request_approval.deleted_dependents" v-bind:key="index">
                                             <td>{{ index + 1 }}</td>
                                             <td>{{ request_approval_deleted_dependent.dependent_name }}</td>
+                                            <td>{{ request_approval_deleted_dependent.first_name }}</td>
+                                            <td>{{ request_approval_deleted_dependent.last_name }}</td>
                                             <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
                                             <td>{{ request_approval_deleted_dependent.bdate }}</td>
                                             <td>{{ request_approval_deleted_dependent.relation }}</td>
+                                            <td>{{ request_approval_deleted_dependent.dependent_status }}</td>
+                                            <td>{{ request_approval_deleted_dependent.civil_Status }}</td>
+                                            <td>{{ request_approval_deleted_dependent.hmo_enrollment }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

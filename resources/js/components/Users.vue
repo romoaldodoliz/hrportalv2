@@ -341,7 +341,7 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
                                         <input id="npa_request" class="custom-control-input" v-model="user_copied.npa_request" true-value="YES" false-value="NO" type="checkbox">
-                                        <label class="custom-control-label" for="npa_request">NPA Request</label>
+                                        <label class="custom-control-label" for="npa_request">Transfer / Npa Requests</label>
                                     </div>
 
                                     <span class="text-danger" v-if="errors.npa_request">{{ errors.npa_request[0] }}</span> 

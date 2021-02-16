@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->command('send_email:regularization_notification')->dailyAt('08:00');
+        $schedule->command('command:auto_transfer_resigned_employee')->hourly();
     }
 
     /**

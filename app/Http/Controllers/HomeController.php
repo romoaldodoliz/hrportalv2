@@ -281,9 +281,15 @@ class HomeController extends Controller
                         $data_dependent = [
                             'employee_id'=>$employee->id,
                             'dependent_name'=>$dependent['dependent_name'],
+                            'first_name'=>$dependent['first_name'],
+                            'last_name'=>$dependent['last_name'],
+                            'middle_name'=>$dependent['middle_name'],
                             'dependent_gender'=>$dependent['dependent_gender'],
                             'bdate'=>$dependent['bdate'],
                             'relation'=>$dependent['relation'],
+                            'dependent_status'=>$dependent['dependent_status'],
+                            'civil_status'=>$dependent['civil_status'],
+                            'hmo_enrollment'=>$dependent['hmo_enrollment'],
                         ];
                         if(!empty($dependent['id'])){
                             $employee->dependents()->where('id',$dependent['id'])->update($data_dependent);

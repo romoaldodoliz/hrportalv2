@@ -10,11 +10,16 @@ class Dependent extends Model
     protected $connection = "mysql";
     
     protected $fillable  = [
+    	'first_name',
+    	'last_name',
+    	'middle_name',
     	'dependent_name',
         'dependent_gender',
     	'bdate',
         'relation',
-        'dependent_status'
+        'dependent_status',
+        'hmo_enrollment',
+        'civil_status',
     ];
 
     public function employee()
