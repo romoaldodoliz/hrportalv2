@@ -90,11 +90,12 @@ Route::get('logout', function(){
     // Authenticated Admin Routes
     
     Route::group(['middleware' => ['auth']], function () {
-        //HDF
-        Route::get('/health_declaration_form_users_disable_set_up',['as'=>'hdf.index','uses'=>'HealthDeclationFormController@health_declaration_form_users_disable_set_up','middleware' => ['role:HDF Admin']]);
-
+        
         //Home
         Route::get('/home', 'HomeController@index')->name('home');
+
+        //HDF
+        Route::get('/health_declaration_form_users_disable_set_up',['as'=>'hdf.index','uses'=>'HealthDeclationFormController@health_declaration_form_users_disable_set_up','middleware' => ['role:HDF Admin']]);
 
         // Users
         Route::get('/users',['as'=>'users.index','uses'=>'UserController@index','middleware' => ['role:Administrator']]);
@@ -113,6 +114,7 @@ Route::get('logout', function(){
         // Employees
             Route::get('/employees',['as'=>'employees.index','uses'=>'EmployeeController@index','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
             Route::get('/employees-all',['as'=>'employees.indexData','uses'=>'EmployeeController@indexData','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            Route::get('/get-employee',['as'=>'employees.getEmployee','uses'=>'EmployeeController@getEmployee','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
             
@@ -129,8 +131,8 @@ Route::get('logout', function(){
             Route::delete('/employee/{employee}',['as'=>'employees.destroy','uses'=>'EmployeeController@destroy','middleware' => ['role:Administrator|HR Staff']]);
 
 
-            Route::get('/decrypt-monthly-basic-salary/{employee}',['as'=>'employees.decryptMonthlyBasicSalary','uses'=>'EmployeeController@decryptMonthlyBasicSalary','middleware' => ['role:Administrator|HR Staff']]);
-            Route::get('/decrypt-monthly-basic-salary-record/{employee}',['as'=>'employees.decryptMonthlyBasicSalaryRecord','uses'=>'EmployeeController@decryptMonthlyBasicSalaryRecord','middleware' => ['role:Administrator|HR Staff']]);
+            Route::get('/decrypt-monthly-basic-salary/{employee}',['as'=>'employees.decryptMonthlyBasicSalary','uses'=>'EmployeeController@decryptMonthlyBasicSalary','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            Route::get('/decrypt-monthly-basic-salary-record/{employee}',['as'=>'employees.decryptMonthlyBasicSalaryRecord','uses'=>'EmployeeController@decryptMonthlyBasicSalaryRecord','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             //All Approvers
             Route::get('/employee-head-approvers', 'EmployeeController@employeeHeadApprovers');
@@ -141,7 +143,25 @@ Route::get('logout', function(){
             //Employee Dependents
             Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents'); 
 
-            Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');  
+            Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');
+
+            //Employee Dependents Reports
+            Route::get('/employee-dependents-reports', 'ReportController@employeeDependentReports'); 
+
+            Route::get('/employee-dependents-reports-data', 'ReportController@employeeDependentReportsData');
+            
+            //Employee Transfer Reports
+            Route::get('/employee-transfer-reports', 'ReportController@employeeTransferReports'); 
+
+            Route::get('/employee-transfer-reports-data', 'ReportController@employeeTransferReportsData');
+            
+            //Employee NPA Reports
+            Route::get('/employee-npa-reports', 'ReportController@employeeNpaReports'); 
+
+            Route::get('/employee-npa-reports-data', 'ReportController@employeeNpaDataReportsData'); 
+            
+            //Employee 201 Files
+            Route::get('/employee-201-file-attachments/{employee}', 'EmployeeController@employee201FileAttachments');
 
             //Employee Filter
             Route::post('/filter-employee',['as'=>'employees.employeeFilter','uses'=>'EmployeeController@employeeFilter','middleware' => ['role:Administrator|HR Staff|Administrator Printer|Cluster Head|BU Head|Immediate Superior']]);
@@ -162,8 +182,13 @@ Route::get('logout', function(){
             //Transfer Employee Logs
             Route::get('/transfer-employee-logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@transferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
             
+            
+            Route::get('/pdf_employee_transfer_logs/{employee}',['as'=>'employees.transfer_employee','uses'=>'EmployeeController@pdfTransferEmployeeLogs','middleware'=>['role:Administrator|HR Staff']]);
+
             //Organizational Chart
             Route::get('/org-chart/{employee}',['as'=>'employees.org_chart','uses'=>'EmployeeController@orgChart','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            
+            Route::get('/org-chart-under-employee/{employee}',['as'=>'employees.org_chart_under_employee','uses'=>'EmployeeController@orgChartUnderEmployee','middleware'=>['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
         
         
             // Settings
@@ -329,6 +354,7 @@ Route::get('logout', function(){
         Route::get('get-npa-requests/{employee_id}','EmployeeController@getNPARequestLists');
         Route::delete('npa_request/{npa_request}', 'EmployeeController@destroyNPARequest');
 
+        Route::get('print-employee-npa-requests/{employee}','NpaRequestController@printEmployeeNPARequest');
 
         //HR Employees
         Route::get('hr-employees','EmployeeController@getHREmployees');

@@ -19,7 +19,7 @@
     <div class="container-fluid mt--7">
         <div class="row">
             <!-- Title -->
-            <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+            <div class="col-xl-3 order-xl-2 mb-5 mb-xl-0">
                 <div class="card card-profile shadow">
                     <div class="row justify-content-center">
                         <div class="col-lg-3 order-lg-2">
@@ -71,7 +71,7 @@
            
             <!-- Content -->
             
-            <div class="col-xl-8 order-xl-1">
+            <div class="col-xl-9 order-xl-1">
                 <div class="card bg-secondary shadow  mb-5">
                     <div class="card-header bg-white border-0">
                         <div class="row align-items-center">
@@ -439,9 +439,12 @@
                                     </div>
                                 </div>   
 
+                                <div class="col-md-12">
+                                    <h4>In case of Emergency</h4>
+                                </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="role">Contact Person</label>
+                                        <label for="role"> Contact Person</label>
                                         <input type="text" class="form-control" v-model="employee_copied.contact_person">
                                         <span class="text-danger" v-if="errors.contact_person">{{ errors.contact_person[0] }}</span> 
                                     </div>
@@ -449,7 +452,7 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="role">Contact Relation</label>
+                                        <label for="role">Contact Relationship</label>
                                         <input type="text" class="form-control" v-model="employee_copied.contact_relation">
                                         <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
                                     </div>
@@ -462,74 +465,122 @@
                                         <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h4>HMO Dependents (By hierarchy *For Single - Mother, Father, Child *For Married - Spouse, Child)</h4>
-                                        <button type="button" class="btn btn-success btn-sm mb-2 ml-2" style="float: right;" @click="fetchDependents()"><i class="fas fa-redo" title="Refresh HMO Dependents"></i></button>
-                                        <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addDependent()">Add Row</button>
-                                    </div>    
-                                        <div class="table-responsive">
-                                        <table class="table table-hover" id="tab_hmo_dependent">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">
-                                                        Name
-                                                    </th>
-                                                    <th class="text-center">
-                                                        Gender
-                                                    </th>
-                                                    <th class="text-center">
-                                                        Date of birth
-                                                    </th>
-                                                    <th class="text-center">
-                                                        Relationship
-                                                    </th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="(row,index) in dependents" v-bind:key="index">
-                                                    <td>
-                                                        <input type="text" class="form-control" v-model="row.dependent_name">     
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-control" v-model="row.dependent_gender" id="dependent_gender">
-                                                            <option value="">Choose Gender</option>
-                                                            <option value="MALE">MALE</option>
-                                                            <option value="FEMALE">FEMALE</option>
-                                                            <option value="UNKNOWN">UNKNOWN</option>
-                                                        </select> 
-                                                    </td>
-                                                    <td>
-                                                        <input type="date" class="form-control" v-model="row.bdate">
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-control" v-model="row.relation" id="relation">
-                                                            <option value="">Choose Relation</option>
-                                                            <option value="MOTHER">MOTHER</option>
-                                                            <option value="FATHER">FATHER</option>
-                                                            <option value="BROTHER">BROTHER</option>
-                                                            <option value="SISTER">SISTER</option>
-                                                            <option value="SPOUSE">SPOUSE</option>
-                                                            <option value="CHILD">CHILD</option>
-                                                        </select> 
 
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">Remove</button>
-                                                        <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">Remove</button>  
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                              
+                                <div class="col-md-12">
+                                    <h4>HMO Dependents (By hierarchy *For Single - Mother, Father, Child *For Married - Spouse, Child)</h4>
+                                    <button type="button" class="btn btn-success btn-sm mb-2 ml-2" style="float: right;" @click="fetchDependents()"><i class="fas fa-redo" title="Refresh HMO Dependents"></i></button>
+                                    <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addDependent()">Add Row</button>
+                                </div>    
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="tab_hmo_dependent">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">
+                                                    Full Name
+                                                </th>
+                                                <th class="text-center">
+                                                    First Name
+                                                </th>
+                                                <th class="text-center">
+                                                    Last Name
+                                                </th>
+                                                <th class="text-center">
+                                                    Middle Name
+                                                </th>
+                                                <th class="text-center">
+                                                    Gender
+                                                </th>
+                                                <th class="text-center">
+                                                    Date of birth
+                                                </th>
+                                                <th class="text-center">
+                                                    Relationship
+                                                </th>
+                                                <th class="text-center">
+                                                    Action
+                                                </th>
+                                                <th class="text-center">
+                                                    Civil Status
+                                                </th>
+                                                <th class="text-center">
+                                                    HMO Enrollment
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(row,index) in dependents" v-bind:key="index">
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
+                                                        <option value="">Choose Gender</option>
+                                                        <option value="MALE">MALE</option>
+                                                        <option value="FEMALE">FEMALE</option>
+                                                        <!-- <option value="UNKNOWN">UNKNOWN</option> -->
+                                                    </select> 
+                                                </td>
+                                                <td>
+                                                    <input type="date" class="form-control" v-model="row.bdate">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.relation" id="relation" style="width:150px;">
+                                                        <option value="">Choose Relationship</option>
+                                                        <option value="MOTHER">MOTHER</option>
+                                                        <option value="FATHER">FATHER</option>
+                                                        <option value="BROTHER">BROTHER</option>
+                                                        <option value="SISTER">SISTER</option>
+                                                        <option value="SPOUSE">SPOUSE</option>
+                                                        <option value="CHILD">CHILD</option>
+                                                    </select> 
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.dependent_status" id="dependent_status" style="width:150px;">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="NEW">NEW</option>
+                                                        <option value="RENEW">RENEW</option>
+                                                    </select>  
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.civil_status" id="hmo_marital_status" style="width:150px;">
+                                                        <option value="">Choose Marital Status</option>
+                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.hmo_enrollment" id="hmo_enrollment" style="width:150px;">
+                                                        <option value="">For HMO Enrollment</option>
+                                                        <option value="YES">YES</option>
+                                                        <option value="NO">NO</option>
+                                                    </select>  
+                                                    
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">x</button>
+                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">x</button>  
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                                
                             </div>
 
                             <div class="col-md-12 mt-5">
-                                <h4>Attachment(s)  - Birth Certificates</h4>
+                                <h4>Attachment(s)  - Marriage / Birth Certificates</h4>
                             </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -553,7 +604,7 @@
                                                 <td>{{ index + 1 }}</td>
                                                 <td> {{ attachment.file }}</td>
                                                 <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
-                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">Remove</button></td>
+                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">x</button></td>
                                                 
                                             </tr>
                                         </tbody>
@@ -656,7 +707,7 @@
 
 
                 </div>
-                </div>
+            </div>
         </div>
     </div>
 
@@ -829,7 +880,7 @@
                                 <td align="left"> <i v-if="employee_request_original.contact_person != employee_request_approval.contact_person" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_person }}</td>
                             </tr>
                             <tr>
-                                <td align="left"> CONTACT RELATION</td>
+                                <td align="left"> CONTACT RELATIONSHIP</td>
                                 <td align="left"> {{ employee_request_original.contact_relation }}</td>
                                 <td align="left"> <i v-if="employee_request_original.contact_relation != employee_request_approval.contact_relation" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_relation }}</td>
                             </tr>
@@ -870,19 +921,31 @@
                             </tr>
                             <tr>
                                 <th width="20%;">#</th>
-                                <th width="20%;">Name</th>
+                                <th width="20%;">Full Name</th>
+                                <th width="20%;">First Name</th>
+                                <th width="20%;">Last Name</th>
+                                <th width="20%;">Middle Name</th>
                                 <th width="20%;">Gender</th>
                                 <th width="20%;">Date of Birth</th>
                                 <th width="20%;">Relationship</th>
+                                <th width="20%;">Action</th>
+                                <th width="20%;">Civil Status</th>
+                                <th width="20%;">HMO Enrollment</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(request_approval_dependent, index) in employee_request_approval.dependents" v-bind:key="index">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ request_approval_dependent.dependent_name }}</td>
+                                <td>{{ request_approval_dependent.first_name }}</td>
+                                <td>{{ request_approval_dependent.last_name }}</td>
+                                <td>{{ request_approval_dependent.middle_name }}</td>
                                 <td>{{ request_approval_dependent.dependent_gender }}</td>
                                 <td>{{ request_approval_dependent.bdate }}</td>
                                 <td>{{ request_approval_dependent.relation }}</td>
+                                <td>{{ request_approval_dependent.dependent_status }}</td>
+                                <td>{{ request_approval_dependent.civil_status }}</td>
+                                <td>{{ request_approval_dependent.hmo_enrollment }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -896,19 +959,31 @@
                                 </tr>
                                 <tr>
                                     <th width="20%;">#</th>
-                                    <th width="20%;">Name</th>
+                                    <th width="20%;">Full Name</th>
+                                    <th width="20%;">First Name</th>
+                                    <th width="20%;">Last Name</th>
+                                    <th width="20%;">Middle Name</th>
                                     <th width="20%;">Gender</th>
                                     <th width="20%;">Date of Birth</th>
                                     <th width="20%;">Relationship</th>
+                                    <th width="20%;">Action</th>
+                                    <th width="20%;">Civil Status</th>
+                                    <th width="20%;">HMO Enrollment</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(request_approval_deleted_dependent, index) in employee_request_approval.deleted_dependents" v-bind:key="index">
                                     <td>{{ index + 1 }}</td>
+                                    <td>{{ request_approval_deleted_dependent.first_name }}</td>
+                                    <td>{{ request_approval_deleted_dependent.last_name }}</td>
+                                    <td>{{ request_approval_deleted_dependent.middle_name }}</td>
                                     <td>{{ request_approval_deleted_dependent.dependent_name }}</td>
                                     <td>{{ request_approval_deleted_dependent.dependent_gender }}</td>
                                     <td>{{ request_approval_deleted_dependent.bdate }}</td>
                                     <td>{{ request_approval_deleted_dependent.relation }}</td>
+                                    <td>{{ request_approval_deleted_dependent.dependent_status }}</td>
+                                    <td>{{ request_approval_deleted_dependent.civil_status }}</td>
+                                    <td>{{ request_approval_deleted_dependent.hmo_enrollment }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1114,93 +1189,123 @@
                     }
                 } 
             },
+            validateHMODependentsAttachment(){
+                let v = this;
+                let old_dependent = 0;
+                let new_dependent = 0;
+                v.dependents.forEach((value) => {
+                    if(value.id){
+                        old_dependent += 1;
+                    }else{
+                        new_dependent += 1;
+                    }
+                });
+
+                if(new_dependent > 0){
+                    if(v.dependent_attachments.length == 0){
+                        alert('Warning : HMO Attachment(s) are required.');
+                        return false;
+                    }else{
+                        return true;
+                    }
+                }else{
+                    return true;
+                }
+            },
             updateEmployee(employee_copied){
                 this.errors = [];
-                document.getElementById('edit_btn').disabled = true;
 
-                //Personal
-                if(this.profile_image_file){
-                    this.userformData.append('employee_image', this.profile_image_file);
-                }
-                if(this.signature_image_file){
-                    this.userformData.append('employee_signature', this.signature_image_file);
-                }
-                
-                this.userformData.append('middle_name', employee_copied.middle_name);
-                
-                this.userformData.append('middle_initial', employee_copied.middle_initial);
-                
-                this.userformData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
-                this.userformData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
-                this.userformData.append('gender', employee_copied.gender ? employee_copied.gender : "");
+                let validate_dependents = this.validateHMODependentsAttachment();
 
-                this.userformData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
+                if(validate_dependents){
 
-
-
-                if(this.marital_file){
-                    this.userformData.append('marital_status_attachment', this.marital_file);
-                }
-            
-                //Contact
-                this.userformData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
-                this.userformData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
-                this.userformData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
-                this.userformData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
-                this.userformData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
-                this.userformData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
-                this.userformData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
-
-                //Dependents
-                this.userformData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
-                this.userformData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
-
-                this.userformData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
-
-                this.prepareDependentsAttachment();
-
-                //IDENTIFICATION
-                this.userformData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
-                this.userformData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
-                this.userformData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
-                this.userformData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
-
-                this.userformData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
-
-                this.userformData.append('_method', 'PATCH');
-
-                axios.post(`/employee-user-profile/${employee_copied.id}`, 
-                    this.userformData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }  
-                )
-                .then(response => {
-                    document.getElementById('edit_btn').disabled = false;
-                    document.getElementById('dependents_attachments').value = "";
-                    this.copyObject(response.data);
-
-                    Swal.fire({
-                        title: 'Success!',
-                        html: 'Your employee update has been sent to HR for Verification/Approval. Click <a href="#" data-toggle="modal" data-target="#employeeRequestsModal"><u><strong class="text-primary">Employee Requests</strong></u></a> to view your requests. Thank you.',
-                        icon: 'success',
-                        confirmButtonText: 'Okay'
-                    })
-                })
-                .catch(error => {
-                    this.errors = error.response.data.errors;
-                    document.getElementById('edit_btn').disabled = false;
+                    document.getElementById('edit_btn').disabled = true;
+                    //Personal
+                    if(this.profile_image_file){
+                        this.userformData.append('employee_image', this.profile_image_file);
+                    }
+                    if(this.signature_image_file){
+                        this.userformData.append('employee_signature', this.signature_image_file);
+                    }
                     
-                    Swal.fire({
-                        title: 'Warning!',
-                        text: 'Unable to Update Employee. Check Entries and then try again.',
-                        icon: 'error',
-                        confirmButtonText: 'Okay'
-                    });
+                    this.userformData.append('middle_name', employee_copied.middle_name);
+                    
+                    this.userformData.append('middle_initial', employee_copied.middle_initial);
+                    
+                    this.userformData.append('last_name', employee_copied.last_name ? employee_copied.last_name : "");
+                    this.userformData.append('marital_status', employee_copied.marital_status ? employee_copied.marital_status : "");
+                    this.userformData.append('gender', employee_copied.gender ? employee_copied.gender : "");
 
-                })
+                    this.userformData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
+
+
+
+                    if(this.marital_file){
+                        this.userformData.append('marital_status_attachment', this.marital_file);
+                    }
+                
+                    //Contact
+                    this.userformData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
+                    this.userformData.append('permanent_address', employee_copied.permanent_address ? employee_copied.permanent_address : "-");
+                    this.userformData.append('phone_number', employee_copied.phone_number ? employee_copied.phone_number : "-");
+                    this.userformData.append('mobile_number', employee_copied.mobile_number ? employee_copied.mobile_number : "-");
+                    this.userformData.append('contact_person', employee_copied.contact_person ? employee_copied.contact_person : "-");
+                    this.userformData.append('contact_number', employee_copied.contact_number ? employee_copied.contact_number : "-");
+                    this.userformData.append('contact_relation', employee_copied.contact_relation ? employee_copied.contact_relation : "-");
+
+                    //Dependents
+                    this.userformData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
+                    this.userformData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
+
+                    this.userformData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
+
+                    this.prepareDependentsAttachment();
+
+                    //IDENTIFICATION
+                    this.userformData.append('sss_number', employee_copied.sss_number ? employee_copied.sss_number : "-");
+                    this.userformData.append('phil_number', employee_copied.phil_number ? employee_copied.phil_number : "-");
+                    this.userformData.append('tax_number', employee_copied.tax_number ? employee_copied.tax_number : "-");
+                    this.userformData.append('hdmf', employee_copied.hdmf ? employee_copied.hdmf : "-");
+
+                    this.userformData.append('remarks', employee_copied.remarks ? employee_copied.remarks : "");
+
+                    this.userformData.append('_method', 'PATCH');
+
+                    axios.post(`/employee-user-profile/${employee_copied.id}`, 
+                        this.userformData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }  
+                    )
+                    .then(response => {
+                        document.getElementById('edit_btn').disabled = false;
+                        document.getElementById('dependents_attachments').value = "";
+                        this.copyObject(response.data);
+
+                        Swal.fire({
+                            title: 'Success!',
+                            html: 'Your employee update has been sent to HR for Verification/Approval. Click <a href="#" data-toggle="modal" data-target="#employeeRequestsModal"><u><strong class="text-primary">Employee Requests</strong></u></a> to view your requests. Thank you.',
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
+                        })
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data.errors;
+                        document.getElementById('edit_btn').disabled = false;
+                        
+                        Swal.fire({
+                            title: 'Warning!',
+                            text: 'Unable to Update Employee. Check Entries and then try again.',
+                            icon: 'error',
+                            confirmButtonText: 'Okay'
+                        });
+
+                    })
+                }
+
+                
 
             },
             profileImageLoadError(){
@@ -1313,9 +1418,15 @@
                             v.dependents.push({
                                 id: element.id,
                                 dependent_name: element.dependent_name,
+                                first_name: element.first_name,
+                                last_name: element.last_name,
+                                middle_name: element.middle_name,
                                 dependent_gender: element.dependent_gender,
                                 bdate: v.getDateFormat(element.bdate),
-                                relation: element.relation
+                                relation: element.relation,
+                                dependent_status: element.dependent_status,
+                                civil_status: element.civil_status,
+                                hmo_enrollment: element.hmo_enrollment,
                             });
                         });
                     }
@@ -1348,6 +1459,8 @@
                     dependent_gender: "",
                     bdate: "",
                     relation: "",
+                    dependent_status: "",
+                    hmo_enrollment: "",
                 });
             },
             removeDependent: function(index,dependent) {
@@ -1367,7 +1480,9 @@
                                 dependent_name: dependent.dependent_name,
                                 dependent_gender: dependent.dependent_gender,
                                 bdate: dependent.bdate,
-                                relation: dependent.relation
+                                relation: dependent.relation,
+                                dependent_status: dependent.dependent_status,
+                                hmo_enrollment: dependent.hmo_enrollment,
                             });
                             this.dependents.splice(index, 1);    
                         }

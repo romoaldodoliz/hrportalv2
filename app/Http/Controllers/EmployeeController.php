@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,9 +23,17 @@ use App\Api;
 use App\EmployeeNpaRequest;
 use App\EmployeeSalaryRecord;
 
+use App\Employee201File;
+
+use App\EmployeeTransferAttachment;
+
 use App\QrCodeLog;
 
 use App\RfidUser;
+
+use App\HrRecieverHmoDependent;
+use App\Mail\EmployeeHMODependentUpdate;
+use App\Mail\EmployeeNpaNotification;
 
 use Carbon\Carbon;
 use Fpdf;
@@ -88,6 +97,14 @@ class EmployeeController extends Controller
        
         
     }
+
+    public function getEmployee(Request $request){
+        return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+                        ->where('id',$request->employee_id)
+                        ->orderBy('series_number','DESC')
+                        ->first();
+    }
+
     public function employeeindexCount()
     {
         return Employee::where('status','Active')->count();
@@ -118,6 +135,10 @@ class EmployeeController extends Controller
         return DependentAttachment::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
     }
 
+    public function employee201FileAttachments(Employee $employee){
+        return Employee201File::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
+    }
+
     public function employeeHeadApprovers(){
         return Employee::where('level','!=','RANK&FILE')->whereNotNull('level')->where('status','Active')->orderBy('last_name','ASC')->get();
     }
@@ -136,6 +157,8 @@ class EmployeeController extends Controller
 
     public function store(Request $request){
         
+        $data = $request->all();
+
         $this->validate($request, [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -153,7 +176,7 @@ class EmployeeController extends Controller
             'tax_status.required' => 'This field is required',
         ]);
 
-        $data = $request->all();
+        
 
         if(empty($request->division) && $request->division == 'null'){
             $data['division'] = null;
@@ -177,7 +200,22 @@ class EmployeeController extends Controller
             $user = new User;
             $user->password = Hash::make(strtolower($request->input('first_name')).".".strtolower($request->input('last_name')));
             $user->name =  $request->input('first_name') . " " . $request->input('last_name');
-            $email = strtolower($request->input('first_name')) .".". strtolower($request->input('last_name')) . "@lafilgroup.com";
+
+            //Get Company
+            $get_company_details = Company::where('id',$data['company_list'])->first();
+            $first_name = str_replace(' ', '', $request->input('first_name'));
+            $last_name = str_replace(' ', '', $request->input('last_name'));
+            if($get_company_details){
+                if($get_company_details['domain']){
+                    $email = strtolower($first_name) .".". strtolower($last_name) . "@" . $get_company_details['domain'];
+                }else{
+                    $email = strtolower($first_name) .".". strtolower($first_name) . "@lafilgroup.com";
+                }
+            }else{
+                $email = strtolower($first_name) .".". strtolower($first_name) . "@lafilgroup.com";
+            }
+            
+            
             $user->email = str_replace(' ', '', $email);
             $user->save();
             $user->attachRole('2');
@@ -388,16 +426,28 @@ class EmployeeController extends Controller
                    foreach($dependents as $dependent){
 
                         $dependent_name = $dependent->dependent_name ? $dependent->dependent_name : null;
+                        $first_name = $dependent->first_name ? $dependent->first_name : null;
+                        $last_name = $dependent->last_name ? $dependent->last_name : null;
+                        $middle_name = $dependent->middle_name ? $dependent->middle_name : null;
                         $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
                         $bdate = $dependent->bdate ? $dependent->bdate : null;
                         $relation = $dependent->relation ? $dependent->relation : null;
+                        $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
+                        $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
+                        $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
                             'dependent_name'=>$dependent_name,
+                            'first_name'=>$first_name,
+                            'last_name'=>$last_name,
+                            'middle_name'=>$middle_name,
                             'dependent_gender'=>$dependent_gender,
                             'bdate'=>$bdate,
                             'relation'=>$relation,
+                            'dependent_status'=>$dependent_status,
+                            'civil_status'=>$civil_status,
+                            'hmo_enrollment'=>$hmo_enrollment,
                         ];
 
                         if(!empty($dependent->id)){
@@ -450,7 +500,52 @@ class EmployeeController extends Controller
                     }
                 }
 
+                //Employee 201 Files : Save to Folder
+                $employee_201_attachments = $request->file('documents_201_files_attachments');   
+                $new_employee_201_attachments = [];
+
+                if(!empty($employee_201_attachments)){
+                    foreach($employee_201_attachments as $attachment){
+                        $filename = $attachment->getClientOriginalName();
+                        $path = Storage::disk('public')->putFileAs('employee_201_files/'.$employee->id, $attachment,$filename);
+                        $new_employee_201_attachments[] = $filename; 
+                    }    
+                }
                 
+                //Delete 201 File Attachment
+                if($data['deleted_documents_201_files_attachments']){
+                    $deleted_employee_201_attachments = json_decode($data['deleted_documents_201_files_attachments']);
+                    foreach($deleted_employee_201_attachments as $deleted_attachment){
+                        if(isset($deleted_attachment->id)){
+                            $document_201_file = $employee->employee_201_files()->where('id',$deleted_attachment->id)->delete();
+                        }
+                   }
+                }
+
+                 //Save 201 File Attachment
+                if($new_employee_201_attachments){
+                    foreach($new_employee_201_attachments as $attachment){
+                        $employee_201_attachment_data =  [];
+                        $employee_201_attachment_data['employee_id'] = $employee->id;
+                        $employee_201_attachment_data['file'] = $attachment;
+                        $employee->employee_201_files()->create($employee_201_attachment_data);
+                    }
+                }
+
+                //Change to First Level Approver
+                if($data['new_approver_under']){
+                    //Find Current approver 
+                    $current_approver = AssignHead::with('employee_info')
+                                                            ->where('employee_head_id',$employee->id)
+                                                            ->where('head_id','3')
+                                                            ->whereHas(
+                                                                'employee_info',function($q) {
+                                                                    $q->where('status','Active');
+                                                                }
+                                                            )
+                                                            ->update(['employee_head_id'=>$data['new_approver_under']]);
+                    
+                }
 
                 DB::commit();
                 return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
@@ -614,6 +709,49 @@ class EmployeeController extends Controller
 
         $employee_data['dependent_attachments'] = $new_dependent_attachments;
         $employee_data['deleted_dependent_attachments'] = $request->deleted_dependent_attachments;
+
+        //Send Email to HR of Dependents Update -----------------------------------------------------------------------------------
+        $send_email_dependent_update = 0;
+        if($request->dependents){
+            $dependents_requests = json_decode($request->dependents);
+           
+            foreach($dependents_requests as $item){
+                $dependent_exist = Dependent::where('employee_id',$employee->id)
+                                                ->where('dependent_name',$item->dependent_name)
+                                                ->where('relation',$item->relation)
+                                                ->where('bdate',$item->bdate)
+                                                ->where('dependent_gender',$item->dependent_gender)
+                                                ->where('dependent_status',$item->dependent_status)
+                                                ->first();
+                if(empty($dependent_exist)){
+                    $send_email_dependent_update = 1;
+                }
+            }
+
+            if($send_email_dependent_update == 1){
+                $email_reciever = HrRecieverHmoDependent::first();
+                $data = [
+                    'employee_name'=>$employee->first_name . ' ' . $employee->last_name,
+                    'position'=>$employee->position,
+                    'dependents'=>$dependents_requests,
+                    'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
+                ];
+                $send_update = Mail::to($email_reciever->email)->send(new EmployeeHMODependentUpdate($data));
+            }
+        }
+        if($request->deleted_dependents){
+            if($send_email_dependent_update == 0){
+                $email_reciever = HrRecieverHmoDependent::first();
+                $data = [
+                    'employee_name'=>$employee->first_name . ' ' . $employee->last_name,
+                    'position'=>$employee->position,
+                    'dependents'=>$dependents_requests,
+                    'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
+                ];
+                $send_update = Mail::to($email_reciever->email)->send(new EmployeeHMODependentUpdate($data));
+            }   
+        }
+        //---------------------------------------------------------------------------------------------------------------------------
 
         $employee_data['gender'] = $request->gender;
         $employee_data['sss_number'] = $request->sss_number;
@@ -1058,7 +1196,7 @@ class EmployeeController extends Controller
                 $transfer_logs_data['previous_id_number'] = $employee_data['id_number'];
                 $transfer_logs_data['previous_position'] = $employee_data['position'];
                 $transfer_logs_data['previous_date_hired'] = $employee_data['date_hired'];
-                $transfer_logs_data['previous_division'] = $employee_data['division'];
+                $transfer_logs_data['previous_cluster'] = $employee_data['cluster'];
                 $transfer_logs_data['previous_department'] = $employee_data['departments'] ? $employee_data['departments'][0]['id'] : "";
                 $transfer_logs_data['previous_company'] = $employee_data['companies'] ? $employee_data['companies'][0]['id'] : "";
                 $transfer_logs_data['previous_location'] = $employee_data['locations'] ? $employee_data['locations'][0]['id'] : "";
@@ -1068,7 +1206,7 @@ class EmployeeController extends Controller
                 $transfer_logs_data['new_id_number'] = $new_id_number;
                 $transfer_logs_data['new_position'] = $data['position'];
                 $transfer_logs_data['new_date_hired'] = $data['date_hired'];
-                $transfer_logs_data['new_division'] = $data['division'];
+                $transfer_logs_data['new_cluster'] = $data['cluster'];
                 $transfer_logs_data['new_department'] =  $data['department_list'] ? $data['department_list'] : "";
                 $transfer_logs_data['new_company'] = $data['company_list'] ? $data['company_list'] : "";
                 $transfer_logs_data['new_location'] = $data['location_list'] ? $data['location_list'] : "";
@@ -1076,7 +1214,25 @@ class EmployeeController extends Controller
 
                 $transfer_logs_data['transferred_by'] =  Auth::user()->id;
 
-                EmployeeTransfer::create($transfer_logs_data);
+                if($employee_transfer = EmployeeTransfer::create($transfer_logs_data)){
+
+                    //Supporting Documents
+                    $transfer_supporting_documents = $request->file('transfer_supporting_documents');
+                    if(!empty($transfer_supporting_documents)){
+                        foreach($transfer_supporting_documents as $attachment){
+                            $filename = $attachment->getClientOriginalName();
+                            $path = Storage::disk('public')->putFileAs('employee_transfer_attachments/'.$employee->id, $attachment,$filename);
+
+                            $supporting_document_data =  [];
+                            $supporting_document_data['employee_transfer_id'] = $employee_transfer->id;
+                            $supporting_document_data['employee_id'] = $employee->id;
+                            $supporting_document_data['filename'] = $filename;
+                            $supporting_document_data['path'] = $path;
+
+                            EmployeeTransferAttachment::create($supporting_document_data);
+                        }    
+                    }
+                }
 
                 DB::commit();
                 
@@ -1092,30 +1248,440 @@ class EmployeeController extends Controller
     }
 
     public function transferEmployeeLogs(Employee $employee){
+        return $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
+    }
 
-        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
+    public function pdfTransferEmployeeLogs(Employee $employee){
         
+        $transfer_employee_logs = EmployeeTransfer::with('new_company','new_department','new_location','previous_company','previous_department','previous_location','employee_transfer_attachments','employee')->where('employee_id',$employee->id)->orderBy('new_date_hired','ASC')->get();
         if($transfer_employee_logs){
             foreach($transfer_employee_logs as $key => $transfer_employee_log){
                 $transfer_employee_logs[$key] = $transfer_employee_log;
+                $transfer_employee_logs[$key]['new_company'] = $transfer_employee_log['new_company'];
                 $transfer_employee_logs[$key]['previous_system_approvers'] = json_decode($transfer_employee_log['previous_system_approvers']);
                 $transfer_employee_logs[$key]['new_system_approvers'] = json_decode($transfer_employee_log['new_system_approvers']);
             }
         }
-        return $transfer_employee_logs;
+
+        Fpdf::AddPage("L", 'A4');
+        Fpdf::SetMargins(0,0,0,0);
+        Fpdf::SetAutoPageBreak(false);
+
+        Fpdf::SetXY(10,10);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(100,5, "EMPLOYEE NAME: " . $employee->last_name . ', ' . $employee->first_name,0,'L');
+
+        Fpdf::SetXY(10,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(20,5, "#" ,1,'C');
+
+        Fpdf::SetXY(30,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(100,5, "FROM" ,1,'C');
+
+        Fpdf::SetXY(130,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(100,5, "TO" ,1,'C');
+
+        Fpdf::SetXY(230,17);
+        Fpdf::SetFont('Arial', '', 10);
+        Fpdf::MultiCell(55,5, "SUPPORTING DOCUMENTS" ,1,'C');
+
+        $item_no = 1;
+        $y=22;
+        foreach($transfer_employee_logs as $item){
+            $item_data = json_encode($item,true);
+            $new_item_data = json_decode($item_data,true);
+            Fpdf::SetXY(10,$y);
+            Fpdf::SetFont('Arial', '', 8);
+            Fpdf::MultiCell(20,30, $item_no ,1,'C');
+
+            Fpdf::SetXY(30,$y);
+            Fpdf::SetFont('Arial', '', 8);
+            Fpdf::MultiCell(100,30, "" ,1,'L');
+
+                //Company
+                Fpdf::SetXY(30,$y);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_company']['name'],1,'L');
+
+                //ID Number
+                Fpdf::SetXY(30,$y+5);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_id_number'],1,'L');
+
+                //Date Hired
+                Fpdf::SetXY(30,$y+10);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_date_hired'],1,'L');
+
+                //Position
+                Fpdf::SetXY(30,$y+15);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_position'],1,'L');
+
+                //Department
+                Fpdf::SetXY(30,$y+20);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_department']['name'],1,'L');
+
+                //Location
+                Fpdf::SetXY(30,$y+25);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5,$new_item_data['previous_location']['name'],1,'L');
+
+            Fpdf::SetXY(130,$y);
+            Fpdf::SetFont('Arial', '', 10);
+            Fpdf::MultiCell(100,30, "" ,1,'L');
+
+                //Company
+                Fpdf::SetXY(130,$y);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_company']['name'] ,1,'L');
+
+                //ID Number
+                Fpdf::SetXY(130,$y+5);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_id_number'],1,'L');
+
+                //Date Hired
+                Fpdf::SetXY(130,$y+10);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_date_hired'] ,1,'L');
+
+                //Position
+                Fpdf::SetXY(130,$y+15);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['new_position'],1,'L');
+
+                //Department
+                Fpdf::SetXY(130,$y+20);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_department']['name'],1,'L');
+
+                //Location
+                Fpdf::SetXY(130,$y+25);
+                Fpdf::SetFont('Arial', '', 8);
+                Fpdf::MultiCell(100,5, $new_item_data['previous_location']['name'],1,'L');
+
+            Fpdf::SetXY(230,$y);
+            Fpdf::SetFont('Arial', '', 10);
+            Fpdf::MultiCell(55,30, count($item->employee_transfer_attachments)  . ' Attachments',1,'C');
+
+            $y+=30;
+            $item_no++;
+        }
+        
+
+        Fpdf::Output($employee->id . ".pdf", 'I');
+        exit();
+    }
+
+    public function orgChartUnderEmployee(Employee $employee){
+        
+        $to_bottom = AssignHead::with('employee_info','unders.unders')
+                                ->whereHas('employee_info',function($q){
+                                    $q->where('status','Active');
+                                })
+                                ->where('employee_head_id',$employee->id)
+                                ->whereIn('head_id',['3'])
+                                ->get();
+
+        $datas = [];
+        //Unders
+        if($to_bottom){
+            foreach($to_bottom as $under)
+            {
+                if($under->employee_info->status == "Active"){
+                    array_push($datas, (object)[
+                        "id" => $under->employee_id,
+                        "head_id" => $under->head_id,
+                        'pid' => $under->employee_head_id,
+                        'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                        'position' => $under->employee_info->position,
+                        'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                    ]);  
+                }
+                    
+
+                if($under->unders != null)
+                {
+                    foreach($under->unders as $under)
+                    {
+                        if($under->employee_info->status == "Active"){
+                            array_push($datas, (object)[
+                                "id" => $under->employee_id,
+                                'pid' => $under->employee_head_id,
+                                "head_id" => $under->head_id,
+                                'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                                'position' => $under->employee_info->position,
+                                'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                            ]); 
+                        }
+
+                        if($under->unders != null)
+                        {
+                            foreach($under->unders as $under)
+                            {
+                                if($under->employee_info->status == "Active"){
+                                    array_push($datas, (object)[
+                                        "id" => $under->employee_id,
+                                        'pid' => $under->employee_head_id,
+                                        "head_id" => $under->head_id,
+                                        'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                                        'position' => $under->employee_info->position,
+                                        'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                                    ]); 
+                                }
+                                if($under->unders != null)
+                                {
+                                    foreach($under->unders as $under)
+                                    {
+                                        if($under->employee_info->status == "Active"){
+                                            array_push($datas, (object)[
+                                                "id" => $under->employee_id,
+                                                'pid' => $under->employee_head_id,
+                                                "head_id" => $under->head_id,
+                                                'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                                                'position' => $under->employee_info->position,
+                                                'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                                            ]); 
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }
+                            
+                    }
+                }
+            }
+        }
+
+        return $datas;
 
     }
 
     public function orgChart(Employee $employee){
 
-        $api = Api::first();
+        // $api = Api::first();
         $user = $employee;
-        $datas = '';
-        if($employee->id){
-            $rUrl =  $api->api_link.$employee->id;
-            $datas = file_get_contents($rUrl);
+        // $datas = '';
+        // if($employee->id){
+        //     $rUrl =  $api->api_link.$employee->id;
+        //     $datas = file_get_contents($rUrl);
+        // }
+      
+        $self = Employee::findOrfail($employee->id);
+        $to_top = AssignHead::with('employee_info','approver_info','approvers.approvers.approvers.approvers.approvers')->where('employee_id',$employee->id)->whereIn('head_id',['3'])->first();
+        $to_bottom = AssignHead::with('employee_info','unders.unders')
+                                ->whereHas('employee_info',function($q){
+                                    $q->where('status','Active');
+                                })
+                                ->where('employee_head_id',$employee->id)
+                                ->whereIn('head_id',['3'])
+                                ->get();
+        $datas = [];
+        //Unders
+        if($to_bottom){
+            foreach($to_bottom as $under)
+            {
+                if($under->employee_info->status == "Active"){
+                    array_push($datas, (object)[
+                        "id" => $under->employee_id,
+                        "head_id" => $under->head_id,
+                        'pid' => $under->employee_head_id,
+                        'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                        'position' => $under->employee_info->position,
+                        'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                    ]);  
+                }
+                  
+
+                if($under->unders != null)
+                {
+                    foreach($under->unders as $under)
+                    {
+                        if($under->employee_info->status == "Active"){
+                            array_push($datas, (object)[
+                                "id" => $under->employee_id,
+                                'pid' => $under->employee_head_id,
+                                "head_id" => $under->head_id,
+                                'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                                'position' => $under->employee_info->position,
+                                'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                            ]); 
+                        }
+
+                        if($under->unders != null)
+                        {
+                            foreach($under->unders as $under)
+                            {
+                                if($under->employee_info->status == "Active"){
+                                    array_push($datas, (object)[
+                                        "id" => $under->employee_id,
+                                        'pid' => $under->employee_head_id,
+                                        "head_id" => $under->head_id,
+                                        'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                                        'position' => $under->employee_info->position,
+                                        'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                                    ]); 
+                                }
+                                if($under->unders != null)
+                                {
+                                    foreach($under->unders as $under)
+                                    {
+                                        if($under->employee_info->status == "Active"){
+                                            array_push($datas, (object)[
+                                                "id" => $under->employee_id,
+                                                'pid' => $under->employee_head_id,
+                                                "head_id" => $under->head_id,
+                                                'name' => $under->employee_info->first_name." ".$under->employee_info->last_name,
+                                                'position' => $under->employee_info->position,
+                                                'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$under->employee_info->id.".png",
+                                            ]); 
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }
+                           
+                    }
+                }
+            }
         }
 
+        //Approvers
+        if($to_top){
+            if($to_top->employee_info->status == "Active"){
+                array_push($datas, (object)[
+                    'id' => $to_top->employee_id,
+                    'pid' => $to_top->employee_head_id,
+                    "head_id" => $to_top->head_id,
+                    'name' => $to_top->employee_info->first_name.' '.$to_top->employee_info->last_name,
+                    'position' => $to_top->employee_info->position,
+                    'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->employee_info->id.".png",
+                ]);
+            }
+
+            //First Level
+            if($to_top->approvers)
+            {
+                if($to_top->approvers->employee_info->status == "Active"){
+                    array_push($datas, (object)[
+                        'id' => $to_top->approvers->employee_id,
+                        'pid' => $to_top->approvers->employee_head_id,
+                        "head_id" => $to_top->approvers->head_id,
+                        'name' => $to_top->approvers->employee_info->first_name." ".$to_top->approvers->employee_info->last_name,
+                        'position' => $to_top->approvers->employee_info->position,
+                        'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approvers->employee_info->id.".png",
+                    ]);
+                }
+                //Second Level
+                if($to_top->approvers->approvers){
+
+                    if($to_top->approvers->approvers->employee_info->status == "Active"){
+                        array_push($datas, (object)[
+                            'id' => $to_top->approvers->approvers->employee_id,
+                            'pid' => $to_top->approvers->approvers->employee_head_id,
+                            'name' => $to_top->approvers->approvers->employee_info->first_name." ".$to_top->approvers->approvers->employee_info->last_name,
+                            'position' => $to_top->approvers->approvers->employee_info->position,
+                            'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approvers->approvers->employee_info->id.".png",
+                        ]);
+                    }
+                    
+                    //Third Level
+                    if($to_top->approvers->approvers->approvers){
+
+                        if($to_top->approvers->approvers->approvers->employee_info->status == "Active"){
+                            array_push($datas, (object)[
+                                'id' => $to_top->approvers->approvers->approvers->employee_id,
+                                'pid' => $to_top->approvers->approvers->approvers->employee_head_id,
+                                'name' => $to_top->approvers->approvers->approvers->employee_info->first_name." ".$to_top->approvers->approvers->approvers->employee_info->last_name,
+                                'position' => $to_top->approvers->approvers->approvers->employee_info->position,
+                                'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approvers->approvers->approvers->employee_info->id.".png",
+                            ]);
+                        }
+                        
+                        //Fourth Level
+                        if($to_top->approvers->approvers->approvers->approvers)
+                        {
+                            if($to_top->approvers->approvers->approvers->approvers->employee_info->status == "Active"){
+                                array_push($datas, (object)[
+                                    'id' => $to_top->approvers->approvers->approvers->approvers->employee_id,
+                                    'pid' => $to_top->approvers->approvers->approvers->approvers->employee_head_id,
+                                    'name' => $to_top->approvers->approvers->approvers->approvers->employee_info->first_name." ".$to_top->approvers->approvers->approvers->approvers->employee_info->last_name,
+                                    'position' => $to_top->approvers->approvers->approvers->approvers->employee_info->position,
+                                    'img' => "http://10.96.4.126:8668/hrportal/public/id_image/employee_image/".$to_top->approvers->approvers->approvers->approvers->employee_info->id.".png",
+                                ]); 
+                          
+                                array_push($datas, (object)[
+                                    'id' => $to_top->approvers->approvers->approvers->approvers->employee_head_id,
+                                    'pid' => null,
+                                    'name' => $to_top->approvers->approvers->approvers->approvers->approver_info->first_name." ".$to_top->approvers->approvers->approvers->approvers->approver_info->last_name,
+                                    'position' => $to_top->approvers->approvers->approvers->approvers->approver_info->position,
+                                    'img' => "http://10.96.4.126:8668/hrportal/public/id_image/employee_image/".$to_top->approvers->approvers->approvers->approvers->approver_info->id.".png",
+                                ]); 
+                            }
+
+                        }else{
+
+                            if($to_top->approvers->approvers->approvers->approver_info->status == "Active"){
+                                array_push($datas, (object)[
+                                    'id' => $to_top->approvers->approvers->approvers->employee_head_id,
+                                    'pid' => null,
+                                    'name' => $to_top->approvers->approvers->approvers->approver_info->first_name." ".$to_top->approvers->approvers->approvers->approver_info->last_name,
+                                    'position' => $to_top->approvers->approvers->approvers->approver_info->position,
+                                    'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approvers->approvers->approvers->approver_info->id.".png",
+                                ]); 
+                            }
+                        }
+                    }else{
+                        if($to_top->approvers->approvers->approver_info->status == "Active"){
+                            array_push($datas, (object)[
+                                'id' => $to_top->approvers->approvers->employee_head_id,
+                                'pid' => null,
+                                'name' => $to_top->approvers->approvers->approver_info->first_name." ".$to_top->approvers->approvers->approver_info->last_name,
+                                'position' => $to_top->approvers->approvers->approver_info->position,
+                                'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approvers->approvers->approver_info->id.".png",
+                            ]);
+                        }
+                    }
+
+                }else {
+                    if($to_top->approvers->approver_info->status == "Active"){
+                        array_push($datas, (object)[
+                            'id' => $to_top->approvers->employee_head_id,
+                            'pid' => null,
+                            'name' => $to_top->approvers->approver_info->first_name." ".$to_top->approvers->approver_info->last_name,
+                            'position' => $to_top->approvers->approver_info->position,
+                            'img' => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approvers->approver_info->id.".png",
+                        ]);
+                    }     
+                }
+            }else{
+                if($to_top->approver_info->status == "Active"){
+                    array_push($datas, (object)[
+                        "id" => $to_top->employee_head_id,
+                        "pid" => null,
+                        "name" => $to_top->approver_info->first_name." ".$to_top->approver_info->last_name,
+                        "position" => $to_top->approver_info->position,
+                        "img" => "http://10.96.4.126:8668/storage/id_image/employee_image/".$to_top->approver_info->id.".png",
+                    ]);
+                } 
+            }
+        }else {
+            array_push($datas, (object)[
+                "id" => $self->id,
+                "pid" => null,
+                "name" => $self->first_name." ".$self->last_name,
+                "position" => $self->position,
+                "img" => "http://10.96.4.126:8668/hrportal/public/id_image/employee_image/".$self->id.".png",
+            ]);
+        }   
+        
+        $datas = json_encode($datas);
         return view('org_chart',compact('datas','user'));
         
     }
@@ -1354,7 +1920,12 @@ class EmployeeController extends Controller
             $today = date("Y-m-d");
 
             $date_hired = $employee['date_hired'];
-            $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            
+            try {
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            } catch (DecryptException $e) {
+                $filtered_data[$key]['basic_salary'] = "";
+            }
            
             //Get Tenure
             $tenure = "";
@@ -1475,12 +2046,10 @@ class EmployeeController extends Controller
         ]);
         
         $employee_data = Employee::with('companies','departments','locations','assign_heads')->where('id',$data['employee_id'])->first();
-        
-
+         
         if($employee_data){
             DB::beginTransaction();
-            try {   
-
+            try { 
                 $select_last_request = EmployeeNpaRequest::select('ctrl_no')->orderBy('ctrl_no','DESC')->orderBy('created_at','DESC')->first();
 
                 $ctrl_no = "";
@@ -1501,6 +2070,63 @@ class EmployeeController extends Controller
 
                 if(EmployeeNpaRequest::create($data)){
                     DB::commit();
+
+                     //Recommended By
+                    if($data['recommended_by']){
+
+                        $recommended_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
+
+                        $email_recommended_by = $recommended_by['user']['email'];
+                        $reciever_name_recommended_by = $recommended_by['user']['name'];
+
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_recommended_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_recommended_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
+
+                    //Approved By
+                    if($data['approved_by']){
+
+                        $approved_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
+
+                        $email_approved_by = $approved_by['user']['email'];
+                        $reciever_name_approved_by = $approved_by['user']['name'];
+    
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_approved_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_approved_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
+
+
+                    //BU Head
+                    if($data['bu_head']){
+
+                        $email_bu_head = 'arjay.lumagdong@lafilgroup.com';
+                        $reciever_name_bu_head = 'Arjay Lumagdong';
+    
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_bu_head,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_bu_head)->send(new EmployeeNpaNotification($npa_data));
+                    }
+
                     return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
                 }
                
@@ -1575,6 +2201,7 @@ class EmployeeController extends Controller
                 if($npa_request['subject'] == "REGULARIZATION"){
                     $data = [];
                     $data['classification'] = "Regular";
+                    $data['date_regularized'] = date('Y-m-d');
                     $employee->update($data);
                 }
 
@@ -1635,7 +2262,11 @@ class EmployeeController extends Controller
     }
 
     public function decryptMonthlyBasicSalary(Employee $employee){
-        return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+        try {
+            return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+        } catch (DecryptException $e) {
+            return "";
+        }
     }
 
     public function decryptMonthlyBasicSalaryRecord(Employee $employee){
@@ -1894,10 +2525,7 @@ class EmployeeController extends Controller
 
     public function printPreviewEmployeeQR(QrCodeLog $qrlog){
         $qrlog_ids = json_decode($qrlog->ids);
-        
-
-        
-
+    
         if($qrlog_ids){
             foreach($qrlog_ids as $log_id){
 
@@ -1924,17 +2552,6 @@ class EmployeeController extends Controller
 
             }
         }
-
-       
-
-       
-
-        
-        
-        
-
-        
-
         Fpdf::Output($qrlog->id . ".pdf", 'I');
         exit();
     }

@@ -73,13 +73,43 @@
                 @if(auth()->user()->roles[0]->name == "Administrator Printer" || auth()->user()->roles[0]->name == "Administrator")
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee_ids') }}">
-                            <i class="fas fa-id-card text-yellow" style="font-size: 15px;"></i> Employee ID's
+                            <i class="fas fa-id-card text-yellow" style="font-size: 15px;"></i> ID's
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee_rfids') }}">
-                            <i class="fas fa-id-card text-green" style="font-size: 15px;"></i> Employee RFID's
+                            <i class="fas fa-id-card text-green" style="font-size: 15px;"></i> RFID's
                         </a>
+                    </li>
+                @endif
+                
+                @if(auth()->user()->roles[0]->name == "HR Staff" || auth()->user()->roles[0]->name == "Administrator")
+                    <li>
+                        <a data-toggle="collapse" href="#Report" class="collapsed" aria-expanded="false">
+                            <div class="nav-link">
+                                <i class="fas fa-file text-pink"></i>
+                                <span>Reports</span>
+                            </div>
+                        </a>
+                        <div class="collapse space-left" id="Report" style="">
+                            <ul class="nav" style="list-style-type: none;">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/employee-dependents-reports') }}">
+                                        <i class="fas fa-circle text-blue"></i>HMO Dependents
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/employee-transfer-reports') }}">
+                                        <i class="fas fa-circle text-green"></i> Employee Transfer
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/employee-npa-reports') }}">
+                                        <i class="fas fa-circle text-red"></i> Employee NPA
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 @endif
 

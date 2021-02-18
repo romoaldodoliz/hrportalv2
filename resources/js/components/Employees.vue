@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
 
-                                <div class="table-responsive">
+                                <div class="table-responsive" style="min-height: 300px!important;">
                                     <!-- employees table -->
                                     <table class="table align-items-center table-flush mb-5">
                                         <thead class="thead-light">
@@ -117,8 +117,8 @@
                                                                 <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(employee)"><i class="fas fa-user-edit"></i> Edit</a>
                                                                 <a v-if="user_access_rights.read == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#orgChartModal"  style="cursor: pointer" @click="orgChartEmployee(employee)"><i class="fas fa-sitemap"></i> Organizational Chart</a>
                                                                 <a v-if="user_access_rights.read == 'YES' && user_access_rights.roles[0].name == 'Administrator'" class="dropdown-item" :href="'/view_user_profile/' + employee.id" target="_blank" style="cursor: pointer;color:#525F7F;"><i class="fas fa-user ml-1"></i>  View Profile</a>    
-                                                                <a v-if="user_access_rights.npa_request == 'YES'"  class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer Company</a>
-                                                                <a v-if="user_access_rights.npa_request == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#npaRequestModal"  style="cursor: pointer" @click="npaRequest(employee)"><i class="fas fa-user-cog"></i> NPA Request</a>
+                                                                <a v-if="user_access_rights.npa_request == 'YES' && user_access_rights.roles[0].name == 'Administrator'"  class="dropdown-item" data-toggle="modal" data-target="#transferModal"  style="cursor: pointer" @click="transferEmployee(employee)"><i class="fas fa-user-cog"></i> Transfer Company</a>
+                                                                <a v-if="user_access_rights.npa_request == 'YES'" class="dropdown-item" data-toggle="modal" data-target="#npaRequestModal"  style="cursor: pointer" @click="npaRequest(employee,user_access_rights.roles[0].name)"><i class="fas fa-user-cog"></i> NPA Request</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -180,7 +180,10 @@
                                     <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-address-book mr-2"></i>CONTACT</a>
                                 </li>
                                 <li class="nav-item" v-if="user_access_rights.identification_info == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-4" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
+                                </li>
+                                <li class="nav-item" v-if="user_access_rights.employee_201_file == 'YES'">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-5-tab" data-toggle="tab" href="#tabs-icons-text-5" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-folder mr-2"></i>201 FILES</a>
                                 </li>
                             </ul>
                         </div>
@@ -190,13 +193,12 @@
                                     <!-- Personal -->
                                     <div v-if="user_access_rights.personal_info == 'YES'" class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
                                         <div class="row">
-                                            
-
                                             <div class="col-md-12 mb-5" style="border:1px solid;border-radius:6px;border-color:#cad1d7;">
                                                 <div class="col-md-12 mt-3 justify-content-center">
                                                     <div class="form-group">
                                                         <label for="role">Profile Image</label> 
-                                                        <input type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
+                                                        <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
+                                                        <input v-else disabled type="file" accept="image/*" id="profile_image_file" class="form-control" ref="file" v-on:change="profileHandleFileUpload()"/>
                                                         <span class="text-danger" v-if="errors.employee_image">{{ errors.employee_image[0] }}</span>
                                                     </div>
                                                 </div>
@@ -206,7 +208,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">Signature</label> 
-                                                        <input type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
+                                                        <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
+                                                        <input v-else disabled type="file" accept="image/*" id="signature_image_file" class="form-control" ref="file" v-on:change="signatureHandleFileUpload()"/>
                                                         <span class="text-danger" v-if="errors.employee_signature">{{ errors.employee_signature[0] }}</span>
                                                     </div>
                                                 </div>
@@ -215,28 +218,32 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">First Name*</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.first_name"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.first_name"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.first_name"   >
                                                     <span class="text-danger" v-if="errors.first_name">{{ errors.first_name[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="role">Middle Name</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.middle_name"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.middle_name"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.middle_name"   >
                                                     <span class="text-danger" v-if="errors.middle_name">{{ errors.middle_name[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="role">Middle Initial</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.middle_initial"   >
                                                     <span class="text-danger" v-if="errors.middle_initial">{{ errors.middle_initial[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Last Name*</label> 
-                                                    <input type="text"  class="form-control" v-model="employee_copied.last_name"   >
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text"  class="form-control" v-model="employee_copied.last_name"   >
+                                                    <input v-else disabled type="text"  class="form-control" v-model="employee_copied.last_name"   >
                                                     <span class="text-danger" v-if="errors.last_name">{{ errors.last_name[0] }}</span>
                                                 </div>
                                             </div>
@@ -244,7 +251,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Nickname</label> 
-                                                    <input type="text" class="form-control" v-model="employee_copied.nick_name">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.nick_name">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.nick_name">
                                                     <span class="text-danger" v-if="errors.nick_name">{{ errors.nick_name[0] }}</span>
                                                 </div>
                                             </div>
@@ -252,7 +260,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Suffix</label> 
-                                                    <input type="text" class="form-control" v-model="employee_copied.name_suffix">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.name_suffix">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.name_suffix">
                                                     <span class="text-danger" v-if="errors.name_suffix">{{ errors.name_suffix[0] }}</span>
                                                 </div>
                                             </div>
@@ -260,7 +269,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Status*</label> 
-                                                    <select class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
+                                                    <select v-if="user_access_rights.personal_info_edit == 'YES'" class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
+                                                        <option value="">Choose Marital Status</option>
+                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMaritalStatus()">
                                                         <option value="">Choose Marital Status</option>
                                                         <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
                                                     </select>
@@ -270,7 +283,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
-                                                    <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
+                                                    <input v-else disabled type="file" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
                                                     <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
                                                 </div>
                                             </div>
@@ -278,20 +292,28 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date of Birth*</label> 
-                                                    <input type="date" class="form-control" v-model="employee_copied.birthdate">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.birthdate">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.birthdate">
                                                     <span class="text-danger" v-if="errors.birthdate">{{ errors.birthdate[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Age <span class="text-danger" v-if="employee_copied.age">{{ employee_copied.ageRange }}</span></label> 
-                                                    <input type="text" disabled class="form-control" v-model="employee_copied.age">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" disabled class="form-control" v-model="employee_copied.age">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.age">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Gender*</label> 
-                                                    <select class="form-control" v-model="employee_copied.gender" id="marital_status">
+                                                    <select v-if="user_access_rights.personal_info_edit == 'YES'" class="form-control" v-model="employee_copied.gender" id="marital_status">
+                                                        <option value="">Choose Gender</option>
+                                                        <option value="MALE"> MALE</option>
+                                                        <option value="FEMALE"> FEMALE</option>
+                                                        <!-- <option value="UNKNOWN"> UNKNOWN</option> -->
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.gender" id="marital_status">
                                                         <option value="">Choose Gender</option>
                                                         <option value="MALE"> MALE</option>
                                                         <option value="FEMALE"> FEMALE</option>
@@ -304,7 +326,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="role">Birthplace</label> 
-                                                    <textarea  class="form-control" v-model="employee_copied.birthplace"></textarea>
+                                                    <textarea v-if="user_access_rights.personal_info_edit == 'YES'" class="form-control" v-model="employee_copied.birthplace"></textarea>
+                                                    <textarea v-else disabled class="form-control" v-model="employee_copied.birthplace"></textarea>
                                                     <span class="text-danger" v-if="errors.birthplace">{{ errors.birthplace[0] }}</span>
                                                 </div>
                                             </div>
@@ -320,21 +343,24 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Name of School</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.school_graduated">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.school_graduated">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.school_graduated">
                                                     <span class="text-danger" v-if="errors.school_graduated">{{ errors.school_graduated[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Course</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.school_course">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.school_course">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.school_course">
                                                     <span class="text-danger" v-if="errors.school_course">{{ errors.school_course[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Year Graduated</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.school_year">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.school_year">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.school_year">
                                                     <span class="text-danger" v-if="errors.school_year">{{ errors.school_year[0] }}</span> 
                                                 </div>
                                             </div>
@@ -346,21 +372,24 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Name of School</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_graduated">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.vocational_graduated">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.vocational_graduated">
                                                     <span class="text-danger" v-if="errors.vocational_graduated">{{ errors.vocational_graduated[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Course</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_course">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.vocational_course">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.vocational_course">
                                                     <span class="text-danger" v-if="errors.vocational_course">{{ errors.vocational_course[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Year Graduated</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.vocational_year">
+                                                    <input v-if="user_access_rights.personal_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.vocational_year">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.vocational_year">
                                                     <span class="text-danger" v-if="errors.vocational_year">{{ errors.vocational_year[0] }}</span> 
                                                 </div>
                                             </div>
@@ -379,7 +408,8 @@
                                                 <div v-else>
                                                     <h4>Employee Number: </h4>
                                                     <div class="custom-control custom-checkbox mb-3" v-if="employee_copied.status == 'Active'">
-                                                        <input id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
+                                                        <input v-if="user_access_rights.work_info_edit == 'YES'" id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
+                                                        <input v-else disabled id="confidential" class="custom-control-input" v-model="employee_copied.generate_id_number" true-value="YES" false-value="NO" type="checkbox">
                                                         <label class="custom-control-label" for="confidential">Please check to generate ID Number.</label>
                                                     </div>   
                                                 </div>
@@ -387,7 +417,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Company*</label>
-                                                    <select class="form-control" v-model="employee_copied.company_list" id="company">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.company_list" id="company">
+                                                        <option value="">Choose Company</option>
+                                                        <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.company_list" id="company">
                                                         <option value="">Choose Company</option>
                                                         <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                                     </select>
@@ -399,7 +433,12 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Cluster</label>
-                                                    <select class="form-control" v-model="employee_copied.cluster" id="cluster">
+                                                    <select  v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.cluster" id="cluster">
+                                                        <option value="">Choose Cluster</option>
+                                                        <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                                    </select>
+
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.cluster" id="cluster">
                                                         <option value="">Choose Cluster</option>
                                                         <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
                                                     </select>
@@ -411,7 +450,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Department*</label>
-                                                    <select class="form-control" v-model="employee_copied.department_list" id="department">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.department_list" id="department">
+                                                        <option value="">Choose Department</option>
+                                                        <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.department_list" id="department">
                                                         <option value="">Choose Department</option>
                                                         <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
                                                     </select>
@@ -422,7 +465,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Section</label>  
-                                                    <input type="text" class="form-control" v-model="employee_copied.division">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.division">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.division">
                                                     <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
                                                 </div>
                                             </div>
@@ -438,7 +482,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">ESS Employee No.</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.ess_ee_number">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.ess_ee_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.ess_ee_number">
                                                     <span class="text-danger" v-if="errors.ess_ee_number">{{ errors.ess_ee_number[0] }}</span> 
                                                 </div>
                                             </div>
@@ -446,7 +491,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Position</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.position">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.position">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.position">
                                                     <span class="text-danger" v-if="errors.position">{{ errors.position[0] }}</span> 
                                                 </div>
                                             </div>
@@ -454,7 +500,14 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Classification</label>
-                                                    <select class="form-control" v-model="employee_copied.classification" id="department">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.classification" id="department">
+                                                        <option value="">Choose Classification</option>
+                                                        <option value="Probationary">Probationary</option>
+                                                        <option value="Regular">Regular</option>
+                                                        <option value="Consultant">Consultant</option>
+                                                        <option value="Project">Project Based</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.classification" id="department">
                                                         <option value="">Choose Classification</option>
                                                         <option value="Probationary">Probationary</option>
                                                         <option value="Regular">Regular</option>
@@ -468,7 +521,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date Hired</label>
-                                                    <input type="date" class="form-control" v-model="employee_copied.date_hired">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_hired">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_hired">
                                                     <span class="text-danger" v-if="errors.date_hired">{{ errors.date_hired[0] }}</span> 
                                                 </div>
                                             </div>
@@ -484,7 +538,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Level</label>
-                                                    <select class="form-control" v-model="employee_copied.level" id="level">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.level" id="level">
+                                                        <option value="">Choose Level</option>
+                                                        <option v-for="(level) in levels" v-bind:key="level" :value="level"> {{ level }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.level" id="level">
                                                         <option value="">Choose Level</option>
                                                         <option v-for="(level) in levels" v-bind:key="level" :value="level"> {{ level }}</option>
                                                     </select>
@@ -496,7 +554,11 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Location*</label>
-                                                    <select class="form-control" v-model="employee_copied.location_list" id="location">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.location_list" id="location">
+                                                        <option value="">Choose Location</option>
+                                                        <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.location_list" id="location">
                                                         <option value="">Choose Location</option>
                                                         <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
                                                     </select>
@@ -508,31 +570,17 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Area</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.area">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.area">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.area">
                                                     <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
-                                                </div>
-                                            </div>
-
-                                            <!-- <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="role">Bank Account Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.bank_account_number">
-                                                    <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
-                                                </div>
-                                            </div> -->
-
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="role">Bank Name</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.bank_name">
-                                                    <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Monthly Basic Salary</label>
-                                                    <input type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <input v-else disabled type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
                                                     <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span> 
                                                 </div>
                                             </div>
@@ -540,7 +588,15 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Status</label>
-                                                    <select class="form-control" v-model="employee_copied.status" id="status">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.status" id="status">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="Active">Active</option> 
+                                                        <option value="Inactive">Inactive</option> 
+                                                        <option value="On-hold">On-hold</option> 
+                                                        <option value="Notification">Notification</option> 
+                                                        <option value="Deleted">Deleted</option> 
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.status" id="status">
                                                         <option value="">Choose Status</option>
                                                         <option value="Active">Active</option> 
                                                         <option value="Inactive">Inactive</option> 
@@ -555,7 +611,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date Regularized</label>
-                                                    <input type="date" class="form-control" v-model="employee_copied.date_regularized">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_regularized">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_regularized">
                                                     <span class="text-danger" v-if="errors.date_regularized">{{ errors.date_regularized[0] }}</span> 
                                                 </div>
                                             </div>
@@ -563,18 +620,38 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Date Resigned</label>
-                                                    <input type="date" class="form-control" v-model="employee_copied.date_resigned">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_resigned">
+                                                    <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_resigned">
                                                     <span class="text-danger" v-if="errors.date_resigned">{{ errors.date_resigned[0] }}</span> 
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-4" v-if="user_access_rights.bank_account_details == 'YES'">
+                                                <div class="form-group">
+                                                    <label for="role">Bank Name</label>
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.bank_name">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.bank_name">
+                                                    <span class="text-danger" v-if="errors.bank_name">{{ errors.bank_name[0] }}</span> 
+                                                </div>
+                                            </div>
 
+                                            <div class="col-md-4" v-if="user_access_rights.bank_account_details == 'YES'">
+                                                <div class="form-group">
+                                                    <label for="role">Bank Account Number</label>
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.bank_account_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.bank_account_number">
+                                                    <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            
                                             <div class="col-md-12">
                                                 <div class="col-md-6 mb-2"  style="border:1px solid;border-radius:5px;">
                                                     <div class="form-group mt-2">
                                                         <label for="confidential">Set as Confidential Employee</label>
                                                         <div class="custom-control custom-checkbox mb-3">
-                                                            <input id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
+                                                            <input v-if="user_access_rights.work_info_edit == 'YES'" id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
+                                                            <input v-else disabled id="confidential" class="custom-control-input" v-model="employee_copied.confidential" true-value="YES" false-value="NO" type="checkbox">
                                                             <label class="custom-control-label" for="confidential">Confidential Employee (Ex. President CEO, Executives, etc.)</label>
                                                         </div>
 
@@ -642,26 +719,58 @@
                                                         <tbody>
                                                             <tr v-for="(row,index) in approvers" v-bind:key="index">
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.employee_head_id" id="location">
+                                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="row.employee_head_id" id="location">
+                                                                        <option value="">Choose Approver</option>
+                                                                        <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                                    </select>
+                                                                    <select v-else disabled class="form-control" v-model="row.employee_head_id" id="location">
                                                                         <option value="">Choose Approver</option>
                                                                         <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.head_id" id="location">
+                                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="row.head_id" id="location">
+                                                                        <option value="">Choose Position</option>
+                                                                        <option v-for="(position,b) in employee_position_approvers" v-bind:key="b" :value="position.id"> {{ position.name }}</option>
+                                                                    </select> 
+                                                                    <select v-else disabled class="form-control" v-model="row.head_id" id="location">
                                                                         <option value="">Choose Position</option>
                                                                         <option v-for="(position,b) in employee_position_approvers" v-bind:key="b" :value="position.id"> {{ position.name }}</option>
                                                                     </select> 
                                                                 </td>
-                                                                <td width="5%">
+                                                                <td width="5%" v-if="user_access_rights.work_info_edit == 'YES'">
                                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeApprover(index,row.id)">Remove</button>
                                                                     <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeApprover(index)">Remove</button>  
+                                                                </td>
+                                                                <td width="5%" v-else>
+                                                                   
                                                                 </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>    
                                                 </div>    
-                                            </div>                
+                                            </div>
+
+                                            <!-- First Level Under            -->
+                                            <div class="col-md-12" v-if="employee_unders.length > 0">
+                                                <hr>
+                                                <h4 class="mt-3">TRANSFER ({{employee_unders.length}}) FIRST LEVEL EMPLOYEES UNDER - {{employee_copied.first_name + ' ' + employee_copied.last_name}}</h4>
+                                        
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="role" class="text-warning">Select New Approver</label>
+                                                        <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="new_approver_under" id="new_approver_under">
+                                                            <option value="">Choose Approver</option>
+                                                            <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <select v-else disabled class="form-control" v-model="new_approver_under" id="new_approver_under">
+                                                            <option value="">Choose Approver</option>
+                                                            <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
+                                                        </select>
+                                                        <span class="text-danger" v-if="errors.new_approver_under">{{ errors.new_approver_under[0] }}</span> 
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
@@ -671,36 +780,45 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Current Address</label>
-                                                    <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
+                                                    <textarea v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="employee_copied.current_address"></textarea>
+                                                    <textarea v-else disabled class="form-control" v-model="employee_copied.current_address"></textarea>
                                                     <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Permanent Address</label>
-                                                    <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
+                                                    <textarea v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="employee_copied.permanent_address"></textarea>
+                                                    <textarea v-else disabled class="form-control" v-model="employee_copied.permanent_address"></textarea>
                                                     <span class="text-danger" v-if="errors.permanent_address">{{ errors.permanent_address[0] }}</span> 
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Landline</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.phone_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phone_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phone_number">
                                                     <span class="text-danger" v-if="errors.phone_number">{{ errors.phone_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Mobile Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.mobile_number">
                                                     <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
                                                 </div>
                                             </div>   
 
+                                            <div class="col-md-12">
+                                                <h4>In case of Emergency</h4>
+                                            </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Person</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.contact_person">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_person">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_person">
                                                     <span class="text-danger" v-if="errors.contact_person">{{ errors.contact_person[0] }}</span> 
                                                 </div>
                                             </div>    
@@ -708,7 +826,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Relation</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.contact_relation">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_relation">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_relation">
                                                     <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
                                                 </div>
                                             </div>  
@@ -716,7 +835,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Number</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.contact_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_number">
                                                     <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                                 </div>
                                             </div>    
@@ -732,6 +852,15 @@
                                                                     Name
                                                                 </th>
                                                                 <th class="text-center">
+                                                                    First Name
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Last Name
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Middle Name
+                                                                </th>
+                                                                <th class="text-center">
                                                                     Gender
                                                                 </th>
                                                                 <th class="text-center">
@@ -740,16 +869,44 @@
                                                                 <th class="text-center">
                                                                     Relationship
                                                                 </th>
+                                                                <th class="text-center">
+                                                                    Action
+                                                                </th>
+                                                                 <th class="text-center">
+                                                                    Civil Status
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    HMO Enrollment
+                                                                </th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(row,index) in dependents" v-bind:key="index">
                                                                 <td>
-                                                                   <input type="text" class="form-control" v-model="row.dependent_name">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.dependent_gender" id="dependent_gender">
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                                </td>
+                                                                <td>
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                                </td>
+                                                                <td>
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                                </td>
+                                                                <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
+                                                                        <option value="">Choose Gender</option>
+                                                                        <option value="MALE">MALE</option>
+                                                                        <option value="FEMALE">FEMALE</option>
+                                                                         <!-- <option value="UNKNOWN"> UNKNOWN</option> -->
+                                                                    </select> 
+                                                                    <select v-else disabled class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
                                                                         <option value="">Choose Gender</option>
                                                                         <option value="MALE">MALE</option>
                                                                         <option value="FEMALE">FEMALE</option>
@@ -757,10 +914,20 @@
                                                                     </select> 
                                                                 </td>
                                                                 <td>
-                                                                    <input type="date" class="form-control" v-model="row.bdate">
+                                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="date" class="form-control" v-model="row.bdate" style="width:150px;">
+                                                                    <input v-else disabled type="date" class="form-control" v-model="row.bdate" style="width:150px;">
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" v-model="row.relation" id="relation">
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.relation" id="relation" style="width:150px;">
+                                                                        <option value="">Choose Relation</option>
+                                                                        <option value="MOTHER">MOTHER</option>
+                                                                        <option value="FATHER">FATHER</option>
+                                                                        <option value="BROTHER">BROTHER</option>
+                                                                        <option value="SISTER">SISTER</option>
+                                                                        <option value="SPOUSE">SPOUSE</option>
+                                                                        <option value="CHILD">CHILD</option>
+                                                                    </select>
+                                                                    <select v-else disabled class="form-control" v-model="row.relation" id="relation" style="width:150px;">
                                                                         <option value="">Choose Relation</option>
                                                                         <option value="MOTHER">MOTHER</option>
                                                                         <option value="FATHER">FATHER</option>
@@ -770,9 +937,50 @@
                                                                         <option value="CHILD">CHILD</option>
                                                                     </select>
                                                                 </td>
-                                                                <td with="5%">
-                                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">Remove</button>
-                                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">Remove</button>  
+                                                                <td>
+                                                                  <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_status" id="dependent_status" style="width:150px;">
+                                                                        <option value="">Choose Status</option>
+                                                                        <option value="NEW">NEW</option>
+                                                                        <option value="RENEW">RENEW</option>
+                                                                    </select>  
+                                                                  <select v-else disabled class="form-control" v-model="row.dependent_status" id="dependent_status" style="width:150px;">
+                                                                        <option value="">Choose Status</option>
+                                                                        <option value="NEW">NEW</option>
+                                                                        <option value="RENEW">RENEW</option>
+                                                                    </select>  
+                                                                </td>
+
+
+                                                                <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.civil_status" id="hmo_marital_status" style="width:150px;">
+                                                                        <option value="">Choose Marital Status</option>
+                                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                                    </select>
+                                                                    <select v-else disabled class="form-control" v-model="row.civil_status" id="hmo_marital_status" style="width:150px;">
+                                                                        <option value="">Choose Marital Status</option>
+                                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                                    </select>
+                                                                </td>
+
+                                                                 <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.hmo_enrollment" id="hmo_enrollment" style="width:150px;">
+                                                                        <option value="">For HMO Enrollment</option>
+                                                                        <option value="YES">YES</option>
+                                                                        <option value="NO">NO</option>
+                                                                    </select>  
+                                                                    <select v-else disabled class="form-control" v-model="row.hmo_enrollment" id="hmo_enrollment" style="width:150px;">
+                                                                        <option value="">For HMO Enrollment</option>
+                                                                        <option value="YES">YES</option>
+                                                                        <option value="NO">NO</option>
+                                                                    </select>  
+                                                                </td>
+
+                                                                <td with="5%" v-if="user_access_rights.contact_info_edit == 'YES'">
+                                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row.id)">x</button>
+                                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">x</button>  
+                                                                </td>
+                                                                <td with="5%" v-else>
+                                                                    
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -781,11 +989,11 @@
                                             </div>
 
                                             <div class="col-md-12 mt-5">
-                                                <h4>Attachment(s)  - Birth Certificates</h4>
+                                                <h4>Attachment(s)  - Marriage / Birth Certificates</h4>
                                             </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <input type="file" multiple="multiple" id="dependents_attachments" class="form-control dependents-attachments-edit" @change="uploadDependentAttachments" placeholder="Attach file"><br>
+                                                        <input v-if="user_access_rights.contact_info_edit == 'YES'" type="file" multiple="multiple" id="dependents_attachments" class="form-control dependents-attachments-edit" @change="uploadDependentAttachments" placeholder="Attach file"><br>
                                                     </div>
                                                 </div>
 
@@ -805,7 +1013,7 @@
                                                                 <td>{{ index + 1 }}</td>
                                                                 <td> {{ attachment.file }}</td>
                                                                 <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td>
-                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">Remove</button></td>
+                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="removeDependentAttachment(index,attachment)">x</button></td>
                                                                 
                                                             </tr>
                                                         </tbody>
@@ -822,35 +1030,53 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">SSS</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.sss_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.sss_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.sss_number">
                                                     <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">HDMF</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.hdmf">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.hdmf">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.hdmf">
                                                     <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Philhealth</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.phil_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phil_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phil_number">
                                                     <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">TIN</label>
-                                                    <input type="text" class="form-control" v-model="employee_copied.tax_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.tax_number">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.tax_number">
                                                     <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Tax Status*</label>
-                                                    <select class="form-control" v-model="employee_copied.tax_status" id="tax_status">
+                                                    <select v-if="user_access_rights.identification_info_edit == 'YES'" class="form-control" v-model="employee_copied.tax_status" id="tax_status">
+                                                        <option value="">Choose Tax Status</option>
+                                                        <option value="S">S</option> 
+                                                        <option value="S1">S1</option> 
+                                                        <option value="S2">S2</option> 
+                                                        <option value="S3">S3</option> 
+                                                        <option value="S4">S4</option> 
+                                                        <option value="M">M4</option> 
+                                                        <option value="M1">M1</option> 
+                                                        <option value="M2">M3</option> 
+                                                        <option value="M3">M4</option> 
+                                                        <option value="M4">M4</option> 
+                                                        
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.tax_status" id="tax_status">
                                                         <option value="">Choose Tax Status</option>
                                                         <option value="S">S</option> 
                                                         <option value="S1">S1</option> 
@@ -870,6 +1096,39 @@
                                             </div>    
                                         </div>
                                     </div>
+                                    <!-- 201 Files -->
+                                    <div v-if="user_access_rights.employee_201_file == 'YES'" class="tab-pane fade" id="tabs-icons-text-5" role="tabpanel" aria-labelledby="tabs-icons-text-5-tab">
+                                        <div class="row">
+                                           <div class="col-md-12">
+                                               <h5>201 Files</h5>
+                                                <div class="form-group">
+                                                    <input v-if="user_access_rights.employee_201_file_edit == 'YES'" type="file" multiple="multiple" id="documents_201_files_attachments" class="form-control 201-files-attachments-edit" @change="upload201FilesAttachments" placeholder="Attach file"><br>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="table-responsive mt-3">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>File</th>
+                                                                <th class="text-center"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(attachment, index) in employee_201_files_attachments" v-bind:key="index">
+                                                                <td>{{ index + 1 }}</td>
+                                                                <td> <a :href="'storage/employee_201_files/'+employee_copied.id +'/'+attachment.file" target="_blank"><u>{{ attachment.file }}</u></a></td>
+                                                                <!-- <td class="text-center"> <a target="_blank" :href="'storage/dependents_attachments/'+attachment.file"><span class="btn btn-info btn-sm mt-2"> View </span></a></td> -->
+                                                                <td class="text-center"> <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;"  @click="remove201FilesAttachment(index,attachment)">Remove</button></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>     
+                                            </div>     
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -890,8 +1149,6 @@
                 </div>
             </div>
         </div>
-
-
 
         <!-- Transfer employee Modal -->
         <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
@@ -919,9 +1176,19 @@
                                
                                <div class="row mt--10 mb-3">
                                     <div class="col-md-12">
+                                        <download-excel
+                                            v-if="transferLogsList.length"
+                                            :data   = "transferLogsList"
+                                            :fields = "transfer_log_fields"
+                                            style="float: right;"
+                                            class   = "btn btn-sm btn-success"
+                                            name    = "Transfer Logs.xls">
+                                                EXCEL
+                                        </download-excel>
+                                        <a v-if="transferLogsList.length" :href="'pdf_employee_transfer_logs/' + transferEmployeeDetails.id" target="_blank" type="button" class="btn btn-warning btn-sm mb-2 ml-2 mt--10 " style="float: right;">PDF</a>
                                         <button v-if="viewTransferLogsList" type="button" class="btn btn-danger btn-sm mb-2 ml-2 mt--10" style="float: right;" @click="closeTransferEmployeeLogs()">Close</button>
                                         <button type="button" class="btn btn-primary btn-sm mb-2 ml-2 mt--10 " style="float: right;" @click="viewTransferEmployeeLogs()">View Transfer History/Logs</button>
-                                        
+                                   
                                     </div>
                                     <div class="col-md-12">
                                         <div class="table-responsive" v-if="viewTransferLogsList">
@@ -937,6 +1204,10 @@
                                                         <th class="text-center">
                                                             TO
                                                         </th>
+                                                        <th class="text-center">
+                                                            Supporting Documents
+                                                        </th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -949,6 +1220,7 @@
                                                             <span>Position: {{log.previous_position}}</span><br>
                                                             <span>Department: {{ log.previous_department ? log.previous_department.name : ""}}</span><br>
                                                             <span>Location: {{log.previous_location ? log.previous_location.name : ""}}</span><br>
+                                                            <span>Cluster: {{log.previous_cluster ? log.previous_cluster : ""}}</span><br>
                                                             
                                                         </td>
                                                         <td>
@@ -958,6 +1230,19 @@
                                                             <span>Position: {{log.new_position}}</span><br>
                                                             <span>Department: {{log.new_department ? log.new_department.name : ""}}</span><br>
                                                             <span>Location: {{log.new_location ? log.new_location.name : ""}}</span><br>
+                                                            <span>Cluster: {{log.new_cluster ? log.new_cluster : ""}}</span><br>
+                                                            
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="log.employee_transfer_attachments.length > 0">
+                                                                <span>{{log.employee_transfer_attachments.length}} Attachments Found</span><br>
+                                                                <span v-for="(attachment,index) in log.employee_transfer_attachments" v-bind:key="index">
+                                                                    <a :href="'storage/' + attachment.path" target="_blank"> {{attachment.filename}} </a><br>
+                                                                </span>
+                                                            </div>
+                                                            <div v-else>
+                                                                <span>0 Attachments</span>
+                                                            </div>
                                                             
                                                         </td>
                                                     </tr>
@@ -1002,15 +1287,26 @@
                                             <span class="text-danger" v-if="transfer_errors.location_list">{{ transfer_errors.location_list[0] }}</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <!-- <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="role">Division</label>
+                                            <label for="role">Cluster</label>
                                             <input type="text" class="form-control" v-model="transfer_employee.division">
                                         </div>
 
                                         <span class="text-danger" v-if="transfer_errors.division">{{ transfer_errors.division[0] }}</span>
+                                    </div> -->
 
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Cluster</label>
+                                            <select class="form-control" v-model="transfer_employee.cluster" id="transfer_employee_cluster">
+                                                <option value="">Choose Cluster</option>
+                                                <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="transfer_errors.cluster">{{ errors.cluster[0] }}</span> 
+                                        </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="role">Position*</label>
@@ -1067,6 +1363,12 @@
                                         </div>    
                                     </div>
 
+                                    <div class="col-md-12">
+                                        <h4 class="mt-3">Supporting Documents*</h4>
+                                        <div class="form-group">
+                                            <input type="file" multiple="multiple" id="transfer_supporting_documents" class="form-control transfer-supporting-documents-edit" @change="uploadTransferSupportingDocuments" placeholder="Attach file"><br>
+                                        </div>
+                                    </div>
                                    
                                 </div>
 
@@ -1075,7 +1377,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Tranfer</button>
+                        <button id="save_trasnfer_btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="saveTransferEmployee(transfer_employee)" style="width:150px;">Transfer</button>
                         <button id="close_transfer_btn" type="button" class="btn btn-danger btn-round btn-fill btn-lg" data-dismiss="modal" aria-label="Close" style="width:150px;">Close</button>
                     </div>
                 </div>
@@ -1114,14 +1416,15 @@
                                             <label for="role">Subject</label>
                                             <select class="form-control" v-model="npa_request.subject" id="subject">
                                                 <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                <option value="REGULARIZATION">REGULARIZATION</option>
-                                                <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
-                                                <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
-                                                <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
-                                                <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
-                                                <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
-                                                <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
-                                                <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                <option v-if="npa_request_role == 'Administrator'" value="REGULARIZATION">REGULARIZATION</option>
+                                                <option v-if="npa_request_role == 'Administrator'" value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                <option v-if="npa_request_role == 'Administrator' " value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
+                                                <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                <option v-if="npa_request_role == 'Administrator'" value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                            
                                             </select>
                                             <span class="text-danger" v-if="npa_request_errors.subject">{{ npa_request_errors.subject[0] }}</span>
                                         </div>
@@ -1154,28 +1457,30 @@
                                                     <td>
                                                         <select class="form-control" v-model="npa_request.from_type_of_movement" id="subject">
                                                             <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                            <option value="REGULARIZATION">REGULARIZATION</option>
-                                                            <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
-                                                            <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
-                                                            <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
-                                                            <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
-                                                            <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
-                                                            <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
-                                                            <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="REGULARIZATION">REGULARIZATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                            <option v-if="npa_request_role == 'Administrator' " value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                        
                                                         </select>
                                                         <span class="text-danger" v-if="npa_request_errors.from_type_of_movement">{{ npa_request_errors.from_type_of_movement[0] }}</span> 
                                                     </td>
                                                     <td>
                                                         <select class="form-control" v-model="npa_request.to_type_of_movement" id="subject">
                                                             <option value="">TYPE OF EMPLOYEE MOVEMENT</option>
-                                                            <option value="REGULARIZATION">REGULARIZATION</option>
-                                                            <option value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
-                                                            <option value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
-                                                            <option value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
-                                                            <option value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
-                                                            <option value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
-                                                            <option value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
-                                                            <option value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="REGULARIZATION">REGULARIZATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="PROMOTION / UPGRADE">PROMOTION / UPGRADE </option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN POSITION TITLE">CHANGE IN POSITION TITLE</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN DEPARTMENT">CHANGE IN DEPARTMENT</option>
+                                                            <option v-if="npa_request_role == 'Administrator' " value="CHANGE IN COMPANY">CHANGE IN COMPANY</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN LOCATION">CHANGE IN LOCATION</option>
+                                                            <option v-if="npa_request_role == 'Administrator' || npa_request_role == 'BU Head' || npa_request_role == 'Cluster Head' || npa_request_role == 'Cluster Head'" value="CHANGE IN IMMEDIATE SUPERIOR/MANAGER">CHANGE IN IMMEDIATE SUPERIOR/MANAGER</option>
+                                                            <option v-if="npa_request_role == 'Administrator'" value="CHANGE IN SALARY">CHANGE IN SALARY</option>
+                                                        
                                                         </select>
                                                         <span class="text-danger" v-if="npa_request_errors.to_type_of_movement">{{ npa_request_errors.to_type_of_movement[0] }}</span> 
                                                     </td>
@@ -1185,7 +1490,7 @@
                                                         <h4>Company</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_company" id="company">
+                                                        <select class="form-control" v-model="npa_request.from_company" id="company" disabled="disabled">
                                                             <option value="">Choose Company</option>
                                                             <option v-for="(company,b) in companies" v-bind:key="b" :value="company.id"> {{ company.name }}</option>
                                                         </select>
@@ -1204,7 +1509,7 @@
                                                         <h4>Location</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_location" id="location">
+                                                        <select class="form-control" v-model="npa_request.from_location" id="location" disabled="disabled">
                                                             <option value="">Choose Location</option>
                                                             <option v-for="(location,b) in locations" v-bind:key="b" :value="location.id"> {{ location.name }}</option>
                                                         </select>
@@ -1223,7 +1528,7 @@
                                                         <h4>Position Title </h4>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" v-model="npa_request.from_position_title">
+                                                        <input type="text" class="form-control" v-model="npa_request.from_position_title" disabled="disabled">
                                                         <span class="text-danger" v-if="npa_request_errors.from_position_title">{{ npa_request_errors.from_position_title[0] }}</span> 
                                                     </td>
                                                     <td>
@@ -1236,7 +1541,7 @@
                                                         <h4>Date Hired</h4>
                                                     </td>
                                                     <td colspan="2">
-                                                        <input type="date" class="form-control" v-model="npa_request.date_hired">
+                                                        <input type="date" disabled class="form-control" v-model="npa_request.date_hired">
                                                     </td> 
                                                  </tr>
                                                  <tr>
@@ -1244,7 +1549,7 @@
                                                         <h4>Immediate Manager</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_immediate_manager" id="location">
+                                                        <select class="form-control" v-model="npa_request.from_immediate_manager" id="location" disabled="disabled">
                                                             <option value="">Choose Immediate Manager</option>
                                                             <option v-for="(approver,b) in employee_head_approvers" v-bind:key="b" :value="approver.id"> {{ approver.last_name + " " + approver.first_name }}</option>
                                                         </select>
@@ -1263,7 +1568,7 @@
                                                         <h4>Department</h4>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" v-model="npa_request.from_department" id="department">
+                                                        <select class="form-control" v-model="npa_request.from_department" id="department" disabled="disabled">
                                                             <option value="">Choose Department</option>
                                                             <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
                                                         </select>
@@ -1290,7 +1595,7 @@
                                                         <h4>Monthly Basic Salary</h4>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" v-model="npa_request.from_monthly_basic_salary">
+                                                        <input type="text" disabled class="form-control" v-model="npa_request.from_monthly_basic_salary">
                                                         <span class="text-danger" v-if="npa_request_errors.from_monthly_basic_salary">{{ npa_request_errors.from_monthly_basic_salary[0] }}</span> 
                                                     </td>
                                                     <td>
@@ -1379,6 +1684,9 @@
                                                         <th class="text-center">
                                                             Action
                                                         </th>
+                                                        <th class="text-center">
+                                                            Print
+                                                        </th>
                                                     </tr>    
                                                 </thead>
                                                 <tbody>
@@ -1423,6 +1731,11 @@
                                                                 <button v-if="npa_request.status == 'Pending' || user_access_rights.roles[0].name == 'Administrator'" type="button" class="btn btn-sm btn-danger" @click="deleteNPARequest(npa_request)">Delete</button>
                                                             </div>
                                                         </td>
+                                                        <td>
+                                                            <div v-if="user_access_rights.roles">
+                                                                <a :href="'print-employee-npa-requests/' + npa_request.id" target="_blank" type="button" class="btn btn-sm btn-info">Print</a>
+                                                            </div>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1458,6 +1771,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-md-12 text-center">
+                            <a class="btn btn-sm btn-default" :href="org_chart_src" target="_blank">View Fullscreen</a>
                             <iframe id="id-frame" :src="org_chart_src" frameborder="0" height="700px" width="100%"></iframe>
                         </div>
                     </div>
@@ -1474,6 +1788,7 @@
     import loader from './Loader'
     import Swal from 'sweetalert2'
     import JsonExcel from 'vue-json-excel'
+    import moment from 'moment';
 
     export default {
         components: { 'downloadExcel': JsonExcel,loader },
@@ -1483,11 +1798,15 @@
                 employees: [],
                 employee: [],
                 employee_copied: [],
+
+                //Transfer
                 transfer_employee: [],
                 transferEmployeeDetails: [],
                 transfer_approvers : [],
                 viewTransferLogsList : false,
                 transferLogsList : [],
+                transfer_supporting_documents : [],
+
                 copied_role: [],
                 roles: [],
                 transfer_errors: [],
@@ -1578,14 +1897,22 @@
                     'BASIC SALARY': 'basic_salary',
                     'DATE HIRED': 'date_hired',
                     'DATE RESIGNED': 'date_resigned',
-                    'TENURE': 'tenure',
+                    'TENURE': {
+                        callback: (value) => {
+                            if(value.date_hired){
+                                return this.getTenureNumeric(value.date_hired);
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
                     '5th month': 'fifth_month',
                     '6th month': 'six_month',
                     'LEVEL': 'level',
                     'LOCATION': 'location',
                     'AREA': 'area',
                     'BANK NAME': 'bank_name',
-                    'BANK ACCOUNT NUMBER': 'bank_name',
+                    'BANK ACCOUNT NUMBER': 'bank_account_number',
                     'EMPLOYEE STATUS' : 'employee_status',
                     'IMMEDIATE SUPERIOR' : 'immediate_superior',
                     'BU HEAD' : 'bu_head',
@@ -1612,13 +1939,105 @@
                 },
                 npaRequestDetails : [],
                 npa_request : [],
+                npa_request_role : '',
                 npa_request_errors : [],
                 npaRequestLists : [],
                 hr_employees : [],
                 bu_heads : [],
                 npa_request_detail : [],
                 npa_request_edit : false,
-                salary_records : []
+                salary_records : [],
+
+                //201 Files
+                documents_201_files_attachments : [],
+                deleted_documents_201_files_attachments : [],
+                employee_201_files_attachments: [],
+
+                //Transfer Logs
+                transfer_log_fields : {
+                    'employee_name':{
+                        callback: (value) => {
+                            if(value.employee){
+                                return value.employee.first_name + ' ' + value.employee.last_name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'previous_company' : {
+                        callback: (value) => {
+                            if(value.previous_company){
+                                return value.previous_company.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'previous_id_number' : 'previous_id_number',
+                    'previous_date_hired' : 'previous_date_hired',
+                    'previous_position' : 'previous_position',
+                    'previous_department' : {
+                        callback: (value) => {
+                            if(value.previous_department){
+                                return value.previous_department.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'previous_location' : {
+                        callback: (value) => {
+                            if(value.previous_location){
+                                return value.previous_location.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'new_company' : {
+                        callback: (value) => {
+                            if(value.new_company){
+                                return value.new_company.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'new_id_number' : 'new_id_number',
+                    'new_date_hired' : 'new_date_hired',
+                    'new_position' : 'new_position',
+                    'new_department' : {
+                        callback: (value) => {
+                            if(value.new_department){
+                                return value.new_department.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'new_location' : {
+                        callback: (value) => {
+                            if(value.new_location){
+                                return value.new_location.name;
+                            }else{
+                                return '';
+                            }
+                        }
+                    },
+                    'supporting_documents' : {
+                        callback: (value) => {
+                            if(value.employee_transfer_attachments){
+                                return value.employee_transfer_attachments.length + ' Attachments';
+                            }else{
+                                return '';
+                            }
+                        }
+                    }
+                },
+
+                //First Level Under
+                employee_unders : [],
+                new_approver_under : ''
             }
         },
         created(){
@@ -1636,8 +2055,33 @@
             this.fetchUserAccessRights();
             this.fetchHREmployees();
             this.fetchBUHeadEmployees();
+
+            //Show Npa Approval Form
+            this.showNpaApprovalForm();
         },
         methods:{
+            showNpaApprovalForm(){
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const employee_id = urlParams.get('employee_id');
+                const type = urlParams.get('type');
+
+                if(employee_id && type=='npa'){
+                    axios.get('/get-employee?employee_id='+employee_id)
+                    .then(response => { 
+                        if(response.data){
+                            $('#npaRequestModal').modal('show');
+                            this.npaRequest(response.data);
+                        }else{
+                            alert('No Results Found');
+                        }
+                    })
+                    .catch(error => { 
+                       
+                    })
+                }
+                
+            },
             cancelEditNPARequest(){
                 let v = this;
                 v.npaRequest(v.npaRequestDetails);
@@ -1657,9 +2101,13 @@
                 v.npa_request.from_immediate_manager = npa_request.from_immediate_manager;
                 v.npa_request.from_department = npa_request.from_department;
                 v.npa_request.from_monthly_basic_salary = npa_request.from_monthly_basic_salary;
-              
-                v.npa_request.effectivity_date = npa_request.effectivity_date;
 
+
+                v.npa_request.date_hired = npa_request.date_hired;
+
+                v.npa_request.effectivity_date = npa_request.effectivity_date;
+                
+                v.npa_request.to_type_of_movement = npa_request.to_type_of_movement;
                 v.npa_request.to_company = npa_request.to_company;
                 v.npa_request.to_location = npa_request.to_location;
                 v.npa_request.to_position_title = npa_request.to_position_title;
@@ -1756,6 +2204,8 @@
                     }
                 })
             },
+
+            //Employee NPA
             clearNPAForm(){
                 this.npa_request_errors = [];
                 this.npa_request = [];
@@ -1764,7 +2214,8 @@
                 this.npa_request.from_immediate_manager = "";
                 this.npa_request.from_department = "";
             },
-            npaRequest(employee){
+            npaRequest(employee,roles){
+                this.npa_request_role = roles;
                 this.clearNPAForm();
                 this.npa_request_errors = [];
                 this.npaRequestDetails = employee;
@@ -1772,10 +2223,10 @@
                 this.npa_request.from_company = employee.companies[0] ? employee.companies[0].id : "";
                 this.npa_request.from_location = employee.locations[0] ? employee.locations[0].id : "";
                 this.npa_request.from_position_title = employee.position;
+                this.npa_request.date_hired = employee.date_hired;
                 this.npa_request.from_immediate_manager = employee.immediate_superior[0] ? employee.immediate_superior[0].employee_head_id : "";
                 this.npa_request.from_department = employee.departments[0] ? employee.departments[0].id : "";
                 this.npa_request.bu_head = employee.bu_head[0] ? employee.bu_head[0].employee_head_id : "";
-                this.fetchNPARequestLists();
             },
             npaMonthlyBasicSalary(){
                 axios.get('/decrypt-monthly-basic-salary/'+this.npaRequestDetails.id)
@@ -1837,11 +2288,11 @@
                         let to_monthly_basic_salary = v.npa_request_detail.to_monthly_basic_salary ? v.npa_request_detail.to_monthly_basic_salary : "";
 
 
-                        let prepared_by = v.npa_request_detail.prepared_by ? v.npa_request_detail.prepared_by.first_name + ' ' + v.npa_request_detail.prepared_by.first_name + ' / ' + v.npa_request_detail.prepared_by.position : "";
+                        let prepared_by = v.npa_request_detail.prepared_by ? v.npa_request_detail.prepared_by.first_name + ' ' + v.npa_request_detail.prepared_by.last_name + ' / ' + v.npa_request_detail.prepared_by.position : "";
                         
-                        let recommended_by = v.npa_request_detail.recommended_by ? v.npa_request_detail.recommended_by.first_name + ' ' + v.npa_request_detail.recommended_by.first_name + ' / ' + v.npa_request_detail.recommended_by.position : "";
+                        let recommended_by = v.npa_request_detail.recommended_by ? v.npa_request_detail.recommended_by.first_name + ' ' + v.npa_request_detail.recommended_by.last_name + ' / ' + v.npa_request_detail.recommended_by.position : "";
                         
-                        let approved_by = v.npa_request_detail.approved_by ? v.npa_request_detail.approved_by.first_name + ' ' + v.npa_request_detail.approved_by.first_name + ' / ' + v.npa_request_detail.approved_by.position : "";
+                        let approved_by = v.npa_request_detail.approved_by ? v.npa_request_detail.approved_by.first_name + ' ' + v.npa_request_detail.approved_by.last_name + ' / ' + v.npa_request_detail.approved_by.position : "";
 
                         let bu_head = v.npa_request_detail.bu_head ? v.npa_request_detail.bu_head.first_name + ' ' + v.npa_request_detail.bu_head.last_name + ' / ' + v.npa_request_detail.bu_head.position  : "";
 
@@ -2092,6 +2543,9 @@
                         }
                 })
             },
+
+            //Employee Access Rights / All Employees / Inactive Employees Export
+
             fetchUserAccessRights(){
                 this.user_access_rights = [];
                 axios.get('/user-access-rights')
@@ -2128,6 +2582,9 @@
                     this.errors = error.response.data.error;
                 })
             },
+
+            //Employee Dependent Attachments
+
             removeDependentAttachment: function(index,attachment) {
                 if(attachment){
                     Swal.fire({
@@ -2150,7 +2607,7 @@
                     })
                 }
             },
-             uploadDependentAttachments(e){
+            uploadDependentAttachments(e){
 
                 var files = e.target.files || e.dataTransfer.files;
 
@@ -2184,15 +2641,87 @@
                     this.errors = error.response.data.error;
                 })
             },
+
+            //Employee 201 Files
+            upload201FilesAttachments(e){
+                this.documents_201_files_attachments = [];
+                var files = e.target.files || e.dataTransfer.files;
+                if(!files.length)
+                    return;
+                for (var i = files.length - 1; i >= 0; i--){
+                    this.documents_201_files_attachments.push(files[i]);
+                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                }
+                if(this.fileSize > 5){
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('documents_201_files_attachments').value = "";
+                    this.documents_201_files_attachments = [];
+                    this.fileSize = 0;
+                }
+            },
+            remove201FilesAttachment: function(index,attachment) {
+                if(attachment){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this 201 File attachment?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+                            this.deleted_documents_201_files_attachments.push({
+                                id: attachment.id,
+                                file: attachment.file,
+                            });
+                            this.employee_201_files_attachments.splice(index, 1);    
+                        }
+                    })
+                }
+            },
+            fetchEmployee201FilesAttachments(){
+                let v = this;
+                this.employee_201_files_attachments = [];
+                this.deleted_documents_201_files_attachments = [];
+                axios.get('/employee-201-file-attachments/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.employee_201_files_attachments = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
             
+            //Org Chart
             orgChartEmployee(employee){
                 this.org_chart_src = '/org-chart/' + employee.id;
             },
+
+            orgChartUnderEmployee(){
+                let v = this;
+                this.employee_unders = [];
+                axios.get('/org-chart-under-employee/'+this.employee_copied.id)
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.employee_unders = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+
+            //Employee Transfer
             clearTransferForm(){
                 this.transfer_employee.company_list = "";
                 this.transfer_employee.department_list = "";
                 this.transfer_employee.location_list = "";
                 this.transfer_employee.division = "";
+                this.transfer_employee.cluster = "";
                 this.transfer_employee.position = "";
                 this.transfer_employee.date_hired = "";
                 this.transfer_approvers = [];
@@ -2219,10 +2748,19 @@
                             formData.append('company_list', transfer_employee.company_list ? transfer_employee.company_list : "");
                             formData.append('department_list', transfer_employee.department_list ? transfer_employee.department_list : "");
                             formData.append('location_list', transfer_employee.location_list ? transfer_employee.location_list : "");
-                            formData.append('division', transfer_employee.division ? transfer_employee.division : "");
+                            formData.append('cluster', transfer_employee.cluster ? transfer_employee.cluster : "");
                             formData.append('position', transfer_employee.position ? transfer_employee.position : "");
                             formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
                             formData.append('head_approvers', this.transfer_approvers ? JSON.stringify(this.transfer_approvers) : "");
+
+
+                            //Supporting Documents
+                            if(this.transfer_supporting_documents.length > 0){
+                                for(var i = 0; i < this.transfer_supporting_documents.length; i++){
+                                    let transfer_supporting_documents = this.transfer_supporting_documents[i];
+                                    formData.append('transfer_supporting_documents[]', transfer_supporting_documents);
+                                }
+                            }
 
                             formData.append('_method', 'PATCH');
 
@@ -2232,7 +2770,7 @@
                             .then(response => {
                                 this.fetchEmployees();
                                 this.clearTransferForm();
-                                this.transferEmployeeDetails = response.data;
+                                this.transferEmployeeDetails = [];
                                
                                 Swal.fire({
                                     title: 'Success!',
@@ -2268,6 +2806,25 @@
             closeTransferEmployeeLogs(){
                 this.viewTransferLogsList = false;
             },
+
+            uploadTransferSupportingDocuments(e){
+                this.transfer_supporting_documents = [];
+                var files = e.target.files || e.dataTransfer.files;
+                if(!files.length)
+                    return;
+                for (var i = files.length - 1; i >= 0; i--){
+                    this.transfer_supporting_documents.push(files[i]);
+                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                }
+                if(this.fileSize > 5){
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('transfer_supporting_documents').value = "";
+                    this.transfer_supporting_documents = [];
+                    this.fileSize = 0;
+                }
+            },
+
+            //Employee Information
             profileImageLoadError(){
                 this.profile_image = 'storage/default.png';
             },
@@ -2327,6 +2884,7 @@
                 formData.append('vocational_graduated', employee_copied.vocational_graduated ? employee_copied.vocational_graduated : "-");
                 formData.append('vocational_course', employee_copied.vocational_course ? employee_copied.vocational_course : "-");
                 formData.append('vocational_year', employee_copied.vocational_year ? employee_copied.vocational_year : "-");
+
                 //Work
                 formData.append('company_list', employee_copied.company_list);
                 formData.append('division', employee_copied.division ? employee_copied.division : "");
@@ -2353,6 +2911,9 @@
                 
                
                 formData.append('date_resigned', employee_copied.date_resigned ? employee_copied.date_resigned : "");
+
+                //Transfer to new approvers
+                formData.append('new_approver_under', this.new_approver_under ? this.new_approver_under : "");
 
                 //Contact
                 formData.append('current_address', employee_copied.current_address ? employee_copied.current_address : "-");
@@ -2388,6 +2949,15 @@
 
                 formData.append('deleted_dependent_attachments', this.deleted_dependent_attachments ? JSON.stringify(this.deleted_dependent_attachments) : "");
 
+                //201 Files
+                if(this.documents_201_files_attachments.length > 0){
+                    for(var i = 0; i < this.documents_201_files_attachments.length; i++){
+                        let documents_201_files_attachments = this.documents_201_files_attachments[i];
+                        formData.append('documents_201_files_attachments[]', documents_201_files_attachments);
+                    }
+                }
+                formData.append('deleted_documents_201_files_attachments', this.deleted_documents_201_files_attachments ? JSON.stringify(this.deleted_documents_201_files_attachments) : "");
+
                 formData.append('_method', 'PATCH');
 
                 axios.post(`/employee/${employee_copied.id}`, 
@@ -2402,11 +2972,17 @@
                 
                     this.employees.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    this.dependent_attachments = [];
 
+                    this.dependent_attachments = [];
                     var dependents_attachment =  document.getElementById("dependents_attachments");
                     if(dependents_attachment){
                         dependents_attachment.value = '';
+                    }
+
+                    this.documents_201_files_attachments = [];
+                    var documents_201_files_attachments =  document.getElementById("documents_201_files_attachments");
+                    if(documents_201_files_attachments){
+                        documents_201_files_attachments.value = '';
                     }
                     
                     this.copyObject(response.data);
@@ -2436,6 +3012,7 @@
                 this.termsConditions = false;
                 this.saveEmployee = true;
 
+                this.new_approver_under = '';
                 this.profile_image_file = '';
 
                 //Config Employee Fields
@@ -2458,6 +3035,9 @@
                 this.fetchDependents();
                 this.fetchDependentAttachments();
 
+                //Get 201 Files Attachments
+                this.fetchEmployee201FilesAttachments();
+
                 //Validate Marital Status
                 this.validateMaritalStatus();
 
@@ -2474,6 +3054,9 @@
                 var profile =  document.getElementById("profile_image_file");
                 var signature =  document.getElementById("signature_image_file");
                 var marital_status =  document.getElementById("marital_file");
+
+                //First Level Under
+                this.orgChartUnderEmployee();
 
                 if(profile){
                     profile.value = '';
@@ -2531,6 +3114,8 @@
                 .then(response => { 
                     this.employees = response.data;
                     this.table_loading = false;
+                    this.exportFetchEmployees();
+                    this.exportFetchInactiveEmployees();
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
@@ -2590,14 +3175,20 @@
                 axios.get('/employee-dependents/'+this.employee_copied.id)
                 .then(response => { 
                     if(response.data.length > 0){
-                        var dependents_arr = [];
+                        // var dependents_arr = [];
                         response.data.forEach(element => {
                             v.dependents.push({
                                 id: element.id,
                                 dependent_name: element.dependent_name,
+                                first_name: element.first_name,
+                                last_name: element.last_name,
+                                middle_name: element.middle_name,
                                 dependent_gender: element.dependent_gender,
                                 bdate: v.getDateFormat(element.bdate),
-                                relation: element.relation
+                                relation: element.relation,
+                                dependent_status: element.dependent_status,
+                                civil_status: element.civil_status,
+                                hmo_enrollment: element.hmo_enrollment,
                             });
                         });
                     }
@@ -2654,6 +3245,7 @@
                     dependent_gender: "",
                     bdate: "",
                     relation: "",
+                    dependent_status: "",
                 });
             },
             removeDependent: function(index,id) {
@@ -2888,6 +3480,119 @@
                     return years + ' year(s) ' + months + ' month(s)';
                 }else{
                     return "";
+                }
+            },
+            getTenureNumeric(dateString) 
+            {
+                if(dateString){
+                    var to = new Date();
+                    var from = new Date(dateString);
+                    var tenure = this.YEARFRAC(to,from);
+                    return tenure.toFixed(2);
+                }else{
+                    return "";
+                }
+            },
+            YEARFRAC(start_date, end_date, basis) {
+            // Initialize parameters
+            var basis = (typeof basis === 'undefined') ? 0 : basis;
+            var sdate = moment(new Date(start_date));
+            var edate = moment(new Date(end_date));
+
+            // Return error if either date is invalid
+            if (!sdate.isValid() || !edate.isValid()) return '#VALUE!';
+
+            // Return error if basis is neither 0, 1, 2, 3, or 4
+            if ([0,1,2,3,4].indexOf(basis) === -1) return '#NUM!';
+            
+            // Return zero if start_date and end_date are the same
+            if (sdate === edate) return 0;
+            
+            // Swap dates if start_date is later than end_date
+            if (sdate.diff(edate) > 0) {
+                var edate = moment(new Date(start_date));
+                var sdate = moment(new Date(end_date)); 
+            }
+
+            // Lookup years, months, and days
+            var syear = sdate.year();
+            var smonth = sdate.month();
+            var sday = sdate.date();
+            var eyear = edate.year();
+            var emonth = edate.month();
+            var eday = edate.date();
+
+            switch (basis) {
+                    case 0:
+                    // US (NASD) 30/360
+                    // Note: if eday == 31, it stays 31 if sday < 30
+                    if (sday === 31 && eday === 31) {
+                        sday = 30;
+                        eday = 30;
+                    } else if (sday === 31) {
+                        sday = 30;
+                    } else if (sday === 30 && eday === 31) {
+                        eday = 30;
+                    } else if (smonth === 1 && emonth === 1 && sdate.daysInMonth() === sday && edate.daysInMonth() === eday) {
+                        sday = 30;
+                        eday = 30;
+                    } else if (smonth === 1 && sdate.daysInMonth() === sday) {
+                        sday = 30;
+                    }
+                    return ((eday + emonth * 30 + eyear * 360) - (sday + smonth * 30 + syear * 360)) / 360;
+                    break;
+
+                    case 1:
+                    // Actual/actual
+                    var feb29Between = function(date1, date2) {
+                        // Requires year2 == (year1 + 1) or year2 == year1
+                        // Returns TRUE if February 29 is between the two dates (date1 may be February 29), with two possibilities:
+                        // year1 is a leap year and date1 <= Februay 29 of year1
+                        // year2 is a leap year and date2 > Februay 29 of year2
+                
+                        var mar1year1 = moment(new Date(date1.year(), 2, 1));
+                        if (moment([date1.year()]).isLeapYear() && date1.diff(mar1year1) < 0 && date2.diff(mar1year1) >= 0) {
+                        return true;
+                        } 
+                        var mar1year2 = moment(new Date(date2.year(), 2, 1));
+                        if (moment([date2.year()]).isLeapYear() && date2.diff(mar1year2) >= 0 && date1.diff(mar1year2) < 0) {
+                        return true;
+                        }
+                        return false;
+                    };
+                    var ylength = 365;
+                    if (syear === eyear || ((syear + 1) === eyear) && ((smonth > emonth) || ((smonth === emonth) && (sday >= eday)))) {
+                        if (syear === eyear && moment([syear]).isLeapYear()) {
+                        ylength = 366;
+                        } else if (feb29Between(sdate, edate) || (emonth === 1 && eday === 29)) {
+                        ylength = 366;
+                        }
+                        return edate.diff(sdate, 'days') / ylength;
+                    } else {
+                        var years = (eyear - syear) + 1;
+                        var days = moment(new Date(eyear + 1, 0, 1)).diff(moment(new Date(syear, 0, 1)), 'days');
+                        var average = days / years;
+                        return edate.diff(sdate, 'days') / average;
+                    }
+                    break;
+
+                    case 2:
+                    // Actual/360
+                    return edate.diff(sdate, 'days') / 360;
+                    break;
+
+                    case 3:
+                    // Actual/365
+                    return edate.diff(sdate, 'days') / 365;
+                    break;
+
+                    case 4:
+                    // European 30/360
+                    if (sday === 31) sday = 30;
+                    if (eday === 31) eday = 30;
+                    // Remarkably, do NOT change February 28 or February 29 at ALL
+                    return ((eday + emonth * 30 + eyear * 360) - (sday + smonth * 30 + syear * 360)) / 360;
+                    break;
                 }
             },
             setPage(pageNumber) {

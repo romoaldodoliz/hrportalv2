@@ -14,6 +14,7 @@ class EmployeeTransfer extends Model
         'previous_position',
         'previous_date_hired',
         'previous_division',
+        'previous_cluster',
         'previous_department',
         'previous_company',
         'previous_location',
@@ -22,12 +23,18 @@ class EmployeeTransfer extends Model
         'new_position',
         'new_date_hired',
         'new_division',
+        'new_cluster',
         'new_department',
         'new_company',
         'new_location',
         'new_system_approvers',
         'transferred_by',
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo('App\Employee')->select('id','first_name','last_name','middle_name');
+    }
 
     public function new_company()
     {
@@ -57,6 +64,12 @@ class EmployeeTransfer extends Model
     public function previous_location()
     {
         return $this->hasOne('App\Location','id','previous_location');
+    }
+
+
+    public function employee_transfer_attachments()
+    {
+        return $this->hasMany('App\EmployeeTransferAttachment');
     }
 
 }

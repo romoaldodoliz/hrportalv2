@@ -36,6 +36,7 @@
 <script>
     
     let jsonData  =  JSON.parse({!! json_encode($datas) !!});
+    console.log(jsonData);
     outputData = [];
     $.each(jsonData , function(index, item){
         outputData.push({
