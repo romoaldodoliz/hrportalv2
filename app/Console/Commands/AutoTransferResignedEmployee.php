@@ -81,8 +81,6 @@ class AutoTransferResignedEmployee extends Command
                                 $updated_count += 1;
                             }
                         }
-
-                        $updated_count += 1;
                     }
                 }
             }
