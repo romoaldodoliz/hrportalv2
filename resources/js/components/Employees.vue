@@ -2227,6 +2227,7 @@
                 this.npa_request.from_immediate_manager = employee.immediate_superior[0] ? employee.immediate_superior[0].employee_head_id : "";
                 this.npa_request.from_department = employee.departments[0] ? employee.departments[0].id : "";
                 this.npa_request.bu_head = employee.bu_head[0] ? employee.bu_head[0].employee_head_id : "";
+                this.fetchNPARequestLists();
             },
             npaMonthlyBasicSalary(){
                 axios.get('/decrypt-monthly-basic-salary/'+this.npaRequestDetails.id)
