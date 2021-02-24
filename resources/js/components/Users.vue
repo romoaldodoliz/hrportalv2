@@ -521,9 +521,10 @@
             },
             copyObject(user){
                 this.errors = [];
+                this.user_id = user.id;
                 this.user_copied = Object.assign({}, user);
                 this.user_copied.role = this.user_copied.roles[0].id;
-                this.user_id = user.id;
+               
             },
             fetchRoles(){
                 axios.get('/roles')
