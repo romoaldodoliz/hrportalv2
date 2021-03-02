@@ -1370,6 +1370,13 @@ class EmployeeController extends Controller
 
             $y+=30;
             $item_no++;
+
+            if($item_no == 6 || $item_no == 12 || $item_no == 18){
+                Fpdf::AddPage("L", 'A4');
+                Fpdf::SetMargins(0,0,0,0);
+                Fpdf::SetAutoPageBreak(false);
+                $y=22;
+            }
         }
         
 
