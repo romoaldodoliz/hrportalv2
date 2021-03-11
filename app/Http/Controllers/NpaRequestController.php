@@ -241,15 +241,19 @@ class NpaRequestController extends Controller
         //Prepare By
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
+
         $pdf->SetXY(27, 157 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['prepared_by'] ? $npa_request_data['prepared_by']['first_name'] . ' ' . $npa_request_data['prepared_by']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
+
         $pdf->SetXY(27,  $getY);
         $pdf->Multicell(58,3.2,$npa_request_data['prepared_by'] ? $npa_request_data['prepared_by']['position'] : "",0,'L');
 
         //Recommended By
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(112, 157 + 3);
+        $pdf->Multicell(58,3.2, $npa_request_data['recommended_by_status'],0,'L');
         $pdf->SetXY(112, 157 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['recommended_by'] ? $npa_request_data['recommended_by']['first_name'] . ' ' . $npa_request_data['recommended_by']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
@@ -259,6 +263,8 @@ class NpaRequestController extends Controller
         //Recommended for approval
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(27, 178 + 3);
+        $pdf->Multicell(58,3.2, $npa_request_data['approved_by_status'],0,'L');
         $pdf->SetXY(27, 178 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['approved_by'] ? $npa_request_data['approved_by']['first_name'] . ' ' . $npa_request_data['approved_by']['last_name'] : "",0,'L');
         $getY = $pdf->getY();
@@ -268,6 +274,8 @@ class NpaRequestController extends Controller
         //BU Head
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(112, 178 + 3);
+        $pdf->Multicell(58,3.2, $npa_request_data['bu_head_status'],0,'L');
         $pdf->SetXY(112, 178 + 7);
         $pdf->Multicell(58,3.2,$npa_request_data['bu_head'] ? $npa_request_data['bu_head']['first_name'] . ' ' . $npa_request_data['bu_head']['last_name'] : "",0,'L');
         $getY = $pdf->getY();

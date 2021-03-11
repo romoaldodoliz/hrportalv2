@@ -438,7 +438,9 @@
                                         <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
                                     </div>
                                 </div>   
-
+                                 <div class="col-md-12">
+                                    <h4>In case of Emergency</h4>
+                                </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Contact Person</label>
@@ -449,7 +451,7 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="role">Contact Relationship</label>
+                                        <label for="role">Relationship</label>
                                         <input type="text" class="form-control" v-model="employee_copied.contact_relation">
                                         <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
                                     </div>
@@ -462,69 +464,109 @@
                                         <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h4>HMO Dependents (By hierarchy *For Single - Mother, Father, Child *For Married - Spouse, Child)</h4>
-                                        <button type="button" class="btn btn-success btn-sm mb-2 ml-2" style="float: right;" @click="fetchDependents()"><i class="fas fa-redo" title="Refresh HMO Dependents"></i></button>
-                                        <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addDependent()">Add Row</button>
-                                    </div>    
-                                        <div class="table-responsive">
-                                        <table class="table table-hover" id="tab_hmo_dependent">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">
-                                                        Name
-                                                    </th>
-                                                    <th class="text-center">
-                                                        Gender
-                                                    </th>
-                                                    <th class="text-center">
-                                                        Date of birth
-                                                    </th>
-                                                    <th class="text-center">
-                                                        Relationship
-                                                    </th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="(row,index) in dependents" v-bind:key="index">
-                                                    <td>
-                                                        <input type="text" class="form-control" v-model="row.dependent_name">     
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-control" v-model="row.dependent_gender" id="dependent_gender">
-                                                            <option value="">Choose Gender</option>
-                                                            <option value="MALE">MALE</option>
-                                                            <option value="FEMALE">FEMALE</option>
-                                                            <!-- <option value="UNKNOWN">UNKNOWN</option> -->
-                                                        </select> 
-                                                    </td>
-                                                    <td>
-                                                        <input type="date" class="form-control" v-model="row.bdate">
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-control" v-model="row.relation" id="relation">
-                                                            <option value="">Choose Relationship</option>
-                                                            <option value="MOTHER">MOTHER</option>
-                                                            <option value="FATHER">FATHER</option>
-                                                            <option value="BROTHER">BROTHER</option>
-                                                            <option value="SISTER">SISTER</option>
-                                                            <option value="SPOUSE">SPOUSE</option>
-                                                            <option value="CHILD">CHILD</option>
-                                                        </select> 
 
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">Remove</button>
-                                                        <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">Remove</button>  
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                 <div class="table-responsive">
+                                    <table class="table table-hover" id="tab_hmo_dependent">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">
+                                                    Full Name
+                                                </th>
+                                                <th class="text-center">
+                                                    First Name
+                                                </th>
+                                                <th class="text-center">
+                                                    Last Name
+                                                </th>
+                                                <th class="text-center">
+                                                    Middle Name
+                                                </th>
+                                                <th class="text-center">
+                                                    Gender
+                                                </th>
+                                                <th class="text-center">
+                                                    Date of birth
+                                                </th>
+                                                <th class="text-center">
+                                                    Relationship
+                                                </th>
+                                                <th class="text-center">
+                                                    Action
+                                                </th>
+                                                <th class="text-center">
+                                                    Civil Status
+                                                </th>
+                                                <th class="text-center">
+                                                    HMO Enrollment
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(row,index) in dependents" v-bind:key="index">
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
+                                                        <option value="">Choose Gender</option>
+                                                        <option value="MALE">MALE</option>
+                                                        <option value="FEMALE">FEMALE</option>
+                                                        <!-- <option value="UNKNOWN">UNKNOWN</option> -->
+                                                    </select> 
+                                                </td>
+                                                <td>
+                                                    <input type="date" class="form-control" v-model="row.bdate">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.relation" id="relation" style="width:150px;">
+                                                        <option value="">Choose Relationship</option>
+                                                        <option value="MOTHER">MOTHER</option>
+                                                        <option value="FATHER">FATHER</option>
+                                                        <option value="BROTHER">BROTHER</option>
+                                                        <option value="SISTER">SISTER</option>
+                                                        <option value="SPOUSE">SPOUSE</option>
+                                                        <option value="CHILD">CHILD</option>
+                                                    </select> 
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.dependent_status" id="dependent_status" style="width:150px;">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="NEW">NEW</option>
+                                                        <option value="RENEW">RENEW</option>
+                                                    </select>  
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.civil_status" id="hmo_marital_status" style="width:150px;">
+                                                        <option value="">Choose Marital Status</option>
+                                                        <option v-for="(maritals) in marital_statuses" v-bind:key="maritals" :value="maritals"> {{ maritals }}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.hmo_enrollment" id="hmo_enrollment" style="width:150px;">
+                                                        <option value="">For HMO Enrollment</option>
+                                                        <option value="YES">YES</option>
+                                                        <option value="NO">NO</option>
+                                                    </select>  
+                                                    
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">x</button>
+                                                    <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeDependent(index)">x</button>  
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-
                                
                             </div>
 
@@ -1321,9 +1363,15 @@
                             v.dependents.push({
                                 id: element.id,
                                 dependent_name: element.dependent_name,
+                                first_name: element.first_name,
+                                last_name: element.last_name,
+                                middle_name: element.middle_name,
                                 dependent_gender: element.dependent_gender,
                                 bdate: v.getDateFormat(element.bdate),
-                                relation: element.relation
+                                relation: element.relation,
+                                dependent_status: element.dependent_status,
+                                civil_status: element.civil_status,
+                                hmo_enrollment: element.hmo_enrollment,
                             });
                         });
                     }

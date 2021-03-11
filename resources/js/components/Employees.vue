@@ -432,14 +432,14 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Cluster</label>
+                                                    <label for="role">Business Unit</label>
                                                     <select  v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.cluster" id="cluster">
-                                                        <option value="">Choose Cluster</option>
+                                                        <option value="">Choose Business Unit</option>
                                                         <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
                                                     </select>
 
                                                     <select v-else disabled class="form-control" v-model="employee_copied.cluster" id="cluster">
-                                                        <option value="">Choose Cluster</option>
+                                                        <option value="">Choose Business Unit</option>
                                                         <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
                                                     </select>
 
@@ -459,6 +459,32 @@
                                                         <option v-for="(department,b) in departments" v-bind:key="b" :value="department.id"> {{ department.name }}</option>
                                                     </select>
                                                     <span class="text-danger" v-if="errors.department_list">{{ errors.department_list[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Cluster</label>
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.new_cluster" id="new_cluster">
+                                                        <option value="">Choose Cluster</option>
+                                                        <option value="COMMODITIES">COMMODITIES</option>
+                                                        <option value="FLOUR">FLOUR</option>
+                                                        <option value="LIVESTOCK">LIVESTOCK</option>
+                                                        <option value="LOGISTICS">LOGISTICS</option>
+                                                        <option value="SUGAR">SUGAR</option>
+                                                        <option value="SUPPORT">SUPPORT</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.new_cluster" id="new_cluster">
+                                                        <option value="">Choose Cluster</option>
+                                                        <option value="COMMODITIES">COMMODITIES</option>
+                                                        <option value="FLOUR">FLOUR</option>
+                                                        <option value="LIVESTOCK">LIVESTOCK</option>
+                                                        <option value="LOGISTICS">LOGISTICS</option>
+                                                        <option value="SUGAR">SUGAR</option>
+                                                        <option value="SUPPORT">SUPPORT</option>
+                                                    </select>
+
+                                                    <span class="text-danger" v-if="errors.new_cluster">{{ errors.new_cluster[0] }}</span> 
                                                 </div>
                                             </div>
 
@@ -825,7 +851,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Contact Relation</label>
+                                                    <label for="role">Relationship</label>
                                                     <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_relation">
                                                     <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_relation">
                                                     <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
@@ -2898,6 +2924,7 @@
                 formData.append('level', employee_copied.level ? employee_copied.level : "-");
                 formData.append('location_list', employee_copied.location_list);
                 formData.append('cluster', employee_copied.cluster);
+                formData.append('new_cluster', employee_copied.new_cluster);
                 formData.append('area', employee_copied.area ? employee_copied.area : "-");
                 formData.append('monthly_basic_salary', employee_copied.monthly_basic_salary ? employee_copied.monthly_basic_salary : "");
                 formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
