@@ -173,7 +173,7 @@
                             <div class="col-md-12 mb-3">
                                 <h4>Change Allowed / Not Allowed Status</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="remark_status_yes" name="remark_status" class="custom-control-input" value="Allowed : Overide" v-model="remarks.status_remarks">
+                                    <input type="radio" id="remark_status_yes" name="remark_status" class="custom-control-input" value="Allowed : Override" v-model="remarks.status_remarks">
                                     <label class="custom-control-label" for="remark_status_yes" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
@@ -399,7 +399,7 @@
                             <div class="col-md-12 mb-3">
                                 <h4>Change Allowed / Not Allowed Status</h4>
                                 <div class="custom-control custom-radio custom-control-inline ml-4">
-                                    <input type="radio" id="ic_remark_status_yes" name="ic_remark_status" class="custom-control-input" value="Allowed : Overide" v-model="ic_remarks.status_remarks">
+                                    <input type="radio" id="ic_remark_status_yes" name="ic_remark_status" class="custom-control-input" value="Allowed : Override" v-model="ic_remarks.status_remarks">
                                     <label class="custom-control-label" for="ic_remark_status_yes" >Yes</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
