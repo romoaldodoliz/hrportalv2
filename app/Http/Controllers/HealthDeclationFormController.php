@@ -265,7 +265,7 @@ class HealthDeclationFormController extends Controller
             else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
                 $location = "Bulacan";
             }
-            else if(stristr($clientIP, '10.96.131') || stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
+            else if(stristr($clientIP, '10.96.131') || stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135') || stristr($clientIP, '10.96.136') || stristr($clientIP, '10.96.137') || stristr($clientIP, '10.96.138') || stristr($clientIP, '10.96.139') || stristr($clientIP, '10.96.140')){
                 $location = "Bataan";
             }
             else if(stristr($clientIP, '10.96.12') || stristr($clientIP, '10.96.13') || stristr($clientIP, '10.96.14') || stristr($clientIP, '10.96.15') || stristr($clientIP, '10.96.16') || stristr($clientIP, '10.96.17') || stristr($clientIP, '10.96.18') || stristr($clientIP, '10.96.19')){
@@ -398,7 +398,7 @@ class HealthDeclationFormController extends Controller
             else if(stristr($clientIP, '10.96.224') || stristr($clientIP, '10.96.225')){
                 $location = "Bulacan";
             }
-            else if(stristr($clientIP, '10.96.131') || stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135')){
+            else if(stristr($clientIP, '10.96.131') || stristr($clientIP, '10.96.132') || stristr($clientIP, '10.96.133') || stristr($clientIP, '10.96.134') || stristr($clientIP, '10.96.135') || stristr($clientIP, '10.96.136') || stristr($clientIP, '10.96.137') || stristr($clientIP, '10.96.138') || stristr($clientIP, '10.96.139') || stristr($clientIP, '10.96.140')){
                 $location = "Bataan";
             }
             else if(stristr($clientIP, '10.96.12') || stristr($clientIP, '10.96.13') || stristr($clientIP, '10.96.14') || stristr($clientIP, '10.96.15') || stristr($clientIP, '10.96.16') || stristr($clientIP, '10.96.17') || stristr($clientIP, '10.96.18') || stristr($clientIP, '10.96.19')){
@@ -1125,7 +1125,12 @@ class HealthDeclationFormController extends Controller
                 '10.96.132',
                 '10.96.133',
                 '10.96.134',
-                '10.96.135'
+                '10.96.135',
+                '10.96.136',
+                '10.96.137',
+                '10.96.138',
+                '10.96.139',
+                '10.96.140'
             ];
         }else if($location == "Iloilo"){
             $ip_address = [
@@ -1205,7 +1210,12 @@ class HealthDeclationFormController extends Controller
                 '10.96.132',
                 '10.96.133',
                 '10.96.134',
-                '10.96.135'
+                '10.96.135',
+                '10.96.136',
+                '10.96.137',
+                '10.96.138',
+                '10.96.139',
+                '10.96.140'
             ];
         }else if($location == "Iloilo"){
             $ip_address = [
