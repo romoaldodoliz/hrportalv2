@@ -11,6 +11,8 @@ use App\HealthDeclarationIcForm;
 use App\RfidUser;
 use App\HdfEmployee;
 
+use App\Laborer;
+
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\BadResponseException;
@@ -130,6 +132,16 @@ class HealthDeclationFormController extends Controller
         });
 
         return $result;
+    }
+
+
+    public function getICEmployees(Request $request){
+        $keyword_ic = $request->keyword_ic;
+        return $ic_employees = Laborer::select('id','agency_id','name')
+                                        ->with('agency')->where('active','AC')
+                                        ->where('name','like','%'.$request->keyword_ic.'%')
+                                        ->take(20)
+                                        ->get();
     }
 
     public function fetchEmployeesOveride(Request $request){

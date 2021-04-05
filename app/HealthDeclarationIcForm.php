@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class HealthDeclarationIcForm extends Model
 {
+    protected $connection = "mysql";
+    
     protected $fillable = [
         'employee_id',
         'name',

@@ -54,6 +54,8 @@ Route::get('/send_message', 'HealthDeclationFormController@send_message');
 
 Route::post('/ic-employees', 'HealthDeclationFormController@fetchICEmployees');
 
+Route::get('/get-ic-employees', 'HealthDeclationFormController@getICEmployees');
+
 
 Route::post('/employee-update-status', 'HealthDeclationFormController@employeeUpdateStatus');
 

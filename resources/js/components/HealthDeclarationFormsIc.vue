@@ -59,7 +59,7 @@
                                             </tr>
                                             <tr v-for="(ic_employee, u) in ic_employees" v-bind:key="u">
                                                 <td>{{ ic_employee.name  }}</td>
-                                                <td>{{ ic_employee.agency_name }}</td>
+                                                <td>{{ ic_employee.agency.agency_name }}</td>
                                                 <td><button type="button" class="btn btn-primary btn-sm" style="font-size:14px;" @click="checkICEmployee(ic_employee)" data-toggle="modal" data-target="#iccheckModal" >Check</button></td>
                                             </tr>
                                         </tbody>
@@ -86,9 +86,9 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12" >
                                 <h3>Name: {{ic_employee.name}}</h3>
-                                <h3>Agency: {{ ic_employee.agency_name }}</h3>
+                                <h3 v-if="ic_employee.agency">Agency: {{ ic_employee.agency.agency_name }}</h3>
                                 <hr>
                             </div>
                             <div class="col-md-4">
@@ -314,9 +314,7 @@
                 this.errors = []; 
                 this.ic_employees = [];
                 this.table_loading_ic = true; 
-                axios.post('/ic-employees', {
-                    keyword_ic: this.keyword_ic
-                })
+                axios.get('/get-ic-employees?keyword_ic='+this.keyword_ic)
                 .then(response => {
                     this.ic_employees = response.data;
                     this.table_loading_ic = false; 
@@ -461,7 +459,7 @@
                 let formData = new FormData();
                 formData.append('employee_id',  this.ic_employee.usruid);
                 formData.append('name',  this.ic_employee.name);
-                formData.append('dept_bu_position', this.ic_employee.agency_name);
+                formData.append('dept_bu_position', this.ic_employee.agency ? this.ic_employee.agency.agency_name : "");
                 formData.append('temperature', form_ic.temperature ? form_ic.temperature  : "");
                 formData.append('one_question', form_ic.one_question ? form_ic.one_question : "");
                 formData.append('two_question', form_ic.two_question ? form_ic.two_question : "");

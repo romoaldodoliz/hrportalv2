@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class RfidCardLog extends Model
 {
+    protected $connection = "mysql";
+    
     protected $auditIncluded = [];
     protected $auditTimestamps = true;
 

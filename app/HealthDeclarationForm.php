@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class HealthDeclarationForm extends Model
 {
+    protected $connection = "mysql";
+    
     protected $fillable = [
         'employee_id',
         'name',
