@@ -137,7 +137,7 @@ class HealthDeclationFormController extends Controller
 
     public function getICEmployees(Request $request){
         $keyword_ic = $request->keyword_ic;
-        return $ic_employees = Laborer::select('id','agency_id','name')
+        return $ic_employees = Laborer::select('id','agency_id','name','usruid')
                                         ->with('agency')->where('active','AC')
                                         ->where('name','like','%'.$request->keyword_ic.'%')
                                         ->take(20)
