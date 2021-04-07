@@ -29,6 +29,7 @@
         "@saeris/vue-spinners": "^1.0.8",
         "chart.js": "^2.9.3",
         "cxlt-vue2-toastr": "^1.1.1",
+        "moment": "^2.29.1",
         "print-js": "^1.0.63",
         "sweetalert2": "^9.4.0",
         "vue-chartjs": "^3.5.0",

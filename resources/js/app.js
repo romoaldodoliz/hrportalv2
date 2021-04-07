@@ -41,6 +41,7 @@ Vue.component('changepassword', require('./components/ChangePassword.vue').defau
 
 
 Vue.component('health-declaration-forms', require('./components/HealthDeclarationForms.vue').default);
+Vue.component('health-declaration-forms-qr', require('./components/HealthDeclarationFormsQr.vue').default);
 
 Vue.component('health-declaration-forms-ic', require('./components/HealthDeclarationFormsIc.vue').default);
 

@@ -27,12 +27,19 @@ class HealthDeclationFormController extends Controller
         return view('health_declartion_form.index');
     }
 
+    public function indexQr(){
+        return view('health_declartion_form.index_qr');
+    }
+
     public function index_ic(){
         return view('health_declartion_form.index_ic');
     }
 
     public function fetchEmployees(Request $request){
         $keyword = $request->keyword;
+
+        session(['hdf_employee_session' => $keyword]);
+
         $employees = Employee::select('id','first_name','last_name','position','mobile_number')->with('companies','departments','locations')
                             ->where(function ($query) use ($keyword) {
                                 $query->where('first_name', 'like' , '%' .  $keyword . '%')->orWhere('last_name', 'like' , '%' .  $keyword . '%');
@@ -226,6 +233,10 @@ class HealthDeclationFormController extends Controller
         return $employees;
     }
 
+    public function fetchHDFEmployeeSession(){
+        return session('hdf_employee_session');
+    }
+
     public function saveDeclaration(Request $request){
 
         $clientIP = request()->ip();
@@ -317,13 +328,13 @@ class HealthDeclationFormController extends Controller
 
                 HealthDeclarationForm::create($data);
 
-                $message = $data['name'];
-                if($location){
-                    $message = $data['name'] . ' - Location: ' . $location;
-                }else{
-                    $message = $data['name'];
-                }
-                $send_message = $this->send_message($message,"not_allowed");
+                // $message = $data['name'];
+                // if($location){
+                //     $message = $data['name'] . ' - Location: ' . $location;
+                // }else{
+                //     $message = $data['name'];
+                // }
+                // $send_message = $this->send_message($message,"not_allowed");
                 
                 session([
                     'lockscreen' => [
