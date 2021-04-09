@@ -328,13 +328,13 @@ class HealthDeclationFormController extends Controller
 
                 HealthDeclarationForm::create($data);
 
-                // $message = $data['name'];
-                // if($location){
-                //     $message = $data['name'] . ' - Location: ' . $location;
-                // }else{
-                //     $message = $data['name'];
-                // }
-                // $send_message = $this->send_message($message,"not_allowed");
+                $message = $data['name'];
+                if($location){
+                    $message = $data['name'] . ' - Location: ' . $location;
+                }else{
+                    $message = $data['name'];
+                }
+                $send_message = $this->send_message($message,"not_allowed");
                 
                 session([
                     'lockscreen' => [
