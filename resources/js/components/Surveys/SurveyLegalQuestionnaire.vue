@@ -213,8 +213,11 @@
                                             text: 'Successfully saved. Thank you',
                                             icon: 'success',
                                             confirmButtonText: 'Okay'
-                                        })
-                                        window.location.href = "http://10.96.4.70/login";
+                                        }).then(okay => {
+                                            if (okay) {
+                                                window.location.href = "http://10.96.4.70/login";
+                                            }
+                                        });
                                     }else{
                                         alert('Please try again. Thank you.');
                                         location.reload();
