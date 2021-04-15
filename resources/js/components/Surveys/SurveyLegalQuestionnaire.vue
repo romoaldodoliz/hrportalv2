@@ -61,13 +61,22 @@
                                         <input type="text" class="form-control" placeholder="Your Answer" v-model="q1" @keypress="isNumber($event)" maxlength="1">
                                     </div> 
                                 </div>
+                                <div class="col-12 mt-2">
+                                    <span class="text-danger" v-if="errors.q1">{{errors.q1[0]}}</span>
+                                </div>
                                 <div class="col-md-12 mt-5">
                                     <h4>2. Is there any service that we provided you or your Department/BU, which you think is outstanding and deserves to be singled out?  Kindly explain.</h4>
                                     <textarea name="" id="" cols="30" rows="10" class="form-control mb-2" v-model="q2">Input here..</textarea>
                                 </div>
+                                <div class="col-12 mt-2">
+                                    <span class="text-danger" v-if="errors.q2">{{errors.q2[0]}}</span>
+                                </div>
                                 <div class="col-md-12 mt-5">
                                     <h4>3. Kindly submit your suggestions on how we can improve our services.</h4>
                                     <textarea name="" id="" cols="30" rows="10" class="form-control mb-2" v-model="q3">Input here..</textarea>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <span class="text-danger" v-if="errors.q3">{{errors.q3[0]}}</span>
                                 </div>
                             </div>
                         </div>

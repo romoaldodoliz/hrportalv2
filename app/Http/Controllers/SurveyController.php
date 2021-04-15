@@ -202,9 +202,9 @@ class SurveyController extends Controller
             'q2' => 'required',
             'q3' => 'required',
         ],[
-            'q1.required' => 'This is field is required.',
-            'q2.required' => 'This is field is required.',
-            'q3.required' => 'This is field is required.',
+            'q1.required' => 'This field is required.',
+            'q2.required' => 'This field is required.',
+            'q3.required' => 'This field is required.',
         ]);
         
         DB::beginTransaction();
