@@ -32,7 +32,6 @@
                             </div>
                         
                             <div class="row">
-                                <!-- Q1 -->
                                 <div class="col-md-12">
                                     <hr>
                                     <h4>1.	How would you rate the quality of the services provided by the Legal Department to you or your Department/Business Unit during this quarter? Kindly use the following rating scale:</h4>
@@ -97,6 +96,7 @@
 </template>
 
 <script>
+    import Swal from 'sweetalert2'
     export default {
         data() {
             return {
@@ -143,36 +143,91 @@
             },
             saveSurveyLegal(){
                 let v = this;
-                var r = confirm("Are you sure you want to save this survey?");
-                if (r == true) {
-                    if(v.user){
-                        axios.post(`/save-survey-legal-questionnaire`, {
-                            user_id: v.user.user_id,
-                            name: v.user.first_name + ' ' + v.user.last_name,
-                            position: v.position,
-                            department: v.department,
-                            company: v.company,
-                            location: v.location,
-                            q1: v.q1,
-                            q2: v.q2,
-                            q3: v.q3,
-                            _method: 'POST'
-                        })
-                        .then(response => {
-                            if(response.data == "saved"){
-                                alert('Successfully saved. Thank you.');
-                                window.location.href = "http://10.96.4.70/login";
-                            }else{
-                                alert('Please try again. Thank you.');
-                                location.reload();
+               Swal.fire({
+                        title: 'Preview',
+                        icon: false,
+                        width : '60%',
+                        html : '<div class="row text-left">'+
+                               ' <div class="col-md-12">'+
+                                   ' <hr>'+
+                                    '<h4>1.	How would you rate the quality of the services provided by the Legal Department to you or your Department/Business Unit during this quarter? Kindly use the following rating scale:</h4>'+
+                                    '<table class="table align-items-center table-bordered text-center">'+
+                                        '<thead class="thead-light">'+
+                                            '<tr>'+
+                                                '<td><h4>1</h4></td>'+
+                                                '<td><h4>2</h4></td>'+
+                                                '<td><h4>3</h4></td>'+
+                                                '<td><h4>4</h4></td>'+
+                                                '<td><h4>5</h4></td>'+
+                                            '</tr>'+
+                                        '</thead>'+
+                                        '<tbody>'+
+                                           '<tr>'+
+                                               '<td><h4>Unsatisfactory</h4> </td>'+
+                                                '<td><h4>Needs Improvement</h4> </td>'+
+                                                '<td><h4>Meets Expectations</h4> </td>'+
+                                                '<td><h4>Exceeds Expectations</h4> </td>'+
+                                                '<td><h4>Exceptional</h4> </td>'+
+                                            '</tr>'+
+                                        '</tbody>'+
+                                    '</table>'+
+                                    '<div class="col-xl-2 mb-2 mt-3">'+
+                                        '<input type="text" class="form-control " placeholder="Your Answer"  value="'+v.q1+'" disabled> '+
+                                    '</div> '+
+                                '</div>'+
+                                
+                                '<div class="col-md-12 mt-5">'+
+                                    '<h4>2. Is there any service that we provided you or your Department/BU, which you think is outstanding and deserves to be singled out?  Kindly explain.</h4>'+
+                                    '<textarea name="" id="" cols="30" rows="5" class="form-control mb-2" disabled>'+v.q2+'</textarea>'+
+                                '</div>'+
+                               
+                                '<div class="col-md-12 mt-5">'+
+                                    '<h4>3. Kindly submit your suggestions on how we can improve our services.</h4>'+
+                                    '<textarea name="" id="" cols="30" rows="5" class="form-control mb-2" disabled>'+v.q3+'</textarea>'+
+                                '</div>'+
+                                '<span class="ml-2 mt-5 text-danger">*Please review your answers. You can no longer change you answers once you click on "Yes, Save"</span>'+
+                            '</div>',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Save'
+                        }).then((result) => {
+                        if (result.value) {
+                            if(v.user){
+                                axios.post(`/save-survey-legal-questionnaire`, {
+                                    user_id: v.user.user_id,
+                                    name: v.user.first_name + ' ' + v.user.last_name,
+                                    position: v.position,
+                                    department: v.department,
+                                    company: v.company,
+                                    location: v.location,
+                                    q1: v.q1,
+                                    q2: v.q2,
+                                    q3: v.q3,
+                                    _method: 'POST'
+                                })
+                                .then(response => {
+                                    if(response.data == "saved"){
+                                        Swal.fire({
+                                            title: 'Success!',
+                                            text: 'Successfully saved. Thank you',
+                                            icon: 'success',
+                                            confirmButtonText: 'Okay'
+                                        })
+                                        window.location.href = "http://10.96.4.70/login";
+                                    }else{
+                                        alert('Please try again. Thank you.');
+                                        location.reload();
+                                    }
+                                })
+                                .catch(error => {
+                                    alert('Check you form and then try again. Thank you.');
+                                    this.errors = error.response.data.errors;
+                                });
                             }
-                        })
-                        .catch(error => {
-                            alert('Check you form and then try again. Thank you.');
-                            this.errors = error.response.data.errors;
-                        });
-                    }
-                }
+                        }
+                })
+                
             }
         },
     }

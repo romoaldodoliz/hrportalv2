@@ -44,7 +44,7 @@
                                         :fields = "json_fields"
                                         class   = "btn btn-md btn-default mt-3 ml-3 mr-3 float-right"
                                         name    = "SURVEY : LEGAL QUESTIONNAIRE.xls">
-                                            Export to excel ({{allSurveyLegal.length}})
+                                            Export Survey ({{allSurveyLegal.length}})
                                     </download-excel>
                             </div>
                             </div> 
