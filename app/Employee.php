@@ -160,4 +160,9 @@ class Employee extends Model implements AuditableContract
     {
         return $this->belongsTo('App\User');
     }
+    
+    public function survey_legal_user()
+    {
+        return $this->hasOne('App\SurveyLegalQuestionnaireUser','user_id','user_id');
+    }
 }

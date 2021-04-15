@@ -55,6 +55,9 @@ Vue.component('survey-culture', require('./components/Surveys/SurveyCulture.vue'
 Vue.component('survey-user', require('./components/Surveys/SurveyUser.vue').default);
 Vue.component('survey-culture-export', require('./components/Surveys/SurveyCultureExport.vue').default);
 
+Vue.component('survey-legal-questionnaire', require('./components/Surveys/SurveyLegalQuestionnaire.vue').default);
+Vue.component('survey-legal-questionnaire-users', require('./components/Surveys/SurveyLegalQuestionnaireUser.vue').default);
+
 
 
 /**

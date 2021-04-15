@@ -8,6 +8,8 @@ use App\User;
 use App\SettingsSurvey;
 use App\SurveyLearningAndDevelopment;
 use App\SurveyCulture;
+use App\SurveyLegalQuestionnaire;
+use App\SurveyLegalQuestionnaireUser;
 
 use DB;
 class SurveyController extends Controller
@@ -173,6 +175,82 @@ class SurveyController extends Controller
     public function exportSurveyCulture(){
         
         return view('surveys.export_survey_culture');
+    }
+
+    //Survey Legal
+
+    public function surveyLegalQuestionnaire(Request $request){
+        $validate_user = SurveyLegalQuestionnaire::where('user_id',$request->user_id)->where('status','Active')->first();
+        if(empty($validate_user)){
+            return view('surveys.survey_legal_questionnaire');
+        }else{
+            return redirect('http://10.96.4.70/login');
+        }
+       
+    }
+
+    public function getUserSurvey(Request $request){
+        $user_session_id = $request->user_id;
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+
+    public function saveSurveyLegalQuestionnaire(Request $request){
+        $this->validate($request, [
+            'q1' => 'required',
+            'q2' => 'required',
+            'q3' => 'required',
+        ],[
+            'q1.required' => 'This is field is required.',
+            'q2.required' => 'This is field is required.',
+            'q3.required' => 'This is field is required.',
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            if($survey = SurveyLegalQuestionnaire::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function surveyLegalQuestionnaireUser(){
+        return view('surveys.survey_legal_questionnaire_users');
+    }
+    
+    public function getsurveyLegalQuestionnaire(){
+        return SurveyLegalQuestionnaire::all();
+    }
+
+    public function getSurveyLegalQuestionnaireUser(){
+        return Employee::select('id','user_id','first_name','last_name','position')->with('user','companies','departments','locations','survey_legal_user')
+                        ->where('status','active')
+                        ->get();
+    }
+
+    public function changeSurveyLegalQuestionnaireUser(Request $request){
+        $data = $request->all();
+        $user_id = $data['user_id'];
+        $check = SurveyLegalQuestionnaireUser::where('user_id',$data['user_id'])->first();
+
+        if($check){
+            unset($data['user_id']);
+            $check->update($data);
+            return Employee::select('id','user_id','first_name','last_name','position')->with('user','companies','departments','locations','survey_legal_user')
+                        ->where('user_id',$user_id)
+                        ->first();
+        }else{
+            SurveyLegalQuestionnaireUser::create($data);
+            return Employee::select('id','user_id','first_name','last_name','position')->with('user','companies','departments','locations','survey_legal_user')
+            ->where('user_id',$user_id)
+            ->first();
+        }
     }
 
 }

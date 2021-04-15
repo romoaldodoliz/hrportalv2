@@ -84,6 +84,15 @@ Route::post('/save-survey-culture', 'SurveyController@saveSurveyCulture');
 Route::get('/export-survey-culture', 'SurveyController@exportSurveyCulture');
 Route::get('/all-survey-culture', 'SurveyController@allSurveyCulture');
 
+//Survey Legal Questionnaire
+Route::get('/survey-legal-questionnaire', 'SurveyController@surveyLegalQuestionnaire');
+Route::get('/get-survey-legal-questionnaire', 'SurveyController@getsurveyLegalQuestionnaire');
+
+Route::get('/get-user-survey', 'SurveyController@getUserSurvey');
+Route::post('/save-survey-legal-questionnaire', 'SurveyController@saveSurveyLegalQuestionnaire');
+Route::get('/survey-legal-questionnaire-user', 'SurveyController@surveyLegalQuestionnaireUser');
+Route::get('/get-survey-legal-questionnaire-users', 'SurveyController@getSurveyLegalQuestionnaireUser');
+Route::post('/change-legal-user-status', 'SurveyController@changeSurveyLegalQuestionnaireUser');
 
 Auth::routes();
 Route::get('logout', function(){
