@@ -171,19 +171,19 @@
                                             '</tr>'+
                                         '</tbody>'+
                                     '</table>'+
-                                    '<div class="col-xl-2 mb-2 mt-3">'+
-                                        '<input type="text" class="form-control " placeholder="Your Answer"  value="'+v.q1+'" disabled> '+
+                                    '<div class="mb-2 mt-3">'+
+                                        '<input type="text" class="form-control " placeholder="Your Answer"  value="'+v.q1+'" disabled style="background-color:white;width:30%;color:black">'+
                                     '</div> '+
                                 '</div>'+
                                 
                                 '<div class="col-md-12 mt-5">'+
                                     '<h4>2. Is there any service that we provided you or your Department/BU, which you think is outstanding and deserves to be singled out?  Kindly explain.</h4>'+
-                                    '<textarea name="" id="" cols="30" rows="5" class="form-control mb-2" disabled>'+v.q2+'</textarea>'+
+                                    '<textarea name="" id="" cols="30" rows="5" class="form-control mb-2" disabled style="background-color:white;color:black">'+v.q2+'</textarea>'+
                                 '</div>'+
                                
                                 '<div class="col-md-12 mt-5">'+
                                     '<h4>3. Kindly submit your suggestions on how we can improve our services.</h4>'+
-                                    '<textarea name="" id="" cols="30" rows="5" class="form-control mb-2" disabled>'+v.q3+'</textarea>'+
+                                    '<textarea name="" id="" cols="30" rows="5" class="form-control mb-2" disabled style="background-color:white;color:black">'+v.q3+'</textarea>'+
                                 '</div>'+
                                 '<span class="ml-2 mt-5 text-danger">*Please review your answers. You can no longer change you answers once you click on "Yes, Save"</span>'+
                             '</div>',
