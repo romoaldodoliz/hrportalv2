@@ -60,6 +60,12 @@
                                             Signature   
                                         </div>
                                     </div>
+                                    <div class="row justify-content-center mb-2 mt-2">
+                                        <img :src="'/qr_employees/'+employee_copied.id+'.png'" style="width:250px;height:auto;border-radius:6px;border:1px solid #8898aa;">
+                                        <div class="col-md-12 h5 font-weight-300">
+                                            QR : {{ employee_copied.id_number}}  
+                                        </div>
+                                    </div>
                                    
                             </div>
 
