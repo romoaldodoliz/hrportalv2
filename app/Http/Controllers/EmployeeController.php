@@ -1121,7 +1121,14 @@ class EmployeeController extends Controller
     }
 
     public function exportEmployees(){
-        $all_employee = Employee::with('companies','departments','locations','employee_accountabilities')
+        $all_employee = Employee::with(array('companies',
+                                        'departments',
+                                        'locations',
+                                        'employee_accountabilities' => function($q){
+                                            $q->whereNotNull('date_assigned');
+                                            $q->whereNull('date_expired');
+                                        }
+                                    ))
                                     ->where('status','Active')
                                     ->orderBy('id','ASC')
                                     ->get();
@@ -1354,7 +1361,12 @@ class EmployeeController extends Controller
             $today = date("Y-m-d");
 
             $date_hired = $employee['date_hired'];
-            $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+
+            try {
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            } catch (DecryptException $e) {
+                $filtered_data[$key]['basic_salary'] = "";
+            }
            
             //Get Tenure
             $tenure = "";
