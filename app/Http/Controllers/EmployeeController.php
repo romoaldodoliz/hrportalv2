@@ -2098,7 +2098,7 @@ class EmployeeController extends Controller
                             'company' => $employee_data['companies'][0]['name'],
                             'position' => $employee_data['position'],
                             'npa_title' => $data['subject'],
-                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                            'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
                         ];
                         $send_update = Mail::to($email_recommended_by)->send(new EmployeeNpaNotification($npa_data));
                     }
@@ -2117,7 +2117,7 @@ class EmployeeController extends Controller
                             'company' => $employee_data['companies'][0]['name'],
                             'position' => $employee_data['position'],
                             'npa_title' => $data['subject'],
-                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                            'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
                         ];
                         $send_update = Mail::to($email_approved_by)->send(new EmployeeNpaNotification($npa_data));
                     }
@@ -2135,7 +2135,7 @@ class EmployeeController extends Controller
                             'company' => $employee_data['companies'][0]['name'],
                             'position' => $employee_data['position'],
                             'npa_title' => $data['subject'],
-                            'link' => 'http://hrportalv2new.local/employees?employee_id='.$employee_data['id'].'&type=npa',
+                            'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
                         ];
                         $send_update = Mail::to($email_bu_head)->send(new EmployeeNpaNotification($npa_data));
                     }
