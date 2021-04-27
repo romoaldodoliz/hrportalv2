@@ -111,7 +111,7 @@
                                             </td>
                                              <td>
                                                 <div class="row justify-content-center mb-2">
-                                                    <img :src="'http://10.96.4.126:8668/storage/id_image/employee_image/' + employee_id.id + '.png?v='" class="rounded-circle" style="width:50px;height:50px;border:2px dotted ;">
+                                                    <img :src="'storage/id_image/employee_image/' + employee_id.id + '.png?v='" class="rounded-circle" style="width:50px;height:50px;border:2px dotted ;">
                                                 </div>
                                             </td>
                                             <td>{{ employee_id.id_number }}</td>
