@@ -447,7 +447,7 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="role">Contact Relation</label>
+                                        <label for="role">Contact Relationship</label>
                                         <input type="text" class="form-control" v-model="employee_copied.contact_relation">
                                         <span class="text-danger" v-if="errors.contact_relation">{{ errors.contact_relation[0] }}</span> 
                                     </div>
@@ -750,12 +750,12 @@
                                 <td align="left"> <i v-if="employee_request_original.mobile_number != employee_request_approval.mobile_number" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.mobile_number }}</td>
                             </tr>
                             <tr>
-                                <td align="left"> CONTACT PERSON</td>
+                                <td align="left"> EMERGENCY CONTACT PERSON</td>
                                 <td align="left"> {{ employee_request_original.contact_person }}</td>
                                 <td align="left"> <i v-if="employee_request_original.contact_person != employee_request_approval.contact_person" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_person }}</td>
                             </tr>
                             <tr>
-                                <td align="left"> CONTACT RELATION</td>
+                                <td align="left"> CONTACT RELATIONSHIP</td>
                                 <td align="left"> {{ employee_request_original.contact_relation }}</td>
                                 <td align="left"> <i v-if="employee_request_original.contact_relation != employee_request_approval.contact_relation" class="fa fa-exclamation-circle" style="color:#F3BB45" title="Changed"></i> {{ employee_request_approval.contact_relation }}</td>
                             </tr>

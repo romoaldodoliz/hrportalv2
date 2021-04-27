@@ -38,8 +38,6 @@ Vue.component('verifiedemployees', require('./components/VerifiedEmployees.vue')
 
 Vue.component('changepassword', require('./components/ChangePassword.vue').default);
 
-
-
 Vue.component('health-declaration-forms', require('./components/HealthDeclarationForms.vue').default);
 Vue.component('health-declaration-forms-qr', require('./components/HealthDeclarationFormsQr.vue').default);
 
@@ -47,16 +45,21 @@ Vue.component('health-declaration-forms-ic', require('./components/HealthDeclara
 
 Vue.component('health-declaration-forms-set-up', require('./components/HealthDeclarationFormsSetup.vue').default);
 
-
 //Survey
 Vue.component('survey', require('./components/Surveys/Survey.vue').default);
 Vue.component('survey-culture', require('./components/Surveys/SurveyCulture.vue').default);
-
 Vue.component('survey-user', require('./components/Surveys/SurveyUser.vue').default);
 Vue.component('survey-culture-export', require('./components/Surveys/SurveyCultureExport.vue').default);
 
 Vue.component('survey-legal-questionnaire', require('./components/Surveys/SurveyLegalQuestionnaire.vue').default);
 Vue.component('survey-legal-questionnaire-users', require('./components/Surveys/SurveyLegalQuestionnaireUser.vue').default);
+
+
+//Reports
+Vue.component('employee-dependent-reports', require('./components/Reports/EmployeeDependentReports.vue').default);
+Vue.component('employee-transfer-reports', require('./components/Reports/EmployeeTransferReports.vue').default);
+Vue.component('employee-npa-reports', require('./components/Reports/EmployeeNpaReports.vue').default);
+
 
 
 

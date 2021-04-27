@@ -73,6 +73,7 @@ class Employee extends Model implements AuditableContract
         'rfid_64',
         'door_id_number',
         'cluster',
+        'new_cluster',
         'original_date_hired',
         'monthly_basic_salary',
         'add_card_id',
@@ -130,6 +131,11 @@ class Employee extends Model implements AuditableContract
     public function dependents_attachments()
     {
         return $this->hasMany('App\DependentAttachment');
+    }
+
+    public function employee_201_files()
+    {
+        return $this->hasMany('App\Employee201File');
     }
 
     public function print_id_logs()

@@ -42,6 +42,11 @@ class EmployeeNpaRequest extends Model
         'status',
     ];
 
+    public function employee()
+    {
+        return $this->belongsTo('App\Employee')->select('id','first_name','last_name','middle_name');
+    }
+
     public function from_company()
     {
         return $this->hasOne('App\Company','id','from_company')->select('id','name');

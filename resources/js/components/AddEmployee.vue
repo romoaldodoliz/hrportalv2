@@ -213,13 +213,20 @@
                                                             <span class="text-danger" v-if="errors.company_list">{{ errors.company_list[0] }}</span> 
                                                         </div>
                                                     </div>
+
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label for="role">Division</label>  
-                                                            <input type="text" class="form-control" v-model="employee.division">
-                                                            <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
+                                                            <label for="role">Business Unit</label>
+                                                            <select class="form-control" v-model="employee.cluster" id="cluster">
+                                                                <option value="">Choose Business Unit</option>
+                                                                <option v-for="(cluster) in clusters" v-bind:key="cluster" :value="cluster"> {{ cluster }}</option>
+                                                            </select>
+
+                            
+                                                            <span class="text-danger" v-if="errors.cluster">{{ errors.cluster[0] }}</span> 
                                                         </div>
                                                     </div>
+
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="role">Department*</label>
@@ -230,6 +237,31 @@
                                                             <span class="text-danger" v-if="errors.department_list">{{ errors.department_list[0] }}</span> 
                                                         </div>
                                                     </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="role">Cluster</label>
+                                                            <select class="form-control" v-model="employee.new_cluster" id="new_cluster">
+                                                                <option value="">Choose Cluster</option>
+                                                                <option value="COMMODITIES">COMMODITIES</option>
+                                                                <option value="FLOUR">FLOUR</option>
+                                                                <option value="LIVESTOCK">LIVESTOCK</option>
+                                                                <option value="LOGISTICS">LOGISTICS</option>
+                                                                <option value="SUGAR">SUGAR</option>
+                                                                <option value="SUPPORT">SUPPORT</option>
+                                                            </select>
+                                                            <span class="text-danger" v-if="errors.new_cluster">{{ errors.new_cluster[0] }}</span> 
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="role">Division</label>  
+                                                            <input type="text" class="form-control" v-model="employee.division">
+                                                            <span class="text-danger" v-if="errors.division">{{ errors.division[0] }}</span> 
+                                                        </div>
+                                                    </div>
+                                                    
 
                                                     <div class="col-md-4">
                                                         <div class="form-group">
@@ -631,6 +663,7 @@
                 departments : [],
                 locations : [],
                 levels : [],
+                clusters : [],
                 saveEmployee: true,
                 termsConditions: false,
                 employee_head_approvers: [],
@@ -646,6 +679,7 @@
             this.fetchDepartments();
             this.fetchLocations();
             this.fetchLevels();
+            this.fetchClusters();
             this.fetchHeadApprovers();
             this.fetchPositionApprovers();
             this.resetForm();
@@ -667,6 +701,8 @@
                 this.employee.department_list = "";
                 this.employee.classification = "";
                 this.employee.level = "";
+                this.employee.cluster = "";
+                this.employee.new_cluster = "";
                 this.employee.location_list = "";
                 this.employee.status = "";
                 this.employee.tax_status = "";
@@ -727,6 +763,8 @@
                 formData.append('classification', employee.classification ? employee.classification : "-");
                 formData.append('date_hired', employee.date_hired ? employee.date_hired : "");
                 formData.append('level', employee.level ? employee.level : "-");
+                formData.append('cluster', employee.cluster ? employee.cluster : "-");
+                formData.append('new_cluster', employee.new_cluster ? employee.new_cluster : "-");
                 formData.append('location_list', employee.location_list ? employee.location_list : "");
                 formData.append('area', employee.area ? employee.area : "-");
                 formData.append('bank_account_number', employee.bank_account_number ? employee.bank_account_number : "-");
@@ -898,6 +936,15 @@
                 axios.get('/levels-options')
                 .then(response => { 
                     this.levels = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            fetchClusters(){
+                axios.get('/clusters-options')
+                .then(response => { 
+                    this.clusters = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.error;
