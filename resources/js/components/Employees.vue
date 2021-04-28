@@ -1925,7 +1925,7 @@
                     'DATE RESIGNED': 'date_resigned',
                     'TENURE': {
                         callback: (value) => {
-                            if(value.date_hired){
+                            if(value.date_hired && value.date_hired != '0000-00-00'){
                                 return this.getTenureNumeric(value.date_hired);
                             }else{
                                 return '';
