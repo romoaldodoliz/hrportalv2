@@ -729,26 +729,28 @@ class EmployeeController extends Controller
             }
 
             if($send_email_dependent_update == 1){
-                $email_reciever = HrRecieverHmoDependent::first();
+                $email_reciever = HrRecieverHmoDependent::select('email')->where('id','0')->first();
+                $email_reciever_cc = HrRecieverHmoDependent::select('email')->where('id','!=','0')->get();
                 $data = [
                     'employee_name'=>$employee->first_name . ' ' . $employee->last_name,
                     'position'=>$employee->position,
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                $send_update = Mail::to($email_reciever->email)->send(new EmployeeHMODependentUpdate($data));
+                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }
         }
         if($request->deleted_dependents){
             if($send_email_dependent_update == 0){
-                $email_reciever = HrRecieverHmoDependent::first();
+                $email_reciever = HrRecieverHmoDependent::select('email')->where('id','0')->first();
+                $email_reciever_cc = HrRecieverHmoDependent::select('email')->where('id','!=','0')->get();
                 $data = [
                     'employee_name'=>$employee->first_name . ' ' . $employee->last_name,
                     'position'=>$employee->position,
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                $send_update = Mail::to($email_reciever->email)->send(new EmployeeHMODependentUpdate($data));
+                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }   
         }
         //---------------------------------------------------------------------------------------------------------------------------
