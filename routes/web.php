@@ -94,6 +94,14 @@ Route::get('/survey-legal-questionnaire-user', 'SurveyController@surveyLegalQues
 Route::get('/get-survey-legal-questionnaire-users', 'SurveyController@getSurveyLegalQuestionnaireUser');
 Route::post('/change-legal-user-status', 'SurveyController@changeSurveyLegalQuestionnaireUser');
 
+//Survey Exit Interview Form
+Route::get('/survey-exit-interview-form', 'SurveyController@surveyExitInterviewForm');
+Route::post('/save-survey-exit-interview-form', 'SurveyController@saveSurveyExitInterviewForm');
+Route::get('/get-user-survey-exit-interview-form', 'SurveyController@getUserSurveyExitInterviewForm');
+Route::get('/survey-exit-interview-form-reports', 'SurveyController@surveyExitInterviewReports');
+Route::get('/all-survey-exit-interview', 'SurveyController@allSurveyExitInterview');
+
+
 Auth::routes();
 Route::get('logout', function(){
     return redirect('/');

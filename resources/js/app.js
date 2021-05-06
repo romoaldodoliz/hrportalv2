@@ -55,6 +55,10 @@ Vue.component('survey-legal-questionnaire', require('./components/Surveys/Survey
 Vue.component('survey-legal-questionnaire-users', require('./components/Surveys/SurveyLegalQuestionnaireUser.vue').default);
 
 
+Vue.component('survey-exit-interview-form', require('./components/Surveys/SurveyExitInterviewForm.vue').default);
+Vue.component('survey-exit-interview-form-reports', require('./components/Surveys/SurveyExitInterviewFormReports.vue').default);
+
+
 //Reports
 Vue.component('employee-dependent-reports', require('./components/Reports/EmployeeDependentReports.vue').default);
 Vue.component('employee-transfer-reports', require('./components/Reports/EmployeeTransferReports.vue').default);

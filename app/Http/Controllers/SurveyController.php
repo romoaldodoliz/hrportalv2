@@ -10,6 +10,7 @@ use App\SurveyLearningAndDevelopment;
 use App\SurveyCulture;
 use App\SurveyLegalQuestionnaire;
 use App\SurveyLegalQuestionnaireUser;
+use App\SurveyExitInterviewForm;
 
 use DB;
 class SurveyController extends Controller
@@ -251,6 +252,54 @@ class SurveyController extends Controller
             ->where('user_id',$user_id)
             ->first();
         }
+    }
+
+    public function surveyExitInterviewForm(){
+        return view('surveys.survey_exit_interview_form');
+    }
+
+    public function saveSurveyExitInterviewForm(Request $request){
+        
+        $check = SurveyExitInterviewForm::where('user_id',$request->user_id)->first();
+
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+
+            if($check){
+                if($check->update($data)){
+                    DB::commit();
+                    return "saved";
+                }else{
+                    DB::rollBack();
+                    return "error";
+                }
+            }else{
+                if($survey = SurveyExitInterviewForm::create($data)){
+                    DB::commit();
+                    return "saved";
+                }else{
+                    DB::rollBack();
+                    return "error";
+                }
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function getUserSurveyExitInterviewForm(Request $request){
+        return SurveyExitInterviewForm::where('user_id',$request->user_id)->first();
+    }
+
+    public function surveyExitInterviewReports(){
+        return view('surveys.survey_exit_interview_form_reports');
+    }
+
+    public function allSurveyExitInterview(Request $request){
+        
+        return SurveyExitInterviewForm::where('updated_at','>=',$request->from)->whereDate('updated_at','<=',$request->to)->get();
     }
 
 }
