@@ -2128,9 +2128,11 @@ class EmployeeController extends Controller
                     //BU Head
                     if($data['bu_head']){
 
-                        $email_bu_head = 'arjay.lumagdong@lafilgroup.com';
-                        $reciever_name_bu_head = 'Arjay Lumagdong';
-    
+                        $bu_head = Employee::with('user')->where('id',$data['bu_head'])->first();
+
+                        $email_bu_head = $bu_head['user']['email'];
+                        $reciever_name_bu_head = $bu_head['user']['name'];
+
                         $npa_data = [
                             'reciever_name' => $reciever_name_bu_head,
                             'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
