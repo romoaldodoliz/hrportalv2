@@ -119,7 +119,7 @@
                                             <td>{{ employee_id.companies[0] ? employee_id.companies[0].name : '' }}</td>
                                             <td>{{ employee_id.departments[0] ? employee_id.departments[0].name : '' }}</td>
                                             <td>{{ employee_id.locations[0] ? employee_id.locations[0].name : '' }}</td>
-                                            <td v-if="employee_id.print_id_logs.length > 0">{{ employee_id.print_id_logs.length }} No. of Print(s)</td>
+                                            <td v-if="employee_id.print_id_logs.length > 0"><a href="#" data-toggle="modal" data-target="#idlogsModal"  @click="printIDLogs(employee_id.print_id_logs)">{{ employee_id.print_id_logs.length }} No. of Print(s)</a> </td>
                                             <td v-else>Not yet</td>
 
                                             <td class="text-center">
@@ -258,6 +258,44 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="modal fade" id="idlogsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title text-center"> ID Logs</h2>
+                        
+                    </div>
+                    <div class="modal-body">
+                         <div class="table-responsive">
+                            <!-- employees table -->
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">No.</th>
+                                        <th scope="col">Print Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(id_log,index) in idLogs" v-bind:key="index">
+                                        <td>{{index+1}}</td>
+                                        <td>{{id_log.created_at}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
@@ -324,7 +362,8 @@ export default {
                     }
                 },
             },
-            checkedIDs : []
+            checkedIDs : [],
+            idLogs : []
          }
     },
     created(){
@@ -335,6 +374,11 @@ export default {
         this.fetchRFIDScans();
     },
     methods:{
+        printIDLogs(printIDLogs){
+            let v = this;
+            v.idLogs = [];
+            v.idLogs = printIDLogs;
+        },
         printQRCodes(){
             axios.post(`/print_qr`, {
                 ids: this.checkedIDs,
