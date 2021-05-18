@@ -79,7 +79,7 @@
                     'Age' : 'age',
                     'Primary reason for leaving' : 'reason_for_leaving',
                     'If primary reason is others, please indicate reason' : 'reason_for_leaving_others',
-                    'If primary reason is work, please indicate main consideration' : 'reason_for_leaving_others',
+                    'If primary reason is work, please indicate main consideration' : 'reason_is_work',
                     'If primary reason is others, please indicate reason' : 'reason_is_work_others',
                     
                     //R1
