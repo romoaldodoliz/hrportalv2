@@ -2108,7 +2108,7 @@ class EmployeeController extends Controller
                     //Approved By
                     if($data['approved_by']){
 
-                        $approved_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
+                        $approved_by = Employee::with('user')->where('id',$data['approved_by'])->first();
 
                         $email_approved_by = $approved_by['user']['email'];
                         $reciever_name_approved_by = $approved_by['user']['name'];
