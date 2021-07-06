@@ -124,7 +124,7 @@ class EmployeeController extends Controller
     }
 
     public function employeeApprovers(Employee $employee){
-        return AssignHead::where('employee_id',$employee->id)->orderBy('created_at', 'DESC')->get();
+        return AssignHead::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
     }
 
     public function employeeDependents(Employee $employee){
