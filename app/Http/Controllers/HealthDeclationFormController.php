@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 class HealthDeclationFormController extends Controller
 {
     public function index(){
+        return redirect('https://hdfemployee.lafilgroup.net:8676');
         return view('health_declartion_form.index');
     }
 
