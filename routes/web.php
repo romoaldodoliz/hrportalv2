@@ -15,9 +15,9 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
+// Route::get('/health_declaration_form', 'HealthDeclationFormController@index')->name('health_declaration_form');
 
-Route::get('/HealthDeclarationFormQr', 'HealthDeclationFormController@indexQr')->name('HealthDeclarationFormQr');
+// Route::get('/HealthDeclarationFormQr', 'HealthDeclationFormController@indexQr')->name('HealthDeclarationFormQr');
 
 Route::get('/get-session-autolock-screen', 'HealthDeclationFormController@autolockScreen');
 Route::post('/unlock-screen', 'HealthDeclationFormController@unlockScreen');
