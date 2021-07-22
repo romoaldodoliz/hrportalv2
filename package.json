@@ -39,6 +39,6 @@
         "vue-pdf-reader": "^0.2.9",
         "vue-search-select": "^2.9.3",
         "vue-select": "^3.2.0",
-        "xlsx": "^0.15.5"
+        "xlsx": "^0.17.0"
     }
 }
