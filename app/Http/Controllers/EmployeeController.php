@@ -1702,7 +1702,12 @@ class EmployeeController extends Controller
                                         'employee_accountabilities' => function($q){
                                             $q->whereNotNull('date_assigned');
                                             $q->whereNull('date_expired');
-                                        }
+                                        },
+                                        'immediate_superior.approver_info',
+                                        'immediate_superior_2.approver_info',
+                                        'department_manager.approver_info',
+                                        'bu_head.approver_info',
+                                        'cluster_head.approver_info',
                                     ))
                                     ->where('status','Active')
                                     ->orderBy('id','ASC')
@@ -1836,40 +1841,28 @@ class EmployeeController extends Controller
 
             $filtered_data[$key]['gender'] = $employee['gender'];
 
-            $immediate_superior = AssignHead::where('employee_id' , $employee['id'])->where('head_id','3')->first();
-            if($immediate_superior){
-                $immediate_superior_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$immediate_superior['employee_head_id'])->where('status','Active')->first();
-                $filtered_data[$key]['immediate_superior'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
-            }else{
-                $filtered_data[$key]['immediate_superior'] = "";
-            }
-
-            $bu_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','4')->first();
-            if($bu_head){
-                $bu_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$bu_head['employee_head_id'])->where('status','Active')->first();
-                $filtered_data[$key]['bu_head'] =  $bu_head_details ? $bu_head_details['first_name'] . ' ' . $bu_head_details['last_name']  : "";
-            }else{
-                $filtered_data[$key]['bu_head'] = "";
-            }
-
-            $cluster_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','5')->first();
-            if($cluster_head){
-                $cluster_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$cluster_head['employee_head_id'])->where('status','Active')->first();
-                $filtered_data[$key]['cluster_head'] =  $cluster_head_details ? $cluster_head_details['first_name'] . ' ' . $cluster_head_details['last_name']  : "";
-            }else{
-                $filtered_data[$key]['cluster_head'] = "";
-            }
-            
             $filtered_data[$key]['status'] = $employee['status'];
         }
+       
         return $filtered_data;
     }
 
     public function exportInactiveEmployees(){
-        $all_employee = Employee::with('companies','departments','locations','employee_accountabilities')
+
+        $all_employee = Employee::with(array('companies',
+                                        'departments',
+                                        'locations',
+                                        'employee_accountabilities',
+                                        'immediate_superior.approver_info',
+                                        'immediate_superior_2.approver_info',
+                                        'department_manager.approver_info',
+                                        'bu_head.approver_info',
+                                        'cluster_head.approver_info',
+                                    ))
                                     ->where('status','Inactive')
                                     ->orderBy('id','ASC')
                                     ->get();
+
         $filtered_data = [];
 
         foreach( $all_employee as $key => $employee ){
@@ -1996,30 +1989,6 @@ class EmployeeController extends Controller
 
             $filtered_data[$key]['gender'] = $employee['gender'];
 
-            $immediate_superior = AssignHead::where('employee_id' , $employee['id'])->where('head_id','3')->first();
-            if($immediate_superior){
-                $immediate_superior_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$immediate_superior['employee_head_id'])->where('status','Active')->first();
-                $filtered_data[$key]['immediate_superior'] =  $immediate_superior_details ? $immediate_superior_details['first_name'] . ' ' . $immediate_superior_details['last_name']  : "";
-            }else{
-                $filtered_data[$key]['immediate_superior'] = "";
-            }
-
-            $bu_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','4')->first();
-            if($bu_head){
-                $bu_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$bu_head['employee_head_id'])->where('status','Active')->first();
-                $filtered_data[$key]['bu_head'] =  $bu_head_details ? $bu_head_details['first_name'] . ' ' . $bu_head_details['last_name']  : "";
-            }else{
-                $filtered_data[$key]['bu_head'] = "";
-            }
-
-            $cluster_head = AssignHead::where('employee_id' , $employee['id'])->where('head_id','5')->first();
-            if($cluster_head){
-                $cluster_head_details = Employee::select('id','first_name', 'last_name','user_id')->where('id',$cluster_head['employee_head_id'])->where('status','Active')->first();
-                $filtered_data[$key]['cluster_head'] =  $cluster_head_details ? $cluster_head_details['first_name'] . ' ' . $cluster_head_details['last_name']  : "";
-            }else{
-                $filtered_data[$key]['cluster_head'] = "";
-            }
-            
             $filtered_data[$key]['status'] = $employee['status'];
         }
         return $filtered_data;

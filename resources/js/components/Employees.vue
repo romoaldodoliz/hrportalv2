@@ -1940,9 +1940,52 @@
                     'BANK NAME': 'bank_name',
                     'BANK ACCOUNT NUMBER': 'bank_account_number',
                     'EMPLOYEE STATUS' : 'employee_status',
-                    'IMMEDIATE SUPERIOR' : 'immediate_superior',
-                    'BU HEAD' : 'bu_head',
-                    'CLUSTER HEAD' : 'cluster_head',
+
+                    'IMMEDIATE SUPERIOR' : {
+                        callback: (value) => {
+                            if(value.immediate_superior.length > 0){
+                                return value.immediate_superior[0].approver_info.first_name + ' ' + value.immediate_superior[0].approver_info.last_name;
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
+                    'IMMEDIATE SUPERIOR II' : {
+                        callback: (value) => {
+                            if(value.immediate_superior_2.length > 0){
+                                return value.immediate_superior_2[0].approver_info.first_name + ' ' + value.immediate_superior_2[0].approver_info.last_name;
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
+                    'DEPARTMENT MANAGER' : {
+                        callback: (value) => {
+                            if(value.department_manager.length > 0){
+                                return value.department_manager[0].approver_info.first_name + ' ' + value.department_manager[0].approver_info.last_name;
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
+                    'BU HEAD' : {
+                        callback: (value) => {
+                            if(value.bu_head.length > 0){
+                                return value.bu_head[0].approver_info.first_name + ' ' + value.bu_head[0].approver_info.last_name;
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
+                    'CLUSTER HEAD' : {
+                        callback: (value) => {
+                            if(value.cluster_head.length > 0){
+                                return value.cluster_head[0].approver_info.first_name + ' ' + value.cluster_head[0].approver_info.last_name;
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
                     
                     //Contact Info
                     'CURRENT ADDRESS' : 'current_address',
