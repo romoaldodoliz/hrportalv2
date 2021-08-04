@@ -384,7 +384,7 @@ class HomeController extends Controller
 
         $client = new Client();
 
-        $response = $client->request('GET', 'http://10.96.4.132:82/api/scan-rfids');
+        $response = $client->request('GET', 'http://10.96.4.132:82/api/rfid_number');
 
         $response = json_decode($response->getBody(), true);
 
