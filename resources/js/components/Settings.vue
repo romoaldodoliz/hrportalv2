@@ -26,11 +26,11 @@
                                 <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-6-tab" data-toggle="tab" href="#tabs-icons-text-6" role="tab" aria-controls="tabs-icons-text-6" aria-selected="false"><i class="fas fa-layer-group mr-2"></i>LEVELS</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-7-tab" data-toggle="tab" href="#tabs-icons-text-7" role="tab" aria-controls="tabs-icons-text-7" aria-selected="false"><i class="fas fa-id-card-alt mr-2"></i> <span style="font-size:12px;">MARITALS STATUS</span> </a>
+                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-7-tab" data-toggle="tab" href="#tabs-icons-text-7" role="tab" aria-controls="tabs-icons-text-7" aria-selected="false"><i class="fas fa-id-card-alt mr-2"></i> <span style="font-size:12px;">MARITAL</span> </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-8-tab" data-toggle="tab" href="#tabs-icons-text-8" role="tab" aria-controls="tabs-icons-text-8" aria-selected="false"><i class="fas fa-layer-group mr-2"></i> <span style="font-size:12px;">CLUSTERS</span> </a>
+                                <a class="nav-link mb-sm-2 mb-md-0" id="tabs-icons-text-8-tab" data-toggle="tab" href="#tabs-icons-text-8" role="tab" aria-controls="tabs-icons-text-8" aria-selected="false"><i class="fas fa-layer-group mr-2"></i> <span style="font-size:12px;">BUSINESS UNIT</span> </a>
                             </li>
                         </ul>
                     </div>
@@ -400,9 +400,9 @@
 
                                 <!-- CLUSTERS -->
                                 <div class="tab-pane fade" id="tabs-icons-text-8" role="tabpanel" aria-labelledby="tabs-icons-text-8-tab">
-                                    CLUSTERS
+                                    BUSINESS UNIT
                                     <div class="col text-right">
-                                        <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addClusterModal" @click="clusterresetForm()">Add Cluster Status</a>
+                                        <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addClusterModal" @click="clusterresetForm()">Add Business Unit</a>
                                     </div>
                                     <div class="row align-items-center">
                                         <div class="col-xl-4 mb-2 mt-3 float-right">
@@ -444,8 +444,8 @@
                                             <button :disabled="!clustersshowNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="clusterssetPage(clustercurrentPage + 1)"> Next </button>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <span class="mr-2">Filtered Cluster Status : {{ clusterfilteredQueues.length }} </span><br>
-                                            <span class="mr-2">Total Cluster Status : {{ clusters.length }}</span>
+                                            <span class="mr-2">Filtered Business Unit : {{ clusterfilteredQueues.length }} </span><br>
+                                            <span class="mr-2">Total Business Unit : {{ clusters.length }}</span>
                                         </div>
                                     </div>
 
@@ -1015,11 +1015,11 @@
                     </button>
                 </div> 
                 <div class="modal-header">
-                    <h2 class="col-12 modal-title text-center" id="addClusterLabel">Edit Cluster</h2>
+                    <h2 class="col-12 modal-title text-center" id="addClusterLabel">Edit Business Unit</h2>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-success" v-if="cluster_updated">
-                        <strong>Success!</strong> Cluster succesfully updated
+                        <strong>Success!</strong> Business Unit succesfully updated
                     </div>
                         <div class="row">
                         <div class="col-md-12">
@@ -1048,11 +1048,11 @@
                     </button>
                 </div> 
                 <div class="modal-header">
-                    <h2 class="col-12 modal-title text-center" id="addClusterLabel">Add Cluster</h2>
+                    <h2 class="col-12 modal-title text-center" id="addClusterLabel">Add Business Unit</h2>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-success" v-if="cluster_added">
-                        <strong>Success!</strong> Cluster succesfully added
+                        <strong>Success!</strong> Business Unit succesfully added
                     </div>
                         <div class="row">
                         <div class="col-md-12">
