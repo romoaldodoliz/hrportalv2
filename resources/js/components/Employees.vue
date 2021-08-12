@@ -1914,7 +1914,8 @@
 
                     //Work Info
                     'COMPANY': 'company',
-                    'CLUSTER': 'cluster',
+                    'BUSINESS UNIT': 'cluster',
+                    'CLUSTER': 'new_cluster',
                     'DEPARTMENT': 'department',
                     'SECTION': 'division',
                     'ESS Employee No.': 'ess_ee_number',
