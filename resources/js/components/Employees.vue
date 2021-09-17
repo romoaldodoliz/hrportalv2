@@ -1074,7 +1074,7 @@
                                                     <label for="role">Philhealth</label>
                                                     <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phil_number">
                                                     <input v-else disabled type="text" class="form-control" v-model="employee_copied.phil_number">
-                                                    <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
+                                                    <span class="text-danger" v-if="errors.phil_number">{{ errors.phil_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">

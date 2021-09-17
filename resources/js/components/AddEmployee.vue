@@ -564,7 +564,7 @@
                                                         <div class="form-group">
                                                             <label for="role">Philhealth</label>
                                                             <input type="text" class="form-control" v-model="employee.phil_number">
-                                                            <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
+                                                            <span class="text-danger" v-if="errors.phil_number">{{ errors.phil_number[0] }}</span> 
                                                         </div>
                                                     </div>    
                                                     <div class="col-md-4">
@@ -624,7 +624,7 @@
             </div>
         </div>
     </div>
-</div>
+
 </template>
 
 
@@ -780,10 +780,10 @@
                 formData.append('contact_number', employee.contact_number ? employee.contact_number : "-");
                 formData.append('contact_relation', employee.contact_relation ? employee.contact_relation : "-");
                 //Identification
-                formData.append('sss_number', employee.sss_number ? employee.sss_number : "-");
-                formData.append('phil_number', employee.phil_number ? employee.phil_number : "-");
-                formData.append('hdmf', employee.hdmf ? employee.hdmf : "-");
-                formData.append('tax_number', employee.tax_number ? employee.tax_number : "-");
+                formData.append('sss_number', employee.sss_number ? employee.sss_number : "");
+                formData.append('phil_number', employee.phil_number ? employee.phil_number : "");
+                formData.append('hdmf', employee.hdmf ? employee.hdmf : "");
+                formData.append('tax_number', employee.tax_number ? employee.tax_number : "");
                 formData.append('tax_status', employee.tax_status ? employee.tax_status : "");
 
                 //Approvers

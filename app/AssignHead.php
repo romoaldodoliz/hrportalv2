@@ -3,11 +3,20 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AssignHead extends Model
+class AssignHead extends Model implements AuditableContract
 {
 	protected $connection = "mysql";
+
+    use SoftDeletes;
 	
+    use Auditable;
+    protected $auditIncluded = [];
+    protected $auditTimestamps = true;
+
     protected $fillable = [
     	'employee_id',
     	'employee_head_id',
