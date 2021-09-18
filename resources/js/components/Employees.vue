@@ -532,6 +532,7 @@
                                                         <option value="Regular">Regular</option>
                                                         <option value="Consultant">Consultant</option>
                                                         <option value="Project">Project Based</option>
+                                                        <option value="Contractual">Contractual</option>
                                                     </select>
                                                     <select v-else disabled class="form-control" v-model="employee_copied.classification" id="department">
                                                         <option value="">Choose Classification</option>
@@ -539,6 +540,7 @@
                                                         <option value="Regular">Regular</option>
                                                         <option value="Consultant">Consultant</option>
                                                         <option value="Project">Project Based</option>
+                                                        <option value="Contractual">Contractual</option>
                                                     </select>
                                                     <span class="text-danger" v-if="errors.classification">{{ errors.classification[0] }}</span> 
                                                 </div>
