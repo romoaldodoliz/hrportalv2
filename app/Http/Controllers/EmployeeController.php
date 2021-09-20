@@ -140,8 +140,8 @@ class EmployeeController extends Controller
     }
 
     public function employeeHeadApprovers(){
-        return Employee::select('id','user_id','first_name','last_name','position')->where('level','!=','RANK&FILE')->whereNotNull('level')->where('status','Active')->orderBy('last_name','ASC')->get();
-        // return Employee::select('id','user_id','first_name','last_name','position')->where('status','Active')->orderBy('last_name','ASC')->get();
+        // return Employee::select('id','user_id','first_name','last_name','position')->where('level','!=','RANK&FILE')->whereNotNull('level')->where('status','Active')->orderBy('last_name','ASC')->get();
+        return Employee::select('id','user_id','first_name','last_name','position')->where('status','Active')->orderBy('last_name','ASC')->get();
     }
 
     public function employeeApprovalRequest(Employee $employee){
