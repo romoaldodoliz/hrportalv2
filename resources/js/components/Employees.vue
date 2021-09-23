@@ -912,20 +912,20 @@
                                                         <tbody>
                                                             <tr v-for="(row,index) in dependents" v-bind:key="index">
                                                                 <td>
-                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
-                                                                   <input v-else disabled type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.dependent_name" style="width:150px;" @input="row.dependent_name=$event.target.value.toUpperCase()">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.dependent_name" style="width:150px;" @input="row.dependent_name=$event.target.value.toUpperCase()">     
                                                                 </td>
                                                                 <td>
-                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
-                                                                   <input v-else disabled type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.first_name" style="width:150px;" @input="row.first_name=$event.target.value.toUpperCase()">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.first_name" style="width:150px;" @input="row.first_name=$event.target.value.toUpperCase()">     
                                                                 </td>
                                                                 <td>
-                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
-                                                                   <input v-else disabled type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.last_name" style="width:150px;"  @input="row.last_name=$event.target.value.toUpperCase()">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.last_name" style="width:150px;"  @input="row.last_name=$event.target.value.toUpperCase()">     
                                                                 </td>
                                                                 <td>
-                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
-                                                                   <input v-else disabled type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                                   <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="row.middle_name" style="width:150px;" @input="row.middle_name=$event.target.value.toUpperCase()">     
+                                                                   <input v-else disabled type="text" class="form-control" v-model="row.middle_name" style="width:150px;"  @input="row.middle_name=$event.target.value.toUpperCase()">     
                                                                 </td>
                                                                 <td>
                                                                     <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">

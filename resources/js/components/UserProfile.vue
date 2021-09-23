@@ -519,16 +519,16 @@
                                         <tbody>
                                             <tr v-for="(row,index) in dependents" v-bind:key="index">
                                                 <td>
-                                                    <input type="text" class="form-control" v-model="row.dependent_name" style="width:150px;">     
+                                                    <input type="text" class="form-control" v-model="row.dependent_name" style="width:150px;" @input="row.dependent_name=$event.target.value.toUpperCase()">     
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control" v-model="row.first_name" style="width:150px;">     
+                                                    <input type="text" class="form-control" v-model="row.first_name" style="width:150px;" @input="row.first_name=$event.target.value.toUpperCase()">     
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control" v-model="row.last_name" style="width:150px;">     
+                                                    <input type="text" class="form-control" v-model="row.last_name" style="width:150px;" @input="row.last_name=$event.target.value.toUpperCase()">     
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control" v-model="row.middle_name" style="width:150px;">     
+                                                    <input type="text" class="form-control" v-model="row.middle_name" style="width:150px;" @input="row.middle_name=$event.target.value.toUpperCase()">     
                                                 </td>
                                                 <td>
                                                     <select class="form-control" v-model="row.dependent_gender" id="dependent_gender" style="width:150px;">
