@@ -323,6 +323,7 @@ class EmployeeController extends Controller
             'company_list' => 'required',
             'department_list' => 'required',
             'location_list' => 'required',
+            'date_hired' => 'required',
             // 'tax_status' => 'required',
         ],[
             'company_list.required' => 'This field is required',

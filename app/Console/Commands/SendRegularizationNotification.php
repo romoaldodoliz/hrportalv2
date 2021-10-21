@@ -62,7 +62,7 @@ class SendRegularizationNotification extends Command
         $data = [];
         
 
-        $all_employees = Employee::select('id','first_name','last_name','date_hired','position','classification','status')->with('companies')->where('classification','Probationary')->where('status','Active')->orderBy('date_hired','DESC')->get();
+        $all_employees = Employee::select('id','first_name','last_name','date_hired','position','classification','status')->with('companies','departments')->where('classification','Probationary')->where('status','Active')->orderBy('date_hired','DESC')->get();
         
         $sent_ctr = 0;
         if($all_employees){
@@ -92,6 +92,7 @@ class SendRegularizationNotification extends Command
                             $data['id'] =  $employee['id'];
                             $data['employee_name'] =  $employee['first_name'] . ' ' . $employee['last_name'];
                             $data['company'] =  $employee['companies'] ? $employee['companies'][0]['name'] : "";
+                            $data['department'] =  $employee['departments'] ? $employee['departments'][0]['name'] : "";
                             $data['position'] =  $employee['position'];
                             $data['date_hired'] =  date('F d, Y',strtotime($employee['date_hired']));
                             $data['classification'] =  $employee['classification'];
