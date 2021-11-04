@@ -9,7 +9,7 @@
     Please be reminded that once the employee reaches 6th month (<b>{{$date_of_regularization}}</b>), without feedback or notice sent to HR, the employee would assume regular employment, as mandated by law.
 </p>
 <p>
-    Feel free to contact Iris May Chan at 2214 or email irismay.chan@lafilgroup.com for further clarifications regarding the regularization process.
+    Feel free to contact Ella Joy Villaplaza thru Webex or email ellajoy.villaplaza@lafilipinauygongco.com for further clarifications regarding the regularization process.
 </p>
 <p>
     Thank you,
