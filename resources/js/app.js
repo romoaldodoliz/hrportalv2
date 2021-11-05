@@ -51,10 +51,17 @@ Vue.component('survey-culture', require('./components/Surveys/SurveyCulture.vue'
 Vue.component('survey-user', require('./components/Surveys/SurveyUser.vue').default);
 Vue.component('survey-culture-export', require('./components/Surveys/SurveyCultureExport.vue').default);
 
+
+//Survey Nov 2021 Culture
+Vue.component('survey-nov-2021-culture', require('./components/Surveys/SurveyNov2021Culture.vue').default);
+Vue.component('survey-nov-2021-culture-export', require('./components/Surveys/SurveyNov2021CultureExport.vue').default);
+
+
+//Survey Legal Questionnaire
 Vue.component('survey-legal-questionnaire', require('./components/Surveys/SurveyLegalQuestionnaire.vue').default);
 Vue.component('survey-legal-questionnaire-users', require('./components/Surveys/SurveyLegalQuestionnaireUser.vue').default);
 
-
+//Survey Exit Interview
 Vue.component('survey-exit-interview-form', require('./components/Surveys/SurveyExitInterviewForm.vue').default);
 Vue.component('survey-exit-interview-form-reports', require('./components/Surveys/SurveyExitInterviewFormReports.vue').default);
 
