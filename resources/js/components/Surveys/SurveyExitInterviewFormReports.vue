@@ -218,7 +218,8 @@
                     "a. comments r11" : 'r11_a_comments',
                     'b. I would consider returning to this company if there is an opportunity in the future.' : 'r11_b',
                     'b. comments r11' : 'r11_b_comments',
-                    "Other suggestions for improvement:" : 'other_suggestions_for_improvement'
+                    "Other suggestions for improvement:" : 'other_suggestions_for_improvement',
+                    "Date" : 'created_at',
                 }
             }
         },

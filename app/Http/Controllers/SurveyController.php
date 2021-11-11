@@ -369,8 +369,7 @@ class SurveyController extends Controller
     }
 
     public function allSurveyExitInterview(Request $request){
-        
-        return SurveyExitInterviewForm::where('updated_at','>=',$request->from)->whereDate('updated_at','<=',$request->to)->get();
+        return SurveyExitInterviewForm::where('created_at','>=',$request->from)->whereDate('created_at','<=',$request->to)->get();
     }
 
 }
