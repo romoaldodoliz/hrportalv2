@@ -368,7 +368,7 @@
                             <!-- Q10 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4 v-if="language == 'English'">10.	Which of the following statements are incorrect:</h4>
+                                <h4 v-if="language == 'English'">10.	Which of the following statements is incorrect:</h4>
                                 <h4 v-else>10.	Alin sa mga sumusunod ang mali:</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-radio mb-3">
