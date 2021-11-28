@@ -9,6 +9,7 @@ use App\SettingsSurvey;
 use App\SurveyLearningAndDevelopment;
 use App\SurveyCulture;
 use App\SurveyNov2021Culture;
+use App\SurveyDec2021CqaCulture;
 use App\SurveyLegalQuestionnaire;
 use App\SurveyLegalQuestionnaireUser;
 use App\SurveyExitInterviewForm;
@@ -249,6 +250,86 @@ class SurveyController extends Controller
         return view('surveys.export_survey_nov_2021_culture');
     }
 
+    //-----------------------------------------------------------------------------
+    // DECEMBER 2021 SURVEY CQA CULTURE
+    public function surveyDec2021CqaCulture(Request $request){
+        $user_id = $request->user_id;
+        session([
+            'survey_dec_2021_cqa_culture_user_id' => $user_id
+        ]);
+        $check  = SurveyDec2021CqaCulture::where('user_id',$user_id)->first();
+        if($check){
+            return redirect('http://10.96.4.70/login');
+        }else{
+            return view('surveys.survey_dec_2021_cqa_culture');
+        }
+    }
+
+    public function getUserSurveyDec2021CqaCulture(){
+        $user_session_id = session('survey_dec_2021_cqa_culture_user_id');
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+
+    public function saveSurveyDec2021CqaCulture(Request $request){
+        
+        $this->validate($request, [
+            'q1' => 'required',
+            'q2' => 'required',
+            'q3' => 'required',
+            'q4' => 'required',
+            'q5' => 'required',
+            'q6' => 'required',
+            'q7' => 'required',
+            'q8' => 'required',
+            'q9' => 'required',
+            'q10' => 'required',
+            'q11' => 'required',
+            'q12' => 'required',
+            'q13' => 'required',
+            'q14' => 'required',
+            'q15' => 'required',
+        ],[
+            'q1.required' => 'This field is required.',
+            'q2.required' => 'This field is required.',
+            'q3.required' => 'This field is required.',
+            'q4.required' => 'This field is required.',
+            'q5.required' => 'This field is required.',
+            'q6.required' => 'This field is required.',
+            'q7.required' => 'This field is required.',
+            'q8.required' => 'This field is required.',
+            'q9.required' => 'This field is required.',
+            'q10.required' => 'This field is required.',
+            'q11.required' => 'This field is required.',
+            'q12.required' => 'This field is required.',
+            'q13.required' => 'This field is required.',
+            'q14.required' => 'This field is required.',
+            'q15.required' => 'This field is required.',
+        ]);
+
+       DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $data['date_answered'] = date('Y-m-d');
+            $data['time_answered'] = date('h:i:s');
+            if($survey = SurveyDec2021CqaCulture::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function allSurveyDec2021CqaCulture(){
+        return $survey = SurveyDec2021CqaCulture::with('employee')->orderBy('created_at','ASC')->get();
+    }
+    public function exportSurveyDec2021CqaCulture(){
+        return view('surveys.export_survey_dec_2021_cqa_culture');
+    }
+
 
     //Survey Legal
     public function surveyLegalQuestionnaire(Request $request){
@@ -371,5 +452,4 @@ class SurveyController extends Controller
     public function allSurveyExitInterview(Request $request){
         return SurveyExitInterviewForm::where('created_at','>=',$request->from)->whereDate('created_at','<=',$request->to)->get();
     }
-
 }

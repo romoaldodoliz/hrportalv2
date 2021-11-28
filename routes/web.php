@@ -91,6 +91,13 @@ Route::post('/save-survey-nov-2021-culture', 'SurveyController@saveSurveyNov2021
 Route::get('/export-survey-nov-2021-culture', 'SurveyController@exportSurveyNov2021Culture');
 Route::get('/all-survey-nov-2021-culture', 'SurveyController@allSurveyNov2021Culture');
 
+//Survey Dec 2021 Culture
+Route::get('/survey-dec-2021-cqa-culture', 'SurveyController@surveyDec2021CqaCulture');
+Route::get('/get-user-survey-dec-2021-cqa-culture', 'SurveyController@getUserSurveyDec2021CqaCulture');
+Route::post('/save-survey-dec-2021-cqa-culture', 'SurveyController@saveSurveyDec2021CqaCulture');
+Route::get('/export-survey-dec-2021-cqa-culture', 'SurveyController@exportSurveyDec2021CqaCulture');
+Route::get('/all-survey-dec-2021-cqa-culture', 'SurveyController@allSurveyDec2021CqaCulture');
+
 //Survey Legal Questionnaire
 Route::get('/survey-legal-questionnaire', 'SurveyController@surveyLegalQuestionnaire');
 Route::get('/get-survey-legal-questionnaire', 'SurveyController@getsurveyLegalQuestionnaire');

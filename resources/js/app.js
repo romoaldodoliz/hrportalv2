@@ -55,6 +55,7 @@ Vue.component('survey-culture-export', require('./components/Surveys/SurveyCultu
 //Survey Nov 2021 Culture
 Vue.component('survey-nov-2021-culture', require('./components/Surveys/SurveyNov2021Culture.vue').default);
 Vue.component('survey-nov-2021-culture-export', require('./components/Surveys/SurveyNov2021CultureExport.vue').default);
+Vue.component('survey-dec-2021-cqa-culture-export', require('./components/Surveys/SurveyDec2021CqaCultureExport.vue').default);
 
 
 //Survey Legal Questionnaire
