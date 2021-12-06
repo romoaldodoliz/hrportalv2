@@ -328,6 +328,7 @@ export default {
             timer : '',
             error_tap : true,
             json_fields: {
+                'User ID' : 'user_id',
                 'Employee number' : 'id_number',
                 'First Name' : 'first_name',
                 'Last Name' : 'last_name',
