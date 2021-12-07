@@ -3114,12 +3114,14 @@
 
                 //Validate Marital Status
                 this.validateMaritalStatus();
+                
+                if(this.user_access_rights.monthly_basic_salary == 'YES'){
+                    //Employee basic salary
+                    this.fetchMonthlyBasicSalary();
 
-                //Employee basic salary
-                this.fetchMonthlyBasicSalary();
-
-                //Salary record
-                this.fetchSalaryRecords();
+                    //Salary record
+                    this.fetchSalaryRecords();
+                }
 
                 //Attachment
                 var num = Math.random();
