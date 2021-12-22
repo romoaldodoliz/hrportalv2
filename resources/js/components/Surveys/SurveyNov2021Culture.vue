@@ -166,6 +166,10 @@
                                         <label  v-else class="custom-control-label" for="l1_2" >B.	Hindi</label>
                                     </div>
                                 </div>
+
+                                <div class="col-12 mt-2">
+                                    <span class="text-danger" v-if="errors.l1">{{errors.l1[0]}}</span>
+                                </div>
                             </div>
                             <!-- L3 -->
                             <div class="col-md-12">
@@ -184,6 +188,9 @@
                                         <label  v-if="language == 'English'" class="custom-control-label" for="l2_2" >B.	No</label>
                                         <label  v-else class="custom-control-label" for="l2_2" >B.	Hindi</label>
                                     </div>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <span class="text-danger" v-if="errors.l2">{{errors.l2[0]}}</span>
                                 </div>
                             </div>
 

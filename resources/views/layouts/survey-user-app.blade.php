@@ -32,6 +32,6 @@
         </div>
     </div>
     @stack('js')
-    <script src="{{ asset('js/all.js') }}" defer></script>
+    <script src="{{ asset('js/all.js?v=1.2.0') }}" defer></script>
 </body>
 </html>
