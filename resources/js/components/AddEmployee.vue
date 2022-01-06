@@ -366,6 +366,7 @@
                                                                 <option value="Inactive">Inactive</option> 
                                                                 <option value="On-hold">On-hold</option> 
                                                                 <option value="Notification">Notification</option> 
+                                                                <option value="Deleted">Deleted</option> 
                                                             </select>
                                                             <span class="text-danger" v-if="errors.status">{{ errors.status[0] }}</span> 
                                                         </div>
