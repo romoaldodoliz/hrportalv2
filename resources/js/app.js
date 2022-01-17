@@ -59,6 +59,9 @@ Vue.component('survey-nov-2021-culture-export', require('./components/Surveys/Su
 Vue.component('survey-dec-2021-cqa-culture', require('./components/Surveys/SurveyDec2021CqaCulture.vue').default);
 Vue.component('survey-dec-2021-cqa-culture-export', require('./components/Surveys/SurveyDec2021CqaCultureExport.vue').default);
 
+Vue.component('pre-test-cleaning-tempering-and-conditioning', require('./components/Surveys/PreTestWheatCleaningTemperingAndConditioning.vue').default);
+Vue.component('pre-test-cleaning-tempering-and-conditioning-export', require('./components/Surveys/PreTestWheatCleaningTemperingAndConditioningExport.vue').default);
+
 
 //Survey Legal Questionnaire
 Vue.component('survey-legal-questionnaire', require('./components/Surveys/SurveyLegalQuestionnaire.vue').default);

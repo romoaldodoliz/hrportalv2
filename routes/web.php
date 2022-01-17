@@ -98,6 +98,13 @@ Route::post('/save-survey-dec-2021-cqa-culture', 'SurveyController@saveSurveyDec
 Route::get('/export-survey-dec-2021-cqa-culture', 'SurveyController@exportSurveyDec2021CqaCulture');
 Route::get('/all-survey-dec-2021-cqa-culture', 'SurveyController@allSurveyDec2021CqaCulture');
 
+//Survey Dec 2021 Culture
+Route::get('/pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@preTestWheatCleaningTemperingAndConditioning');
+Route::get('/get-user-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@getUserPreTestWheatCleaningTemperingAndConditioning');
+Route::post('/save-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@savePreTestWheatCleaningTemperingAndConditioning');
+Route::get('/export-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@exportPreTestWheatCleaningTemperingAndConditioning');
+Route::get('/all-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@allPreTestWheatCleaningTemperingAndConditioning');
+
 //Survey Legal Questionnaire
 Route::get('/survey-legal-questionnaire', 'SurveyController@surveyLegalQuestionnaire');
 Route::get('/get-survey-legal-questionnaire', 'SurveyController@getsurveyLegalQuestionnaire');

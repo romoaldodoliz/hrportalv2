@@ -14,6 +14,8 @@ use App\SurveyLegalQuestionnaire;
 use App\SurveyLegalQuestionnaireUser;
 use App\SurveyExitInterviewForm;
 
+use App\PreTestWheatCleaningTemperingAndConditioning;
+
 use DB;
 class SurveyController extends Controller
 {
@@ -332,6 +334,167 @@ class SurveyController extends Controller
     }
     public function exportSurveyDec2021CqaCulture(){
         return view('surveys.export_survey_dec_2021_cqa_culture');
+    }
+
+    // PRE TEST WHEAT CLEANING TEMPERING AND CONDITIONING
+    public function preTestWheatCleaningTemperingAndConditioning(Request $request){
+        $user_id = $request->user_id;
+        session([
+            'pre_test_wheat_cleaning_tempering_and_conditioning_user_id' => $user_id
+        ]);
+        $check  = PreTestWheatCleaningTemperingAndConditioning::where('user_id',$user_id)->first();
+        if($check){
+            return redirect('http://10.96.4.70/login');
+        }else{
+            return view('surveys.pre_test_wheat_cleaning_tempering_and_conditioning');
+        }
+    }
+
+    public function getUserPreTestWheatCleaningTemperingAndConditioning(){
+        $user_session_id = session('pre_test_wheat_cleaning_tempering_and_conditioning_user_id');
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+
+    public function savePreTestWheatCleaningTemperingAndConditioning(Request $request){
+        
+        $this->validate($request, [
+            'q1' => 'required',
+            'q2' => 'required',
+            'q3' => 'required',
+            'q4' => 'required',
+            'q5' => 'required',
+            'q6' => 'required',
+            'q7' => 'required',
+            'q8' => 'required',
+            'q9' => 'required',
+            'q10' => 'required',
+            'q11' => 'required',
+            'q12' => 'required',
+            'q13' => 'required',
+            'q14' => 'required',
+            'q15' => 'required',
+            'q16' => 'required',
+            'q17' => 'required',
+            'q18' => 'required',
+            'q19' => 'required',
+            'q20' => 'required',
+            'q21' => 'required',
+            'q22' => 'required',
+            'q23' => 'required',
+            'q24_a' => 'required',
+            'q24_b' => 'required',
+            'q25' => 'required',
+            'q26_a' => 'required',
+            'q26_b' => 'required',
+            'q26_c' => 'required',
+            'q26_d' => 'required',
+            'q26_e' => 'required',
+            'q26_f' => 'required',
+            'q26_g' => 'required',
+            'q26_h' => 'required',
+            'q26_i' => 'required',
+            'q26_j' => 'required',
+            'q27' => 'required',
+            'q28' => 'required',
+            'q29' => 'required',
+            'q30' => 'required',
+            'q31' => 'required',
+        ]
+        ,[
+            'q1.required' => 'This field is required.',
+            'q2.required' => 'This field is required.',
+            'q3.required' => 'This field is required.',
+            'q4.required' => 'This field is required.',
+            'q5.required' => 'This field is required.',
+            'q6.required' => 'This field is required.',
+            'q7.required' => 'This field is required.',
+            'q8.required' => 'This field is required.',
+            'q9.required' => 'This field is required.',
+            'q10.required' => 'This field is required.',
+            'q11.required' => 'This field is required.',
+            'q12.required' => 'This field is required.',
+            'q13.required' => 'This field is required.',
+            'q14.required' => 'This field is required.',
+            'q15.required' => 'This field is required.',
+            'q16.required' => 'This field is required.',
+            'q17.required' => 'This field is required.',
+            'q18.required' => 'This field is required.',
+            'q19.required' => 'This field is required.',
+            'q20.required' => 'This field is required.',
+            'q21.required' => 'This field is required.',
+            'q22.required' => 'This field is required.',
+            'q23.required' => 'This field is required.',
+            'q24_a.required' => 'This field is required.',
+            'q24_b.required' => 'This field is required.',
+            'q25.required' => 'This field is required.',
+            'q26_a.required' => 'This field is required.',
+            'q26_b.required' => 'This field is required.',
+            'q26_c.required' => 'This field is required.',
+            'q26_d.required' => 'This field is required.',
+            'q26_e.required' => 'This field is required.',
+            'q26_f.required' => 'This field is required.',
+            'q26_g.required' => 'This field is required.',
+            'q26_h.required' => 'This field is required.',
+            'q26_i.required' => 'This field is required.',
+            'q26_j.required' => 'This field is required.',
+            'q27.required' => 'This field is required.',
+            'q28.required' => 'This field is required.',
+            'q29.required' => 'This field is required.',
+            'q30.required' => 'This field is required.',
+            'q31.required' => 'This field is required.'
+        ]
+        );
+
+       DB::beginTransaction();
+        try {
+            $data = $request->all();
+
+            $q3 = json_decode($data['q3']);
+            $data['q3'] = implode(",",$q3);
+
+            $q6 = json_decode($data['q6']);
+            $data['q6'] = implode(",",$q6);
+
+            $q7 = json_decode($data['q7']);
+            $data['q7'] = implode(",",$q7);
+
+            $q10 = json_decode($data['q10']);
+            $data['q10'] = implode(",",$q10);
+
+            $q18 = json_decode($data['q18']);
+            $data['q18'] = implode(",",$q18);
+
+            $q20 = json_decode($data['q20']);
+            $data['q20'] = implode(",",$q20);
+
+            $q22 = json_decode($data['q22']);
+            $data['q22'] = implode(",",$q22);
+
+            $q23 = json_decode($data['q23']);
+            $data['q23'] = implode(",",$q23);
+
+            $q25 = json_decode($data['q25']);
+            $data['q25'] = implode(",",$q25);
+
+            $data['date_answered'] = date('Y-m-d');
+            $data['time_answered'] = date('h:i:s');
+            if($survey = PreTestWheatCleaningTemperingAndConditioning::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function allPreTestWheatCleaningTemperingAndConditioning(){
+        return $pretest = PreTestWheatCleaningTemperingAndConditioning::with('employee')->orderBy('created_at','ASC')->get();
+    }
+    public function exportPreTestWheatCleaningTemperingAndConditioning(){
+        return view('surveys.export_pre_test_wheat_cleaning_tempering_and_conditioning');
     }
 
 
