@@ -342,12 +342,12 @@ class SurveyController extends Controller
         session([
             'pre_test_wheat_cleaning_tempering_and_conditioning_user_id' => $user_id
         ]);
-        $check  = PreTestWheatCleaningTemperingAndConditioning::where('user_id',$user_id)->first();
-        if($check){
-            return redirect('http://10.96.4.70/login');
-        }else{
+        // $check  = PreTestWheatCleaningTemperingAndConditioning::where('user_id',$user_id)->first();
+        // if($check){
+        //     return redirect('http://10.96.4.70/login');
+        // }else{
             return view('surveys.pre_test_wheat_cleaning_tempering_and_conditioning');
-        }
+        // }
     }
 
     public function getUserPreTestWheatCleaningTemperingAndConditioning(){
