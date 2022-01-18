@@ -7,7 +7,7 @@
         <div class="container-fluid d-flex align-items-center">
             <div class="row">
                 <div class="col-lg-12 col-md-12">
-                    <h1 class="display-2 text-white text-uppercase">Pre - Test Wheat Cleaning, Tempering and Conditioning</h1>
+                    <h1 class="display-2 text-white text-uppercase text-center">Pre - Test Wheat Cleaning, Tempering and Conditioning</h1>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@
                             <!-- q3 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>3.	What are the documents that the miller's needs to provide to ensure wheat transfer to mill is correct?</h4>
+                                <h4>3.	What are the documents that the miller's needs to provide to ensure wheat transfer to mill is correct? (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q3_1" value="a" v-model="q3">
@@ -217,7 +217,7 @@
                             <!-- q6 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>6.	Give three (3) examples of impurities: </h4>
+                                <h4>6.	Give three (3) examples of impurities: (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q6_1" value="a" v-model="q6">
@@ -257,7 +257,7 @@
                             <!-- q7 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>7.	Give three (3) machines related to wheat cleaning process:</h4>
+                                <h4>7.	Give three (3) machines related to wheat cleaning process: (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q7_1" value="a" v-model="q7">
@@ -361,7 +361,7 @@
                             <!-- q10 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>10.	Give three (3) benefits of wheat cleaning: </h4>
+                                <h4>10.	Give three (3) benefits of wheat cleaning: (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q10_1" value="a" v-model="q10">
@@ -625,7 +625,7 @@
                             <!-- q18 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>18.	Give three (3) machines related to wheat screenings </h4>
+                                <h4>18.	Give three (3) machines related to wheat screenings (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q18_1" value="a" v-model="q18">
@@ -697,7 +697,7 @@
                             <!-- q20 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>20.	SOP for hammer mill </h4>
+                                <h4>20.	SOP for hammer mill (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q20_1" value="a" v-model="q20">
@@ -769,7 +769,7 @@
                             <!-- q22 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>22.	What to do when there is clogged stocks in hammer mill </h4>
+                                <h4>22.	What to do when there is clogged stocks in hammer mill (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q22_1" value="a" v-model="q22">
@@ -809,7 +809,7 @@
                             <!-- q23 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>23.	Give three (3) importance of wheat tempering </h4>
+                                <h4>23.	Give three (3) importance of wheat tempering (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q23_1" value="a" v-model="q23">
@@ -912,7 +912,7 @@
                             <!-- q25 -->
                             <div class="col-md-12">
                                 <hr>
-                                <h4>25.	SOP for auto dampener </h4>
+                                <h4>25.	SOP for auto dampener (select all correct answers)</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="q25_1" value="a" v-model="q25">
@@ -1206,7 +1206,7 @@
                     <div class="card-footer bg-white border-0">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <button id="save-btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="savePreTestWheatCleaningTemperingAndConditioning" style="width:150px;">Save</button>
+                                <button id="save-btn" type="button" class="btn btn-success btn-round btn-fill btn-lg" @click="savePreTestWheatCleaningTemperingAndConditioning" style="width:150px;">Submit</button>
                             </div>
                         </div>
                     </div>
