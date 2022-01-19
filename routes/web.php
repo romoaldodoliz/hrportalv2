@@ -104,6 +104,8 @@ Route::get('/get-user-pre-test-wheat-cleaning-tempering-and-conditioning', 'Surv
 Route::post('/save-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@savePreTestWheatCleaningTemperingAndConditioning');
 Route::get('/export-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@exportPreTestWheatCleaningTemperingAndConditioning');
 Route::get('/all-pre-test-wheat-cleaning-tempering-and-conditioning', 'SurveyController@allPreTestWheatCleaningTemperingAndConditioning');
+Route::get('/get-pre-test-wheat-cleaning-tempering-and-conditioning-users', 'SurveyController@getPreTestWheatCleaningTemperingAndConditioningUsers');
+Route::post('/change-pre-test-wheat-cleaning-tempering-and-conditioning-user-status', 'SurveyController@changePreTestWheatCleaningTemperingAndConditioningUserStatus');
 
 //Survey Legal Questionnaire
 Route::get('/survey-legal-questionnaire', 'SurveyController@surveyLegalQuestionnaire');

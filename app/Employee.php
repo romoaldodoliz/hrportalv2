@@ -182,4 +182,9 @@ class Employee extends Model implements AuditableContract
     {
         return $this->hasOne('App\SurveyLegalQuestionnaireUser','user_id','user_id');
     }
+
+    public function pre_test_wheat_user()
+    {
+        return $this->hasOne('App\PreTestWheatCleaningTemperingAndConditioningUser','user_id','user_id');
+    }
 }

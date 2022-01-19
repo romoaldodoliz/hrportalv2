@@ -15,6 +15,7 @@ use App\SurveyLegalQuestionnaireUser;
 use App\SurveyExitInterviewForm;
 
 use App\PreTestWheatCleaningTemperingAndConditioning;
+use App\PreTestWheatCleaningTemperingAndConditioningUser;
 
 use DB;
 class SurveyController extends Controller
@@ -346,8 +347,39 @@ class SurveyController extends Controller
         // if($check){
         //     return redirect('http://10.96.4.70/login');
         // }else{
-            return view('surveys.pre_test_wheat_cleaning_tempering_and_conditioning');
+        //     $check_pretest = PreTestWheatCleaningTemperingAndConditioningUser::where('user_id',$user_id)->where('status','1')->first();
+        //     if($check_pretest){
+                return view('surveys.pre_test_wheat_cleaning_tempering_and_conditioning');
+        //     }else{
+        //         return redirect('http://10.96.4.70/login');
+        //     }
         // }
+    }
+
+    public function getPreTestWheatCleaningTemperingAndConditioningUsers(){
+        return Employee::select('id','user_id','first_name','last_name','position')->with('user','companies','departments','locations','pre_test_wheat_user')
+                        ->where('status','active')
+                        ->get();
+    }
+
+    public function changePreTestWheatCleaningTemperingAndConditioningUserStatus(Request $request){
+
+        $data = $request->all();
+        $user_id = $data['user_id'];
+        $check = PreTestWheatCleaningTemperingAndConditioningUser::where('user_id',$data['user_id'])->first();
+
+        if($check){
+            unset($data['user_id']);
+            $check->update($data);
+            return Employee::select('id','user_id','first_name','last_name','position')->with('user','companies','departments','locations','pre_test_wheat_user')
+                        ->where('user_id',$user_id)
+                        ->first();
+        }else{
+            PreTestWheatCleaningTemperingAndConditioningUser::create($data);
+            return Employee::select('id','user_id','first_name','last_name','position')->with('user','companies','departments','locations','pre_test_wheat_user')
+            ->where('user_id',$user_id)
+            ->first();
+        }
     }
 
     public function getUserPreTestWheatCleaningTemperingAndConditioning(){
