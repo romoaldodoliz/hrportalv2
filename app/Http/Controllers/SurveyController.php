@@ -343,17 +343,30 @@ class SurveyController extends Controller
         session([
             'pre_test_wheat_cleaning_tempering_and_conditioning_user_id' => $user_id
         ]);
-        $check  = PreTestWheatCleaningTemperingAndConditioning::where('user_id',$user_id)->first();
+
+        $check = PreTestWheatCleaningTemperingAndConditioningUser::where('user_id',$request->user_id)->where('status','1')->first();
         if($check){
-            return redirect('http://10.96.4.70/login');
-        }else{
-            $check_pretest = PreTestWheatCleaningTemperingAndConditioningUser::where('user_id',$user_id)->where('status','1')->first();
-            if($check_pretest){
+           $checkSurvey = PreTestWheatCleaningTemperingAndConditioning::where('user_id',$request->user_id)->first();
+            if(empty($checkSurvey)){
                 return view('surveys.pre_test_wheat_cleaning_tempering_and_conditioning');
             }else{
                 return redirect('http://10.96.4.70/login');
             }
+        }else{
+            return redirect('http://10.96.4.70/login');
         }
+
+        // $check  = PreTestWheatCleaningTemperingAndConditioning::where('user_id',$user_id)->first();
+        // if($check){
+        //     return redirect('http://10.96.4.70/login');
+        // }else{
+        //     $check_pretest = PreTestWheatCleaningTemperingAndConditioningUser::where('user_id',$user_id)->where('status','1')->first();
+        //     if($check_pretest){
+                // return view('surveys.pre_test_wheat_cleaning_tempering_and_conditioning');
+        //     }else{
+        //         return redirect('http://10.96.4.70/login');
+        //     }
+        // }
     }
 
     public function getPreTestWheatCleaningTemperingAndConditioningUsers(){
