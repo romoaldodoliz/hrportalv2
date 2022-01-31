@@ -46,8 +46,11 @@
                                         <div class="col-xl-3 mb-2 float-left">
                                                 <select class="form-control" v-model="employee_status" id="employee_status">
                                                     <option value="">Choose Status</option>
-                                                    <option value="ACTIVE">Active</option>
-                                                    <option value="INACTIVE">Inactive</option>
+                                                    <option value="Active">Active</option> 
+                                                    <option value="Inactive">Inactive</option> 
+                                                    <option value="On-hold">On-hold</option> 
+                                                    <option value="Notification">Notification</option> 
+                                                    <option value="Deleted">Deleted</option> 
                                                 </select>
                                             </div> 
                                         <div class="col-xl-12">
