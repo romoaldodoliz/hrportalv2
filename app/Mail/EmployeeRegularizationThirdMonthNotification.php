@@ -35,6 +35,7 @@ class EmployeeRegularizationThirdMonthNotification extends Mailable
             'employee_name'  =>  $this->employee_data['employee_name'],
             'position'  =>  $this->employee_data['position'],
             'company'  =>  $this->employee_data['company'],
+            'department'  =>  $this->employee_data['department'],
             'date_hired'  =>  $this->employee_data['date_hired'],
             'date_of_regularization'  =>  $this->employee_data['date_of_regularization'],
         ]);
