@@ -70,7 +70,10 @@ Route::post('/fetch-apply-filter-hdf-employee', 'HealthDeclationFormController@f
 
 Route::post('/fetch-apply-filter-hdf-ic-employee', 'HealthDeclationFormController@fetchApplyFilterHDFICEmployee');
 
-//Surveys
+
+
+//Surveys-------------------------------------------------------------------------------------------------------------------------------------------------
+
 Route::get('/survey', 'SurveyController@index');
 Route::get('/get-survey', 'SurveyController@getSurvey');
 Route::get('/user-survey', 'SurveyController@userSurvey');
@@ -116,6 +119,16 @@ Route::post('/save-survey-legal-questionnaire', 'SurveyController@saveSurveyLega
 Route::get('/survey-legal-questionnaire-user', 'SurveyController@surveyLegalQuestionnaireUser');
 Route::get('/get-survey-legal-questionnaire-users', 'SurveyController@getSurveyLegalQuestionnaireUser');
 Route::post('/change-legal-user-status', 'SurveyController@changeSurveyLegalQuestionnaireUser');
+
+
+//Survey Dog Treats
+Route::get('/survey-dog-treats', 'SurveyController@surveyDogTreats');
+Route::get('/get-user-dog-treats', 'SurveyController@getUserSurveyDogTreats');
+Route::post('/save-survey-dog-treats', 'SurveyController@saveSurveyDogTreats');
+Route::get('/export-survey-dog-treats', 'SurveyController@exportSurveyDogTreats');
+Route::get('/all-survey-dog-treats', 'SurveyController@allSurveyDogTreats');
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //Survey Exit Interview Form
 Route::get('/survey-exit-interview-form', 'SurveyController@surveyExitInterviewForm');

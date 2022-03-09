@@ -10,6 +10,7 @@ use App\SurveyLearningAndDevelopment;
 use App\SurveyCulture;
 use App\SurveyNov2021Culture;
 use App\SurveyDec2021CqaCulture;
+use App\SurveyDogTreat;
 use App\SurveyLegalQuestionnaire;
 use App\SurveyLegalQuestionnaireUser;
 use App\SurveyExitInterviewForm;
@@ -542,7 +543,6 @@ class SurveyController extends Controller
         return view('surveys.export_pre_test_wheat_cleaning_tempering_and_conditioning');
     }
 
-
     //Survey Legal
     public function surveyLegalQuestionnaire(Request $request){
         $validate_user = SurveyLegalQuestionnaire::where('user_id',$request->user_id)->where('status','Active')->first();
@@ -618,6 +618,61 @@ class SurveyController extends Controller
         }
     }
 
+    //-----------------------------------------------------------------------------
+    // DOG TREATS
+    public function surveyDogTreats(Request $request){
+        $user_id = $request->user_id;
+        session([
+            'survey_dog_treats_user_id' => $user_id
+        ]);
+        $check  = SurveyDogTreat::where('user_id',$user_id)->first();
+        if($check){
+            return redirect('http://10.96.4.70/login');
+        }else{
+            return view('surveys.survey_dog_treats');
+        }
+    }
+
+    public function getUserSurveyDogTreats(){
+        $user_session_id = session('survey_dog_treats_user_id');
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+
+    public function saveSurveyDogTreats(Request $request){
+        
+        $this->validate($request, [
+            'q1' => 'required',
+            'q2' => 'required'
+        ],[
+            'q1.required' => 'This field is required.',
+            'q2.required' => 'This field is required.'
+        ]);
+
+       DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $data['date_answered'] = date('Y-m-d');
+            $data['time_answered'] = date('h:i:s');
+            if($survey = SurveyDogTreat::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function allSurveyDogTreats(){
+        return $survey = SurveyDogTreat::with('employee')->orderBy('created_at','ASC')->get();
+    }
+    public function exportSurveyDogTreats(){
+        return view('surveys.export_survey_dog_treats');
+    }
+
+    //Exit Interview-----------------------------------------------------------------------------------------------------
     public function surveyExitInterviewForm(){
         return view('surveys.survey_exit_interview_form');
     }
