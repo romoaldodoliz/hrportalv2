@@ -644,15 +644,29 @@ class SurveyController extends Controller
         
         $this->validate($request, [
             'q1' => 'required',
-            'q2' => 'required'
+            'q2_a' => 'required',
+            'q2_b' => 'required',
+            'q2_c' => 'required',
+            'q2_d' => 'required'
         ],[
             'q1.required' => 'This field is required.',
-            'q2.required' => 'This field is required.'
+            'q2_a.required' => 'This field is required.',
+            'q2_b.required' => 'This field is required.',
+            'q2_c.required' => 'This field is required.',
+            'q2_d.required' => 'This field is required.'
         ]);
 
        DB::beginTransaction();
         try {
             $data = $request->all();
+            $q2_a = json_decode($data['q2_a']);
+            $data['q2_a'] = implode(",",$q2_a);
+            $q2_b = json_decode($data['q2_b']);
+            $data['q2_b'] = implode(",",$q2_b);
+            $q2_c = json_decode($data['q2_c']);
+            $data['q2_c'] = implode(",",$q2_c);
+            $q2_d = json_decode($data['q2_d']);
+            $data['q2_d'] = implode(",",$q2_d);
             $data['date_answered'] = date('Y-m-d');
             $data['time_answered'] = date('h:i:s');
             if($survey = SurveyDogTreat::create($data)){

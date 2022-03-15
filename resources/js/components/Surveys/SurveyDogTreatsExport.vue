@@ -67,7 +67,10 @@ import JsonExcel from 'vue-json-excel'
                     'Date Answered' : 'date_answered',
                     'Time Answered' : 'time_answered',
                     'Q1' : 'q1',
-                    'Q2' : 'q2'
+                    'Q2 A' : 'q2_a',
+                    'Q2 B' : 'q2_b',
+                    'Q2 C' : 'q2_c',
+                    'Q2 D' : 'q2_d',
                 }
             }
         },

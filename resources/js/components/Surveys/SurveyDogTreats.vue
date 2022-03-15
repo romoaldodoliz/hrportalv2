@@ -34,12 +34,14 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <hr>
-                                <h4 class="text-center">Good day! Before we start our work, we would like to ask for a few seconds of your time to answer this quick survey regarding your own preference for brand name and packaging design </h4>
+                                <h4 class="text-center">
+                                    Survey Time!!! Good day! We would like to ask for a few seconds of your time to answer this quick survey regarding your preference for brand name and packaging design. PFMC will launch it’s very first dog treats and as part of LFUG-GOC, your feedback is valuable to us. Dog treats are dietary supplements similar to human snack food. They are usually dry and in biscuit form. Treats are given to dogs for training as reward for their good behavior. 
+                                </h4>
                                 <hr>
                             </div>
                             <!-- q1 -->
                             <div class="col-md-12">
-                                <h4>1.	Which of the following proposed brand name (for dog treats) appeals to you most</h4>
+                                <h4>1.	Which of the following proposed brand names appeal to you most?</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-radio mb-3">
                                         <input type="radio" id="q1_1" class="custom-control-input" value="a" v-model="q1">
@@ -88,18 +90,24 @@
                                         <label class="custom-control-label" for="q1_8" >h.	Magnifico</label>
                                     </div>
                                 </div>
+                                <div class="col-12 mt-2">
+                                    <div class="custom-control custom-radio mb-3">
+                                        <input type="radio" id="q1_9" class="custom-control-input" value="i" v-model="q1">
+                                        <label class="custom-control-label" for="q1_9" >i.	None of the above</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-12 mt-2 mb-3">
                                 <span class="text-danger" v-if="errors.q1">{{errors.q1[0]}}</span>
                             </div>
                             <!-- q2 -->
                             <div class="col-md-12">
-                                <h4>2.	Which of the following packaging design appeals to you most (kindly disregard the brand name)</h4>
+                                <h4>2.	Which of the following packaging design elements appeal to you most? </h4>
                                 <center>
                                     <img src="/hr_survey/dog_treats_q2.png" alt="" class="mt-2">
                                 </center>
                                 
-                                <div class="col-12 mt-2">
+                                <!-- <div class="col-12 mt-2">
                                     <div class="custom-control custom-radio mb-3">
                                         <input type="radio" id="q2_1" class="custom-control-input" value="a" v-model="q2">
                                         <label class="custom-control-label" for="q2_1" >a. 1</label>
@@ -134,10 +142,112 @@
                                         <input type="radio" id="q2_6" class="custom-control-input" value="f" v-model="q2">
                                         <label class="custom-control-label" for="q2_6" >f. 6</label>
                                     </div>
+                                </div> -->
+                               
+                                <div class="table-responsive mt-4">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td align="center"><strong>Category</strong></td>
+                                            <td align="center"><strong>1</strong></td>
+                                            <td align="center"><strong>2</strong></td>
+                                            <td align="center"><strong>3</strong></td>
+                                            <td align="center"><strong>4</strong></td>
+                                            <td align="center"><strong>5</strong></td>
+                                            <td align="center"><strong>6</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><strong>Brand Name font</strong></td>
+                                            <td align="center">
+                                                <input type="checkbox" value="1" id="q2_a_1" v-model="q2_a">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="2" id="q2_a_2" v-model="q2_a">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="3" id="q2_a_3" v-model="q2_a">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="4" id="q2_a_4" v-model="q2_a">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="5" id="q2_a_5" v-model="q2_a">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="6" id="q2_a_6" v-model="q2_a">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><strong>Color combination</strong></td>
+                                            <td align="center">
+                                                <input type="checkbox" value="1" id="q2_b_1" v-model="q2_b">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="2" id="q2_b_2" v-model="q2_b">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="3" id="q2_b_3" v-model="q2_b">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="4" id="q2_b_4" v-model="q2_b">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="5" id="q2_b_5" v-model="q2_b">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="6" id="q2_b_6" v-model="q2_b">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><strong>Design execution</strong></td>
+                                            <td align="center">
+                                                <input type="checkbox" value="1" id="q2_c_1" v-model="q2_c">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="2" id="q2_c_2" v-model="q2_c">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="3" id="q2_c_3" v-model="q2_c">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="4" id="q2_c_4" v-model="q2_c">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="5" id="q2_c_5" v-model="q2_c">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="6" id="q2_c_6" v-model="q2_c">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><strong>Overall design</strong></td>
+                                            <td align="center">
+                                                <input type="checkbox" value="1" id="q2_d_1" v-model="q2_d">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="2" id="q2_d_2" v-model="q2_d">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="3" id="q2_d_3" v-model="q2_d">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="4" id="q2_d_4" v-model="q2_d">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="5" id="q2_d_5" v-model="q2_d">
+                                            </td>
+                                            <td align="center">
+                                                <input type="checkbox" value="6" id="q2_d_6" v-model="q2_d">
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
+                                
                             </div>
                             <div class="col-12 mt-2 mb-3">
-                                <span class="text-danger" v-if="errors.q2">{{errors.q2[0]}}</span>
+                                <span class="text-danger" v-if="errors.q2_a">{{errors.q2_a[0]}}</span>
+                                <span class="text-danger" v-else-if="errors.q2_b">{{errors.q2_b[0]}}</span>
+                                <span class="text-danger" v-else-if="errors.q2_c">{{errors.q2_c[0]}}</span>
+                                <span class="text-danger" v-else-if="errors.q2_d">{{errors.q2_d[0]}}</span>
                             </div>
                         </div>
                     </div>
@@ -167,6 +277,10 @@
                 location: '',
                 q1 : '',
                 q2 : '',
+                q2_a : [],
+                q2_b : [],
+                q2_c : [],
+                q2_d : [],
                 errors : [],
                 saveDisable : false
             }
@@ -194,7 +308,10 @@
                             region: v.user.area ? v.user.area : "",
                             hired_date : v.user.date_hired,
                             q1: v.q1 ? v.q1 : "",
-                            q2: v.q2 ? v.q2 : "",
+                            q2_a: v.q2_a.length > 0 ? JSON.stringify(v.q2_a)  : "",
+                            q2_b: v.q2_b.length > 0 ? JSON.stringify(v.q2_b) : "",
+                            q2_c: v.q2_c.length > 0 ? JSON.stringify(v.q2_c) : "",
+                            q2_d: v.q2_d.length > 0 ? JSON.stringify(v.q2_d) : "",
                             _method: 'POST'
                         })
                         .then(response => {
