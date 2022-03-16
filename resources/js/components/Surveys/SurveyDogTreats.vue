@@ -102,48 +102,10 @@
                             </div>
                             <!-- q2 -->
                             <div class="col-md-12">
-                                <h4>2.	Which of the following packaging design elements appeal to you most? </h4>
+                                <h4>2.	Which of the following packaging design elements appeal to you most? (choose only 1 per category)</h4>
                                 <center>
-                                    <img src="/hr_survey/dog_treats_q2.png" alt="" class="mt-2">
+                                    <img src="/hr_survey/dog_treats_q2.png" alt="" class="mt-2" width="100%" height="auto">
                                 </center>
-                                
-                                <!-- <div class="col-12 mt-2">
-                                    <div class="custom-control custom-radio mb-3">
-                                        <input type="radio" id="q2_1" class="custom-control-input" value="a" v-model="q2">
-                                        <label class="custom-control-label" for="q2_1" >a. 1</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <div class="custom-control custom-radio mb-3">
-                                        <input type="radio" id="q2_2" class="custom-control-input" value="b" v-model="q2">
-                                        <label class="custom-control-label" for="q2_2" >b. 2</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <div class="custom-control custom-radio mb-3">
-                                        <input type="radio" id="q2_3" class="custom-control-input" value="c" v-model="q2">
-                                        <label class="custom-control-label" for="q2_3" >c. 3</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <div class="custom-control custom-radio mb-3">
-                                        <input type="radio" id="q2_4" class="custom-control-input" value="d" v-model="q2">
-                                        <label class="custom-control-label" for="q2_4" >d. 4</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <div class="custom-control custom-radio mb-3">
-                                        <input type="radio" id="q2_5" class="custom-control-input" value="e" v-model="q2">
-                                        <label class="custom-control-label" for="q2_5" >e. 5</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <div class="custom-control custom-radio mb-3">
-                                        <input type="radio" id="q2_6" class="custom-control-input" value="f" v-model="q2">
-                                        <label class="custom-control-label" for="q2_6" >f. 6</label>
-                                    </div>
-                                </div> -->
-                               
                                 <div class="table-responsive mt-4">
                                     <table class="table table-bordered">
                                         <tr>
@@ -158,85 +120,85 @@
                                         <tr>
                                             <td align="center"><strong>Brand Name font</strong></td>
                                             <td align="center">
-                                                <input type="checkbox" value="1" id="q2_a_1" v-model="q2_a">
+                                                <input type="radio" value="1" id="q2_a_1" v-model="q2_a">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="2" id="q2_a_2" v-model="q2_a">
+                                                <input type="radio" value="2" id="q2_a_2" v-model="q2_a">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="3" id="q2_a_3" v-model="q2_a">
+                                                <input type="radio" value="3" id="q2_a_3" v-model="q2_a">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="4" id="q2_a_4" v-model="q2_a">
+                                                <input type="radio" value="4" id="q2_a_4" v-model="q2_a">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="5" id="q2_a_5" v-model="q2_a">
+                                                <input type="radio" value="5" id="q2_a_5" v-model="q2_a">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="6" id="q2_a_6" v-model="q2_a">
+                                                <input type="radio" value="6" id="q2_a_6" v-model="q2_a">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center"><strong>Color combination</strong></td>
                                             <td align="center">
-                                                <input type="checkbox" value="1" id="q2_b_1" v-model="q2_b">
+                                                <input type="radio" value="1" id="q2_b_1" v-model="q2_b">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="2" id="q2_b_2" v-model="q2_b">
+                                                <input type="radio" value="2" id="q2_b_2" v-model="q2_b">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="3" id="q2_b_3" v-model="q2_b">
+                                                <input type="radio" value="3" id="q2_b_3" v-model="q2_b">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="4" id="q2_b_4" v-model="q2_b">
+                                                <input type="radio" value="4" id="q2_b_4" v-model="q2_b">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="5" id="q2_b_5" v-model="q2_b">
+                                                <input type="radio" value="5" id="q2_b_5" v-model="q2_b">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="6" id="q2_b_6" v-model="q2_b">
+                                                <input type="radio" value="6" id="q2_b_6" v-model="q2_b">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center"><strong>Design execution</strong></td>
                                             <td align="center">
-                                                <input type="checkbox" value="1" id="q2_c_1" v-model="q2_c">
+                                                <input type="radio" value="1" id="q2_c_1" v-model="q2_c">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="2" id="q2_c_2" v-model="q2_c">
+                                                <input type="radio" value="2" id="q2_c_2" v-model="q2_c">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="3" id="q2_c_3" v-model="q2_c">
+                                                <input type="radio" value="3" id="q2_c_3" v-model="q2_c">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="4" id="q2_c_4" v-model="q2_c">
+                                                <input type="radio" value="4" id="q2_c_4" v-model="q2_c">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="5" id="q2_c_5" v-model="q2_c">
+                                                <input type="radio" value="5" id="q2_c_5" v-model="q2_c">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="6" id="q2_c_6" v-model="q2_c">
+                                                <input type="radio" value="6" id="q2_c_6" v-model="q2_c">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center"><strong>Overall design</strong></td>
                                             <td align="center">
-                                                <input type="checkbox" value="1" id="q2_d_1" v-model="q2_d">
+                                                <input type="radio" value="1" id="q2_d_1" v-model="q2_d">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="2" id="q2_d_2" v-model="q2_d">
+                                                <input type="radio" value="2" id="q2_d_2" v-model="q2_d">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="3" id="q2_d_3" v-model="q2_d">
+                                                <input type="radio" value="3" id="q2_d_3" v-model="q2_d">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="4" id="q2_d_4" v-model="q2_d">
+                                                <input type="radio" value="4" id="q2_d_4" v-model="q2_d">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="5" id="q2_d_5" v-model="q2_d">
+                                                <input type="radio" value="5" id="q2_d_5" v-model="q2_d">
                                             </td>
                                             <td align="center">
-                                                <input type="checkbox" value="6" id="q2_d_6" v-model="q2_d">
+                                                <input type="radio" value="6" id="q2_d_6" v-model="q2_d">
                                             </td>
                                         </tr>
                                     </table>
@@ -277,10 +239,10 @@
                 location: '',
                 q1 : '',
                 q2 : '',
-                q2_a : [],
-                q2_b : [],
-                q2_c : [],
-                q2_d : [],
+                q2_a : '',
+                q2_b : '',
+                q2_c : '',
+                q2_d : '',
                 errors : [],
                 saveDisable : false
             }
@@ -308,10 +270,10 @@
                             region: v.user.area ? v.user.area : "",
                             hired_date : v.user.date_hired,
                             q1: v.q1 ? v.q1 : "",
-                            q2_a: v.q2_a.length > 0 ? JSON.stringify(v.q2_a)  : "",
-                            q2_b: v.q2_b.length > 0 ? JSON.stringify(v.q2_b) : "",
-                            q2_c: v.q2_c.length > 0 ? JSON.stringify(v.q2_c) : "",
-                            q2_d: v.q2_d.length > 0 ? JSON.stringify(v.q2_d) : "",
+                            q2_a: v.q2_a ? v.q2_a  : "",
+                            q2_b: v.q2_b ? v.q2_b : "",
+                            q2_c: v.q2_c ? v.q2_c : "",
+                            q2_d: v.q2_d ? v.q2_d : "",
                             _method: 'POST'
                         })
                         .then(response => {
