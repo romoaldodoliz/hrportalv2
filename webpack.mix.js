@@ -19,5 +19,5 @@ mix.styles([
 .js([
     'public/js/script.js',
     'resources/js/app.js',],
-    'public/js/all.js')
+    'public/js/all-1.2.0.js')
 .browserSync('http://hrportalv2new.local/');

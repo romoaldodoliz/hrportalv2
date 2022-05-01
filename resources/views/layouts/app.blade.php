@@ -35,7 +35,7 @@
     </div>
     @stack('js')
     <!-- Scripts -->
-    <script src="{{ asset('js/all.js?v=1.2.0') }}"></script>
+    <script src="{{ asset('js/all-1.2.0.js') }}"></script>
     <!-- Argon JS -->
     {{-- <script src="{{ asset('js/argon.min.js?v=1.0.0') }}"></script> --}}
     

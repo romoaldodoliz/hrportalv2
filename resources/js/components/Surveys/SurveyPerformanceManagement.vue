@@ -355,7 +355,7 @@
                 }
             },
             getUser(){
-                axios.get('/get-user-dog-treats')
+                axios.get('/get-user-performance-management')
                 .then(response => { 
                     this.user = response.data;
                     this.position = response.data.position;
