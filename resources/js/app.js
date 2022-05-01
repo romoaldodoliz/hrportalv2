@@ -63,6 +63,9 @@ Vue.component('survey-dec-2021-cqa-culture-export', require('./components/Survey
 Vue.component('survey-dog-treats', require('./components/Surveys/SurveyDogTreats.vue').default);
 Vue.component('survey-dog-treats-export', require('./components/Surveys/SurveyDogTreatsExport.vue').default);
 
+Vue.component('survey-performance-management', require('./components/Surveys/SurveyPerformanceManagement.vue').default);
+Vue.component('survey-performance-management-export', require('./components/Surveys/SurveyPerformanceManagementExport.vue').default);
+
 Vue.component('pre-test-cleaning-tempering-and-conditioning', require('./components/Surveys/PreTestWheatCleaningTemperingAndConditioning.vue').default);
 Vue.component('pre-test-cleaning-tempering-and-conditioning-export', require('./components/Surveys/PreTestWheatCleaningTemperingAndConditioningExport.vue').default);
 

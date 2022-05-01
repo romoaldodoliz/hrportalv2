@@ -128,6 +128,13 @@ Route::post('/save-survey-dog-treats', 'SurveyController@saveSurveyDogTreats');
 Route::get('/export-survey-dog-treats', 'SurveyController@exportSurveyDogTreats');
 Route::get('/all-survey-dog-treats', 'SurveyController@allSurveyDogTreats');
 
+//Survey Performance Management
+Route::get('/survey-performance-management', 'SurveyController@surveyPerformanceManagement');
+Route::get('/get-user-performance-management', 'SurveyController@getUserSurveyPerformanceManagement');
+Route::post('/save-survey-performance-management', 'SurveyController@saveSurveyPerformanceManagement');
+Route::get('/export-survey-performance-management', 'SurveyController@exportSurveyPerformanceManagement');
+Route::get('/all-survey-performance-management', 'SurveyController@allSurveyPerformanceManagement');
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //Survey Exit Interview Form

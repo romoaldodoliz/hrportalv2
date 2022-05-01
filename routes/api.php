@@ -15,6 +15,8 @@ use App\Employee;
 |
 */
 
+Route::get('/org-chart-data','ApiController@orgChartData');
+
 Route::get('/user-login',function(Request $request){
     $user = User::where('email', $request->email)->first();
     if ($user) {

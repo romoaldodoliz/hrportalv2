@@ -14,6 +14,7 @@ use App\SurveyDogTreat;
 use App\SurveyLegalQuestionnaire;
 use App\SurveyLegalQuestionnaireUser;
 use App\SurveyExitInterviewForm;
+use App\SurveyPerformanceManagement;
 
 use App\PreTestWheatCleaningTemperingAndConditioning;
 use App\PreTestWheatCleaningTemperingAndConditioningUser;
@@ -676,6 +677,75 @@ class SurveyController extends Controller
     }
     public function exportSurveyDogTreats(){
         return view('surveys.export_survey_dog_treats');
+    }
+
+    //-----------------------------------------------------------------------------
+    // Performance Management
+    public function surveyPerformanceManagement(Request $request){
+        $user_id = $request->user_id;
+        session([
+            'survey_performance_management_user_id' => $user_id
+        ]);
+        $check  = SurveyPerformanceManagement::where('user_id',$user_id)->first();
+        if($check){
+            return redirect('http://10.96.4.70/login');
+        }else{
+            return view('surveys.survey_performance_management');
+        }
+    }
+
+    public function getUserSurveyPerformanceManagement(){
+        $user_session_id = session('survey_performance_management_user_id');
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+
+    public function saveSurveyPerformanceManagement(Request $request){
+        
+        $this->validate($request, [
+            't1' => 'required',
+            't2' => 'required',
+            't3' => 'required',
+            't4' => 'required',
+            't5' => 'required',
+            'p1' => 'required',
+            'p2' => 'required',
+            'p3' => 'required',
+            'p4' => 'required',
+            'p5' => 'required'
+        ],[
+            't1.required' => 'This field is required.',
+            't2.required' => 'This field is required.',
+            't4.required' => 'This field is required.',
+            't5.required' => 'This field is required.',
+            'p1.required' => 'This field is required.',
+            'p2.required' => 'This field is required.',
+            'p3.required' => 'This field is required.',
+            'p4.required' => 'This field is required.',
+            'p5.required' => 'This field is required.',
+        ]);
+
+       DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $data['date_answered'] = date('Y-m-d');
+            $data['time_answered'] = date('h:i:s');
+            if($survey = SurveyPerformanceManagement::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function allSurveyPerformanceManagement(){
+        return $survey = SurveyPerformanceManagement::with('employee')->orderBy('created_at','ASC')->get();
+    }
+    public function exportSurveyPerformanceManagement(){
+        return view('surveys.export_survey_performance_management');
     }
 
     //Exit Interview-----------------------------------------------------------------------------------------------------
