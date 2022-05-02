@@ -713,7 +713,9 @@ class SurveyController extends Controller
             'p2' => 'required',
             'p3' => 'required',
             'p4' => 'required',
-            'p5' => 'required'
+            'p5' => 'required',
+            'c1' => 'required',
+            'c2' => 'required',
         ],[
             't1.required' => 'This field is required.',
             't2.required' => 'This field is required.',
@@ -724,6 +726,8 @@ class SurveyController extends Controller
             'p3.required' => 'This field is required.',
             'p4.required' => 'This field is required.',
             'p5.required' => 'This field is required.',
+            'c1.required' => 'This field is required.',
+            'c2.required' => 'This field is required.',
         ]);
 
        DB::beginTransaction();
