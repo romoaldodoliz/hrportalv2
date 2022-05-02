@@ -54,7 +54,7 @@ import JsonExcel from 'vue-json-excel'
             return {
                 allSurveyPerformanceManagement: [],
                 json_fields: {
-                    // 'Employee Number' : 'employee_number',
+                    'Employee Number' : 'employee_number',
                     'Name' : 'name',
                     'Cluster' : 'cluster',
                     'Company' : 'company',
@@ -63,7 +63,7 @@ import JsonExcel from 'vue-json-excel'
                     'Position' : 'position',
                     'Region' : 'region',
                     'Location' : 'location',
-                    // 'Hired Date' : 'hired_date',
+                    'Hired Date' : 'hired_date',
                     'Date Answered' : 'date_answered',
                     'Time Answered' : 'time_answered',
                     'T1' : 't1',
