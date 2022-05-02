@@ -163,7 +163,7 @@
                                        </thead>
                                        <tbody>
                                            <tr>
-                                               <td style="text-align: left; width: 200px !important;">1.	The system is simple and easy to use.</td>
+                                               <td style="text-align: left; width: 200px !important;">1.	Performance expectation (KPI and values) are clear to me prior to the evaluation period.</td>
                                                <td style="text-align: center;">
                                                    <input type="radio" value="1" id="p1_a" v-model="p1">
                                                </td>
@@ -178,7 +178,7 @@
                                                </td>
                                            </tr>
                                            <tr>
-                                               <td style="text-align: left; width: 200px !important;">2.    The Key Performance Indicators (KPI) truly reflect my duties and responsibilities as an employee.</td>
+                                               <td style="text-align: left; width: 200px !important;">2.	I feel that I have an opportunity to justify my rating.</td>
                                                <td style="text-align: center;">
                                                    <input type="radio" value="1" id="p2_a" v-model="p2">
                                                </td>
@@ -193,7 +193,7 @@
                                                </td>
                                            </tr>
                                            <tr>
-                                               <td style="text-align: left; width: 200px !important;">3.    The KPIs are realistic and achievable</td>
+                                               <td style="text-align: left; width: 200px !important;">3.	My performance evaluation is fair and objective.</td>
                                                <td style="text-align: center;">
                                                    <input type="radio" value="1" id="p3_a" v-model="p3">
                                                </td>
@@ -208,7 +208,7 @@
                                                </td>
                                            </tr>
                                            <tr>
-                                               <td style="text-align: left; width: 200px !important;">4.	The portion of the values assessment is easy to understand.</td>
+                                               <td style="text-align: left; width: 200px !important;">4.	My final performance rating was discussed with me by my immediate superior (including Performance Improvement Plan if any).</td>
                                                <td style="text-align: center;">
                                                    <input type="radio" value="1" id="p4_a" v-model="p4">
                                                </td>
@@ -223,7 +223,7 @@
                                                </td>
                                            </tr>
                                            <tr>
-                                               <td style="text-align: left; width: 200px !important;">5.	The assessment of the values truly reflects the company’s expectations of my behavior as an employee.</td>
+                                               <td style="text-align: left; width: 200px !important;">5.	The timeline given for the evaluation process is enough.</td>
                                                <td style="text-align: center;">
                                                    <input type="radio" value="1" id="p5_a" v-model="p5">
                                                </td>
