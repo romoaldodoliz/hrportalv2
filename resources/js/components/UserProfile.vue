@@ -174,7 +174,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
+                                        <label for="role">Document Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
                                         <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
                                         <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
                                         <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
@@ -653,7 +653,7 @@
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Tax Status*</label>
                                         <select class="form-control" v-model="employee_copied.tax_status" id="tax_status" :disabled="user_disabled">
@@ -673,7 +673,7 @@
 
                                         <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                     </div>
-                                </div>
+                                </div> -->
                             </div>         
                         </div> 
                          <hr class="my-4">

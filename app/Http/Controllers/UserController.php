@@ -31,7 +31,12 @@ class UserController extends Controller
      */
     public function indexData()
     {
-        return User::with('roles')->orderBy('id', 'desc')->get();
+        return User::with('roles','employees')
+                            ->whereHas('employees',function($q){
+                                $q->where('status','Active');
+                            })
+                            ->orderBy('id', 'desc')
+                            ->get();
     }
 
     /**
@@ -51,7 +56,7 @@ class UserController extends Controller
         if($user = User::create($request->all())){
             // Assigning of role
             $user->syncRoles($request->role);
-            return User::with('roles')->where('id', $user->id)->first();   
+            return User::with('employees','roles')->where('id', $user->id)->first();   
         }
         return false;
     }
@@ -75,9 +80,9 @@ class UserController extends Controller
             // Assigning of role
             DB::table('role_user')->where('user_id',$user->id)->delete();
             $user->attachRole($request->role);
-            return User::with('roles')->where('id', $user->id)->first(); 
+            return User::with('employees','roles')->where('id', $user->id)->first(); 
         }else{
-            return User::with('roles')->where('id', $user->id)->first(); 
+            return User::with('employees','roles')->where('id', $user->id)->first(); 
         }
     }
 

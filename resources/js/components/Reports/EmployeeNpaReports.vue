@@ -77,14 +77,14 @@
                                                 </td>
                                                 <td>{{npa.ctrl_no}}</td>
                                                 <td>{{npa.subject}}</td>
-                                                <td>{{npa.from_type_of_movement}}</td>
+                                                <!-- <td>{{npa.from_type_of_movement}}</td> -->
                                                 <td>{{npa.from_company ? npa.from_company.name : ""}}</td>
                                                 <td>{{npa.from_location ? npa.from_location.name : ""}}</td>
                                                 <td>{{npa.from_position_title}}</td>
                                                 <td>{{npa.from_department ? npa.from_department.name : ""}}</td>
                                                 <td>{{npa.from_immediate_manager ? npa.from_immediate_manager.first_name + ' ' + npa.from_immediate_manager.last_name : ""}}</td>
                                                 <td>{{ npa.effectivity_date}}</td>
-                                                <td>{{npa.to_type_of_movement}}</td>
+                                                <!-- <td>{{npa.to_type_of_movement}}</td> -->
                                                 <td>{{npa.to_company ? npa.to_company.name : ""}}</td>
                                                 <td>{{npa.to_location ? npa.to_location.name : ""}}</td>
                                                 <td>{{npa.to_position_title}}</td>

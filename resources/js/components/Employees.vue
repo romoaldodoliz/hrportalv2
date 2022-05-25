@@ -17,23 +17,7 @@
 
                                             <a v-if="user_access_rights.create == 'YES'" href="/add-employee" class="btn btn-sm btn-primary">Add Employee</a>
 
-                                            <download-excel
-                                                v-if="export_employees.length > 0 && user_access_rights.download_export == 'YES'"
-                                                :data   = "export_employees"
-                                                :fields = "json_fields"
-                                                class   = "btn btn-sm btn-default"
-                                                name    = "All HR Portal Employees.xls">
-                                                    Export to excel (Active)
-                                            </download-excel>
-
-                                            <download-excel
-                                                v-if="export_inactive_employees.length > 0 && user_access_rights.download_export == 'YES'"
-                                                :data   = "export_inactive_employees"
-                                                :fields = "json_fields"
-                                                class   = "btn btn-sm btn-default"
-                                                name    = "All HR Portal Inactive Employees.xls">
-                                                    Export to excel (Inactive)
-                                            </download-excel>
+                                            <a v-if="export_employees.length > 0 && user_access_rights.download_export == 'YES'" href="#" class="btn btn-sm btn-success" @click="showExportEmployees">Export Employees</a>
                                             
                                         </div> 
                                     </div>
@@ -127,7 +111,7 @@
                                                     </div>
                                                 </td>
                                                 <td>{{ employee.id_number }}</td>
-                                                <td>{{ employee.first_name + " "+ employee.last_name }}</td>
+                                                <td>{{ getFullName(employee) }}</td>
                                                 <td>{{ employee.position }}</td>
                                                 <td>{{ employee.companies[0] ? employee.companies[0].name : "" }}</td>
                                                 <td>{{ employee.departments[0] ? employee.departments[0].name : ""  }}</td>
@@ -155,7 +139,7 @@
         </div>
 
         <!-- Edit employee Modal -->
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" v-if="employee_copied">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document" style="width:80%!important;">
                 <div class="modal-content">
                     <div>
@@ -174,19 +158,28 @@
                         <div class="nav-wrapper">
                             <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li class="nav-item" v-if="user_access_rights.personal_info == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i class="fas fa-user-tie mr-2"></i>PERSONAL</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0 active mt-2" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i class="fas fa-user-tie mr-2"></i>PERSONAL INFORMATION</a>
                                 </li>
                                 <li class="nav-item" v-if="user_access_rights.work_info == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i class="fas fa-briefcase mr-2"></i>WORK</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i class="fas fa-briefcase mr-2"></i>WORK INFORMATION</a>
                                 </li>
                                 <li class="nav-item" v-if="user_access_rights.contact_info == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-address-book mr-2"></i>CONTACT</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-address-book mr-2"></i>CONTACT INFORMATION</a>
                                 </li>
                                 <li class="nav-item" v-if="user_access_rights.identification_info == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-4" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-4-tab" data-toggle="tab" href="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-4" aria-selected="false"><i class="fas fa-id-card mr-2"></i>IDENTIFICATION</a>
                                 </li>
                                 <li class="nav-item" v-if="user_access_rights.employee_201_file == 'YES'">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-5-tab" data-toggle="tab" href="#tabs-icons-text-5" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-folder mr-2"></i>201 FILES</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-5-tab" data-toggle="tab" href="#tabs-icons-text-5" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-folder mr-2"></i>201 FILES</a>
+                                </li>
+                                <li class="nav-item" v-if="user_access_rights.job_history == 'YES'">
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-6-tab" data-toggle="tab" href="#tabs-icons-text-6" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-suitcase mr-2"></i>JOB HISTORY</a>
+                                </li>
+                                <li class="nav-item" v-if="user_access_rights.compensation_history == 'YES'">
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-7-tab" data-toggle="tab" href="#tabs-icons-text-7" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-money-check mr-2"></i>COMPENSATION HISTORY</a>
+                                </li>
+                                <li class="nav-item" v-if="user_access_rights.performance_history == 'YES'">
+                                    <a class="nav-link mb-sm-3 mb-md-0 mt-2" id="tabs-icons-text-8-tab" data-toggle="tab" href="#tabs-icons-text-8" role="tab" aria-controls="tabs-icons-text-5" aria-selected="false"><i class="fas fa-chart-line mr-2"></i>PERFORMANCE</a>
                                 </li>
                             </ul>
                         </div>
@@ -268,7 +261,6 @@
                                                     <span class="text-danger" v-if="errors.name_suffix">{{ errors.name_suffix[0] }}</span>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Marital Status*</label> 
@@ -285,7 +277,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
+                                                    <label for="role">Document Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
                                                     <input v-if="user_access_rights.personal_info_edit == 'YES'" type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
                                                     <input v-else disabled type="file" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
                                                     <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
@@ -525,6 +517,45 @@
                                                     <span class="text-danger" v-if="errors.position">{{ errors.position[0] }}</span> 
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="job_position_level">Job Position Level</label>
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.job_position_level">
+                                                        <option value="EXEC 1">EXEC 1</option>
+                                                        <option value="MGR 3">MGR 3</option>
+                                                        <option value="MGR 2">MGR 2</option>
+                                                        <option value="MGR 1">MGR 1</option>
+                                                        <option value="SUP 3">SUP 3</option>
+                                                        <option value="SUP 2">SUP 2</option>
+                                                        <option value="SUP 1">SUP 1</option>
+                                                        <option value="SP 3">SP 3</option>
+                                                        <option value="SP 2">SP 2</option>
+                                                        <option value="SP 1">SP 1</option>
+                                                        <option value="RF 5">RF 5</option>
+                                                        <option value="RF 4">RF 4</option>
+                                                        <option value="RF 3">RF 3</option>
+                                                        <option value="RF 2">RF 2</option>
+                                                        <option value="RF 1">RF 1</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.job_position_level">
+                                                        <option value="EXEC 1">EXEC 1</option>
+                                                        <option value="MGR 3">MGR 3</option>
+                                                        <option value="MGR 2">MGR 2</option>
+                                                        <option value="MGR 1">MGR 1</option>
+                                                        <option value="SUP 3">SUP 3</option>
+                                                        <option value="SUP 2">SUP 2</option>
+                                                        <option value="SUP 1">SUP 1</option>
+                                                        <option value="SP 3">SP 3</option>
+                                                        <option value="SP 2">SP 2</option>
+                                                        <option value="SP 1">SP 1</option>
+                                                        <option value="RF 5">RF 5</option>
+                                                        <option value="RF 4">RF 4</option>
+                                                        <option value="RF 3">RF 3</option>
+                                                        <option value="RF 2">RF 2</option>
+                                                        <option value="RF 1">RF 1</option>
+                                                    </select>
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -581,6 +612,18 @@
                                                     <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span> 
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                   <label></label>
+                                                    <div class="custom-control custom-checkbox mb-3">
+                                                        <input v-if="user_access_rights.work_info_edit == 'YES'" id="is_manager" class="custom-control-input" v-model="employee_copied.is_manager" true-value="YES" false-value="NO" type="checkbox">
+                                                        <input v-else disabled id="is_manager" class="custom-control-input" v-model="employee_copied.is_manager" true-value="YES" false-value="NO" type="checkbox">
+                                                        <label class="custom-control-label" for="is_manager">With direct report/s</label>
+                                                    </div>
+                                                    <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span> 
+                                                </div>
+                                            </div>
+                                              
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -601,8 +644,18 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Area</label>
-                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.area">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.area">
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.area" id="area">
+                                                        <option value="">Choose Area</option>
+                                                        <option value="LUZON">LUZON</option>
+                                                        <option value="VISAYAS">VISAYAS</option>
+                                                        <option value="MINDANAO">MINDANAO</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.area" id="area">
+                                                        <option value="">Choose Area</option>
+                                                        <option value="LUZON">LUZON</option>
+                                                        <option value="VISAYAS">VISAYAS</option>
+                                                        <option value="MINDANAO">MINDANAO</option>
+                                                    </select>
                                                     <span class="text-danger" v-if="errors.area">{{ errors.area[0] }}</span> 
                                                 </div>
                                             </div>
@@ -610,9 +663,11 @@
                                             <div class="col-md-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Monthly Basic Salary</label>
-                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <!-- <input v-if="user_access_rights.work_info_edit == 'YES'" type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
                                                     <input v-else disabled type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
-                                                    <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span> 
+                                                    <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span>  -->
+
+                                                    <VueNumberFormat class="form-control" v-model="employee_copied.monthly_basic_salary" :options="{ prefix: '', precision: 2, decimal: '.', thousand: ',' }"></VueNumberFormat>
                                                 </div>
                                             </div>
 
@@ -650,10 +705,52 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="role">Date Resigned</label>
+                                                    <label for="role">Date of Separation</label>
                                                     <input v-if="user_access_rights.work_info_edit == 'YES'" type="date" class="form-control" v-model="employee_copied.date_resigned">
                                                     <input v-else disabled type="date" class="form-control" v-model="employee_copied.date_resigned">
                                                     <span class="text-danger" v-if="errors.date_resigned">{{ errors.date_resigned[0] }}</span> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Type of Separation</label>
+                                                    <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.type_of_separation">
+                                                        <option value="">Choose Type of Separation</option>
+                                                        <option value="VOLUNTARY">VOLUNTARY</option>
+                                                        <option value="INVOLUNTARY">INVOLUNTARY</option>
+                                                    </select>
+                                                    <select v-else disabled class="form-control" v-model="employee_copied.type_of_separation">
+                                                        <option value="">Choose Type of Separation</option>
+                                                        <option value="VOLUNTARY">VOLUNTARY</option>
+                                                        <option value="INVOLUNTARY">INVOLUNTARY</option>
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.type_of_separation">{{ errors.type_of_separation[0] }}</span> 
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Separation Reason</label>
+                                                    <select class="form-control" v-model="employee_copied.separation_reason">
+                                                        <option value="">Choose Type of Separation</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Career growth">Career growth</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Personal reasons">Personal reasons</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Working conditions">Working conditions</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Job content/ Nature of work">Job content/ Nature of work</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Dissatisfied with Supervisor">Dissatisfied with Supervisor</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Pay">Pay</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Working hours">Working hours</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Career change">Career change</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Return to School">Return to School</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Migration">Migration</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Other Employment">Other Employment</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Health Issues">Health Issues</option>
+                                                        <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="AWOL">AWOL</option>
+                                                        <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Termination">Termination</option>
+                                                        <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Retrenchment">Retrenchment</option>
+                                                        <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Redundancy">Redundancy</option>
+                                                    </select>
+                                                    <span class="text-danger" v-if="errors.type_of_separation">{{ errors.type_of_separation[0] }}</span> 
                                                 </div>
                                             </div>
 
@@ -674,8 +771,7 @@
                                                     <span class="text-danger" v-if="errors.bank_account_number">{{ errors.bank_account_number[0] }}</span> 
                                                 </div>
                                             </div>
-
-                                            
+    
                                             <div class="col-md-12">
                                                 <div class="col-md-6 mb-2"  style="border:1px solid;border-radius:5px;">
                                                     <div class="form-group mt-2">
@@ -785,7 +881,7 @@
                                             <!-- First Level Under            -->
                                             <div class="col-md-12" v-if="employee_unders.length > 0">
                                                 <hr>
-                                                <h4 class="mt-3">TRANSFER ({{employee_unders.length}}) FIRST LEVEL EMPLOYEES UNDER - {{employee_copied.first_name + ' ' + employee_copied.last_name}}</h4>
+                                                <h4 class="mt-3">TRANSFER ALL EMPLOYEES UNDER - {{employee_copied.first_name + ' ' + employee_copied.last_name}}</h4>
                                         
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -810,13 +906,31 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
+                                                    <label for="role">Personal Email</label> 
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.personal_email">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.personal_email">
+                                                    <span class="text-danger" v-if="errors.personal_email">{{ errors.personal_email[0] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6" v-if="employee_copied.user">
+                                                <div class="form-group">
+                                                    <label for="role">Company Email</label> 
+                                                    <input  v-if="user_access_rights.contact_info_edit == 'YES'" type="text" readonly class="form-control" v-model="employee_copied.user.email">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
                                                     <label for="role">Current Address</label>
                                                     <textarea v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="employee_copied.current_address"></textarea>
                                                     <textarea v-else disabled class="form-control" v-model="employee_copied.current_address"></textarea>
                                                     <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                                 </div>
                                             </div>    
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
+                                                <input type="checkbox" v-model="replicated_address" @change="replicateAddress"> Same as Current Address
+                                                <br>
+                                                <br>
                                                 <div class="form-group">
                                                     <label for="role">Permanent Address</label>
                                                     <textarea v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="employee_copied.permanent_address"></textarea>
@@ -827,16 +941,16 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Landline</label>
-                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phone_number">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phone_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phone_number" v-mask="'###-####'" placeholder="XXX-XXXX">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phone_number" v-mask="'###-####'" placeholder="XXX-XXXX">
                                                     <span class="text-danger" v-if="errors.phone_number">{{ errors.phone_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="role">Mobile Number</label>
-                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.mobile_number">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.mobile_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.mobile_number" v-mask="'09##-###-####'">
                                                     <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
                                                 </div>
                                             </div>   
@@ -866,8 +980,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Contact Number</label>
-                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_number">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_number">
+                                                    <input v-if="user_access_rights.contact_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.contact_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.contact_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
                                                     <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                                 </div>
                                             </div>    
@@ -1061,36 +1175,36 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">SSS</label>
-                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.sss_number">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.sss_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.sss_number" v-mask="'##-#######-#'" placeholder="XX-XXXXXXX-X">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.sss_number" v-mask="'##-#######-#'" placeholder="XX-XXXXXXX-X">
                                                     <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">HDMF</label>
-                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.hdmf">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.hdmf">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.hdmf" v-mask="'####-####-####'" placeholder="XXXX-XXXX-XXXX">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.hdmf" v-mask="'####-####-####'" placeholder="XXXX-XXXX-XXXX">
                                                     <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Philhealth</label>
-                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phil_number">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phil_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.phil_number" v-mask="'##-#########-#'" placeholder="XX-XXXXXXXXX-X">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.phil_number" v-mask="'##-#########-#'" placeholder="XX-XXXXXXXXX-X">
                                                     <span class="text-danger" v-if="errors.phil_number">{{ errors.phil_number[0] }}</span> 
                                                 </div>
                                             </div>    
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">TIN</label>
-                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.tax_number">
-                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.tax_number">
+                                                    <input v-if="user_access_rights.identification_info_edit == 'YES'" type="text" class="form-control" v-model="employee_copied.tax_number" v-mask="'###-###-###-000'" placeholder="XXX-XXX-XXX-000">
+                                                    <input v-else disabled type="text" class="form-control" v-model="employee_copied.tax_number" v-mask="'###-###-###-###'" placeholder="XXX-XXX-XXX-000">
                                                     <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                                 </div>
                                             </div>    
-                                            <div class="col-md-4">
+                                            <!-- <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="role">Tax Status*</label>
                                                     <select v-if="user_access_rights.identification_info_edit == 'YES'" class="form-control" v-model="employee_copied.tax_status" id="tax_status">
@@ -1124,7 +1238,7 @@
 
                                                     <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                                 </div>
-                                            </div>    
+                                            </div>     -->
                                         </div>
                                     </div>
                                     <!-- 201 Files -->
@@ -1157,6 +1271,176 @@
                                                     </table>
                                                 </div>     
                                             </div>     
+                                        </div>
+                                    </div>
+                                    <!-- Job History -->
+                                    <div v-if="user_access_rights.job_history == 'YES'" class="tab-pane fade" id="tabs-icons-text-6" role="tabpanel" aria-labelledby="tabs-icons-text-6-tab">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Job History</h4>
+                                                <div v-if="user_access_rights.job_history_edit == 'YES'">
+                                                    <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;"><i class="fas fa-redo" title="Refresh Job History" @click="fetchJobHistory"></i></button>
+                                                    <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addJobHistory">Add Row</button>
+                                                </div>
+                                                
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover" id="tab_job_history">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Job Start Date
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Job End Date
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Position
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Reason
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Job Level
+                                                                </th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(row,index) in job_history" v-bind:key="index">
+                                                                <td>
+                                                                    <input v-if="user_access_rights.job_history_edit == 'YES'" type="date" class="form-control" v-model="row.job_start_date">
+                                                                    <input v-else disabled type="date" class="form-control" v-model="row.job_start_date">
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.job_history_edit == 'YES'" type="date" class="form-control" v-model="row.job_end_date">
+                                                                    <input v-else disabled type="date" class="form-control" v-model="row.job_end_date">
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.job_history_edit == 'YES'" type="text" class="form-control" v-model="row.position" placeholder="Position">
+                                                                    <input v-else disabled type="text" class="form-control" v-model="row.position" placeholder="Position">
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.job_history_edit == 'YES'" type="text" class="form-control" v-model="row.reason" placeholder="Reason">
+                                                                    <input v-else disabled type="text" class="form-control" v-model="row.reason" placeholder="Reason">
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.job_history_edit == 'YES'" type="text" class="form-control" v-model="row.job_level" placeholder="Job Level">
+                                                                    <input v-else disabled type="text" class="form-control" v-model="row.job_level" placeholder="Job Level">
+                                                                </td>
+                                                                <td>
+                                                                    <div v-if="user_access_rights.job_history_edit == 'YES'">
+                                                                        <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeJobHistory(index,row.id)">Remove</button>
+                                                                        <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeJobHistory(index)">Remove</button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Compensation History -->
+                                    <div v-if="user_access_rights.compensation_history == 'YES'" class="tab-pane fade" id="tabs-icons-text-7" role="tabpanel" aria-labelledby="tabs-icons-text-7-tab">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Compensation History</h4>
+                                                <div v-if="user_access_rights.compensation_history_edit == 'YES'">
+                                                    <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;"><i class="fas fa-redo" title="Refresh Job History" @click="fetchCompensationHistory"></i></button>
+                                                    <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addCompensationHistory">Add Row</button>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover" id="tab_job_history">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Effectivity Date
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    New Salary Rate
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Job Grade
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Frequency
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Reason
+                                                                </th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(row,index) in compensation_history" v-bind:key="index">
+                                                                <td>
+                                                                    <input v-if="user_access_rights.compensation_history_edit == 'YES'" type="date" class="form-control" v-model="row.effectivity_date">
+                                                                    <input v-else disabled type="date" class="form-control" v-model="row.effectivity_date">
+                                                                </td>
+                                                                <td>
+                                                                    <VueNumberFormat v-if="user_access_rights.compensation_history_edit == 'YES'" class="form-control" v-model="row.new_salary_rate" :options="{ prefix: '', precision: 2, decimal: '.', thousand: ',' }"></VueNumberFormat>
+                                                                    <VueNumberFormat v-else disabled class="form-control" v-model="row.new_salary_rate" :options="{ prefix: '', precision: 2, decimal: '.', thousand: ',' }"></VueNumberFormat>
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.compensation_history_edit == 'YES'" type="text" class="form-control" v-model="row.job_grade" placeholder="Job Grade">
+                                                                    <input v-else disabled type="text" class="form-control" v-model="row.job_grade" placeholder="Job Grade">
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.compensation_history_edit == 'YES'" type="text" class="form-control" v-model="row.frequency" placeholder="Frequency">
+                                                                    <input v-else disabled type="text" class="form-control" v-model="row.frequency" placeholder="Frequency">
+                                                                </td>
+                                                                <td>
+                                                                    <input v-if="user_access_rights.compensation_history_edit == 'YES'" type="text" class="form-control" v-model="row.reason" placeholder="Reason">
+                                                                    <input v-else disabled type="text" class="form-control" v-model="row.reason" placeholder="Reason">
+                                                                </td>
+                                                                <td>
+                                                                    <div v-if="user_access_rights.compensation_history_edit == 'YES'">
+                                                                        <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeCompensationHistory(index,row.id)">Remove</button>
+                                                                        <button type="button" v-else class="btn btn-success btn-sm mt-2" style="float:right;" @click="removeCompensationHistory(index)">Remove</button>
+                                                                    </div>
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Performance -->
+                                    <div v-if="user_access_rights.performance_history == 'YES'" class="tab-pane fade" id="tabs-icons-text-8" role="tabpanel" aria-labelledby="tabs-icons-text-8-tab">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Performance</h4>
+                                                    <div class="table-responsive">
+                                                    <table class="table table-hover table-bordered" id="tab_job_history">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Evaluation Year
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Performance Rating
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Description
+                                                                </th>
+                                                                <th class="text-center">PDF</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(row,index) in performance_history" v-bind:key="index">
+                                                                <td class="text-center">{{row.settings_quarter_period.name + ' ' + row.settings_quarter_period.year}}</td>
+                                                                <td class="text-center">{{row.total_score}}</td>
+                                                                <td class="text-center">{{row.total_score_status}}</td>
+                                                                <td class="text-center">
+                                                                    <a target="_blank" :href="'https://performance_eval.lafilgroup.net:8675/print-assessment?quarter_period_id='+row.quarter_period_id+'&user_id='+row.user_id+''" class="btn btn-sm btn-primary">View</a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -1353,6 +1637,20 @@
                                             <span class="text-danger" v-if="transfer_errors.date_hired">{{ transfer_errors.date_hired[0] }}</span>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Transferred Date</label>
+                                            <input type="date" class="form-control" v-model="transfer_employee.transferred_date">
+                                            <span class="text-danger" v-if="transfer_errors.transferred_date">{{ transfer_errors.transferred_date[0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="role">Date In Position</label>
+                                            <input type="date" class="form-control" v-model="transfer_employee.date_in_position">
+                                            <span class="text-danger" v-if="transfer_errors.date_in_position">{{ transfer_errors.date_in_position[0] }}</span>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-12">
                                         <h4>New System Approvers</h4>
@@ -1481,7 +1779,7 @@
                                                 </tr>    
                                              </thead>
                                              <tbody>
-                                                 <tr>
+                                                 <!-- <tr>
                                                     <td>
                                                         <h4>Type of Movement</h4>
                                                     </td>
@@ -1515,7 +1813,7 @@
                                                         </select>
                                                         <span class="text-danger" v-if="npa_request_errors.to_type_of_movement">{{ npa_request_errors.to_type_of_movement[0] }}</span> 
                                                     </td>
-                                                 </tr>
+                                                 </tr> -->
                                                  <tr>
                                                     <td>
                                                         <h4>Company</h4>
@@ -1812,6 +2110,70 @@
             </div>
         </div>
 
+        <!-- Export Employee -->
+        <div class="modal fade" id="exportEmployeesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-body">
+                        <h5>Export Employees</h5>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <select class="form-control" v-model="export_employee_selector">
+                                        <option value="">Choose One</option>
+                                        <option value="Probationary/Regular">Probationary/Regular</option>
+                                        <option value="Consultant">Consultant</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <download-excel
+                                    v-if="export_employee_selector == 'Probationary/Regular'"
+                                    :data   = "export_employees"
+                                    :fields = "json_fields"
+                                    class   = "btn btn-sm btn-primary"
+                                    name    = "All HR Portal Employees.xls">
+                                    Active ({{export_employees.length}})
+                                </download-excel>
+
+                                <download-excel
+                                    v-if="export_employee_selector == 'Probationary/Regular'"
+                                    :data   = "export_inactive_employees"
+                                    :fields = "json_fields"
+                                    class   = "btn btn-sm btn-default"
+                                    name    = "All HR Portal Inactive Employees.xls">
+                                    Inactive ({{export_inactive_employees.length}})
+                                </download-excel>
+
+                                <download-excel
+                                    v-if="export_employee_selector == 'Consultant'"
+                                    :data   = "export_consultant_employees"
+                                    :fields = "json_fields"
+                                    class   = "btn btn-sm btn-primary"
+                                    name    = "All HR Portal Consultant Employees.xls">
+                                    Active ({{export_consultant_employees.length}})
+                                </download-excel>
+
+                                <download-excel
+                                    v-if="export_employee_selector == 'Consultant'"
+                                    :data   = "export_inactive_consultant_employees"
+                                    :fields = "json_fields"
+                                    class   = "btn btn-sm btn-default"
+                                    name    = "All HR Portal Inactive Consultant Employees.xls">
+                                    Inactive ({{export_inactive_consultant_employees.length}})
+                                </download-excel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </div>
 </template>
 
@@ -1820,15 +2182,18 @@
     import Swal from 'sweetalert2'
     import JsonExcel from 'vue-json-excel'
     import moment from 'moment';
-
+    import VueMask from 'v-mask';
+    import VueNumberFormat from 'vue-number-format';
+    Vue.use(VueNumberFormat)
+    Vue.use(VueMask)
     export default {
-        components: { 'downloadExcel': JsonExcel,loader },
+        components: { 'downloadExcel': JsonExcel,loader,VueMask },
         data(){
             return {
                 user_access_rights: [],
                 employees: [],
                 employee: [],
-                employee_copied: [],
+                employee_copied: '',
 
                 //Transfer
                 transfer_employee: [],
@@ -1881,6 +2246,8 @@
                 fileSize: 0,
                 export_employees : [],
                 export_inactive_employees : [],
+                export_consultant_employees : [],
+                export_inactive_consultant_employees : [],
                 json_fields: {
                     //Personal Info
                     'USER ID': 'user_id',
@@ -1890,7 +2257,15 @@
                     'MIDDLE INITIAL': 'middle_initial',
                     'NICK NAME': 'nick_name',
                     'LAST NAME': 'last_name',
-                    'FULL NAME': 'full_name',
+                    'FULL NAME': {
+                        callback: (value) => {
+                            if(value){
+                                return this.getFullName(value);
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
                     'NAME SUFFIX': 'name_suffix',
                     'MARITAL STATUS' : 'marital_status',
                     'DATE OF BIRTH' : 'birthdate',
@@ -1925,10 +2300,12 @@
                     'SECTION': 'division',
                     'ESS Employee No.': 'ess_ee_number',
                     'POSITION': 'position',
+                    'JOB POSITION LEVEL': 'job_position_level',
                     'CLASSIFICATION': 'classification',
                     'BASIC SALARY': 'basic_salary',
                     'DATE HIRED': 'date_hired',
-                    'DATE RESIGNED': 'date_resigned',
+                    'DATE OF SEPARATION': 'date_resigned',
+                    'TYPE OF SEPARATION': 'type_of_separation',
                     'TENURE': {
                         callback: (value) => {
                             if(value.date_hired && value.date_hired != '0000-00-00'){
@@ -1941,6 +2318,19 @@
                     '5th month': 'fifth_month',
                     '6th month': 'six_month',
                     'LEVEL': 'level',
+                    'MAXIMUM MBL': {
+                        callback: (value) => {
+                            if(value.level == 'RANK&FILE'){
+                                return Number(150000);
+                            }
+                            else if(value.level == 'MANAGER' || value.level == 'SUPERVISOR' || value.level == 'EXECUTIVE' || value.level == 'UYGONGCOFAMILY'){
+                                return Number(200000);
+                            }
+                            else{
+                                return '';
+                            }
+                        }
+                    },
                     'LOCATION': 'location',
                     'AREA': 'area',
                     'BANK NAME': 'bank_name',
@@ -1994,6 +2384,17 @@
                     },
                     
                     //Contact Info
+                    'PERSONAL EMAIL' : 'personal_email',
+                    'COMPANY EMAIL' : {
+                        callback: (value) => {
+                            if(value.user){
+                                return value.user.email;
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
+
                     'CURRENT ADDRESS' : 'current_address',
                     'PERMANENT ADDRESS' : 'permanent_address',
                     'LANDLINE' : 'phone_number',
@@ -2007,8 +2408,16 @@
                     'SSS' : 'sss_number',
                     'HDMF' : 'hdmf',
                     'PHILHEALTH' : 'phil_number',
-                    'TIN' : 'tax_number',
-                    'TAX STATUS' : 'tax_status',
+                    'TIN' : {
+                        callback: (value) => {
+                            if(value.tax_number){
+                                return value.tax_number + '-000';
+                            }else{
+                                return "";
+                            }
+                        }
+                    },
+                    // 'TAX STATUS' : 'tax_status',
     
                     'STATUS' : 'status'
                 },
@@ -2030,7 +2439,7 @@
 
                 //Transfer Logs
                 transfer_log_fields : {
-                    'employee_name':{
+                    'Employee name':{
                         callback: (value) => {
                             if(value.employee){
                                 return value.employee.first_name + ' ' + value.employee.last_name;
@@ -2039,7 +2448,7 @@
                             }
                         }
                     },
-                    'previous_company' : {
+                    'Previous Company' : {
                         callback: (value) => {
                             if(value.previous_company){
                                 return value.previous_company.name;
@@ -2048,10 +2457,10 @@
                             }
                         }
                     },
-                    'previous_id_number' : 'previous_id_number',
-                    'previous_date_hired' : 'previous_date_hired',
-                    'previous_position' : 'previous_position',
-                    'previous_department' : {
+                    'Previous ID Number' : 'previous_id_number',
+                    'Previous Date Hired' : 'previous_date_hired',
+                    'Previous Position' : 'previous_position',
+                    'Previous Department' : {
                         callback: (value) => {
                             if(value.previous_department){
                                 return value.previous_department.name;
@@ -2060,7 +2469,7 @@
                             }
                         }
                     },
-                    'previous_location' : {
+                    'Previous Location' : {
                         callback: (value) => {
                             if(value.previous_location){
                                 return value.previous_location.name;
@@ -2069,7 +2478,7 @@
                             }
                         }
                     },
-                    'new_company' : {
+                    'New Company' : {
                         callback: (value) => {
                             if(value.new_company){
                                 return value.new_company.name;
@@ -2078,10 +2487,10 @@
                             }
                         }
                     },
-                    'new_id_number' : 'new_id_number',
-                    'new_date_hired' : 'new_date_hired',
-                    'new_position' : 'new_position',
-                    'new_department' : {
+                    'New ID Number' : 'new_id_number',
+                    'New Date Hired' : 'new_date_hired',
+                    'New Position' : 'new_position',
+                    'New Department' : {
                         callback: (value) => {
                             if(value.new_department){
                                 return value.new_department.name;
@@ -2090,7 +2499,7 @@
                             }
                         }
                     },
-                    'new_location' : {
+                    'New Location' : {
                         callback: (value) => {
                             if(value.new_location){
                                 return value.new_location.name;
@@ -2099,7 +2508,7 @@
                             }
                         }
                     },
-                    'supporting_documents' : {
+                    'Support Documents' : {
                         callback: (value) => {
                             if(value.employee_transfer_attachments){
                                 return value.employee_transfer_attachments.length + ' Attachments';
@@ -2107,12 +2516,30 @@
                                 return '';
                             }
                         }
-                    }
+                    },
+                    'Transferred Date' : 'transferred_date',
+                    'Date in Position' : 'date_in_position',
                 },
 
                 //First Level Under
                 employee_unders : [],
-                new_approver_under : ''
+                new_approver_under : '',
+
+                replicated_address : '',
+
+                //Job History
+                job_history : [],
+                deleted_job_history : [],
+
+                //Compensation History
+                compensation_history : [],
+                deleted_compensation_history : [],
+
+                //Performance Historu
+                performance_history : [],
+
+                //Export Employees
+                export_employee_selector : '',
             }
         },
         created(){
@@ -2127,6 +2554,8 @@
             this.fetchPositionApprovers();
             this.exportFetchEmployees();
             this.exportFetchInactiveEmployees();
+            this.exportFetchConsultantEmployees();
+            this.exportFetchInactiveConsultantEmployees();
             this.fetchUserAccessRights();
             this.fetchHREmployees();
             this.fetchBUHeadEmployees();
@@ -2135,6 +2564,43 @@
             this.showNpaApprovalForm();
         },
         methods:{
+            showExportEmployees(){
+                this.export_employee_selector = '';
+                $('#exportEmployeesModal').modal('show');
+            },
+            addJobHistory(){
+                this.job_history.push({
+                    id: "",
+                    job_start_date: "",
+                    job_end_date: "",
+                    position: "",
+                    reason: "",
+                    job_level: "",
+                });
+            },
+            addCompensationHistory(){
+                this.compensation_history.push({
+                    id: "",
+                    effectivity_date: "",
+                    new_salary_rate: "",
+                    job_grade: "",
+                    job_grade: "",
+                    reason: "",
+                });
+            },
+            getFullName(employee){
+                var first_name = employee.first_name;
+                var last_name = employee.last_name;
+                var middle_initial = employee.middle_initial && employee.middle_initial != '-' ? employee.middle_initial + '.' : "";
+                var name_suffix = employee.name_suffix && employee.name_suffix != '-' ? employee.name_suffix : "";
+                return first_name + ' ' + middle_initial + ' ' + last_name + ' ' + name_suffix ;
+            },
+            replicateAddress(){
+                if(this.replicated_address == true){
+                    this.employee_copied.permanent_address = this.employee_copied.current_address;
+                }
+                console.log(this.replicated_address);
+            },
             showNpaApprovalForm(){
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
@@ -2279,7 +2745,6 @@
                     }
                 })
             },
-
             //Employee NPA
             clearNPAForm(){
                 this.npa_request_errors = [];
@@ -2338,8 +2803,8 @@
                     v.npa_request_detail = response.data;
 
                     if(v.npa_request_detail){
-                        let from_type_of_movement = v.npa_request_detail.from_type_of_movement ? v.npa_request_detail.from_type_of_movement : "";
-                        let to_type_of_movement = v.npa_request_detail.to_type_of_movement ? v.npa_request_detail.to_type_of_movement : "";
+                        // let from_type_of_movement = v.npa_request_detail.from_type_of_movement ? v.npa_request_detail.from_type_of_movement : "";
+                        // let to_type_of_movement = v.npa_request_detail.to_type_of_movement ? v.npa_request_detail.to_type_of_movement : "";
                         let from_company = v.npa_request_detail.from_company ? v.npa_request_detail.from_company.name : "";
                         let to_company = v.npa_request_detail.to_company ? v.npa_request_detail.to_company.name : "";
 
@@ -2384,11 +2849,6 @@
                                         '<td></td>'+
                                         '<td>From</td>'+
                                         '<td>To</td>'+
-                                    '</tr>'+
-                                    '<tr>'+
-                                        '<td>Type of Movement</td>'+
-                                        '<td>'+from_type_of_movement+'</td>'+
-                                        '<td>'+to_type_of_movement+'</td>'+
                                     '</tr>'+
                                     '<tr>'+
                                         '<td>Company</td>'+
@@ -2572,7 +3032,7 @@
                             formData.append('subject', npa_request.subject ? npa_request.subject : "");
                             formData.append('date_hired', npa_request.date_hired ? npa_request.date_hired : "");
                             formData.append('employee_name', npa_request.employee_name ? npa_request.employee_name : "");
-                            formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
+                            // formData.append('from_type_of_movement', npa_request.from_type_of_movement ? npa_request.from_type_of_movement : "");
                             formData.append('from_company', npa_request.from_company ? npa_request.from_company : "");
                             formData.append('from_location', npa_request.from_location ? npa_request.from_location : "");
                             formData.append('from_position_title', npa_request.from_position_title ? npa_request.from_position_title : "");
@@ -2580,7 +3040,7 @@
                             formData.append('from_department', npa_request.from_department ? npa_request.from_department : "");
                             formData.append('effectivity_date', npa_request.effectivity_date ? npa_request.effectivity_date : "");
                             formData.append('from_monthly_basic_salary', npa_request.from_monthly_basic_salary ? npa_request.from_monthly_basic_salary : "");
-                            formData.append('to_type_of_movement', npa_request.to_type_of_movement ? npa_request.to_type_of_movement : "");
+                            // formData.append('to_type_of_movement', npa_request.to_type_of_movement ? npa_request.to_type_of_movement : "");
                             formData.append('to_company', npa_request.to_company ? npa_request.to_company : "");
                             formData.append('to_location', npa_request.to_location ? npa_request.to_location : "");
                             formData.append('to_position_title', npa_request.to_position_title ? npa_request.to_position_title : "");
@@ -2659,8 +3119,34 @@
                 })
             },
 
-            //Employee Dependent Attachments
+            exportFetchConsultantEmployees(){
+                this.export_consultant_employees = [];
+                axios.get('/export-consultant-employees')
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.export_consultant_employees = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            exportFetchInactiveConsultantEmployees(){
+                this.export_inactive_consultant_employees = [];
+                axios.get('/export-inactive-consultant-employees')
+                .then(response => { 
+                    if(response.data.length > 0){
+                        this.export_inactive_consultant_employees = response.data;
+                    }
+                    
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
 
+            //Employee Dependent Attachments
             removeDependentAttachment: function(index,attachment) {
                 if(attachment){
                     Swal.fire({
@@ -2800,12 +3286,15 @@
                 this.transfer_employee.cluster = "";
                 this.transfer_employee.position = "";
                 this.transfer_employee.date_hired = "";
+                this.transfer_employee.transferred_date = "";
+                this.transfer_employee.date_in_position = "";
                 this.transfer_approvers = [];
             },
             transferEmployee(employee){
                 let v = this;
                 v.transferEmployeeDetails = [];
                 v.transferEmployeeDetails = employee;
+                v.viewTransferEmployeeLogs();
             },
             saveTransferEmployee(transfer_employee){
                 let v = this;
@@ -2827,6 +3316,8 @@
                             formData.append('cluster', transfer_employee.cluster ? transfer_employee.cluster : "");
                             formData.append('position', transfer_employee.position ? transfer_employee.position : "");
                             formData.append('date_hired', transfer_employee.date_hired ? transfer_employee.date_hired : "");
+                            formData.append('transferred_date', transfer_employee.transferred_date ? transfer_employee.transferred_date : "");
+                            formData.append('date_in_position', transfer_employee.date_in_position ? transfer_employee.date_in_position : "");
                             formData.append('head_approvers', this.transfer_approvers ? JSON.stringify(this.transfer_approvers) : "");
 
 
@@ -2854,6 +3345,8 @@
                                     icon: 'success',
                                     confirmButtonText: 'Okay'
                                 })
+
+                                $('#transferModal').modal('hide');
                             })
                             .catch(error => {
                                 this.transfer_errors = error.response.data.errors;
@@ -2943,6 +3436,7 @@
                 formData.append('last_name', employee_copied.last_name);
                 formData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "-");
                 formData.append('name_suffix', employee_copied.name_suffix ? employee_copied.name_suffix : "-");
+                formData.append('personal_email', employee_copied.personal_email ? employee_copied.personal_email : "-");
                 formData.append('marital_status', employee_copied.marital_status);
 
                 if(this.marital_file){
@@ -2968,9 +3462,11 @@
                 formData.append('employee_number', employee_copied.employee_number ? employee_copied.employee_number : "-");
                 formData.append('ess_ee_number', employee_copied.ess_ee_number ? employee_copied.ess_ee_number : "-");
                 formData.append('position', employee_copied.position ? employee_copied.position : "-");
+                formData.append('job_position_level', employee_copied.job_position_level ? employee_copied.job_position_level : "-");
                 formData.append('classification', employee_copied.classification ? employee_copied.classification : "-");
                 formData.append('date_hired', employee_copied.date_hired ? employee_copied.date_hired : "");
                 formData.append('level', employee_copied.level ? employee_copied.level : "-");
+                formData.append('is_manager', employee_copied.is_manager ? employee_copied.is_manager : "-");
                 formData.append('location_list', employee_copied.location_list);
                 formData.append('cluster', employee_copied.cluster);
                 formData.append('new_cluster', employee_copied.new_cluster);
@@ -2988,6 +3484,8 @@
                 
                
                 formData.append('date_resigned', employee_copied.date_resigned ? employee_copied.date_resigned : "");
+                formData.append('type_of_separation', employee_copied.type_of_separation ? employee_copied.type_of_separation : "");
+                formData.append('separation_reason', employee_copied.separation_reason ? employee_copied.separation_reason : "");
 
                 //Transfer to new approvers
                 formData.append('new_approver_under', this.new_approver_under ? this.new_approver_under : "");
@@ -3015,7 +3513,13 @@
                 formData.append('dependents', this.dependents ? JSON.stringify(this.dependents) : "");
                 formData.append('deleted_dependents', this.deletedDependent ? JSON.stringify(this.deletedDependent) : "");
 
-                
+                //Job History
+                formData.append('job_history', this.job_history ? JSON.stringify(this.job_history) : "");
+                formData.append('deleted_job_history', this.deleted_job_history ? JSON.stringify(this.deleted_job_history) : "");
+
+                //Compensation History
+                formData.append('compensation_history', this.compensation_history ? JSON.stringify(this.compensation_history) : "");
+                formData.append('deleted_compensation_history', this.deleted_compensation_history ? JSON.stringify(this.deleted_compensation_history) : "");
 
                 if(this.dependent_attachments.length > 0){
                     for(var i = 0; i < this.dependent_attachments.length; i++){
@@ -3103,6 +3607,11 @@
                 this.employee_copied.company_list = this.employee_copied.companies[0].id; 
                 this.employee_copied.department_list = this.employee_copied.departments[0].id; 
                 this.employee_copied.location_list = this.employee_copied.locations[0].id; 
+
+
+                this.employee_copied.mobile_number = employee.mobile_number.replace("+63","0"); 
+                this.employee_copied.contact_number = employee.contact_number.replace("+63","0"); 
+                
                 this.employee_id = employee.id;
 
                 //Get Approvers
@@ -3111,6 +3620,15 @@
                 //Get Dependents
                 this.fetchDependents();
                 this.fetchDependentAttachments();
+
+                //Get Job History
+                this.fetchJobHistory();
+
+                //Get Compensation History
+                this.fetchCompensationHistory();
+
+                //Get Performance History
+                this.fetchPerformanceHistory();
 
                 //Get 201 Files Attachments
                 this.fetchEmployee201FilesAttachments();
@@ -3188,6 +3706,7 @@
                 })
             },
             fetchEmployees(){
+                this.employees = [];
                 this.table_loading = true;
                 axios.get('/employees-all')
                 .then(response => { 
@@ -3306,6 +3825,84 @@
                 }else{
                     this.approvers.splice(index, 1);
                 } 
+            },
+            
+
+            fetchJobHistory(){
+                this.job_history = [];
+                this.deleted_job_history = [];
+                axios.get('/employee-job-history/'+this.employee_copied.id)
+                .then(response => { 
+                    this.job_history = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            removeJobHistory: function(index,id) {
+                let head_id = id;
+                if(head_id){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this Job History?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+                            this.deleted_job_history.push({
+                                id: head_id
+                            });
+                            this.job_history.splice(index, 1);    
+                        }
+                    })
+                }else{
+                    this.job_history.splice(index, 1);
+                } 
+            },
+            fetchCompensationHistory(){
+                this.compensation_history = [];
+                this.deleted_compensation_history = [];
+                axios.get('/employee-compensation-history/'+this.employee_copied.id)
+                .then(response => { 
+                    this.compensation_history = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
+            },
+            removeCompensationHistory: function(index,id) {
+                let head_id = id;
+                if(head_id){
+                    Swal.fire({
+                        title: 'Are you sure you want to remove this Compensation History?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Remove'
+                        }).then((result) => {
+                        if (result.value) {
+                            this.deleted_compensation_history.push({
+                                id: head_id
+                            });
+                            this.compensation_history.splice(index, 1);    
+                        }
+                    })
+                }else{
+                    this.compensation_history.splice(index, 1);
+                } 
+            },
+            fetchPerformanceHistory(){
+                this.performance_history = [];
+                axios.get('/employee-performance-history/'+this.employee_copied.id)
+                .then(response => { 
+                    this.performance_history = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.error;
+                })
             },
             addTransferApprover(){
                 this.transfer_approvers.push({

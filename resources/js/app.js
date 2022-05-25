@@ -85,6 +85,10 @@ Vue.component('employee-transfer-reports', require('./components/Reports/Employe
 Vue.component('employee-npa-reports', require('./components/Reports/EmployeeNpaReports.vue').default);
 
 
+//Offboarding
+Vue.component('uploaded-pdf', require('./components/Offboarding/UploadedPdf.vue').default);
+
+
 
 
 /**

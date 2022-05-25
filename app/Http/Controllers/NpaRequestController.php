@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use setasign\Fpdi\Fpdi;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 use App\EmployeeNpaRequest;
 
@@ -201,7 +203,7 @@ class NpaRequestController extends Controller
         //Effectivity
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(78.6, 136.8);
+        $pdf->SetXY(78.6, 137);
         $effectivity_date = $npa_request_data['effectivity_date'];    
         $height = (ceil(($pdf->GetStringWidth($effectivity_date) / $width)) * $line_height);
         if($height == $line_height){
@@ -214,8 +216,8 @@ class NpaRequestController extends Controller
         //From Basic Salary
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(78.8, 137);
-        $from_monthly_basic_salary = $npa_request_data['from_monthly_basic_salary'];    
+        $pdf->SetXY(78.8, 137  + 7);
+        $from_monthly_basic_salary = $npa_request_data['from_monthly_basic_salary'] ? Crypt::decryptString($npa_request_data['from_monthly_basic_salary']) : "";    
         $height = (ceil(($pdf->GetStringWidth($from_monthly_basic_salary) / $width)) * $line_height);
         if($height == $line_height){
             $height  = $height * 2;
@@ -227,8 +229,8 @@ class NpaRequestController extends Controller
         //To Basic Salary
         $pdf->SetFont('Helvetica','','7');
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetXY(78.8 + 52.6, 137);
-        $to_monthly_basic_salary = $npa_request_data['to_monthly_basic_salary'];    
+        $pdf->SetXY(78.8 + 52.6, 137 + 7);
+        $to_monthly_basic_salary = $npa_request_data['to_monthly_basic_salary'] ? Crypt::decryptString($npa_request_data['to_monthly_basic_salary']) : "";    
         $height = (ceil(($pdf->GetStringWidth($to_monthly_basic_salary) / $width)) * $line_height);
         if($height == $line_height){
             $height  = $height * 2;

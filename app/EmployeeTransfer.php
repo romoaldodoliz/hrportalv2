@@ -29,6 +29,8 @@ class EmployeeTransfer extends Model
         'new_location',
         'new_system_approvers',
         'transferred_by',
+        'transferred_date',
+        'date_in_position',
     ];
 
     public function employee()

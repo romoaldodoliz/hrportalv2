@@ -55,7 +55,13 @@ class User extends Model implements Auditable, Authenticatable
         'work_info_edit',
         'contact_info_edit',
         'identification_info_edit',
-        'employee_201_file_edit'
+        'employee_201_file_edit',
+        'employee_201_file_edit',
+        'job_history',
+        'compensation_history',
+        'performance_history',
+        'job_history_edit',
+        'compensation_history_edit',
     ];
 
     /**
