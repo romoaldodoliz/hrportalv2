@@ -503,7 +503,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="role">Contact Number</label>
-                                                            <input type="text" class="form-control" v-model="employee.contact_number">
+                                                            <input type="text" class="form-control" v-model="employee.contact_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
                                                             <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                                         </div>
                                                     </div>    

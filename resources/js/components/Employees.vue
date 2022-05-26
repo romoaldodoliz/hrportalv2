@@ -1280,7 +1280,7 @@
                                                 <h4>Job History</h4>
                                                 <div v-if="user_access_rights.job_history_edit == 'YES'">
                                                     <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;"><i class="fas fa-redo" title="Refresh Job History" @click="fetchJobHistory"></i></button>
-                                                    <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addJobHistory">Add Row</button>
+                                                    <button type="button" class="btn btn-primary btn-sm mb-2 mr-2" style="float: right;" @click="addJobHistory">Add Row</button>
                                                 </div>
                                                 
                                                 <div class="table-responsive">
@@ -1347,7 +1347,7 @@
                                                 <h4>Compensation History</h4>
                                                 <div v-if="user_access_rights.compensation_history_edit == 'YES'">
                                                     <button type="button" class="btn btn-success btn-sm mb-2" style="float: right;"><i class="fas fa-redo" title="Refresh Job History" @click="fetchCompensationHistory"></i></button>
-                                                    <button type="button" class="btn btn-primary btn-sm mb-2" style="float: right;" @click="addCompensationHistory">Add Row</button>
+                                                    <button type="button" class="btn btn-primary btn-sm mb-2 mr-2" style="float: right;" @click="addCompensationHistory">Add Row</button>
                                                 </div>
                                                 <div class="table-responsive">
                                                     <table class="table table-hover" id="tab_job_history">

@@ -191,11 +191,10 @@ class EmployeeController extends Controller
             'company_list' => 'required',
             'department_list' => 'required',
             'location_list' => 'required',
-            'sss_number' => 'required',
-            'hdmf' => 'required',
-            'phil_number' => 'required',
-            'tax_number' => 'required',
-            'tax_status' => 'required',
+            'sss_number' => 'required|unique:employees,sss_number,',
+            'hdmf' => 'required|unique:employees,hdmf,',
+            'phil_number' => 'required|unique:employees,phil_number,',
+            'tax_number' => 'required|unique:employees,tax_number,',
         ],[
             'company_list.required' => 'This field is required',
             'department_list.required' => 'This field is required',
@@ -204,7 +203,6 @@ class EmployeeController extends Controller
             'sss_number.required' => 'This field is required',
             'hdmf.required' => 'This field is required',
             'phil_number.required' => 'This field is required',
-            'tax_number.required' => 'This field is required',
         ]);
 
         
@@ -346,12 +344,14 @@ class EmployeeController extends Controller
             'department_list' => 'required',
             'location_list' => 'required',
             'date_hired' => 'required',
-            // 'tax_status' => 'required',
+            'sss_number' => 'required',
+            'hdmf' => 'required',
+            'phil_number' => 'required',
+            'tax_number' => 'required'
         ],[
             'company_list.required' => 'This field is required',
             'department_list.required' => 'This field is required',
-            'location_list.required' => 'This field is required',
-            'tax_status.required' => 'This field is required',
+            'location_list.required' => 'This field is required'
         ]);
 
         $data = $request->all();
