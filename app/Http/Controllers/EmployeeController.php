@@ -766,6 +766,7 @@ class EmployeeController extends Controller
             'last_name' => 'required',
             'marital_status' => 'required',
             'gender' => 'required',
+            'remarks' => 'required',
         ]);
 
         $original_employee_dependents = Dependent::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
