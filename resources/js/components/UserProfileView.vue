@@ -417,14 +417,17 @@
                         <h6 class="heading-small text-muted mb-4">Contact Information</h6>
                         <div class="pl-lg-4">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="role">Current Address</label>
                                         <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
                                         <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <input type="checkbox" v-model="replicated_address" @change="replicateAddress"> Same as Current Address
+                                    <br>
+                                    <br>
                                     <div class="form-group">
                                         <label for="role">Permanent Address</label>
                                         <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
@@ -1072,6 +1075,7 @@
                 deleted_dependent_attachments: [],
                 dependent_attachments: [],
                 fileSize: 0,
+                replicated_address : '',
             }
         },
         created(){
@@ -1085,6 +1089,11 @@
             this.fetchUserAccessRights();
         },
         methods:{
+            replicateAddress(){
+                if(this.replicated_address == true){
+                    this.employee_copied.permanent_address = this.employee_copied.current_address;
+                }
+            },
             fetchUserAccessRights(){
                 this.user_access_rights = [];
                 axios.get('/user-access-rights')

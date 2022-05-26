@@ -416,14 +416,17 @@
                         <h6 class="heading-small text-muted mb-4">Contact Information</h6>
                         <div class="pl-lg-4">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="role">Current Address</label>
                                         <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
                                         <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <input type="checkbox" v-model="replicated_address" @change="replicateAddress"> Same as Current Address
+                                    <br>
+                                    <br>
                                     <div class="form-group">
                                         <label for="role">Permanent Address</label>
                                         <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
@@ -433,14 +436,14 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="role">Landline</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.phone_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.phone_number" v-mask="'###-####'" placeholder="XXX-XXXX">
                                         <span class="text-danger" v-if="errors.phone_number">{{ errors.phone_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="role">Mobile Number</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.mobile_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
                                         <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
                                     </div>
                                 </div>   
@@ -467,7 +470,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Contact Number</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.contact_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.contact_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
                                         <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                     </div>
                                 </div>    
@@ -628,28 +631,28 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">SSS</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.sss_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.sss_number" v-mask="'##-#######-#'" placeholder="XX-XXXXXXX-X">
                                         <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">HDMF</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.hdmf">
+                                        <input type="text" class="form-control" v-model="employee_copied.hdmf" v-mask="'####-####-####'" placeholder="XXXX-XXXX-XXXX">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Philhealth</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.phil_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.phil_number" v-mask="'##-#########-#'" placeholder="XX-XXXXXXXXX-X">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">TIN</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.tax_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.tax_number" v-mask="'###-###-###-000'" placeholder="XXX-XXX-XXX-000">
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
@@ -1102,6 +1105,7 @@
                 deleted_dependent_attachments: [],
                 dependent_attachments: [],
                 fileSize: 0,
+                replicated_address : '',
             }
         },
         created(){
@@ -1114,6 +1118,11 @@
             this.disabledByGender();
         },
         methods:{
+            replicateAddress(){
+                if(this.replicated_address == true){
+                    this.employee_copied.permanent_address = this.employee_copied.current_address;
+                }
+            },
             disabledByGender(){
                 if(this.employee_copied.gender == 'FEMALE'){
                     if(this.employee_copied.marital_status == 'MARRIED' || this.employee_copied.marital_status == 'DIVORCED' || this.employee_copied.marital_status == 'WIDOW'){

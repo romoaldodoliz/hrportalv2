@@ -57,6 +57,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ClientException;
 
 class EmployeeController extends Controller
 {
@@ -847,7 +849,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }
         }
         if($request->deleted_dependents){
@@ -860,7 +862,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }   
         }
         //---------------------------------------------------------------------------------------------------------------------------
@@ -904,12 +906,66 @@ class EmployeeController extends Controller
  
         if($check_request){
             $check_request->update($employee_approval_data);
+
+            //Notify via Webex
+            $message = "<span>Employee: <strong>".$employee['first_name'] . ' ' . $employee['last_name'] ."</strong> update his/her personal infomation. </pspan>
+                        <span>Remarks : ".$request->remarks."</span>
+                        <p>We would like to request your <strong>approval</strong>. Thank you.</p><hr>";
+            $send_webex = $this->sendGroupWebexMessage($message);
         }else{
             EmployeeApprovalRequest::create($employee_approval_data);
+
+            //Notify via Webex
+            $message = "<span>Employee: <strong>".$employee['first_name'] . ' ' . $employee['last_name'] ."</strong> update his/her personal infomation. </span>
+                        <span>Remarks : ".$request->remarks."</span>
+                        <p>We would like to request your <strong>approval</strong>. Thank you.</p><hr>";
+            $send_webex = $this->sendGroupWebexMessage($message);
         }
 
         return Employee::with('companies','departments','locations','verification')->where('id',$employee->id)->first();
 
+    }
+
+    public function sendGroupWebexMessage($message){
+
+        $httpClient = new Client(); 
+
+        if($message){
+            $body = [
+                //prod
+                'roomId' => 'Y2lzY29zcGFyazovL3VzL1JPT00vMDVlNjYzODAtZGM5Ny0xMWVjLWFmNDMtYzFhMzRjODhkYjBh',
+                'html' => $message
+            ];
+
+            try{
+                $response = $httpClient->post(
+                    'https://api.ciscospark.com/v1/messages',
+                    [
+                        RequestOptions::BODY => json_encode($body),
+                        RequestOptions::HEADERS => [
+                            'Content-Type' => 'application/json',
+                            //prod
+                            'Authorization' => 'Bearer YzA2MzZjYzMtNjU1Ni00OTBhLTg4YmUtNmZlZmVkMTM4YTg0YzEyM2Q4NGUtYWQw_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
+                        ],
+                    ]
+                );
+
+            return 'sent';
+
+            }catch(ServerException $e){
+                return 'not';
+            }
+            catch(RequestException $e){
+                return 'not';
+            }
+            catch(ConnectException $e){
+                return 'not';
+            }
+            catch(ClientException $e){
+                return 'not';
+            }
+
+        }
     }
 
     public function destroyEmployeeUserProfile(EmployeeApprovalRequest $employee){

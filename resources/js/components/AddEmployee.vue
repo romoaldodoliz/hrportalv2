@@ -713,7 +713,6 @@
                 if(this.replicated_address == true){
                     this.employee.permanent_address = this.employee.current_address;
                 }
-                console.log(this.replicated_address);
             },
             profileImageLoadError(){
                 this.profile_image = 'storage/default.png';
