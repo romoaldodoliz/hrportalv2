@@ -910,7 +910,9 @@ class EmployeeController extends Controller
             //Notify via Webex
             $message = "<span>Employee: <strong>".$employee['first_name'] . ' ' . $employee['last_name'] ."</strong> update his/her personal infomation. </pspan>
                         <span>Remarks : ".$request->remarks."</span>
-                        <p>We would like to request your <strong>approval</strong>. Thank you.</p><hr>";
+                        <p>We would like to request your <strong>approval</strong>. Thank you.</p>
+                        <p>Link : http://10.96.4.126:8668/login</p>
+                        <hr>";
             $send_webex = $this->sendGroupWebexMessage($message);
         }else{
             EmployeeApprovalRequest::create($employee_approval_data);
@@ -918,7 +920,9 @@ class EmployeeController extends Controller
             //Notify via Webex
             $message = "<span>Employee: <strong>".$employee['first_name'] . ' ' . $employee['last_name'] ."</strong> update his/her personal infomation. </span>
                         <span>Remarks : ".$request->remarks."</span>
-                        <p>We would like to request your <strong>approval</strong>. Thank you.</p><hr>";
+                        <p>We would like to request your <strong>approval</strong>. Thank you.</p>
+                        <p>Link : http://10.96.4.126:8668/login</p>
+                        <hr>";
             $send_webex = $this->sendGroupWebexMessage($message);
         }
 
