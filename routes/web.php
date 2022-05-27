@@ -516,3 +516,4 @@ Route::get('logout', function(){
     Route::get('/uploaded-pdf', 'OffboardingController@uploaded_pdf');
     Route::get('/uploaded-pdf-data', 'OffboardingController@uploaded_pdf_data');
     Route::post('/cancel-upload-pdf', 'OffboardingController@cancel_upload_pdf');
+    Route::get('/notify-group-upload-pdf', 'OffboardingController@notifyGroupOnceEmployeeResigned');
