@@ -21,4 +21,8 @@ class UploadPdf extends Model
     public function letter(){
         return $this->hasOne('App\Letter');
     }
+
+    public function clearance(){
+        return $this->hasOne('App\Clearance')->select('id','upload_pdf_id');
+    }
 }

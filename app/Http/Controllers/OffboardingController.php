@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\UploadPdf;
 use App\Employee;
+use App\ResetLog;
+use App\ClearanceSignatory;
 use Auth;
 use DB;
 
@@ -47,7 +49,7 @@ class OffboardingController extends Controller
     }
 
     public function uploaded_pdf_data(){
-        return UploadPdf::with('letter','employee.departments','employee.locations','employee.companies','cancelled_by')->orderBy('updated_at','DESC')->get();
+        return UploadPdf::with('clearance.signatories.user','clearance.signatories.department','letter','employee.departments','employee.locations','employee.companies','cancelled_by')->orderBy('updated_at','DESC')->get();
     }
 
     public function cancel_upload_pdf(Request $request){
@@ -62,7 +64,7 @@ class OffboardingController extends Controller
                     'cancel_by'=>Auth::user()->id,
                 ]);
                 DB::commit();
-                $upload_pdf = UploadPdf::with('letter','employee.departments','employee.locations','employee.companies','cancelled_by')
+                $upload_pdf = UploadPdf::with('clearance.signatories.user','clearance.signatories.department','letter','employee.departments','employee.locations','employee.companies','cancelled_by')
                                         ->where('id',$request->id)
                                         ->first();
                 
@@ -112,7 +114,6 @@ class OffboardingController extends Controller
                 $send_webex = $this->sendGroupWebexMessage($message);
                 UploadPdf::where('id',$item['id'])->update(['notification_webex'=>'1']);
             }
-
             return 'sent';
         }
 
@@ -157,6 +158,57 @@ class OffboardingController extends Controller
                 return 'not';
             }
 
+        }
+    }
+
+    public function resetClearanceSignatory(Request $request){
+        
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            $clearance_signatory = ClearanceSignatory::where('id',$data['id'])->first();
+            if($clearance_signatory){
+                $new_reset_fields = [
+                    'status' => null,
+                    'amount' => null,
+                    'accountabilities' => null,
+                    'date_verified' => null,
+                    'reset_by' => Auth::user()->id,
+                ];
+                $old_reset_fields = [
+                    'status' => $clearance_signatory->status,
+                    'amount' => $clearance_signatory->amount,
+                    'accountabilities' => $clearance_signatory->accountabilities,
+                    'date_verified' => $clearance_signatory->date_verified,
+                    'reset_by' => Auth::user()->id,
+                ];
+
+                if($clearance_signatory->update($new_reset_fields)){
+
+                    //Save Reset Logs
+                    $reset_logs_data = [
+                        'user_id'=>Auth::user()->id,
+                        'reset_id'=>$request->id,
+                        'old'=>json_encode($old_reset_fields,true),
+                        'new'=>json_encode($new_reset_fields,true),
+                    ];
+                    ResetLog::create($reset_logs_data);
+                    
+                    DB::commit();
+                    $clearance_signatory_data = ClearanceSignatory::with('user','department')
+                                                                    ->where('id',$request->id)
+                                                                    ->first();
+                    return $response = [
+                        'status'=>'saved',
+                        'clearance_signatory_data'=>$clearance_signatory_data
+                    ];
+                }
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return $response = [
+                'status'=>'error'
+            ];
         }
     }
 

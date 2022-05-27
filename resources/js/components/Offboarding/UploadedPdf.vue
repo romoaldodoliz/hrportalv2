@@ -68,11 +68,14 @@
                                                     </td>
                                                     <td align="center">
                                                         <div v-if="item.cancel == '1'">
-                                                            <button class="btn btn-sm danger" disabled :title="'Cancelled On : ' + item.cancel_date + ' by: ' + getFullName(item.cancelled_by)">Cancelled</button>
+                                                            <button class="btn btn-sm danger mt-2" disabled :title="'Cancelled On : ' + item.cancel_date + ' by: ' + getFullName(item.cancelled_by)">Cancelled</button>
+                                                            <button v-if="item.clearance" class="btn btn-sm btn-info mt-2" @click="viewClearance(item)">View Clearance</button>
                                                         </div>
                                                         <div v-else>
-                                                            <button class="btn btn-sm btn-danger" @click="cancelUploadPdf(item)">Cancel</button>
+                                                            <button class="btn btn-sm btn-danger mt-2" @click="cancelUploadPdf(item)">Cancel</button>
+                                                            <button v-if="item.clearance" class="btn btn-sm btn-info mt-2" @click="viewClearance(item)">View Clearance</button>
                                                         </div>
+                                                       
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -99,6 +102,59 @@
         </div>
     </div>
 
+    <div class="modal fade" id="clearanceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-employee" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Clearance - {{ upload_pdf ? getFullName(upload_pdf.employee) : "" }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-bordered mb-5">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Department</th>
+                                    <th scope="col">Signatory</th>
+                                    <th scope="col">Accountabilities</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Date Verified</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, u) in clearance_signatories" v-bind:key="u">
+                                    <td>
+                                        {{item.department ?  item.department.name : "DEPARTMENT/DIVISION HEAD"}}
+                                    </td>
+                                    <td>
+                                        <strong>{{item.user ?  item.user.name : ""}}</strong>
+                                    </td>
+                                    <td>
+                                        {{item.accountabilities ?  item.accountabilities : ""}} <br>
+                                        {{item.remarks ? "Remarks: "+ item.remarks : ""}}
+                                    </td>
+                                    <td>
+                                        {{item.amount ?  item.amount : ""}}
+                                    </td>
+                                    <td>
+                                        {{item.date_verified}}
+                                    </td>
+                                    <td>
+                                        <button v-if="item.status == 1" class="btn btn-sm btn-danger" @click="resetClearance(item)">Reset</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 </template>
 
@@ -114,12 +170,48 @@
                 errors : [],
                 currentPage: 0,
                 itemsPerPage: 10,
+                clearance_signatories : [],
             }
         },
         created () {
             this.getUploadedPDF();
         },
         methods: {
+            resetClearance(clearance_signatory){
+                let v = this;
+                if(clearance_signatory){
+                    Swal.fire({
+                        title: 'Are you sure you want to reset this signatory?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Reset',
+                        cancelButtonText: 'No'
+                    }).then((result) => {
+                        let formData = new FormData();
+                        formData.append('id', clearance_signatory.id);
+                        formData.append('upload_pdf_id', v.upload_pdf.id);
+                        axios.post(`/reset-clearance-signatory`, formData)
+                        .then(response => {
+                            if(response.data.status == "saved"){
+                                alert('Successfully reset');
+                                var index = this.clearance_signatories.findIndex(item => item.id == clearance_signatory.id);
+                                this.clearance_signatories.splice(index,1,response.data.clearance_signatory_data);
+                            }
+                        })
+                    })
+                }
+            },
+            viewClearance(upload_pdf){
+                if(upload_pdf.clearance.signatories.length > 0){
+                    this.upload_pdf = upload_pdf; 
+                    this.clearance_signatories = upload_pdf.clearance.signatories;
+                    $('#clearanceModal').modal('show');
+                }else{
+                    alert('No Signatories Found!');
+                }
+            },
             cancelUploadPdf(upload_pdf){
                 let v = this;
                 this.upload_pdf = upload_pdf;
@@ -214,5 +306,12 @@
 </script>
 
 <style lang="scss" scoped>
-
+    @media (min-width: 992px){
+        .modal-lg {
+            max-width: 700px!important;
+        }
+        .modal-employee {
+            max-width: 1200px!important;
+        }
+    }
 </style>
