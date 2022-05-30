@@ -57,7 +57,7 @@
                             </div>
                             <!-- q1 -->
                             <div class="col-md-12">
-                                <h4>Which art card design do you like the most for Iloilo Plant Billboard?</h4>
+                                <h4>Which design would you like the most for the Iloilo Plant Billboard?</h4>
                                 <div class="col-12 mt-2">
                                     <div class="custom-control custom-radio mb-3">
                                         <input type="radio" id="q1_1" class="custom-control-input" value="a" v-model="q1">
