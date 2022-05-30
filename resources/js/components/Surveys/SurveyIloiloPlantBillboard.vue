@@ -146,7 +146,7 @@
                             }
                         })
                         .catch(error => {
-                            alert('Check you form and then try again. Thank you.');
+                            alert('Check your form and then try again. Thank you.');
                             this.errors = error.response.data.errors;
                             v.saveDisable = false;
                         });
