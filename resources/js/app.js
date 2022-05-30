@@ -69,6 +69,10 @@ Vue.component('survey-performance-management-export', require('./components/Surv
 Vue.component('pre-test-cleaning-tempering-and-conditioning', require('./components/Surveys/PreTestWheatCleaningTemperingAndConditioning.vue').default);
 Vue.component('pre-test-cleaning-tempering-and-conditioning-export', require('./components/Surveys/PreTestWheatCleaningTemperingAndConditioningExport.vue').default);
 
+Vue.component('survey-iloilo-plant-billboard', require('./components/Surveys/SurveyIloiloPlantBillboard.vue').default);
+Vue.component('survey-iloilo-plant-billboard-export', require('./components/Surveys/SurveyIloiloPlantBillboardExport.vue').default);
+
+
 
 //Survey Legal Questionnaire
 Vue.component('survey-legal-questionnaire', require('./components/Surveys/SurveyLegalQuestionnaire.vue').default);

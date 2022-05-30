@@ -135,6 +135,13 @@ Route::post('/save-survey-performance-management', 'SurveyController@saveSurveyP
 Route::get('/export-survey-performance-management', 'SurveyController@exportSurveyPerformanceManagement');
 Route::get('/all-survey-performance-management', 'SurveyController@allSurveyPerformanceManagement');
 
+//Survey Dog Treats
+Route::get('/survey-iloilo-plant-billboard', 'SurveyController@surveyIloiloPlantBillboard');
+Route::get('/get-user-iloilo-plant-billboard', 'SurveyController@getUserSurveyIloiloPlantBillboard');
+Route::post('/save-survey-iloilo-plant-billboard', 'SurveyController@saveSurveyIloiloPlantBillboard');
+Route::get('/export-survey-iloilo-plant-billboard', 'SurveyController@exportSurveyIloiloPlantBillboard');
+Route::get('/all-survey-iloilo-plant-billboard', 'SurveyController@allSurveyIloiloPlantBillboard');
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //Survey Exit Interview Form

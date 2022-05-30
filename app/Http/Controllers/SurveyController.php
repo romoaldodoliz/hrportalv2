@@ -15,6 +15,7 @@ use App\SurveyLegalQuestionnaire;
 use App\SurveyLegalQuestionnaireUser;
 use App\SurveyExitInterviewForm;
 use App\SurveyPerformanceManagement;
+use App\SurveyIloiloPlantBillboard;
 
 use App\PreTestWheatCleaningTemperingAndConditioning;
 use App\PreTestWheatCleaningTemperingAndConditioningUser;
@@ -750,6 +751,60 @@ class SurveyController extends Controller
     }
     public function exportSurveyPerformanceManagement(){
         return view('surveys.export_survey_performance_management');
+    }
+
+    
+    //-----------------------------------------------------------------------------
+    // Iloilo Plant Billboard
+    public function surveyIloiloPlantBillboard(Request $request){
+        $user_id = $request->user_id;
+        session([
+            'survey_iloilo_plant_billboard_user_id' => $user_id
+        ]);
+        $check  = SurveyIloiloPlantBillboard::where('user_id',$user_id)->first();
+        if($check){
+            return redirect('http://10.96.4.70/login');
+        }else{
+            return view('surveys.survey_iloilo_plant_billboard');
+        }
+    }
+
+    public function getUserSurveyIloiloPlantBillboard(){
+        $user_session_id = session('survey_iloilo_plant_billboard_user_id');
+        return Employee::with('companies','departments','locations')
+                        ->where('user_id',$user_session_id)
+                        ->first();
+    }
+
+    public function saveSurveyIloiloPlantBillboard(Request $request){
+        
+        $this->validate($request, [
+            'q1' => 'required',
+
+        ],[
+            'q1.required' => 'This field is required.'
+        ]);
+
+       DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $data['date_answered'] = date('Y-m-d');
+            $data['time_answered'] = date('h:i:s');
+            if($survey = SurveyIloiloPlantBillboard::create($data)){
+                DB::commit();
+                return "saved";
+            }
+        }catch (Exception $e) {
+            DB::rollBack();
+            return "error";
+        }
+    }
+
+    public function allSurveyIloiloPlantBillboard(){
+        return $survey = SurveyIloiloPlantBillboard::with('employee')->orderBy('created_at','ASC')->get();
+    }
+    public function exportSurveyIloiloPlantBillboard(){
+        return view('surveys.export_survey_iloilo_plant_billboard');
     }
 
     //Exit Interview-----------------------------------------------------------------------------------------------------
