@@ -420,6 +420,25 @@
                                     <span class="text-danger" v-if="errors.bank_account_details">{{ errors.bank_account_details[0] }}</span> 
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="job_position_level" class="custom-control-input" v-model="user_copied.job_position_level" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="job_position_level">Job Position Detail</label>
+                                    </div>
+
+                                    <span class="text-danger" v-if="errors.job_position_level">{{ errors.job_position_level[0] }}</span> 
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="mbl_amount" class="custom-control-input" v-model="user_copied.mbl_amount" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="mbl_amount">MAXIMUM MBL </label>
+                                    </div>
+                                    <span class="text-danger" v-if="errors.mbl_amount">{{ errors.mbl_amount[0] }}</span> 
+                                </div>
+                            </div>
                         </div>     
                     </div>
                     <div class="modal-footer">
@@ -632,6 +651,8 @@
                     npa_request: user_copied.npa_request,
                     monthly_basic_salary: user_copied.monthly_basic_salary,
                     bank_account_details: user_copied.bank_account_details,
+                    job_position_level: user_copied.job_position_level,
+                    mbl_amount: user_copied.mbl_amount,
                     personal_info_edit: user_copied.personal_info_edit,
                     work_info_edit: user_copied.work_info_edit,
                     contact_info_edit: user_copied.contact_info_edit,

@@ -187,7 +187,7 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes, Reset',
-                        cancelButtonText: 'No'
+                        cancelButtonText: 'No',
                     }).then((result) => {
                         let formData = new FormData();
                         formData.append('id', clearance_signatory.id);
@@ -216,17 +216,20 @@
                 let v = this;
                 this.upload_pdf = upload_pdf;
                 Swal.fire({
-                    title: 'Are you sure you want to cancel this uploaded PDF?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Cancel',
-                    cancelButtonText: 'No'
+                        title: 'Are you sure you want to cancel this uploaded PDF?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Cancel',
+                        cancelButtonText: 'No',
+                        input: 'textarea',
+                        inputPlaceholder: 'Remarks...',
                     }).then((result) => {
                     if (result.value) {
                         let formData = new FormData();
                         formData.append('id', v.upload_pdf.id);
+                        formData.append('cancel_remarks', result.value);
                         axios.post(`/cancel-upload-pdf`, formData)
                         .then(response => {
                             if(response.data.status == "saved"){

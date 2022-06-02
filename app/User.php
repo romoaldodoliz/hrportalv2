@@ -62,6 +62,8 @@ class User extends Model implements Auditable, Authenticatable
         'performance_history',
         'job_history_edit',
         'compensation_history_edit',
+        'job_position_level',
+        'mbl_amount',
     ];
 
     /**

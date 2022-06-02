@@ -62,11 +62,25 @@ class OffboardingController extends Controller
                     'cancel'=>1,
                     'cancel_date'=>date('Y-m-d'),
                     'cancel_by'=>Auth::user()->id,
+                    'cancel_remarks'=>$request->cancel_remarks,
                 ]);
                 DB::commit();
+
+               
+
                 $upload_pdf = UploadPdf::with('clearance.signatories.user','clearance.signatories.department','letter','employee.departments','employee.locations','employee.companies','cancelled_by')
                                         ->where('id',$request->id)
                                         ->first();
+
+                $message_to_cancel = "<p> Hi! ".$upload_pdf->employee->first_name.",  please be advised that we cancelled your resignation letter due to:</p>
+                                        <hr>
+                                        <ul>
+                                            <li>Remarks : ".$request->cancel_remarks."</li>
+                                        </ul>
+                                        <p>Cancelled By : ".Auth::user()->email."</p>
+                                        <small><i>Note: This is an auto generated message please do not reply</i></small>";
+                                        
+                $send_webex_to_admin = $this->sendWebexMessage('arjay.lumagdong@lafilgroup.com',$message_to_cancel);
                 
                 return $response = [
                     'status'=>'saved',
@@ -81,6 +95,8 @@ class OffboardingController extends Controller
             ];
         }
     }
+
+
 
     public function notifyGroupOnceEmployeeResigned(Request $request){
 
@@ -127,6 +143,47 @@ class OffboardingController extends Controller
             $body = [
                 //prod
                 'roomId' => 'Y2lzY29zcGFyazovL3VzL1JPT00vMDVlNjYzODAtZGM5Ny0xMWVjLWFmNDMtYzFhMzRjODhkYjBh',
+                'html' => $message
+            ];
+
+            try{
+                $response = $httpClient->post(
+                    'https://api.ciscospark.com/v1/messages',
+                    [
+                        RequestOptions::BODY => json_encode($body),
+                        RequestOptions::HEADERS => [
+                            'Content-Type' => 'application/json',
+                            //prod
+                            'Authorization' => 'Bearer NmI3NTIzNzctNzI1NC00M2I1LThmMDctNzliNzg2ZGM2NzMyYjdkZGE0Y2UtOTdh_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
+                        ],
+                    ]
+                );
+
+            return 'sent';
+
+            }catch(ServerException $e){
+                return 'not';
+            }
+            catch(RequestException $e){
+                return 'not';
+            }
+            catch(ConnectException $e){
+                return 'not';
+            }
+            catch(ClientException $e){
+                return 'not';
+            }
+
+        }
+    }
+
+    public function sendWebexMessage($email,$message){
+
+        $httpClient = new Client(); 
+
+        if($email && $message){
+            $body = [
+                'toPersonEmail' => $email,
                 'html' => $message
             ];
 

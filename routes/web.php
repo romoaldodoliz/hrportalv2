@@ -492,6 +492,13 @@ Route::get('logout', function(){
         Route::post('print_qr','EmployeeController@printEmployeeQR');
         Route::get('preview_qr/{qrlog}','EmployeeController@printPreviewEmployeeQR');
 
+        //OffBoarding
+        Route::get('/uploaded-pdf', 'OffboardingController@uploaded_pdf');
+        Route::get('/uploaded-pdf-data', 'OffboardingController@uploaded_pdf_data');
+        Route::post('/cancel-upload-pdf', 'OffboardingController@cancel_upload_pdf');
+        Route::get('/notify-group-upload-pdf', 'OffboardingController@notifyGroupOnceEmployeeResigned');
+        Route::post('/reset-clearance-signatory', 'OffboardingController@resetClearanceSignatory');
+
     });
 
 
@@ -512,9 +519,3 @@ Route::get('logout', function(){
     Route::get('/get-rfid-door-unassigned', 'EmployeeRfidController@getDoorUnassigned');
     Route::get('/get-rfid-door-user-card', 'EmployeeRfidController@getDoorUserCard');
 
-    //OffBoarding
-    Route::get('/uploaded-pdf', 'OffboardingController@uploaded_pdf');
-    Route::get('/uploaded-pdf-data', 'OffboardingController@uploaded_pdf_data');
-    Route::post('/cancel-upload-pdf', 'OffboardingController@cancel_upload_pdf');
-    Route::get('/notify-group-upload-pdf', 'OffboardingController@notifyGroupOnceEmployeeResigned');
-    Route::post('/reset-clearance-signatory', 'OffboardingController@resetClearanceSignatory');

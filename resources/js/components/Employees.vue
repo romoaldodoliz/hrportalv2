@@ -517,7 +517,7 @@
                                                     <span class="text-danger" v-if="errors.position">{{ errors.position[0] }}</span> 
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4" v-if="user_access_rights.job_position_level == 'YES'">
                                                 <div class="form-group">
                                                     <label for="job_position_level">Job Position Level</label>
                                                     <select v-if="user_access_rights.work_info_edit == 'YES'" class="form-control" v-model="employee_copied.job_position_level">
@@ -2300,7 +2300,13 @@
                     'SECTION': 'division',
                     'ESS Employee No.': 'ess_ee_number',
                     'POSITION': 'position',
-                    'JOB POSITION LEVEL': 'job_position_level',
+                    'JOB POSITION LEVEL':  {
+                        callback: (value) => {
+                            if(this.user_access_rights.job_position_level == 'YES'){
+                                return value.job_position_level;
+                            }
+                        }
+                    },
                     'CLASSIFICATION': 'classification',
                     'BASIC SALARY': 'basic_salary',
                     'DATE HIRED': 'date_hired',
@@ -2318,15 +2324,20 @@
                     '5th month': 'fifth_month',
                     '6th month': 'six_month',
                     'LEVEL': 'level',
+                    'WITH DIRECT REPORTS': 'is_manager',
                     'MAXIMUM MBL': {
                         callback: (value) => {
-                            if(value.level == 'RANK&FILE'){
-                                return Number(150000);
-                            }
-                            else if(value.level == 'MANAGER' || value.level == 'SUPERVISOR' || value.level == 'EXECUTIVE' || value.level == 'UYGONGCOFAMILY'){
-                                return Number(200000);
-                            }
-                            else{
+                            if(this.user_access_rights.mbl_amount == 'YES'){
+                                if(value.level == 'RANK&FILE'){
+                                    return Number(150000);
+                                }
+                                else if(value.level == 'MANAGER' || value.level == 'SUPERVISOR' || value.level == 'EXECUTIVE' || value.level == 'UYGONGCOFAMILY'){
+                                    return Number(200000);
+                                }
+                                else{
+                                    return '';
+                                }
+                            }else{
                                 return '';
                             }
                         }
