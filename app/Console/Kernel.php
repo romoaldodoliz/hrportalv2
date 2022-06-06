@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\SendRegularizationNotification::class,
+        Commands\AutoResignedEmployee::class,
     ];
 
     /**
@@ -28,6 +29,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->command('send_email:regularization_notification')->dailyAt('08:00');
+        $schedule->command('command:auto_resigned_employee')->dailyAt('22:00');
         $schedule->command('command:auto_transfer_resigned_employee')->hourly();
     }
 
