@@ -48,6 +48,9 @@ class ReportController extends Controller
                     $employee_depedents[$x]['dependent_bdate'] = $item_dependent['bdate'];
                     $employee_depedents[$x]['dependent_gender'] = $item_dependent['dependent_gender'];
                     $employee_depedents[$x]['dependent_status'] = $item_dependent['dependent_status'];
+                    $employee_depedents[$x]['hmo_enrollment'] = $item_dependent['hmo_enrollment'];
+                    $employee_depedents[$x]['civil_status'] = $item_dependent['civil_status'];
+                    $employee_depedents[$x]['mbl'] = $item_dependent['mbl'];
                     $employee_depedents[$x]['dependent_created_date'] = date('Y-m-d h:m A',strtotime($item_dependent['created_at']));
 
                     $x++;
