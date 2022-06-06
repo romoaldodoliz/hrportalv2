@@ -311,7 +311,7 @@ class EmployeeController extends Controller
                         $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
                         $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
                         $mbl = $dependent->mbl ? $dependent->mbl : null;
-                        
+
                         $data_dependent = [
                             'employee_id'=>$employee->id,
                             'dependent_name'=>$dependent_name,
@@ -868,7 +868,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }
         }
         if($request->deleted_dependents){
@@ -881,7 +881,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }   
         }
         //---------------------------------------------------------------------------------------------------------------------------
@@ -2565,63 +2565,63 @@ class EmployeeController extends Controller
                 if(EmployeeNpaRequest::create($data)){
                     DB::commit();
 
-                     //Recommended By
-                    // if($data['recommended_by']){
+                    //Recommended By
+                    if($data['recommended_by']){
 
-                    //     $recommended_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
+                        $recommended_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
 
-                    //     $email_recommended_by = $recommended_by['user']['email'];
-                    //     $reciever_name_recommended_by = $recommended_by['user']['name'];
+                        $email_recommended_by = $recommended_by['user']['email'];
+                        $reciever_name_recommended_by = $recommended_by['user']['name'];
 
-                    //     $npa_data = [
-                    //         'reciever_name' => $reciever_name_recommended_by,
-                    //         'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
-                    //         'company' => $employee_data['companies'][0]['name'],
-                    //         'position' => $employee_data['position'],
-                    //         'npa_title' => $data['subject'],
-                    //         'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
-                    //     ];
-                    //     $send_update = Mail::to($email_recommended_by)->send(new EmployeeNpaNotification($npa_data));
-                    // }
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_recommended_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_recommended_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
 
                     // //Approved By
-                    // if($data['approved_by']){
+                    if($data['approved_by']){
 
-                    //     $approved_by = Employee::with('user')->where('id',$data['approved_by'])->first();
+                        $approved_by = Employee::with('user')->where('id',$data['approved_by'])->first();
 
-                    //     $email_approved_by = $approved_by['user']['email'];
-                    //     $reciever_name_approved_by = $approved_by['user']['name'];
+                        $email_approved_by = $approved_by['user']['email'];
+                        $reciever_name_approved_by = $approved_by['user']['name'];
     
-                    //     $npa_data = [
-                    //         'reciever_name' => $reciever_name_approved_by,
-                    //         'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
-                    //         'company' => $employee_data['companies'][0]['name'],
-                    //         'position' => $employee_data['position'],
-                    //         'npa_title' => $data['subject'],
-                    //         'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
-                    //     ];
-                    //     $send_update = Mail::to($email_approved_by)->send(new EmployeeNpaNotification($npa_data));
-                    // }
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_approved_by,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_approved_by)->send(new EmployeeNpaNotification($npa_data));
+                    }
 
 
                     // //BU Head
-                    // if($data['bu_head']){
+                    if($data['bu_head']){
 
-                    //     $bu_head = Employee::with('user')->where('id',$data['bu_head'])->first();
+                        $bu_head = Employee::with('user')->where('id',$data['bu_head'])->first();
 
-                    //     $email_bu_head = $bu_head['user']['email'];
-                    //     $reciever_name_bu_head = $bu_head['user']['name'];
+                        $email_bu_head = $bu_head['user']['email'];
+                        $reciever_name_bu_head = $bu_head['user']['name'];
 
-                    //     $npa_data = [
-                    //         'reciever_name' => $reciever_name_bu_head,
-                    //         'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
-                    //         'company' => $employee_data['companies'][0]['name'],
-                    //         'position' => $employee_data['position'],
-                    //         'npa_title' => $data['subject'],
-                    //         'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
-                    //     ];
-                    //     $send_update = Mail::to($email_bu_head)->send(new EmployeeNpaNotification($npa_data));
-                    // }
+                        $npa_data = [
+                            'reciever_name' => $reciever_name_bu_head,
+                            'employee_name' => $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                            'company' => $employee_data['companies'][0]['name'],
+                            'position' => $employee_data['position'],
+                            'npa_title' => $data['subject'],
+                            'link' => 'http://10.96.4.126:8668/employees?employee_id='.$employee_data['id'].'&type=npa',
+                        ];
+                        $send_update = Mail::to($email_bu_head)->send(new EmployeeNpaNotification($npa_data));
+                    }
 
                     return Employee::with('companies','departments','locations')->where('id',$employee_data['id'])->first();
                 }

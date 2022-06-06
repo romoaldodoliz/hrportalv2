@@ -68,19 +68,31 @@ class OffboardingController extends Controller
 
                
 
-                $upload_pdf = UploadPdf::with('clearance.signatories.user','clearance.signatories.department','letter','employee.departments','employee.locations','employee.companies','cancelled_by')
+                $upload_pdf = UploadPdf::with('user','clearance.signatories.user','clearance.signatories.department','letter','employee.departments','employee.locations','employee.companies','cancelled_by')
                                         ->where('id',$request->id)
                                         ->first();
-
-                $message_to_cancel = "<p> Hi! ".$upload_pdf->employee->first_name.",  please be advised that we cancelled your resignation letter due to:</p>
-                                        <hr>
-                                        <ul>
-                                            <li>Remarks : ".$request->cancel_remarks."</li>
-                                        </ul>
-                                        <p>Cancelled By : ".Auth::user()->email."</p>
-                                        <small><i>Note: This is an auto generated message please do not reply</i></small>";
+                if($upload_pdf){
+                    // $message_to_cancel = "<p> Hi! ".$upload_pdf->employee->first_name.",  please be advised that we cancelled your resignation letter due to:</p>
+                    //                     <hr>
+                    //                     <ul>
+                    //                         <li>Remarks : ".$request->cancel_remarks."</li>
+                    //                     </ul>
+                    //                     <p>Cancelled By : ".Auth::user()->email."</p>
+                    //                     <small><i>Note: This is an auto generated message please do not reply</i></small>";
                                         
-                $send_webex_to_admin = $this->sendWebexMessage('arjay.lumagdong@lafilgroup.com',$message_to_cancel);
+                    // $send_webex_to_admin = $this->sendWebexMessage($upload_pdf->user->email,$message_to_cancel);
+
+                    $message_to_cancel_to_group =  "<p> HR cancelled a resignation letter, check details below:</p>
+                                                    <ul>
+                                                        <li>Email : ".$upload_pdf->user->email."</li>
+                                                        <li>Remarks : ".$request->cancel_remarks."</li>
+                                                        <li>Date : ".date('Y-m-d h:i A')."</li>
+                                                    </ul>
+                                                    <p>Cancelled By : ".Auth::user()->email."</p><hr>";
+                                                    
+                    $send_webex = $this->sendGroupWebexMessage($message_to_cancel_to_group);
+                }
+                
                 
                 return $response = [
                     'status'=>'saved',
