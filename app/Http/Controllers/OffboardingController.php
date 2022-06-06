@@ -72,15 +72,15 @@ class OffboardingController extends Controller
                                         ->where('id',$request->id)
                                         ->first();
                 if($upload_pdf){
-                    // $message_to_cancel = "<p> Hi! ".$upload_pdf->employee->first_name.",  please be advised that we cancelled your resignation letter due to:</p>
-                    //                     <hr>
-                    //                     <ul>
-                    //                         <li>Remarks : ".$request->cancel_remarks."</li>
-                    //                     </ul>
-                    //                     <p>Cancelled By : ".Auth::user()->email."</p>
-                    //                     <small><i>Note: This is an auto generated message please do not reply</i></small>";
+                    $message_to_cancel = "<p> Hi! ".$upload_pdf->employee->first_name.",  please be advised that we cancelled your resignation letter due to:</p>
+                                        <hr>
+                                        <ul>
+                                            <li>Remarks : ".$request->cancel_remarks."</li>
+                                        </ul>
+                                        <p>Cancelled By : ".Auth::user()->email."</p>
+                                        <small><i>Note: This is an auto generated message please do not reply</i></small>";
                                         
-                    // $send_webex_to_admin = $this->sendWebexMessage($upload_pdf->user->email,$message_to_cancel);
+                    $send_webex_to_admin = $this->sendWebexMessage($upload_pdf->user->email,$message_to_cancel);
 
                     $message_to_cancel_to_group =  "<p> HR cancelled a resignation letter, check details below:</p>
                                                     <ul>

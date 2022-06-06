@@ -868,7 +868,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }
         }
         if($request->deleted_dependents){
@@ -881,7 +881,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }   
         }
         //---------------------------------------------------------------------------------------------------------------------------
