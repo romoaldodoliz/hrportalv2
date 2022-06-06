@@ -547,7 +547,7 @@
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Tax Status*</label>
                                         <select class="form-control" v-model="employee_copied.tax_status" id="tax_status" disabled="disabled">
@@ -567,7 +567,7 @@
 
                                         <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                     </div>
-                                </div>    
+                                </div>     -->
                             </div>         
                         </div>         
 

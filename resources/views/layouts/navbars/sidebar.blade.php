@@ -112,6 +112,13 @@
                         </div>
                     </li>
                 @endif
+                @if(auth()->user()->roles[0]->name == "Administrator")
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/uploaded-pdf') }}">
+                            <i class="fas fa-file text-default" style="font-size: 15px;"></i>Resignation Letters
+                        </a>
+                    </li>
+                @endif
 
             </ul>
         </div>

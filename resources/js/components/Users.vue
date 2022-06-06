@@ -52,8 +52,7 @@
                                                     </content-placeholders>
                                                 </td>
                                             </tr>
-                                             <tr v-for="(user, i) in filteredQueues" :key="i">
-                                            
+                                            <tr v-for="(user, x) in filteredQueues" v-bind:key="x">
                                                 <td class="text-center">
                                                     <div class="dropdown">
                                                         <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -67,7 +66,7 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{{ user.name }}</td>
+                                                <td>{{ getFullName(user.employees) }}</td>
                                                 <td>{{ user.email }}</td>
                                                 <td>
                                                     <div v-if="user.roles.length > 0">
@@ -333,6 +332,58 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="job_history" class="custom-control-input" v-model="user_copied.job_history" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="job_history">Job History</label>
+                                    </div>
+
+                                    <span class="text-danger" v-if="errors.job_history">{{ errors.job_history[0] }}</span> 
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="job_history_edit" class="custom-control-input" v-model="user_copied.job_history_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="job_history_edit">Allow Edit Job History</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.job_history_edit">{{ errors.job_history_edit[0] }}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="compensation_history" class="custom-control-input" v-model="user_copied.compensation_history" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="compensation_history">Compensation History</label>
+                                    </div>
+
+                                    <span class="text-danger" v-if="errors.compensation_history">{{ errors.compensation_history[0] }}</span> 
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                            <input id="compensation_history_edit" class="custom-control-input" v-model="user_copied.compensation_history_edit" true-value="YES" false-value="NO" type="checkbox">
+                                            <label class="custom-control-label" for="compensation_history_edit">Allow Edit Compensation History</label>
+                                        </div>
+
+                                        <span class="text-danger" v-if="errors.compensation_history_edit">{{ errors.compensation_history_edit[0] }}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="performance_history" class="custom-control-input" v-model="user_copied.performance_history" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="performance_history">Performance History</label>
+                                    </div>
+
+                                    <span class="text-danger" v-if="errors.performance_history">{{ errors.performance_history[0] }}</span> 
+                                </div>
+                            </div>
 
                             <div class="col-md-12">
                                 <h4>Allow Hidden Fields</h4>
@@ -367,6 +418,25 @@
                                     </div>
 
                                     <span class="text-danger" v-if="errors.bank_account_details">{{ errors.bank_account_details[0] }}</span> 
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="job_position_level" class="custom-control-input" v-model="user_copied.job_position_level" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="job_position_level">Job Position Detail</label>
+                                    </div>
+
+                                    <span class="text-danger" v-if="errors.job_position_level">{{ errors.job_position_level[0] }}</span> 
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 ml-2 mb-3">
+                                        <input id="mbl_amount" class="custom-control-input" v-model="user_copied.mbl_amount" true-value="YES" false-value="NO" type="checkbox">
+                                        <label class="custom-control-label" for="mbl_amount">MAXIMUM MBL </label>
+                                    </div>
+                                    <span class="text-danger" v-if="errors.mbl_amount">{{ errors.mbl_amount[0] }}</span> 
                                 </div>
                             </div>
                         </div>     
@@ -480,7 +550,7 @@
                     'Email' : 'email',
                     'Role' :  {
                         callback: (value) => {
-                            if(value.roles[0]){
+                            if(value.roles.length > 0){
                                 return `${value.roles[0].name}`;
                             }
                         }
@@ -494,6 +564,13 @@
             this.fetchRoles();
         },
         methods:{
+            getFullName(employee){
+                var first_name = employee.first_name;
+                var last_name = employee.last_name;
+                var middle_initial = employee.middle_initial && employee.middle_initial != '-' ? employee.middle_initial + '.' : "";
+                var name_suffix = employee.name_suffix && employee.name_suffix != '-' ? employee.name_suffix : "";
+                return first_name + ' ' + middle_initial + ' ' + last_name + ' ' + name_suffix ;
+            },
             resetForm(){
                 this.errors = [];
                 this.user = [];
@@ -574,11 +651,18 @@
                     npa_request: user_copied.npa_request,
                     monthly_basic_salary: user_copied.monthly_basic_salary,
                     bank_account_details: user_copied.bank_account_details,
+                    job_position_level: user_copied.job_position_level,
+                    mbl_amount: user_copied.mbl_amount,
                     personal_info_edit: user_copied.personal_info_edit,
                     work_info_edit: user_copied.work_info_edit,
                     contact_info_edit: user_copied.contact_info_edit,
                     identification_info_edit: user_copied.identification_info_edit,
                     employee_201_file_edit: user_copied.employee_201_file_edit,
+                    job_history: user_copied.job_history,
+                    job_history_edit: user_copied.job_history_edit,
+                    compensation_history: user_copied.compensation_history,
+                    compensation_history_edit: user_copied.compensation_history_edit,
+                    performance_history: user_copied.performance_history,
                     _method: 'PATCH'
                 })
                 .then(response => {

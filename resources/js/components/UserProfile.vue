@@ -174,10 +174,10 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
+                                        <label for="role">Document Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
                                         <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
-                                        <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
-                                        <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
+                                        <!-- <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
+                                        <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span> -->
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -416,14 +416,17 @@
                         <h6 class="heading-small text-muted mb-4">Contact Information</h6>
                         <div class="pl-lg-4">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="role">Current Address</label>
                                         <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
                                         <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <input type="checkbox" v-model="replicated_address" @change="replicateAddress"> Same as Current Address
+                                    <br>
+                                    <br>
                                     <div class="form-group">
                                         <label for="role">Permanent Address</label>
                                         <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
@@ -433,14 +436,14 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="role">Landline</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.phone_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.phone_number" v-mask="'###-####'" placeholder="XXX-XXXX">
                                         <span class="text-danger" v-if="errors.phone_number">{{ errors.phone_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="role">Mobile Number</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.mobile_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.mobile_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
                                         <span class="text-danger" v-if="errors.mobile_number">{{ errors.mobile_number[0] }}</span> 
                                     </div>
                                 </div>   
@@ -467,7 +470,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Contact Number</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.contact_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.contact_number" v-mask="'09##-###-####'" placeholder="09XX-XXX-XXXX">
                                         <span class="text-danger" v-if="errors.contact_number">{{ errors.contact_number[0] }}</span> 
                                     </div>
                                 </div>    
@@ -571,7 +574,14 @@
                                                         <option value="YES">YES</option>
                                                         <option value="NO">NO</option>
                                                     </select>  
-                                                    
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.mbl" id="mbl" style="width:150px;">
+                                                        <option value="">Choose MBL</option>
+                                                        <option v-if="validate_mbl(employee_copied.level,'sp')" value="Semi-Private">Semi-Private</option>
+                                                        <option v-if="validate_mbl(employee_copied.level,'rp')" value="Regular Private">Regular Private</option>
+                                                        <option v-if="validate_mbl(employee_copied.level,'lp')" value="Large Private">Large Private</option>
+                                                    </select>  
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">x</button>
@@ -628,32 +638,32 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">SSS</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.sss_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.sss_number" v-mask="'##-#######-#'" placeholder="XX-XXXXXXX-X">
                                         <span class="text-danger" v-if="errors.sss_number">{{ errors.sss_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">HDMF</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.hdmf">
+                                        <input type="text" class="form-control" v-model="employee_copied.hdmf" v-mask="'####-####-####'" placeholder="XXXX-XXXX-XXXX">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.hdmf[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Philhealth</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.phil_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.phil_number" v-mask="'##-#########-#'" placeholder="XX-XXXXXXXXX-X">
                                         <span class="text-danger" v-if="errors.hdmf">{{ errors.phil_number[0] }}</span> 
                                     </div>
                                 </div>    
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">TIN</label>
-                                        <input type="text" class="form-control" v-model="employee_copied.tax_number">
+                                        <input type="text" class="form-control" v-model="employee_copied.tax_number" v-mask="'###-###-###-000'" placeholder="XXX-XXX-XXX-000">
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Tax Status*</label>
                                         <select class="form-control" v-model="employee_copied.tax_status" id="tax_status" :disabled="user_disabled">
@@ -673,7 +683,7 @@
 
                                         <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                     </div>
-                                </div>
+                                </div> -->
                             </div>         
                         </div> 
                          <hr class="my-4">
@@ -937,6 +947,7 @@
                                 <th width="20%;">Action</th>
                                 <th width="20%;">Civil Status</th>
                                 <th width="20%;">HMO Enrollment</th>
+                                <th width="20%;">MBL</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -952,6 +963,7 @@
                                 <td>{{ request_approval_dependent.dependent_status }}</td>
                                 <td>{{ request_approval_dependent.civil_status }}</td>
                                 <td>{{ request_approval_dependent.hmo_enrollment }}</td>
+                                <td>{{ request_approval_dependent.mbl }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1102,6 +1114,7 @@
                 deleted_dependent_attachments: [],
                 dependent_attachments: [],
                 fileSize: 0,
+                replicated_address : '',
             }
         },
         created(){
@@ -1114,6 +1127,34 @@
             this.disabledByGender();
         },
         methods:{
+            validate_mbl(level,mbl){
+                if(mbl == 'sp'){
+                    if(level == 'RANK&FILE' || level == 'SUPERVISOR' || level == 'MANAGER' || level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                if(mbl == 'rp'){
+                    if(level == 'MANAGER' || level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                if(mbl == 'lp'){
+                    if(level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                } 
+            },
+            replicateAddress(){
+                if(this.replicated_address == true){
+                    this.employee_copied.permanent_address = this.employee_copied.current_address;
+                }
+            },
             disabledByGender(){
                 if(this.employee_copied.gender == 'FEMALE'){
                     if(this.employee_copied.marital_status == 'MARRIED' || this.employee_copied.marital_status == 'DIVORCED' || this.employee_copied.marital_status == 'WIDOW'){
@@ -1346,6 +1387,10 @@
                 this.employee_copied.company_list = this.employee_copied.companies[0].id; 
                 this.employee_copied.department_list = this.employee_copied.departments[0].id; 
                 this.employee_copied.location_list = this.employee_copied.locations[0].id; 
+
+                this.employee_copied.mobile_number = employee.mobile_number.replace("+63","0"); 
+                this.employee_copied.contact_number = employee.contact_number.replace("+63","0"); 
+                
                 this.employee_id = employee.id;
 
                 //Attachment
@@ -1433,6 +1478,7 @@
                                 dependent_status: element.dependent_status,
                                 civil_status: element.civil_status,
                                 hmo_enrollment: element.hmo_enrollment,
+                                mbl: element.mbl,
                             });
                         });
                     }
@@ -1467,6 +1513,7 @@
                     relation: "",
                     dependent_status: "",
                     hmo_enrollment: "",
+                    mbl: "",
                 });
             },
             removeDependent: function(index,dependent) {
@@ -1489,6 +1536,7 @@
                                 relation: dependent.relation,
                                 dependent_status: dependent.dependent_status,
                                 hmo_enrollment: dependent.hmo_enrollment,
+                                mbl: dependent.mbl,
                             });
                             this.dependents.splice(index, 1);    
                         }

@@ -43,6 +43,9 @@
                                                 <th scope="col">Birthdate</th>
                                                 <th scope="col">Gender</th>
                                                 <th scope="col">Status</th>
+                                                <th scope="col">HMO Enrollment</th>
+                                                <th scope="col">Civil Status</th>
+                                                <th scope="col">MBL</th>
                                                 <th scope="col">Created Date</th>
                                             </tr>
                                         </thead>
@@ -68,6 +71,9 @@
                                                 <td>{{employee.dependent_bdate}}</td>
                                                 <td>{{employee.dependent_gender}}</td>
                                                 <td>{{employee.dependent_status}}</td>
+                                                <td>{{employee.hmo_enrollment}}</td>
+                                                <td>{{employee.civil_status}}</td>
+                                                <td>{{employee.mbl}}</td>
                                                 <td>{{employee.dependent_created_date}}</td>
                                              </tr>
                                         </tbody>
@@ -133,6 +139,9 @@ export default {
                 'Birthdate': 'dependent_bdate',
                 'Gender': 'dependent_gender',
                 'Status': 'dependent_status',
+                'Civil Status': 'civil_status',
+                'HMO Enrollment': 'hmo_enrollment',
+                'MBL': 'mbl',
                 'Created Date': 'dependent_created_date',
             }
         }

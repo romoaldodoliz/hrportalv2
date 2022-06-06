@@ -158,6 +158,13 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
+                                        <label for="role">Personal Email</label> 
+                                        <input type="text"  class="form-control" v-model="employee_copied.personal_email" >
+                                        <span class="text-danger" v-if="errors.personal_email">{{ errors.personal_email[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
                                         <label for="role">Marital Status*</label> 
                                         <select class="form-control" v-model="employee_copied.marital_status" id="marital_status" @change="validateMartialStatus()">
                                             <option value="">Choose Marital Status</option>
@@ -168,7 +175,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="role">Marital Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
+                                        <label for="role">Document Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
                                         <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
                                         <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
                                         <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
@@ -410,14 +417,17 @@
                         <h6 class="heading-small text-muted mb-4">Contact Information</h6>
                         <div class="pl-lg-4">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="role">Current Address</label>
                                         <textarea class="form-control" v-model="employee_copied.current_address"></textarea>
                                         <span class="text-danger" v-if="errors.current_address">{{ errors.current_address[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <input type="checkbox" v-model="replicated_address" @change="replicateAddress"> Same as Current Address
+                                    <br>
+                                    <br>
                                     <div class="form-group">
                                         <label for="role">Permanent Address</label>
                                         <textarea class="form-control" v-model="employee_copied.permanent_address"></textarea>
@@ -638,7 +648,7 @@
                                         <span class="text-danger" v-if="errors.tax_number">{{ errors.tax_number[0] }}</span> 
                                     </div>
                                 </div>    
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="role">Tax Status*</label>
                                         <select class="form-control" v-model="employee_copied.tax_status" id="tax_status" :disabled="user_disabled">
@@ -658,7 +668,7 @@
 
                                         <span class="text-danger" v-if="errors.tax_status">{{ errors.tax_status[0] }}</span> 
                                     </div>
-                                </div>
+                                </div> -->
                             </div>         
                         </div> 
                          <hr class="my-4">
@@ -1065,6 +1075,7 @@
                 deleted_dependent_attachments: [],
                 dependent_attachments: [],
                 fileSize: 0,
+                replicated_address : '',
             }
         },
         created(){
@@ -1078,6 +1089,11 @@
             this.fetchUserAccessRights();
         },
         methods:{
+            replicateAddress(){
+                if(this.replicated_address == true){
+                    this.employee_copied.permanent_address = this.employee_copied.current_address;
+                }
+            },
             fetchUserAccessRights(){
                 this.user_access_rights = [];
                 axios.get('/user-access-rights')
@@ -1190,6 +1206,7 @@
                 this.userformData.append('gender', employee_copied.gender ? employee_copied.gender : "");
 
                 this.userformData.append('nick_name', employee_copied.nick_name ? employee_copied.nick_name : "");
+                this.userformData.append('personal_email', employee_copied.personal_email ? employee_copied.personal_email : "");
 
 
 

@@ -77,6 +77,11 @@ class Employee extends Model implements AuditableContract
         'original_date_hired',
         'monthly_basic_salary',
         'add_card_id',
+        'personal_email',
+        'type_of_separation',
+        'is_manager',
+        'separation_reason',
+        'job_position_level',
     ];
     
 
@@ -187,4 +192,18 @@ class Employee extends Model implements AuditableContract
     {
         return $this->hasOne('App\PreTestWheatCleaningTemperingAndConditioningUser','user_id','user_id');
     }
+
+    public function job_history()
+    {
+        return $this->hasMany('App\EmployeeJobHistory');
+    }
+    public function compensation_history()
+    {
+        return $this->hasMany('App\EmployeeCompensationHistory');
+    }
+    public function performance_history()
+    {
+        return $this->hasOne('App\ManagerAssessmentLogScore','user_id','user_id');
+    }
+
 }

@@ -31,6 +31,10 @@ use App\QrCodeLog;
 
 use App\RfidUser;
 
+use App\EmployeeJobHistory;
+use App\EmployeeCompensationHistory;
+use App\ManagersAssessmentLogScore;
+
 use App\HrRecieverHmoDependent;
 use App\Mail\EmployeeHMODependentUpdate;
 use App\Mail\EmployeeNpaNotification;
@@ -53,6 +57,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ClientException;
 
 class EmployeeController extends Controller
 {
@@ -77,7 +83,7 @@ class EmployeeController extends Controller
                     array_push($employee_ids , $head['employee_id']);
                 }
             }
-            return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+            return Employee::with('companies','departments','locations','immediate_superior','bu_head','user')
                         ->when($check_user['view_confidential'] != "YES" , function($q) {
                             $q->where('confidential','NO');
                         })
@@ -86,7 +92,7 @@ class EmployeeController extends Controller
                         ->orderBy('series_number','DESC')
                         ->get();
         }else{
-            return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+            return Employee::with('companies','departments','locations','immediate_superior','bu_head','user')
                         ->when($check_user['view_confidential'] != "YES" , function($q) {
                             $q->where('confidential','NO');
                         })
@@ -99,7 +105,7 @@ class EmployeeController extends Controller
     }
 
     public function getEmployee(Request $request){
-        return Employee::with('companies','departments','locations','immediate_superior','bu_head')
+        return Employee::with('companies','departments','locations','immediate_superior','bu_head','user')
                         ->where('id',$request->employee_id)
                         ->orderBy('series_number','DESC')
                         ->first();
@@ -107,7 +113,7 @@ class EmployeeController extends Controller
 
     public function employeeindexCount()
     {
-        return Employee::where('status','Active')->count();
+        return $total_active = Employee::select('id','date_hired','classification')->whereIn('classification',['Regular','Probationary'])->where('status','Active')->count();
     }
     public function employeeInactiveCount()
     {
@@ -115,7 +121,7 @@ class EmployeeController extends Controller
     }
     public function employeeNewCount()
     {
-        return Employee::with('companies','departments')->whereMonth('date_hired', Carbon::now()->month)->whereYear('date_hired', Carbon::now()->year)->get();
+        return Employee::with('companies','departments')->whereMonth('date_hired', Carbon::now()->month)->whereIn('classification',['Regular','Probationary'])->whereYear('date_hired', Carbon::now()->year)->get();
     }
     public function employeeUpdateCount()
     {
@@ -125,6 +131,24 @@ class EmployeeController extends Controller
 
     public function employeeApprovers(Employee $employee){
         return AssignHead::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
+    }
+    public function employeeJobHistory(Employee $employee){
+        return EmployeeJobHistory::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
+    }
+    public function employeeCompensationHistory(Employee $employee){
+        $employee_compensation_history = EmployeeCompensationHistory::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
+
+        if($employee_compensation_history){
+            $employee_compensation_history_arr = [];
+            foreach($employee_compensation_history as $k => $item){
+                $employee_compensation_history_arr[$k] = $item;
+                $employee_compensation_history_arr[$k]['new_salary_rate'] = (float) Crypt::decryptString($item['new_salary_rate']);
+            }
+            return $employee_compensation_history_arr;
+        }
+    }
+    public function employeePerformanceHistory(Employee $employee){
+        return ManagersAssessmentLogScore::select('id','user_id','quarter_period_id','total_score','total_score_status')->with('settings_quarter_period')->where('user_id',$employee->user_id)->where('is_final','Yes')->orderBy('created_at', 'DESC')->get();
     }
 
     public function employeeDependents(Employee $employee){
@@ -169,11 +193,10 @@ class EmployeeController extends Controller
             'company_list' => 'required',
             'department_list' => 'required',
             'location_list' => 'required',
-            'sss_number' => 'required',
-            'hdmf' => 'required',
-            'phil_number' => 'required',
-            'tax_number' => 'required',
-            'tax_status' => 'required',
+            'sss_number' => 'required|unique:employees,sss_number,',
+            'hdmf' => 'required|unique:employees,hdmf,',
+            'phil_number' => 'required|unique:employees,phil_number,',
+            'tax_number' => 'required|unique:employees,tax_number,',
         ],[
             'company_list.required' => 'This field is required',
             'department_list.required' => 'This field is required',
@@ -182,7 +205,6 @@ class EmployeeController extends Controller
             'sss_number.required' => 'This field is required',
             'hdmf.required' => 'This field is required',
             'phil_number.required' => 'This field is required',
-            'tax_number.required' => 'This field is required',
         ]);
 
         
@@ -285,6 +307,10 @@ class EmployeeController extends Controller
                         $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
                         $bdate = $dependent->bdate ? $dependent->bdate : null;
                         $relation = $dependent->relation ? $dependent->relation : null;
+                        $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
+                        $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
+                        $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
+                        $mbl = $dependent->mbl ? $dependent->mbl : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
@@ -292,6 +318,10 @@ class EmployeeController extends Controller
                             'dependent_gender'=>$dependent_gender,
                             'bdate'=>$bdate,
                             'relation'=>$relation,
+                            'dependent_status'=>$dependent_status,
+                            'civil_status'=>$civil_status,
+                            'hmo_enrollment'=>$hmo_enrollment,
+                            'mbl'=>$mbl,
                         ];
                         if($employee->id){
                             $employee->dependents()->create($data_dependent);       
@@ -303,7 +333,7 @@ class EmployeeController extends Controller
 
                 DB::commit();
 
-                return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
+                return Employee::with('companies','departments','locations','immediate_superior','bu_head','user')->where('id',$employee->id)->first();
             }
         }catch (Exception $e) {
             DB::rollBack();
@@ -324,12 +354,14 @@ class EmployeeController extends Controller
             'department_list' => 'required',
             'location_list' => 'required',
             'date_hired' => 'required',
-            // 'tax_status' => 'required',
+            'sss_number' => 'required',
+            'hdmf' => 'required',
+            'phil_number' => 'required',
+            'tax_number' => 'required'
         ],[
             'company_list.required' => 'This field is required',
             'department_list.required' => 'This field is required',
-            'location_list.required' => 'This field is required',
-            'tax_status.required' => 'This field is required',
+            'location_list.required' => 'This field is required'
         ]);
 
         $data = $request->all();
@@ -374,9 +406,9 @@ class EmployeeController extends Controller
         }
 
         if(isset($request->monthly_basic_salary)){
-            $data['monthly_basic_salary'] = Crypt::encryptString($request->monthly_basic_salary);
+            $monthly_basic_salary = str_replace(array('.', ','), '' , $request->monthly_basic_salary);
+            $data['monthly_basic_salary'] = Crypt::encryptString($monthly_basic_salary);
         }
-        
 
         if($data['generate_id_number'] == 'YES'){
             //Generate New Employee Number
@@ -445,6 +477,7 @@ class EmployeeController extends Controller
                         $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
                         $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
                         $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
+                        $mbl = $dependent->mbl ? $dependent->mbl : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
@@ -458,6 +491,7 @@ class EmployeeController extends Controller
                             'dependent_status'=>$dependent_status,
                             'civil_status'=>$civil_status,
                             'hmo_enrollment'=>$hmo_enrollment,
+                            'mbl'=>$mbl,
                         ];
 
                         if(!empty($dependent->id)){
@@ -547,7 +581,7 @@ class EmployeeController extends Controller
                     //Find Current approver 
                     $current_approver = AssignHead::with('employee_info')
                                                             ->where('employee_head_id',$employee->id)
-                                                            ->where('head_id','3')
+                                                            // ->where('head_id','3')
                                                             ->whereHas(
                                                                 'employee_info',function($q) {
                                                                     $q->where('status','Active');
@@ -557,8 +591,86 @@ class EmployeeController extends Controller
                     
                 }
 
-                DB::commit();
-                return Employee::with('companies','departments','locations')->where('id',$employee->id)->first();
+                //Add JOB History
+                if($data['job_history']){
+                    $job_history = json_decode($data['job_history']);
+                    foreach($job_history as $job_history_item){
+
+                        $job_start_date = $job_history_item->job_start_date ? $job_history_item->job_start_date : null;
+                        $job_end_date = $job_history_item->job_end_date ? $job_history_item->job_end_date : null;
+                        $position = $job_history_item->position ? $job_history_item->position : null;
+                        $reason = $job_history_item->reason ? $job_history_item->reason : null;
+                        $job_level = $job_history_item->job_level ? $job_history_item->job_level : null;
+
+                        $data_job_history = [
+                            'employee_id'=>$employee->id,
+                            'job_start_date'=>$job_start_date,
+                            'job_end_date'=>$job_end_date,
+                            'position'=>$position,
+                            'reason'=>$reason,
+                            'job_level'=>$job_level,
+                        ];
+
+                        if(!empty($job_history_item->id)){
+                            $employee->job_history()->where('id',$job_history_item->id)->update($data_job_history);
+                        }else{
+                            $employee->job_history()->create($data_job_history);
+                        }
+                    }
+                }
+
+                //Delete JOB History
+                if(!empty($data['deleted_job_history'])){
+                    $deleted_job_history = json_decode($data['deleted_job_history']);
+                    foreach($deleted_job_history as $deleted_job_history_item){
+                         if(isset($deleted_job_history_item->id)){
+                             $employee->job_history()->where('id',$deleted_job_history_item->id)->delete();
+                         }
+                    }
+                }
+
+                //Add JOB History
+                if($data['compensation_history']){
+                    $compensation_history = json_decode($data['compensation_history']);
+                    foreach($compensation_history as $compensation_history_item){
+
+                        $effectivity_date = $compensation_history_item->effectivity_date ? $compensation_history_item->effectivity_date : null;
+                        $new_salary_rate = $compensation_history_item->new_salary_rate ? str_replace(array('.', ','), '' , $compensation_history_item->new_salary_rate) : null;
+                        $job_grade = $compensation_history_item->job_grade ? $compensation_history_item->job_grade : null;
+                        $frequency = $compensation_history_item->frequency ? $compensation_history_item->frequency : null;
+                        $reason = $compensation_history_item->reason ? $compensation_history_item->reason : null;
+                       
+
+                        $data_compensation_history = [
+                            'employee_id'=>$employee->id,
+                            'effectivity_date'=>$effectivity_date,
+                            'new_salary_rate'=>Crypt::encryptString($new_salary_rate),
+                            'job_grade'=>$job_grade,
+                            'frequency'=>$frequency,
+                            'reason'=>$reason,
+                        ];
+
+                        if(!empty($compensation_history_item->id)){
+                            $employee->compensation_history()->where('id',$compensation_history_item->id)->update($data_compensation_history);
+                        }else{
+                            $employee->compensation_history()->create($data_compensation_history);
+                        }
+                    }
+                }
+
+                //Delete Compensation History
+                if(!empty($data['deleted_compensation_history'])){
+                    $deleted_compensation_history = json_decode($data['deleted_compensation_history']);
+                    foreach($deleted_compensation_history as $deleted_compensation_history_item){
+                         if(isset($deleted_compensation_history_item->id)){
+                             $employee->compensation_history()->where('id',$deleted_compensation_history_item->id)->delete();
+                         }
+                    }
+                }
+
+                
+                 DB::commit();
+                return Employee::with('companies','departments','locations','immediate_superior','bu_head','user')->where('id',$employee->id)->first();
             }
         }catch (Exception $e) {
             DB::rollBack();
@@ -603,6 +715,10 @@ class EmployeeController extends Controller
                         $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
                         $bdate = $dependent->bdate ? $dependent->bdate : null;
                         $relation = $dependent->relation ? $dependent->relation : null;
+                        $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
+                        $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
+                        $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
+                        $mbl = $dependent->mbl ? $dependent->mbl : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
@@ -610,6 +726,10 @@ class EmployeeController extends Controller
                             'dependent_gender'=>$dependent_gender,
                             'bdate'=>$bdate,
                             'relation'=>$relation,
+                            'dependent_status'=>$dependent_status,
+                            'civil_status'=>$civil_status,
+                            'hmo_enrollment'=>$hmo_enrollment,
+                            'mbl'=>$mbl,
                         ];
 
                         if(!empty($dependent->id)){
@@ -664,6 +784,7 @@ class EmployeeController extends Controller
             'last_name' => 'required',
             'marital_status' => 'required',
             'gender' => 'required',
+            'remarks' => 'required',
         ]);
 
         $original_employee_dependents = Dependent::where('employee_id',$employee->id)->orderBy('created_at', 'ASC')->get();
@@ -747,7 +868,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }
         }
         if($request->deleted_dependents){
@@ -760,7 +881,7 @@ class EmployeeController extends Controller
                     'dependents'=>$dependents_requests,
                     'deleted_dependents'=> $request->deleted_dependents ? json_decode($request->deleted_dependents) : ""
                 ];
-                $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
+                // $send_update = Mail::to($email_reciever)->cc($email_reciever_cc)->send(new EmployeeHMODependentUpdate($data));
             }   
         }
         //---------------------------------------------------------------------------------------------------------------------------
@@ -804,12 +925,70 @@ class EmployeeController extends Controller
  
         if($check_request){
             $check_request->update($employee_approval_data);
+
+            //Notify via Webex
+            $message = "<span>Employee: <strong>".$employee['first_name'] . ' ' . $employee['last_name'] ."</strong> update his/her personal infomation. </pspan>
+                        <span>Remarks : ".$request->remarks."</span>
+                        <p>Kindly click the link or log in to the HR portal for approval. Thank you.</p>
+                        <p>Link : http://10.96.4.126:8668/login</p>
+                        <hr>";
+            $send_webex = $this->sendGroupWebexMessage($message);
         }else{
             EmployeeApprovalRequest::create($employee_approval_data);
+
+            //Notify via Webex
+            $message = "<span>Employee: <strong>".$employee['first_name'] . ' ' . $employee['last_name'] ."</strong> update his/her personal infomation. </span>
+                        <span>Remarks : ".$request->remarks."</span>
+                        <p>Kindly click the link or log in to the HR portal for approval. Thank you.</p>
+                        <p>Link : http://10.96.4.126:8668/login</p>
+                        <hr>";
+            $send_webex = $this->sendGroupWebexMessage($message);
         }
 
         return Employee::with('companies','departments','locations','verification')->where('id',$employee->id)->first();
 
+    }
+
+    public function sendGroupWebexMessage($message){
+
+        $httpClient = new Client(); 
+
+        if($message){
+            $body = [
+                //prod
+                'roomId' => 'Y2lzY29zcGFyazovL3VzL1JPT00vMDVlNjYzODAtZGM5Ny0xMWVjLWFmNDMtYzFhMzRjODhkYjBh',
+                'html' => $message
+            ];
+
+            try{
+                $response = $httpClient->post(
+                    'https://api.ciscospark.com/v1/messages',
+                    [
+                        RequestOptions::BODY => json_encode($body),
+                        RequestOptions::HEADERS => [
+                            'Content-Type' => 'application/json',
+                            //prod
+                            'Authorization' => 'Bearer YzA2MzZjYzMtNjU1Ni00OTBhLTg4YmUtNmZlZmVkMTM4YTg0YzEyM2Q4NGUtYWQw_PF84_72c16376-f5a4-4a5c-ad51-a60a7b78a790',
+                        ],
+                    ]
+                );
+
+            return 'sent';
+
+            }catch(ServerException $e){
+                return 'not';
+            }
+            catch(RequestException $e){
+                return 'not';
+            }
+            catch(ConnectException $e){
+                return 'not';
+            }
+            catch(ClientException $e){
+                return 'not';
+            }
+
+        }
     }
 
     public function destroyEmployeeUserProfile(EmployeeApprovalRequest $employee){
@@ -1225,6 +1404,8 @@ class EmployeeController extends Controller
                 $transfer_logs_data['new_system_approvers'] = $data['head_approvers'] ? json_encode($data['head_approvers']) : "";
 
                 $transfer_logs_data['transferred_by'] =  Auth::user()->id;
+                $transfer_logs_data['transferred_date'] =  $data['transferred_date'];
+                $transfer_logs_data['date_in_position'] =  $data['date_in_position'];
 
                 if($employee_transfer = EmployeeTransfer::create($transfer_logs_data)){
 
@@ -1718,7 +1899,9 @@ class EmployeeController extends Controller
                                         'department_manager.approver_info',
                                         'bu_head.approver_info',
                                         'cluster_head.approver_info',
+                                        'user'
                                     ))
+                                    ->whereIn('classification',['Probationary','Regular'])
                                     ->where('status','Active')
                                     ->orderBy('id','ASC')
                                     ->get();
@@ -1737,6 +1920,7 @@ class EmployeeController extends Controller
             $filtered_data[$key]['position'] = $employee['position'];
             $filtered_data[$key]['level'] = $employee['level'];
             $filtered_data[$key]['cluster'] = $employee['cluster'];
+            $filtered_data[$key]['personal_email'] = $employee['personal_email'];
             
 
             if($employee['companies']){
@@ -1786,7 +1970,7 @@ class EmployeeController extends Controller
             $filtered_data[$key]['date_hired'] = $employee['date_hired'];
 
             try {
-                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? (float) Crypt::decryptString($employee['monthly_basic_salary']) : "";
             } catch (DecryptException $e) {
                 $filtered_data[$key]['basic_salary'] = "";
             }
@@ -1846,6 +2030,8 @@ class EmployeeController extends Controller
                 $age_range = "41 - 50 YEARS OLD";
             }else if($age >= 51 && $age <= 60){
                 $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
             }
             $filtered_data[$key]['age_range'] = $age_range;
 
@@ -1869,6 +2055,7 @@ class EmployeeController extends Controller
                                         'bu_head.approver_info',
                                         'cluster_head.approver_info',
                                     ))
+                                    ->whereIn('classification',['Probationary','Regular'])
                                     ->where('status','Inactive')
                                     ->orderBy('id','ASC')
                                     ->get();
@@ -1940,7 +2127,7 @@ class EmployeeController extends Controller
 
             $date_hired = $employee['date_hired'];
             try {
-                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? (float) Crypt::decryptString($employee['monthly_basic_salary']) : "";
             } catch (DecryptException $e) {
                 $filtered_data[$key]['basic_salary'] = "";
             }
@@ -1994,6 +2181,315 @@ class EmployeeController extends Controller
                 $age_range = "41 - 50 YEARS OLD";
             }else if($age >= 51 && $age <= 60){
                 $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
+            }
+            $filtered_data[$key]['age_range'] = $age_range;
+
+            $filtered_data[$key]['gender'] = $employee['gender'];
+
+            $filtered_data[$key]['status'] = $employee['status'];
+        }
+        return $filtered_data;
+    }
+
+    public function exportConsultantEmployees(){
+        $all_employee = Employee::with(array('companies',
+                                        'departments',
+                                        'locations',
+                                        'employee_accountabilities' => function($q){
+                                            $q->whereNotNull('date_assigned');
+                                            $q->whereNull('date_expired');
+                                        },
+                                        'immediate_superior.approver_info',
+                                        'immediate_superior_2.approver_info',
+                                        'department_manager.approver_info',
+                                        'bu_head.approver_info',
+                                        'cluster_head.approver_info',
+                                        'user'
+                                    ))
+                                    ->whereIn('classification',['Consultant'])
+                                    ->where('status','Active')
+                                    ->orderBy('id','ASC')
+                                    ->get();
+        $filtered_data = [];
+
+        foreach( $all_employee as $key => $employee ){
+
+            $filtered_data[$key] = $employee;
+            $filtered_data[$key]['user_id'] = $employee['user_id'];
+            $filtered_data[$key]['id_number'] = $employee['id_number'];
+            $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
+            $filtered_data[$key]['middle_name'] = strtoupper($employee['middle_name']);
+            $filtered_data[$key]['last_name'] = strtoupper($employee['last_name']);
+            $middle_initial =  $employee['middle_initial'] ? $employee['middle_initial'] . '. ' : " ";
+            $filtered_data[$key]['full_name'] = strtoupper($employee['first_name'])  . ' '. $middle_initial . strtoupper($employee['last_name']);
+            $filtered_data[$key]['position'] = $employee['position'];
+            $filtered_data[$key]['level'] = $employee['level'];
+            $filtered_data[$key]['cluster'] = $employee['cluster'];
+            $filtered_data[$key]['personal_email'] = $employee['personal_email'];
+            
+
+            if($employee['companies']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['company'] = $employee['companies'][0] ? $employee['companies'][0]['name'] : "";
+                }else{
+                    $filtered_data[$key]['company'] = "";
+                }
+            }else{
+                $filtered_data[$key]['company'] = "";
+            }
+           
+            $filtered_data[$key]['position'] = $employee['position'];
+
+            if($employee['departments']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['department'] = $employee['departments'][0]['name'];
+                }else{
+                    $filtered_data[$key]['department'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['department'] = "";
+            }
+
+            if($employee['locations']){
+                if(isset($employee['locations'][0])){
+                    $filtered_data[$key]['location'] = $employee['locations'][0]['name'];
+                }else{
+                    $filtered_data[$key]['location'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['location'] = "";
+            }
+
+            $filtered_data[$key]['mobile_number'] = $employee['mobile_number'];
+
+            if(count($employee['employee_accountabilities']) > 0){
+                $filtered_data[$key]['company_assign_phone'] = $employee['employee_accountabilities'][0]['inventories']['service_number'];
+            }else{
+                $filtered_data[$key]['company_assign_phone'] = "";
+            }
+            
+
+            $filtered_data[$key]['area'] = $employee['area'];
+            $filtered_data[$key]['date_hired'] = $employee['date_hired'];
+
+            try {
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ?(float) Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            } catch (DecryptException $e) {
+                $filtered_data[$key]['basic_salary'] = "";
+            }
+
+            
+
+            $today = date("Y-m-d");
+
+            $date_hired = $employee['date_hired'];
+           
+            //Get Tenure
+            $tenure = "";
+            if($date_hired != '0000-00-00' && $date_hired){
+                $diff = date_diff(date_create($date_hired), date_create($today));
+                $year = $diff->format('%y');
+                $month = $diff->format('%m');
+
+                $tenure = $year . '.' . $month;
+            }
+
+            $filtered_data[$key]['tenure'] = $tenure;
+
+            //Get 5th month
+            $fifth_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+150 days", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['fifth_month'] = $fifth_month;
+
+            //Get 6th month
+            $six_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['six_month'] = $six_month;
+
+            //Personal Phone number
+            $filtered_data[$key]['mobile_number'] = str_replace("+63","",$employee['mobile_number']);
+
+            $filtered_data[$key]['employee_status'] = $employee['classification'];
+
+            $filtered_data[$key]['marital_status'] = $employee['marital_status'];
+
+            //Birthdate
+            $filtered_data[$key]['birthdate'] = $employee['birthdate'];
+
+            $birthdate = $employee['birthdate'];
+            $age = "";
+            if($birthdate != '0000-00-00' && $birthdate){
+                $diff = date_diff(date_create($birthdate), date_create($today));
+                $age = $diff->format('%y');
+            }
+            $filtered_data[$key]['age'] = $age;
+
+            $age_range = "";
+            if($age < 21){
+                $age_range = "21 Below";
+            }else if($age >= 21 && $age <= 30){
+                $age_range = "21 - 30 YEARS OLD";
+            }else if($age >= 31 && $age <= 40){
+                $age_range = "31 - 40 YEARS OLD";
+            }else if($age >= 41 && $age <= 50){
+                $age_range = "41 - 50 YEARS OLD";
+            }else if($age >= 51 && $age <= 60){
+                $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
+            }
+            $filtered_data[$key]['age_range'] = $age_range;
+
+            $filtered_data[$key]['gender'] = $employee['gender'];
+
+            $filtered_data[$key]['status'] = $employee['status'];
+        }
+       
+        return $filtered_data;
+    }
+
+    public function exportInactiveConsultantEmployees(){
+
+        $all_employee = Employee::with(array('companies',
+                                        'departments',
+                                        'locations',
+                                        'employee_accountabilities',
+                                        'immediate_superior.approver_info',
+                                        'immediate_superior_2.approver_info',
+                                        'department_manager.approver_info',
+                                        'bu_head.approver_info',
+                                        'cluster_head.approver_info',
+                                    ))
+                                    ->whereIn('classification',['Consultant'])
+                                    ->where('status','Inactive')
+                                    ->orderBy('id','ASC')
+                                    ->get();
+
+        $filtered_data = [];
+
+        foreach( $all_employee as $key => $employee ){
+
+            $filtered_data[$key] = $employee;
+            $filtered_data[$key]['user_id'] = $employee['user_id'];
+            $filtered_data[$key]['id_number'] = $employee['id_number'];
+            $filtered_data[$key]['first_name'] = strtoupper($employee['first_name']);
+            $filtered_data[$key]['middle_name'] = strtoupper($employee['middle_name']);
+            $filtered_data[$key]['last_name'] = strtoupper($employee['last_name']);
+            $middle_initial =  $employee['middle_initial'] ? $employee['middle_initial'] . '. ' : " ";
+            $filtered_data[$key]['full_name'] = strtoupper($employee['first_name'])  . ' '. $middle_initial . strtoupper($employee['last_name']);
+            $filtered_data[$key]['position'] = $employee['position'];
+            $filtered_data[$key]['level'] = $employee['level'];
+            $filtered_data[$key]['cluster'] = $employee['cluster'];
+            
+
+            if($employee['companies']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['company'] = $employee['companies'][0] ? $employee['companies'][0]['name'] : "";
+                }else{
+                    $filtered_data[$key]['company'] = "";
+                }
+            }else{
+                $filtered_data[$key]['company'] = "";
+            }
+           
+            $filtered_data[$key]['position'] = $employee['position'];
+
+            if($employee['departments']){
+                if(isset($employee['departments'][0])){
+                    $filtered_data[$key]['department'] = $employee['departments'][0]['name'];
+                }else{
+                    $filtered_data[$key]['department'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['department'] = "";
+            }
+
+            if($employee['locations']){
+                if(isset($employee['locations'][0])){
+                    $filtered_data[$key]['location'] = $employee['locations'][0]['name'];
+                }else{
+                    $filtered_data[$key]['location'] = "";
+                }
+               
+            }else{
+                $filtered_data[$key]['location'] = "";
+            }
+
+            $filtered_data[$key]['mobile_number'] = $employee['mobile_number'];
+
+            if(count($employee['employee_accountabilities']) > 0){
+                $filtered_data[$key]['company_assign_phone'] = $employee['employee_accountabilities'][0]['inventories']['service_number'];
+            }else{
+                $filtered_data[$key]['company_assign_phone'] = "";
+            }
+            
+
+            $filtered_data[$key]['area'] = $employee['area'];
+            $filtered_data[$key]['date_hired'] = $employee['date_hired'];
+
+            $today = date("Y-m-d");
+
+            $date_hired = $employee['date_hired'];
+            try {
+                $filtered_data[$key]['basic_salary'] = $employee['monthly_basic_salary'] ? (float) Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            } catch (DecryptException $e) {
+                $filtered_data[$key]['basic_salary'] = "";
+            }
+           
+            //Get Tenure
+            $tenure = "";
+            if($date_hired != '0000-00-00' && $date_hired){
+                $diff = date_diff(date_create($date_hired), date_create($today));
+                $year = $diff->format('%y');
+                $month = $diff->format('%m');
+
+                $tenure = $year . '.' . $month;
+            }
+
+            $filtered_data[$key]['tenure'] = $tenure;
+
+            //Get 5th month
+            $fifth_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+150 days", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['fifth_month'] = $fifth_month;
+
+            //Get 6th month
+            $six_month = $employee['date_hired'] ? date('Y-m-d', strtotime("+180 days", strtotime($employee['date_hired']))) : "";
+            $filtered_data[$key]['six_month'] = $six_month;
+
+            //Personal Phone number
+            $filtered_data[$key]['mobile_number'] = str_replace("+63","",$employee['mobile_number']);
+
+            $filtered_data[$key]['employee_status'] = $employee['classification'];
+
+            $filtered_data[$key]['marital_status'] = $employee['marital_status'];
+
+            //Birthdate
+            $filtered_data[$key]['birthdate'] = $employee['birthdate'];
+
+            $birthdate = $employee['birthdate'];
+            $age = "";
+            if($birthdate != '0000-00-00' && $birthdate){
+                $diff = date_diff(date_create($birthdate), date_create($today));
+                $age = $diff->format('%y');
+            }
+            $filtered_data[$key]['age'] = $age;
+
+            $age_range = "";
+            if($age < 21){
+                $age_range = "21 Below";
+            }else if($age >= 21 && $age <= 30){
+                $age_range = "21 - 30 YEARS OLD";
+            }else if($age >= 31 && $age <= 40){
+                $age_range = "31 - 40 YEARS OLD";
+            }else if($age >= 41 && $age <= 50){
+                $age_range = "41 - 50 YEARS OLD";
+            }else if($age >= 51 && $age <= 60){
+                $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
             }
             $filtered_data[$key]['age_range'] = $age_range;
 
@@ -2016,6 +2512,8 @@ class EmployeeController extends Controller
         if($npa_request){
             DB::beginTransaction();
             try {   
+                $data['from_monthly_basic_salary'] = $request->from_monthly_basic_salary ? Crypt::encryptString($request->from_monthly_basic_salary) : null;
+                $data['to_monthly_basic_salary'] = $request->to_monthly_basic_salary ? Crypt::encryptString($request->to_monthly_basic_salary) : null;
                 unset($data['id']);
                 if($npa_request->update($data)){
                     DB::commit();
@@ -2061,11 +2559,13 @@ class EmployeeController extends Controller
                 $data['requested_by'] = $requested_by['id'];
                 $data['date_prepared'] = date('Y-m-d h:m:s');
                 $data['status'] = 'Pending';
+                $data['from_monthly_basic_salary'] = $request->from_monthly_basic_salary ? Crypt::encryptString($request->from_monthly_basic_salary) : null;
+                $data['to_monthly_basic_salary'] = $request->to_monthly_basic_salary ? Crypt::encryptString($request->to_monthly_basic_salary) : null;
 
                 if(EmployeeNpaRequest::create($data)){
                     DB::commit();
 
-                     //Recommended By
+                    //Recommended By
                     if($data['recommended_by']){
 
                         $recommended_by = Employee::with('user')->where('id',$data['recommended_by'])->first();
@@ -2084,7 +2584,7 @@ class EmployeeController extends Controller
                         $send_update = Mail::to($email_recommended_by)->send(new EmployeeNpaNotification($npa_data));
                     }
 
-                    //Approved By
+                    // //Approved By
                     if($data['approved_by']){
 
                         $approved_by = Employee::with('user')->where('id',$data['approved_by'])->first();
@@ -2104,7 +2604,7 @@ class EmployeeController extends Controller
                     }
 
 
-                    //BU Head
+                    // //BU Head
                     if($data['bu_head']){
 
                         $bu_head = Employee::with('user')->where('id',$data['bu_head'])->first();
@@ -2136,7 +2636,16 @@ class EmployeeController extends Controller
     }
 
     public function getNPARequestLists($employee_id){
-        return $npa_requests_list = EmployeeNpaRequest::where('employee_id' , $employee_id)->orderBy('created_at','DESC')->get();
+        $npa_requests_list = EmployeeNpaRequest::where('employee_id' , $employee_id)->orderBy('created_at','DESC')->get();
+        $npa_requests_list_data = [];
+        if(count($npa_requests_list) > 0){
+            foreach($npa_requests_list as $k => $item){
+                $npa_requests_list_data[$k] = $item;
+                $npa_requests_list_data[$k]['from_monthly_basic_salary'] = $item['from_monthly_basic_salary'] ? (float) Crypt::decryptString($item['from_monthly_basic_salary']) : "";
+                $npa_requests_list_data[$k]['to_monthly_basic_salary'] = $item['to_monthly_basic_salary'] ? (float) Crypt::decryptString($item['to_monthly_basic_salary']) : "";
+            }
+        }
+        return $npa_requests_list_data;
     }
 
     public function destroyNPARequest(EmployeeNpaRequest $npa_request){
@@ -2146,7 +2655,12 @@ class EmployeeController extends Controller
     }
 
     public function viewNPARequest(EmployeeNpaRequest $npa_request){
-        return $npa_request = EmployeeNpaRequest::with('from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
+        $npa_request = EmployeeNpaRequest::with('from_company','from_location','from_immediate_manager','from_department','to_company','to_location','to_immediate_manager','to_department','prepared_by','recommended_by','approved_by','bu_head')->where('id',$npa_request->id)->first();
+        if($npa_request){
+            $npa_request['from_monthly_basic_salary'] = $npa_request['from_monthly_basic_salary'] ? (float) Crypt::decryptString($npa_request['from_monthly_basic_salary']) : "";
+            $npa_request['to_monthly_basic_salary'] = $npa_request['to_monthly_basic_salary'] ? (float) Crypt::decryptString($npa_request['to_monthly_basic_salary']) : "";
+        }
+        return $npa_request;
     }
 
     public function approvedByHRRecommend(EmployeeNpaRequest $npa_request){
@@ -2259,7 +2773,7 @@ class EmployeeController extends Controller
 
     public function decryptMonthlyBasicSalary(Employee $employee){
         try {
-            return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            return $monthly_basic_salary = $employee['monthly_basic_salary'] ? (float) Crypt::decryptString($employee['monthly_basic_salary']) : "";
         } catch (DecryptException $e) {
             return "";
         }
@@ -2272,8 +2786,8 @@ class EmployeeController extends Controller
             $salary_record_data = [];
             foreach($salary_records as $k => $salary_record){
                 $salary_record_data[$k] = $salary_record;
-                $salary_record_data[$k]['old_salary'] = $salary_record['old_salary'] ? Crypt::decryptString($salary_record['old_salary']) : "";
-                $salary_record_data[$k]['new_salary'] = $salary_record['new_salary'] ? Crypt::decryptString($salary_record['new_salary']) : "";
+                $salary_record_data[$k]['old_salary'] = $salary_record['old_salary'] ? (float) Crypt::decryptString($salary_record['old_salary']) : "";
+                $salary_record_data[$k]['new_salary'] = $salary_record['new_salary'] ? (float) Crypt::decryptString($salary_record['new_salary']) : "";
             }
             return $salary_record_data;
         }else{

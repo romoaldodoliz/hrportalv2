@@ -40,11 +40,11 @@ class AutoTransferResignedEmployee extends Command
      */
     public function handle()
     {
-        $auto_transfer = $this->transfer_first_level_employees();
+        $auto_transfer = $this->transfer_all_level_employees();
         $this->info($auto_transfer);
     }
 
-    public function transfer_first_level_employees(){
+    public function transfer_all_level_employees(){
 
         $date_today = date('Y-m-d');
         $resigned_employees_today = Employee::with('immediate_superior')->whereDate('date_resigned',$date_today)->where('status','Inactive')->get();
@@ -58,7 +58,7 @@ class AutoTransferResignedEmployee extends Command
 
                     $employee_under = AssignHead::with('employee_info')
                                         ->where('employee_head_id',$item['id'])
-                                        ->where('head_id','3')
+                                        // ->where('head_id','3')
                                         ->whereHas(
                                             'employee_info',function($q) {
                                                 $q->where('status','Active');
@@ -69,7 +69,7 @@ class AutoTransferResignedEmployee extends Command
 
                         $current_approvers = AssignHead::with('employee_info')
                                             ->where('employee_head_id',$item['id'])
-                                            ->where('head_id','3')
+                                            // ->where('head_id','3')
                                             ->whereHas('employee_info',function($q) {
                                                 $q->where('status','Active');
                                             })

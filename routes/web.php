@@ -72,6 +72,12 @@ Route::post('/fetch-apply-filter-hdf-ic-employee', 'HealthDeclationFormControlle
 
 
 
+
+
+Route::get('/set_status_resigned', 'OffboardingController@set_status_resigned');
+
+
+
 //Surveys-------------------------------------------------------------------------------------------------------------------------------------------------
 
 Route::get('/survey', 'SurveyController@index');
@@ -193,6 +199,9 @@ Route::get('logout', function(){
             Route::get('/export-employees',['as'=>'employees.exportEmployees','uses'=>'EmployeeController@exportEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
             
             Route::get('/export-inactive-employees',['as'=>'employees.exportInactiveEmployees','uses'=>'EmployeeController@exportInactiveEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            
+            Route::get('/export-consultant-employees',['as'=>'employees.exportConsultantEmployees','uses'=>'EmployeeController@exportConsultantEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
+            Route::get('/export-inactive-consultant-employees',['as'=>'employees.exportInactiveConsultantEmployees','uses'=>'EmployeeController@exportInactiveConsultantEmployees','middleware' => ['role:Administrator|HR Staff|Cluster Head|BU Head|Immediate Superior']]);
 
             Route::get('/employees-index-count',['as'=>'employees.employeeindexCount','uses'=>'EmployeeController@employeeindexCount','middleware' => ['role:Administrator|HR Staff']]);
             Route::get('/employees-inactive-count',['as'=>'employees.employeeInactiveCount','uses'=>'EmployeeController@employeeInactiveCount','middleware' => ['role:Administrator|HR Staff']]);
@@ -218,6 +227,15 @@ Route::get('logout', function(){
             Route::get('/employee-dependents/{employee}', 'EmployeeController@employeeDependents'); 
 
             Route::get('/employee-dependents-attachments/{employee}', 'EmployeeController@employeeDependentsAttachments');
+
+            //Employeee Job History
+            Route::get('/employee-job-history/{employee}', 'EmployeeController@employeeJobHistory');
+
+            //Employee Compensation History
+            Route::get('/employee-compensation-history/{employee}', 'EmployeeController@employeeCompensationHistory');
+
+            //Employee Performance History
+            Route::get('/employee-performance-history/{employee}', 'EmployeeController@employeePerformanceHistory');
 
             //Employee Dependents Reports
             Route::get('/employee-dependents-reports', 'ReportController@employeeDependentReports'); 
@@ -481,6 +499,13 @@ Route::get('logout', function(){
         Route::post('print_qr','EmployeeController@printEmployeeQR');
         Route::get('preview_qr/{qrlog}','EmployeeController@printPreviewEmployeeQR');
 
+        //OffBoarding
+        Route::get('/uploaded-pdf', 'OffboardingController@uploaded_pdf');
+        Route::get('/uploaded-pdf-data', 'OffboardingController@uploaded_pdf_data');
+        Route::post('/cancel-upload-pdf', 'OffboardingController@cancel_upload_pdf');
+        Route::get('/notify-group-upload-pdf', 'OffboardingController@notifyGroupOnceEmployeeResigned');
+        Route::post('/reset-clearance-signatory', 'OffboardingController@resetClearanceSignatory');
+
     });
 
 
@@ -500,3 +525,4 @@ Route::get('logout', function(){
     Route::get('/get-rfid-door-device-users', 'EmployeeRfidController@getBiometricDoorDeviceUsers');
     Route::get('/get-rfid-door-unassigned', 'EmployeeRfidController@getDoorUnassigned');
     Route::get('/get-rfid-door-user-card', 'EmployeeRfidController@getDoorUserCard');
+
