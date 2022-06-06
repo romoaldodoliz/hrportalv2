@@ -1023,6 +1023,9 @@
                                                                 <th class="text-center">
                                                                     HMO Enrollment
                                                                 </th>
+                                                                <th class="text-center">
+                                                                    MBL
+                                                                </th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -1117,6 +1120,20 @@
                                                                         <option value="">For HMO Enrollment</option>
                                                                         <option value="YES">YES</option>
                                                                         <option value="NO">NO</option>
+                                                                    </select>  
+                                                                </td>
+                                                                 <td>
+                                                                    <select v-if="user_access_rights.contact_info_edit == 'YES'" class="form-control" v-model="row.mbl" id="mbl" style="width:150px;">
+                                                                        <option value="">Choose MBL</option>
+                                                                        <option v-if="validate_mbl(employee_copied.level,'sp')" value="Semi-Private">Semi-Private</option>
+                                                                        <option v-if="validate_mbl(employee_copied.level,'rp')" value="Regular Private">Regular Private</option>
+                                                                        <option v-if="validate_mbl(employee_copied.level,'lp')" value="Large Private">Large Private</option>
+                                                                    </select>  
+                                                                    <select v-else disabled class="form-control" v-model="row.mbl" id="mbl" style="width:150px;">
+                                                                        <option value="">Choose MBL</option>
+                                                                        <option v-if="validate_mbl(employee_copied.level,'sp')" value="Semi-Private">Semi-Private</option>
+                                                                        <option v-if="validate_mbl(employee_copied.level,'rp')" value="Regular Private">Regular Private</option>
+                                                                        <option v-if="validate_mbl(employee_copied.level,'lp')" value="Large Private">Large Private</option>
                                                                     </select>  
                                                                 </td>
 
@@ -2575,6 +2592,29 @@
             this.showNpaApprovalForm();
         },
         methods:{
+            validate_mbl(level,mbl){
+                if(mbl == 'sp'){
+                    if(level == 'RANK&FILE' || level == 'SUPERVISOR' || level == 'MANAGER' || level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                if(mbl == 'rp'){
+                    if(level == 'MANAGER' || level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                if(mbl == 'lp'){
+                    if(level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                } 
+            },
             showExportEmployees(){
                 this.export_employee_selector = '';
                 $('#exportEmployeesModal').modal('show');
@@ -3798,6 +3838,7 @@
                                 dependent_status: element.dependent_status,
                                 civil_status: element.civil_status,
                                 hmo_enrollment: element.hmo_enrollment,
+                                mbl: element.mbl,
                             });
                         });
                     }
@@ -3933,6 +3974,9 @@
                     bdate: "",
                     relation: "",
                     dependent_status: "",
+                    civil_status: "",
+                    hmo_enrollment: "",
+                    mbl: "",
                 });
             },
             removeDependent: function(index,id) {

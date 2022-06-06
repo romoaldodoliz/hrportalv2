@@ -307,13 +307,21 @@ class EmployeeController extends Controller
                         $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
                         $bdate = $dependent->bdate ? $dependent->bdate : null;
                         $relation = $dependent->relation ? $dependent->relation : null;
-
+                        $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
+                        $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
+                        $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
+                        $mbl = $dependent->mbl ? $dependent->mbl : null;
+                        
                         $data_dependent = [
                             'employee_id'=>$employee->id,
                             'dependent_name'=>$dependent_name,
                             'dependent_gender'=>$dependent_gender,
                             'bdate'=>$bdate,
                             'relation'=>$relation,
+                            'dependent_status'=>$dependent_status,
+                            'civil_status'=>$civil_status,
+                            'hmo_enrollment'=>$hmo_enrollment,
+                            'mbl'=>$mbl,
                         ];
                         if($employee->id){
                             $employee->dependents()->create($data_dependent);       
@@ -469,6 +477,7 @@ class EmployeeController extends Controller
                         $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
                         $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
                         $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
+                        $mbl = $dependent->mbl ? $dependent->mbl : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
@@ -482,6 +491,7 @@ class EmployeeController extends Controller
                             'dependent_status'=>$dependent_status,
                             'civil_status'=>$civil_status,
                             'hmo_enrollment'=>$hmo_enrollment,
+                            'mbl'=>$mbl,
                         ];
 
                         if(!empty($dependent->id)){
@@ -705,6 +715,10 @@ class EmployeeController extends Controller
                         $dependent_gender = $dependent->dependent_gender ? $dependent->dependent_gender : null;
                         $bdate = $dependent->bdate ? $dependent->bdate : null;
                         $relation = $dependent->relation ? $dependent->relation : null;
+                        $dependent_status = $dependent->dependent_status ? $dependent->dependent_status : null;
+                        $civil_status = $dependent->civil_status ? $dependent->civil_status : null;
+                        $hmo_enrollment = $dependent->hmo_enrollment ? $dependent->hmo_enrollment : null;
+                        $mbl = $dependent->mbl ? $dependent->mbl : null;
 
                         $data_dependent = [
                             'employee_id'=>$employee->id,
@@ -712,6 +726,10 @@ class EmployeeController extends Controller
                             'dependent_gender'=>$dependent_gender,
                             'bdate'=>$bdate,
                             'relation'=>$relation,
+                            'dependent_status'=>$dependent_status,
+                            'civil_status'=>$civil_status,
+                            'hmo_enrollment'=>$hmo_enrollment,
+                            'mbl'=>$mbl,
                         ];
 
                         if(!empty($dependent->id)){
@@ -2012,6 +2030,8 @@ class EmployeeController extends Controller
                 $age_range = "41 - 50 YEARS OLD";
             }else if($age >= 51 && $age <= 60){
                 $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
             }
             $filtered_data[$key]['age_range'] = $age_range;
 
@@ -2161,6 +2181,8 @@ class EmployeeController extends Controller
                 $age_range = "41 - 50 YEARS OLD";
             }else if($age >= 51 && $age <= 60){
                 $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
             }
             $filtered_data[$key]['age_range'] = $age_range;
 
@@ -2315,6 +2337,8 @@ class EmployeeController extends Controller
                 $age_range = "41 - 50 YEARS OLD";
             }else if($age >= 51 && $age <= 60){
                 $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
             }
             $filtered_data[$key]['age_range'] = $age_range;
 
@@ -2464,6 +2488,8 @@ class EmployeeController extends Controller
                 $age_range = "41 - 50 YEARS OLD";
             }else if($age >= 51 && $age <= 60){
                 $age_range = "51 - 60 YEARS OLD";
+            }else if($age >= 61 && $age <= 65){
+                $age_range = "61 - 65 YEARS OLD";
             }
             $filtered_data[$key]['age_range'] = $age_range;
 

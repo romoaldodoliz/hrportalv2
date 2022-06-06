@@ -365,7 +365,7 @@ import LineChart from './Charts/LineChart.js'
                 });
                 
                 this.dataEmployeeAgecount = {
-                    labels: ['20 yrs. old and Below (' + count[0] + ')','21 - 30 yrs. old (' + count[1] + ')','31-40 yrs. old (' + count[2] + ')','41-50 yrs. old ('  + count[3] + ')','51-60 yrs old (' + count[4] + ')'],
+                    labels: ['20 yrs. old and Below (' + count[0] + ')','21 - 30 yrs. old (' + count[1] + ')','31-40 yrs. old (' + count[2] + ')','41-50 yrs. old ('  + count[3] + ')','51-60 yrs old (' + count[4] + ')','61-65 yrs old (' + count[5] + ')'],
                     datasets: [
                         {
                             label: 'Employee Age',

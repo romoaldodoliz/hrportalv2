@@ -546,7 +546,10 @@ class HomeController extends Controller
 
     public function getEmployeeAgeCount(){
        
-        $all_employees = Employee::select('id','birthdate','status','classification')->whereIn('classification',['Regular','Probationary'])->where('status','Active')->get();
+        $all_employees = Employee::select('id','birthdate','status','classification')
+                                    ->whereIn('classification',['Regular','Probationary'])
+                                    ->where('status','Active')
+                                    ->get();
 
         $get_age = [
             '21_below' => 0,
@@ -554,6 +557,7 @@ class HomeController extends Controller
             '31_40' => 0,
             '41_50' => 0,
             '51_60' => 0,
+            '61_65' => 0,
             'none' => 0,
         ];
 
@@ -583,13 +587,13 @@ class HomeController extends Controller
                     $get_age['41_50'] += 1;
                 }else if($data['age'] >= 51 && $data['age'] <= 60){
                     $get_age['51_60'] += 1;
+                }else if($data['age'] >= 61 && $data['age'] <= 65){
+                    $get_age['61_65'] += 1;
                 }
-            }else{
-                $get_age['none'] += 1;
             }
         }
 
-        $datas = [$get_age['21_below'],$get_age['21_30'],$get_age['31_40'],$get_age['41_50'],$get_age['51_60'],$get_age['none']];
+        $datas = [$get_age['21_below'],$get_age['21_30'],$get_age['31_40'],$get_age['41_50'],$get_age['51_60'],$get_age['61_65']];
 
         return $datas;
     }

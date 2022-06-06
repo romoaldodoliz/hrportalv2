@@ -574,7 +574,14 @@
                                                         <option value="YES">YES</option>
                                                         <option value="NO">NO</option>
                                                     </select>  
-                                                    
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" v-model="row.mbl" id="mbl" style="width:150px;">
+                                                        <option value="">Choose MBL</option>
+                                                        <option v-if="validate_mbl(employee_copied.level,'sp')" value="Semi-Private">Semi-Private</option>
+                                                        <option v-if="validate_mbl(employee_copied.level,'rp')" value="Regular Private">Regular Private</option>
+                                                        <option v-if="validate_mbl(employee_copied.level,'lp')" value="Large Private">Large Private</option>
+                                                    </select>  
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-danger btn-sm mt-2" style="float:right;" v-if="row.id" @click="removeDependent(index,row)">x</button>
@@ -940,6 +947,7 @@
                                 <th width="20%;">Action</th>
                                 <th width="20%;">Civil Status</th>
                                 <th width="20%;">HMO Enrollment</th>
+                                <th width="20%;">MBL</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -955,6 +963,7 @@
                                 <td>{{ request_approval_dependent.dependent_status }}</td>
                                 <td>{{ request_approval_dependent.civil_status }}</td>
                                 <td>{{ request_approval_dependent.hmo_enrollment }}</td>
+                                <td>{{ request_approval_dependent.mbl }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1118,6 +1127,29 @@
             this.disabledByGender();
         },
         methods:{
+            validate_mbl(level,mbl){
+                if(mbl == 'sp'){
+                    if(level == 'RANK&FILE' || level == 'SUPERVISOR' || level == 'MANAGER' || level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                if(mbl == 'rp'){
+                    if(level == 'MANAGER' || level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                if(mbl == 'lp'){
+                    if(level == 'EXECUTIVE' || level == 'UYGONGCOFAMILY'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                } 
+            },
             replicateAddress(){
                 if(this.replicated_address == true){
                     this.employee_copied.permanent_address = this.employee_copied.current_address;
@@ -1442,6 +1474,7 @@
                                 dependent_status: element.dependent_status,
                                 civil_status: element.civil_status,
                                 hmo_enrollment: element.hmo_enrollment,
+                                mbl: element.mbl,
                             });
                         });
                     }
@@ -1476,6 +1509,7 @@
                     relation: "",
                     dependent_status: "",
                     hmo_enrollment: "",
+                    mbl: "",
                 });
             },
             removeDependent: function(index,dependent) {
@@ -1498,6 +1532,7 @@
                                 relation: dependent.relation,
                                 dependent_status: dependent.dependent_status,
                                 hmo_enrollment: dependent.hmo_enrollment,
+                                mbl: dependent.mbl,
                             });
                             this.dependents.splice(index, 1);    
                         }

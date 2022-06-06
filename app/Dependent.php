@@ -20,6 +20,7 @@ class Dependent extends Model
         'dependent_status',
         'hmo_enrollment',
         'civil_status',
+        'mbl',
     ];
 
     public function employee()
