@@ -176,8 +176,8 @@
                                     <div class="form-group">
                                         <label for="role">Document Attachment <a target="_blank" :href="'storage/marital_attachments/'+employee_copied.marital_status_attachment" v-if="employee_copied.marital_status_attachment"><span v-if="marital_attachment_view" class="badge badge-primary">View</span></a></label> 
                                         <input type="file" :disabled="marital_attachment_validate" id="marital_file" class="form-control" ref="file" v-on:change="maritalHandleFileUpload()"/>
-                                        <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
-                                        <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span>
+                                        <!-- <span class="text-danger" v-if="employee_copied.marital_status == 'MARRIED' || employee_copied.marital_status == 'DIVORCED' ||  employee_copied.marital_status == 'WIDOW'">*Attach original copy</span>
+                                        <span class="text-danger" v-if="errors.marital_status_attachment">{{ errors.marital_status_attachment[0] }}</span> -->
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -1387,6 +1387,10 @@
                 this.employee_copied.company_list = this.employee_copied.companies[0].id; 
                 this.employee_copied.department_list = this.employee_copied.departments[0].id; 
                 this.employee_copied.location_list = this.employee_copied.locations[0].id; 
+
+                this.employee_copied.mobile_number = employee.mobile_number.replace("+63","0"); 
+                this.employee_copied.contact_number = employee.contact_number.replace("+63","0"); 
+                
                 this.employee_id = employee.id;
 
                 //Attachment
