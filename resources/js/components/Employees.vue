@@ -3522,7 +3522,12 @@
                 formData.append('cluster', employee_copied.cluster);
                 formData.append('new_cluster', employee_copied.new_cluster);
                 formData.append('area', employee_copied.area ? employee_copied.area : "-");
-                formData.append('monthly_basic_salary', employee_copied.monthly_basic_salary ? employee_copied.monthly_basic_salary : "");
+
+                if(this.user_access_rights.monthly_basic_salary == 'YES'){ 
+                    formData.append('monthly_basic_salary', employee_copied.monthly_basic_salary ? employee_copied.monthly_basic_salary : "");
+                }
+                
+                
                 formData.append('bank_account_number', employee_copied.bank_account_number ? employee_copied.bank_account_number : "-");
                 formData.append('bank_name', employee_copied.bank_name ? employee_copied.bank_name : "-");
                 formData.append('status', employee_copied.status ? employee_copied.status : "-");
