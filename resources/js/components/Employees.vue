@@ -667,7 +667,7 @@
                                                     <input v-else disabled type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
                                                     <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span>  -->
 
-                                                    <VueNumberFormat class="form-control" v-model="employee_copied.monthly_basic_salary" :options="{ prefix: '', precision: 2, decimal: '.', thousand: ',' }"></VueNumberFormat>
+                                                    <VueNumberFormat class="form-control" v-model="employee_copied.monthly_basic_salary" :options="{ prefix: '', decimal: '.', thousand: ',' }"></VueNumberFormat>
                                                 </div>
                                             </div>
 

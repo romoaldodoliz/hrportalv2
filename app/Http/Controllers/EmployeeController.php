@@ -406,8 +406,8 @@ class EmployeeController extends Controller
         }
 
         if(isset($request->monthly_basic_salary)){
-            $monthly_basic_salary = str_replace(array('.', ','), '' , $request->monthly_basic_salary);
-            $data['monthly_basic_salary'] = Crypt::encryptString($monthly_basic_salary);
+            // $monthly_basic_salary = str_replace(array('.', ','), '' , $request->monthly_basic_salary);
+            $data['monthly_basic_salary'] = Crypt::encryptString($request->monthly_basic_salary);
         }
 
         if($data['generate_id_number'] == 'YES'){
@@ -635,7 +635,7 @@ class EmployeeController extends Controller
                     foreach($compensation_history as $compensation_history_item){
 
                         $effectivity_date = $compensation_history_item->effectivity_date ? $compensation_history_item->effectivity_date : null;
-                        $new_salary_rate = $compensation_history_item->new_salary_rate ? str_replace(array('.', ','), '' , $compensation_history_item->new_salary_rate) : null;
+                        $new_salary_rate = $compensation_history_item->new_salary_rate ? $compensation_history_item->new_salary_rate : null;
                         $job_grade = $compensation_history_item->job_grade ? $compensation_history_item->job_grade : null;
                         $frequency = $compensation_history_item->frequency ? $compensation_history_item->frequency : null;
                         $reason = $compensation_history_item->reason ? $compensation_history_item->reason : null;
