@@ -53,7 +53,7 @@ class UploadPdfNotification extends Command
     public function notifyGroupOnceEmployeeResigned(){
 
         $upload_pdfs = UploadPdf::with('employee.departments','employee.locations','employee.companies')
-                                    ->whereDate('created_at','>=',date('Y-m-d'))
+                                    ->whereDate('created_at','=',date('Y-m-d'))
                                     ->where(function($q){
                                         $q->where('notification_webex','!=','1');
                                         $q->orWhere('notification_webex',null);
