@@ -1395,8 +1395,8 @@
                                                                     <input v-else disabled type="date" class="form-control" v-model="row.effectivity_date">
                                                                 </td>
                                                                 <td>
-                                                                    <VueNumberFormat v-if="user_access_rights.compensation_history_edit == 'YES'" class="form-control" v-model="row.new_salary_rate" :options="{ prefix: '', precision: 2, decimal: '.', thousand: ',' }"></VueNumberFormat>
-                                                                    <VueNumberFormat v-else disabled class="form-control" v-model="row.new_salary_rate" :options="{ prefix: '', precision: 2, decimal: '.', thousand: ',' }"></VueNumberFormat>
+                                                                    <VueNumberFormat v-if="user_access_rights.compensation_history_edit == 'YES'" class="form-control" v-model="row.new_salary_rate" :options="{ prefix: '', decimal: '.', thousand: ',' }"></VueNumberFormat>
+                                                                    <VueNumberFormat v-else disabled class="form-control" v-model="row.new_salary_rate" :options="{ prefix: '', decimal: '.', thousand: ',' }"></VueNumberFormat>
                                                                 </td>
                                                                 <td>
                                                                     <input v-if="user_access_rights.compensation_history_edit == 'YES'" type="text" class="form-control" v-model="row.job_grade" placeholder="Job Grade">
