@@ -2773,7 +2773,7 @@ class EmployeeController extends Controller
 
     public function decryptMonthlyBasicSalary(Employee $employee){
         try {
-            return $monthly_basic_salary = $employee['monthly_basic_salary'] ? (float) Crypt::decryptString($employee['monthly_basic_salary']) : "";
+            return $monthly_basic_salary = $employee['monthly_basic_salary'] ? Crypt::decryptString($employee['monthly_basic_salary']) : "";
         } catch (DecryptException $e) {
             return "";
         }

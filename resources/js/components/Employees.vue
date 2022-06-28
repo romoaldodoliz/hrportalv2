@@ -663,11 +663,11 @@
                                             <div class="col-md-4" v-if="user_access_rights.monthly_basic_salary == 'YES'">
                                                 <div class="form-group">
                                                     <label for="role">Monthly Basic Salary</label>
-                                                    <!-- <input v-if="user_access_rights.work_info_edit == 'YES'" type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
+                                                    <input v-if="user_access_rights.work_info_edit == 'YES'" type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
                                                     <input v-else disabled type="number" class="form-control" v-model="employee_copied.monthly_basic_salary">
-                                                    <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span>  -->
+                                                    <span class="text-danger" v-if="errors.monthly_basic_salary">{{ errors.monthly_basic_salary[0] }}</span> 
 
-                                                    <VueNumberFormat class="form-control" v-model="employee_copied.monthly_basic_salary" :options="{ prefix: '', decimal: '.', thousand: ',' }"></VueNumberFormat>
+                                                    <!-- <VueNumberFormat class="form-control" v-model="employee_copied.monthly_basic_salary" :options="{ prefix: '', decimal: '.', thousand: ',' }"></VueNumberFormat> -->
                                                 </div>
                                             </div>
 
