@@ -746,10 +746,13 @@
                                                         <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Migration">Migration</option>
                                                         <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Other Employment">Other Employment</option>
                                                         <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Health Issues">Health Issues</option>
+                                                        <option v-if="employee_copied.type_of_separation =='VOLUNTARY'" value="Early Retirement">Early Retirement</option>
                                                         <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="AWOL">AWOL</option>
                                                         <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Termination">Termination</option>
                                                         <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Retrenchment">Retrenchment</option>
                                                         <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Redundancy">Redundancy</option>
+                                                        <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Retirement">Retirement</option>
+                                                        <option v-if="employee_copied.type_of_separation =='INVOLUNTARY'" value="Non Regularization">Non Regularization</option>
                                                     </select>
                                                     <span class="text-danger" v-if="errors.type_of_separation">{{ errors.type_of_separation[0] }}</span> 
                                                 </div>
